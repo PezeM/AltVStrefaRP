@@ -3,6 +3,7 @@ using System.IO;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Handlers;
 using AltVStrefaRPServer.Services.Character;
+using AltVStrefaRPServer.Services.Character.Customization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -48,6 +49,7 @@ namespace AltVStrefaRPServer
                     }));
             // Add services
             services.AddTransient<ILogin, Login>();
+            services.AddTransient<ICharacterCreatorService, CharacterCreatorService>();
             services.AddSingleton<HashingService>();
             services.AddSingleton<PlayerConnect>();
 

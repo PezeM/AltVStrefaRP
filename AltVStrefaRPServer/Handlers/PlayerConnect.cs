@@ -13,13 +13,11 @@ namespace AltVStrefaRPServer.Handlers
     public class PlayerConnect
     {
         private AppSettings _appSettings;
-        private ServerContext _serverContext;
         private ILogin _loginService;
 
-        public PlayerConnect(AppSettings appSettings, ServerContext serverContext, ILogin loginService)
+        public PlayerConnect(AppSettings appSettings, ILogin loginService)
         {
             _appSettings = appSettings;
-            _serverContext = serverContext;
             _loginService = loginService;
 
             Alt.Log($"Player connect handler initialized.");
@@ -122,6 +120,7 @@ namespace AltVStrefaRPServer.Handlers
                     return;
                 }
 
+                player.SetData("accountId", account.AccountId);
                 await player.EmitAsync("loginSuccesfully", await _loginService.GetCharacterList(account.AccountId));
                 //await player.EmitAsync("loginSuccesfully");
                 Alt.Log($"LoginAccount data: {args[0]} password: {args[1]} Completed in {Time.GetTimestampMs() - startTime}ms.");

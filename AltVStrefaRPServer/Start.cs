@@ -8,6 +8,7 @@ using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Handlers;
 using AltVStrefaRPServer.Models;
+using AltVStrefaRPServer.Modules.Character.Customization;
 using AltVStrefaRPServer.Modules.Vehicle;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -28,6 +29,7 @@ namespace AltVStrefaRPServer
 
             Startup = new Startup();
             var playerConnectEvent = Startup.ServiceProvider.GetService<PlayerConnect>();
+            var characterCreator = Startup.ServiceProvider.GetService<CharacterCreator>();
         }
 
 
