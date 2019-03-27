@@ -42,5 +42,15 @@ namespace AltVStrefaRPServer.Modules.Character
             CharactersList.Add(player.Id, character);
             Alt.Log($"Initialized character {character.GetFullName()} with ID({player.Id}) CID({character.Id}) in the world.");
         }
+
+        /// <summary>
+        /// Removes character data from server memory
+        /// </summary>
+        /// <param name="characterData"></param>
+        public void RemoveCharacterDataFromServer(Models.Character characterData)
+        {
+            CharactersList.Remove(characterData.Player.Id);
+            Alt.Log($"Removed character data from server for ID({characterData.Player.Id}) CID({characterData.Id})");
+        }
     }
 }

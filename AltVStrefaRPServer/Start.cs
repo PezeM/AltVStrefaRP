@@ -21,7 +21,6 @@ namespace AltVStrefaRPServer
         {
             Alt.Server.LogInfo("Starting AltVTestResource...");
 
-            AltAsync.OnPlayerDisconnect += OnPlayerDisconnectAsync;
             AltAsync.OnConsoleCommand += OnConsoleCommand;
             AltAsync.OnPlayerEnterVehicle += OnPlayerEnterVehicleAsync;
 
@@ -29,6 +28,7 @@ namespace AltVStrefaRPServer
 
             Startup = new Startup();
             var playerConnectEvent = Startup.ServiceProvider.GetService<PlayerConnect>();
+            var playerDiconnectEvent = Startup.ServiceProvider.GetService<PlayerDisconnect>();
             var characterCreator = Startup.ServiceProvider.GetService<CharacterCreator>();
         }
 
@@ -99,12 +99,6 @@ namespace AltVStrefaRPServer
             }
             stopwatch.Stop();
             Alt.Log($"Executed console command in {stopwatch.Elapsed}");
-        }
-
-        private async Task OnPlayerDisconnectAsync(ReadOnlyPlayer player, string reason)
-        {
-            AltAsync.Log($"Player disconnected: ID: {player.Id} Name: {player.Name} " +
-                         $"Ping: {player.Ping} Is connected: {player.IsConnected}");
         }
 
         public override IEntityFactory<IVehicle> GetVehicleFactory()
