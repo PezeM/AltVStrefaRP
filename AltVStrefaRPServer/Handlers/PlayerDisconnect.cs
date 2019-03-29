@@ -15,6 +15,8 @@ namespace AltVStrefaRPServer.Handlers
         public PlayerDisconnect(ServerContext serverContext)
         {
             _serverContext = serverContext;
+
+            Alt.Log("Player disconnect handler intialized");
             AltAsync.OnPlayerDisconnect += OnPlayerDisconnectAsync;
         }
 

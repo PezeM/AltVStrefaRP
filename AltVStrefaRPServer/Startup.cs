@@ -2,6 +2,7 @@
 using System.IO;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Handlers;
+using AltVStrefaRPServer.Modules.Character.Customization;
 using AltVStrefaRPServer.Services.Character;
 using AltVStrefaRPServer.Services.Character.Customization;
 using Microsoft.EntityFrameworkCore;
@@ -39,6 +40,7 @@ namespace AltVStrefaRPServer
             var appSettings = new AppSettings();
             Configuration.Bind(appSettings);
             services.AddSingleton(appSettings);
+            appSettings.Initialize();
 
             // Add database
             services.AddDbContext<ServerContext>(options =>
@@ -47,11 +49,16 @@ namespace AltVStrefaRPServer
                     {
                         mysqlOptions.ServerVersion(new Version(10, 1, 37), ServerType.MariaDb);
                     }));
+
             // Add services
             services.AddTransient<ILogin, Login>();
             services.AddTransient<ICharacterCreatorService, CharacterCreatorService>();
+
             services.AddSingleton<HashingService>();
             services.AddSingleton<PlayerConnect>();
+            services.AddSingleton<PlayerDisconnect>();
+
+            services.AddTransient<CharacterCreator>();
 
             // Build provider
             ServiceProvider = services.BuildServiceProvider();

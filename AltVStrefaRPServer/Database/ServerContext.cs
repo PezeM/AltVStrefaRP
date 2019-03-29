@@ -20,6 +20,9 @@ namespace AltVStrefaRPServer.Database
             modelBuilder.Entity<Account>()
                 .HasMany(c => c.Characters)
                 .WithOne(a => a.Account);
+
+            modelBuilder.Entity<Character>()
+                .Ignore(c => c.Player);
         }
     }
 }

@@ -4,9 +4,10 @@ using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
-using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Helpers;
+using AltVStrefaRPServer.Modules.Character;
 using AltVStrefaRPServer.Services.Character;
+using Newtonsoft.Json;
 
 namespace AltVStrefaRPServer.Handlers
 {
@@ -22,7 +23,7 @@ namespace AltVStrefaRPServer.Handlers
 
             Alt.Log($"Player connect handler initialized.");
             AltAsync.OnPlayerConnect += OnPlayerConnectAsync;
-            AltAsync.OnClient("loginAccount", LoginAccount);
+            AltAsync.OnClient("loginAccount", LoginAccountAsync);
             AltAsync.OnClient("registerAccount", RegisterAccountAsync);
             AltAsync.OnClient("tryToLoadCharacter", TryToLoadCharacterAsync);
             async void function(IPlayer player, string login, string password)
@@ -47,6 +48,8 @@ namespace AltVStrefaRPServer.Handlers
                 }
 
                 // Trigger client-side event
+                CharacterManager.Instance.IntializeCharacter(player, character);
+                player.Emit("loadedCharacter");
             }
             catch (Exception e)
             {
@@ -82,7 +85,7 @@ namespace AltVStrefaRPServer.Handlers
                 await _loginService.CreateNewAccountAndSaveAsync(login, password).ConfigureAwait(false);
                 await player.EmitAsync("successfullyRegistered");
 
-                Alt.Log($"Registered account in {Time.GetTimestampMs() - startTime}");
+                Alt.Log($"Registered account in {Time.GetTimestampMs() - startTime}ms");
 
             }
             catch (Exception e)
@@ -91,7 +94,7 @@ namespace AltVStrefaRPServer.Handlers
             }
         }
 
-        private async Task LoginAccount(IPlayer player, object[] args)
+        private async Task LoginAccountAsync(IPlayer player, object[] args)
         {
             try
             {
@@ -121,8 +124,8 @@ namespace AltVStrefaRPServer.Handlers
                 }
 
                 player.SetData("accountId", account.AccountId);
-                await player.EmitAsync("loginSuccesfully", await _loginService.GetCharacterList(account.AccountId));
-                //await player.EmitAsync("loginSuccesfully");
+                var characterList = await _loginService.GetCharacterList(account.AccountId).ConfigureAwait(false);
+                await player.EmitAsync("loginSuccesfully", JsonConvert.SerializeObject(characterList));
                 Alt.Log($"LoginAccount data: {args[0]} password: {args[1]} Completed in {Time.GetTimestampMs() - startTime}ms.");
             }
             catch (Exception e)

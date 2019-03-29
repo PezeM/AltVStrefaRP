@@ -32,8 +32,11 @@ namespace AltVStrefaRPServer.Services.Character.Customization
                 Money = 250f,
                 Gender = gender,
                 Dimension = 0,
-                BackgroundImage = string.Empty,
-                ProfileImage = string.Empty,
+                X = AppSettings.Current.ServerConfig.SpawnPosition.X,
+                Y = AppSettings.Current.ServerConfig.SpawnPosition.Y,
+                Z = AppSettings.Current.ServerConfig.SpawnPosition.Z,
+                BackgroundImage = "../images/profile-card-background.jpg",
+                ProfileImage = "../images/default-profile-image.jpg",
                 TimePlayed = 0
             };
         }

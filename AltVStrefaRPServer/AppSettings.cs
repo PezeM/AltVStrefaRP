@@ -4,7 +4,7 @@
     {
         public static AppSettings Current;
 
-        public AppSettings()
+        public void Initialize()
         {
             Current = this;
         }
@@ -15,7 +15,7 @@
 
     public class ServerConfig
     {
-        public ConfigPosition ConfigPosition { get; set; }
+        public ConfigPosition SpawnPosition { get; set; }
         public ConfigPosition LoginPosition { get; set; }
     }
 

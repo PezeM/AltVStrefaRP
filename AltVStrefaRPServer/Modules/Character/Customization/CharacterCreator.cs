@@ -21,17 +21,20 @@ namespace AltVStrefaRPServer.Modules.Character.Customization
         private async Task TryToCreateNewCharacterAsync(IPlayer player, object[] args)
         {
             // Get name and username
-            // Check if users exists
-            if (await _characterCreatorService.CheckIfCharacterExistsAsync(string.Empty, string.Empty))
-            {
-                // Error to user 
-                return;
-            }
 
             // Create new character 
             if (!player.GetData("accountId", out int accountId))
             {
                 // Return to user
+                Alt.Log($"User {player.Name} doesn't have accountId {accountId}");
+                return;
+            }
+
+            // Check if users exists
+            if (await _characterCreatorService.CheckIfCharacterExistsAsync(accountId.ToString(), accountId.ToString()))
+            {
+                // Error to user 
+                Alt.Log($"User already exists");
                 return;
             }
 
