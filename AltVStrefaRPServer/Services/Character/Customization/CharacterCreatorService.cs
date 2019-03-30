@@ -14,7 +14,7 @@ namespace AltVStrefaRPServer.Services.Character.Customization
         }
 
         public async Task<bool> CheckIfCharacterExistsAsync(string firstName, string lastName)
-            => await _serverContext.Characters.AnyAsync(c => c.FirstName == firstName && c.LastName == lastName);
+            => await _serverContext.Characters.AsNoTracking().AnyAsync(c => c.FirstName == firstName && c.LastName == lastName);
 
         public async Task SaveNewCharacter(Models.Character character)
         {
