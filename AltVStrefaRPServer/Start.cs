@@ -9,6 +9,7 @@ using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Handlers;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Modules.Character.Customization;
+using AltVStrefaRPServer.Modules.Chat;
 using AltVStrefaRPServer.Modules.Environment;
 using AltVStrefaRPServer.Modules.Vehicle;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,7 +34,6 @@ namespace AltVStrefaRPServer
             var characterCreator = Startup.ServiceProvider.GetService<CharacterCreator>();
             var sitting = new Sitting();
         }
-
 
         private Task AltAsyncOnOnPlayerEvent(IPlayer player, string eventname, object[] args)
         {
@@ -87,11 +87,11 @@ namespace AltVStrefaRPServer
 
                     Alt.Log($"Creating vehicle at position: {player.Position}.");
                     var vehicle = Alt.CreateVehicle(model, player.Position, float.MinValue);
-                    await vehicle.SetPrimaryColorRgbAsync(new Rgba(0, 0, 0, 255));
-                    await vehicle.SetSecondaryColorRgbAsync(new Rgba(255, 255, 255, 255));
-                    await vehicle.SetNumberplateTextAsync("StrefaRP");
-                    await vehicle.SetNumberplateIndexAsync(3);
-                    await vehicle.SetDimensionAsync(player.Dimension);
+                    await vehicle.SetPrimaryColorRgbAsync(new Rgba(0, 0, 0, 255)).ConfigureAwait(false);
+                    await vehicle.SetSecondaryColorRgbAsync(new Rgba(255, 255, 255, 255)).ConfigureAwait(false);
+                    await vehicle.SetNumberplateTextAsync("StrefaRP").ConfigureAwait(false);
+                    await vehicle.SetNumberplateIndexAsync(3).ConfigureAwait(false);
+                    await vehicle.SetDimensionAsync(player.Dimension).ConfigureAwait(false);
                     Alt.Log($"Created vehicle {vehicle}");
                 }
                 catch (Exception e)
