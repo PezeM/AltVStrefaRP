@@ -9,6 +9,7 @@ using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Handlers;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Modules.Character.Customization;
+using AltVStrefaRPServer.Modules.Environment;
 using AltVStrefaRPServer.Modules.Vehicle;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -30,6 +31,7 @@ namespace AltVStrefaRPServer
             var playerConnectEvent = Startup.ServiceProvider.GetService<PlayerConnect>();
             var playerDiconnectEvent = Startup.ServiceProvider.GetService<PlayerDisconnect>();
             var characterCreator = Startup.ServiceProvider.GetService<CharacterCreator>();
+            var sitting = new Sitting();
         }
 
 
