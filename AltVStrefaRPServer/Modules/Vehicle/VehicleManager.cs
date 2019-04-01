@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using AltVStrefaRPServer.Models;
 
 namespace AltVStrefaRPServer.Modules.Vehicle
 {
@@ -12,6 +14,13 @@ namespace AltVStrefaRPServer.Modules.Vehicle
         {
         }
 
+        private Dictionary<int, VehicleModel> Vehicles = new Dictionary<int, VehicleModel>();
 
+        /// <summary>
+        /// Gets VehicleModel by id
+        /// </summary>
+        /// <param name="vehicleId"></param>
+        /// <returns>Returns <see cref="VehicleModel"/></returns>
+        public VehicleModel GetVehicleModel(int vehicleId) => Vehicles.ContainsKey(vehicleId) ? Vehicles[vehicleId] : null;
     }
 }

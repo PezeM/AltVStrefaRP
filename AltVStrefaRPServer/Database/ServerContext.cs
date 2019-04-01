@@ -7,7 +7,7 @@ namespace AltVStrefaRPServer.Database
     {
         public DbSet<Character> Characters { get; set; }
         public DbSet<Account> Accounts { get; set; }
-        //public DbSet<MyVehicle> Vehicles { get; set; }
+        public DbSet<VehicleModel> Vehicles { get; set; }
 
         public ServerContext(DbContextOptions options) : base(options)
         {
@@ -23,6 +23,9 @@ namespace AltVStrefaRPServer.Database
 
             modelBuilder.Entity<Character>()
                 .Ignore(c => c.Player);
+
+            modelBuilder.Entity<VehicleModel>()
+                .Ignore(v => v.VehicleHandle);
         }
     }
 }
