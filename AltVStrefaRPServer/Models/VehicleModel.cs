@@ -13,6 +13,7 @@ namespace AltVStrefaRPServer.Models
         public float Fuel { get; set; }
         public float Oil { get; set; }
         public bool IsJobVehicle { get; set; }
+        public bool IsSpawned { get; set; }
 
         public IVehicle VehicleHandle { get; set; }
     }

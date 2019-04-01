@@ -5,6 +5,7 @@ using AltVStrefaRPServer.Handlers;
 using AltVStrefaRPServer.Modules.Character.Customization;
 using AltVStrefaRPServer.Services.Character;
 using AltVStrefaRPServer.Services.Character.Customization;
+using AltVStrefaRPServer.Services.Vehicles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -54,6 +55,7 @@ namespace AltVStrefaRPServer
             services.AddTransient<ILogin, Login>();
             services.AddTransient<ICharacterCreatorService, CharacterCreatorService>();
 
+            services.AddSingleton<IVehicleLoader, VehicleLoader>();
             services.AddSingleton<HashingService>();
             services.AddSingleton<PlayerConnect>();
             services.AddSingleton<PlayerDisconnect>();
