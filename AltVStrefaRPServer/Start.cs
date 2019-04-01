@@ -33,6 +33,13 @@ namespace AltVStrefaRPServer
             var playerDiconnectEvent = Startup.ServiceProvider.GetService<PlayerDisconnect>();
             var characterCreator = Startup.ServiceProvider.GetService<CharacterCreator>();
             var sitting = new Sitting();
+
+            // For now not working on windows
+            //var chat = new ChatHandler();
+            //chat.RegisterCommand("test", (player, strings) =>
+            //{
+            //    Alt.Log($"{player.Id} triggered command test");
+            //});
         }
 
         private Task AltAsyncOnOnPlayerEvent(IPlayer player, string eventname, object[] args)
