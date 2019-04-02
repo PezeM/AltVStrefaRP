@@ -8,6 +8,7 @@ using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Handlers;
 using AltVStrefaRPServer.Models;
+using AltVStrefaRPServer.Modules.Character;
 using AltVStrefaRPServer.Modules.Character.Customization;
 using AltVStrefaRPServer.Modules.Environment;
 using AltVStrefaRPServer.Modules.Vehicle;
@@ -18,6 +19,7 @@ namespace AltVStrefaRPServer
 {
     public class Start : AsyncResource
     {
+        private VehicleManager vehicleManager;
         protected Startup Startup;
         public override void OnStart()
         {
@@ -25,15 +27,15 @@ namespace AltVStrefaRPServer
 
             AltAsync.OnConsoleCommand += OnConsoleCommand;
             AltAsync.OnPlayerEnterVehicle += OnPlayerEnterVehicleAsync;
-
             AltAsync.OnPlayerEvent += AltAsyncOnOnPlayerEvent;
 
             Startup = new Startup();
             var playerConnectEvent = Startup.ServiceProvider.GetService<PlayerConnect>();
             var playerDiconnectEvent = Startup.ServiceProvider.GetService<PlayerDisconnect>();
+            var vehicleHandler = Startup.ServiceProvider.GetService<VehicleHandler>();
             var characterCreator = Startup.ServiceProvider.GetService<CharacterCreator>();
             var vehicleLoader = Startup.ServiceProvider.GetService<VehicleManagerService>();
-            var vehicleManager = Startup.ServiceProvider.GetService<VehicleManager>();
+            vehicleManager = Startup.ServiceProvider.GetService<VehicleManager>();
 
             var sitting = new Sitting();
 
@@ -86,31 +88,41 @@ namespace AltVStrefaRPServer
                 var model = args[0];
                 if (string.IsNullOrEmpty(model)) return;
 
-                try
+                var player = Alt.GetAllPlayers().FirstOrDefault();
+                if (player == null)
                 {
-                    var player = Alt.GetAllPlayers().FirstOrDefault();
-                    if (player == null)
-                    {
-                        Alt.Log($"Not found any player in the game");
-                        return;
-                    }
+                    Alt.Log($"Not found any player in the game");
+                    return;
+                }
 
-                    Alt.Log($"Creating vehicle at position: {player.Position}.");
-                    var vehicle = Alt.CreateVehicle(model, player.Position, float.MinValue);
-                    await vehicle.SetPrimaryColorRgbAsync(new Rgba(0, 0, 0, 255)).ConfigureAwait(false);
-                    await vehicle.SetSecondaryColorRgbAsync(new Rgba(255, 255, 255, 255)).ConfigureAwait(false);
-                    await vehicle.SetNumberplateTextAsync("StrefaRP").ConfigureAwait(false);
-                    await vehicle.SetNumberplateIndexAsync(3).ConfigureAwait(false);
-                    await vehicle.SetDimensionAsync(player.Dimension).ConfigureAwait(false);
-                    Alt.Log($"Created vehicle {vehicle}");
-                }
-                catch (Exception e)
+                await VehicleCommandAsync(model, player).ConfigureAwait(false);
+            }
+            else if (name == "spawn")
+            {
+                if (!int.TryParse(args[0], out int id))
                 {
-                    Alt.Log($"Couldn't create a vehicle by command line. {e}");
+                    Alt.Log($"Wrong vehicle id for command {name}");
+                    return;
                 }
+                SpawnVehicleComand(id);
             }
             stopwatch.Stop();
             Alt.Log($"Executed console command in {stopwatch.Elapsed}");
+        }
+
+        public async Task VehicleCommandAsync(string vehicleModel, IPlayer player)
+        {
+            var character = CharacterManager.Instance.GetCharacter(player);
+            if (character == null) return;
+
+            var vehicle = await vehicleManager.CreateVehicleAsync(vehicleModel, player.Position, player.HeadRotation.pitch,
+                player.Dimension, character.Id).ConfigureAwait(false);
+            vehicleManager.SpawnVehicle(vehicle.Id);
+        }
+
+        public void SpawnVehicleComand(int vehicleId)
+        {
+            vehicleManager.SpawnVehicle(vehicleId);
         }
 
         public override IEntityFactory<IVehicle> GetVehicleFactory()

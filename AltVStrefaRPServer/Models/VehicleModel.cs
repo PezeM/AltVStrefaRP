@@ -6,14 +6,24 @@ namespace AltVStrefaRPServer.Models
     {
         public int Id { get; set; }
         public int Owner { get; set; }
+        public string Model { get; set; }
+
         public float X { get; set; }
         public float Y { get; set; }
         public float Z { get; set; }
         public short Dimension { get; set; }
+        public float Heading { get; set; }
+
+        public float MaxFuel { get; set; }
         public float Fuel { get; set; }
+        public float MaxOil { get; set; }
         public float Oil { get; set; }
+        public float Mileage { get; set; }
+
         public bool IsJobVehicle { get; set; }
         public bool IsSpawned { get; set; }
+        public bool IsLocked { get; set; }
+        public bool IsBlocked { get; set; }
 
         public IVehicle VehicleHandle { get; set; }
     }

@@ -55,11 +55,13 @@ namespace AltVStrefaRPServer
             // Add services
             services.AddTransient<ILogin, Login>();
             services.AddTransient<ICharacterCreatorService, CharacterCreatorService>();
+            services.AddTransient<IVehicleCreatorService, VehicleCreatorService>();
 
             services.AddSingleton<IVehicleManagerService, VehicleManagerService>();
             services.AddSingleton<HashingService>();
             services.AddSingleton<PlayerConnect>();
             services.AddSingleton<PlayerDisconnect>();
+            services.AddSingleton<VehicleHandler>();
             services.AddSingleton<VehicleManager>();
 
             services.AddTransient<CharacterCreator>();
