@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AltV.Net;
+using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
@@ -69,5 +71,29 @@ namespace AltVStrefaRPServer.Modules.Vehicle
         /// <param name="vehicle"></param>
         /// <returns>True if vehicle was removed successfully</returns>
         public bool RemoveVehicle(VehicleModel vehicle) => Vehicles.Remove(vehicle.Id);
+
+        /// <summary>
+        /// Completly removes vehicle. Removes it from the server/vehicle list and database
+        /// </summary>
+        /// <param name="vehicle">The vehicle to remove</param>
+        /// <returns></returns>
+        public async Task<bool> RemoveVehicleFromWorldAsync(VehicleModel vehicle)
+        {
+            if (RemoveVehicle(vehicle))
+            {
+                try
+                {
+                    Alt.RemoveVehicle(vehicle.VehicleHandle);
+                    await _vehicleManagerService.RemoveVehicleAsync(vehicle).ConfigureAwait(false);
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    Alt.Log($"Error removing vehicle from world: {e}");
+                    throw;
+                }
+            }
+            return false;
+        }
     }
 }
