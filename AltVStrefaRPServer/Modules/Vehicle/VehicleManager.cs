@@ -1,32 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using AltV.Net;
+using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
+using AltVStrefaRPServer.Services.Vehicles;
 
 namespace AltVStrefaRPServer.Modules.Vehicle
 {
     public class VehicleManager
     {
-        private static readonly Lazy<VehicleManager> lazy = new Lazy<VehicleManager>(() => new VehicleManager());
+        private Dictionary<int, VehicleModel> Vehicles = new Dictionary<int, VehicleModel>();
+        private IVehicleManagerService _vehicleManagerService;
 
-        public static VehicleManager Instance { get { return lazy.Value; } }
-
-        private VehicleManager()
+        public VehicleManager(IVehicleManagerService vehicleManagerService)
         {
+            _vehicleManagerService = vehicleManagerService;
+
+            LoadVehiclesFromDatabaseAsync();
         }
 
-        private Dictionary<int, VehicleModel> Vehicles = new Dictionary<int, VehicleModel>();
-
         /// <summary>
-        /// Adds list of VehicleModel to dictionary and sets IsSpawned flag to false
+        /// Loads all vehicles from database to memory and sets every vehicle IsSpawned property to false
         /// </summary>
-        /// <param name="vehiclesList">List of <see cref="VehicleModel"/></param>
-        public void AddVehicles(List<VehicleModel> vehiclesList)
+        public async Task LoadVehiclesFromDatabaseAsync()
         {
             var startTime = Time.GetTimestampMs();
-            foreach (var vehicle in vehiclesList)
+            foreach (var vehicle in await _vehicleManagerService.LoadVehiclesFromDatabaseAsync().ConfigureAwait(false))
             {
                 vehicle.IsSpawned = false;
                 Vehicles.Add(vehicle.Id, vehicle);
@@ -48,6 +49,25 @@ namespace AltVStrefaRPServer.Modules.Vehicle
         /// <returns></returns>
         public VehicleModel GetVehicleModel(ushort vehicleID) => Vehicles.Values.FirstOrDefault(v => v.VehicleHandle?.Id == vehicleID);
 
+        /// <summary>
+        /// Gets <see cref="VehicleModel"/> by vehicle handle id
+        /// </summary>
+        /// <param name="vehicle"><see cref="IVehicle"/></param>
+        /// <returns></returns>
+        public VehicleModel GetVehicleModel(IVehicle vehicle) => Vehicles.Values.FirstOrDefault(v => v.VehicleHandle?.Id == vehicle.Id);
 
+        /// <summary>
+        /// Removes <see cref="VehicleModel"/> from vehicle list by id
+        /// </summary>
+        /// <param name="vehicleId"></param>
+        /// <returns>True if vehicle was removed successfully</returns>
+        public bool RemoveVehicle(int vehicleId) => Vehicles.Remove(vehicleId);
+
+        /// <summary>
+        /// Removes <see cref="VehicleModel"/> from vehicle list by value
+        /// </summary>
+        /// <param name="vehicle"></param>
+        /// <returns>True if vehicle was removed successfully</returns>
+        public bool RemoveVehicle(VehicleModel vehicle) => Vehicles.Remove(vehicle.Id);
     }
 }

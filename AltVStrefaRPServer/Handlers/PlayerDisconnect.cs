@@ -5,7 +5,6 @@ using AltV.Net.Data;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Modules.Character;
-using Microsoft.EntityFrameworkCore;
 
 namespace AltVStrefaRPServer.Handlers
 {
