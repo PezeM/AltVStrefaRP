@@ -32,11 +32,12 @@ namespace AltVStrefaRPServer
             var playerConnectEvent = Startup.ServiceProvider.GetService<PlayerConnect>();
             var playerDiconnectEvent = Startup.ServiceProvider.GetService<PlayerDisconnect>();
             var vehicleHandler = Startup.ServiceProvider.GetService<VehicleHandler>();
+
+            var sittingHandler = Startup.ServiceProvider.GetService<SittingHandler>();
             var characterCreator = Startup.ServiceProvider.GetService<CharacterCreator>();
             var vehicleLoader = Startup.ServiceProvider.GetService<VehicleManagerService>();
             vehicleManager = Startup.ServiceProvider.GetService<VehicleManager>();
 
-            var sitting = new SittingHandler();
 
             // For now not working on windows
             //var chat = new ChatHandler();

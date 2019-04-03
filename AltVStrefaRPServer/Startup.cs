@@ -3,7 +3,9 @@ using System.IO;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Handlers;
 using AltVStrefaRPServer.Modules.Character.Customization;
+using AltVStrefaRPServer.Modules.Environment;
 using AltVStrefaRPServer.Modules.Vehicle;
+using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Character;
 using AltVStrefaRPServer.Services.Character.Customization;
 using AltVStrefaRPServer.Services.Vehicles;
@@ -53,16 +55,18 @@ namespace AltVStrefaRPServer
                     }));
 
             // Add services
+            services.AddTransient<INotificationService, NotificationService>();
             services.AddTransient<ILogin, Login>();
             services.AddTransient<ICharacterCreatorService, CharacterCreatorService>();
             services.AddTransient<IVehicleCreatorService, VehicleCreatorService>();
-
+            
             services.AddSingleton<IVehicleManagerService, VehicleManagerService>();
             services.AddSingleton<HashingService>();
             services.AddSingleton<PlayerConnect>();
             services.AddSingleton<PlayerDisconnect>();
             services.AddSingleton<VehicleHandler>();
             services.AddSingleton<VehicleManager>();
+            services.AddSingleton<SittingHandler>();
 
             services.AddTransient<CharacterCreator>();
 

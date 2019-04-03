@@ -1,15 +1,19 @@
 ﻿using System.Collections.Generic;
 using AltV.Net;
 using AltV.Net.Elements.Entities;
+using AltVStrefaRPServer.Services;
 
 namespace AltVStrefaRPServer.Modules.Environment
 {
     public class SittingHandler
     {
+        private INotificationService _notificationService;
         private Dictionary<int, ushort> _seatsTaken = new Dictionary<int, ushort>();
 
-        public SittingHandler()
+        public SittingHandler(INotificationService notificationService)
         {
+            _notificationService = notificationService;
+
             Alt.OnClient("takeSeat", TakeSeat);
             Alt.OnClient("leaveSeat", LeaveSeat);
         }
@@ -23,10 +27,6 @@ namespace AltVStrefaRPServer.Modules.Environment
                 Alt.Log($"Removing {objectId} from seatsTaken dict");
                 _seatsTaken.Remove(objectId);
             }
-            else
-            {
-                Alt.Log($"There is seat taken with object {objectId}");
-            }
         }
 
         private void TakeSeat(IPlayer player, object[] args)
@@ -35,6 +35,7 @@ namespace AltVStrefaRPServer.Modules.Environment
 
             if (_seatsTaken.ContainsKey(objectId))
             {
+                _notificationService.ShowErrorNotfication(player, "To miejsce jest już zajęte.", 4000);
                 Alt.Log($"Someone sits at object {objectId}");
                 return;
             }
