@@ -36,7 +36,7 @@ namespace AltVStrefaRPServer
             var vehicleLoader = Startup.ServiceProvider.GetService<VehicleManagerService>();
             vehicleManager = Startup.ServiceProvider.GetService<VehicleManager>();
 
-            var sitting = new Sitting();
+            var sitting = new SittingHandler();
 
             // For now not working on windows
             //var chat = new ChatHandler();

@@ -4,11 +4,11 @@ using AltV.Net.Elements.Entities;
 
 namespace AltVStrefaRPServer.Modules.Environment
 {
-    public class Sitting
+    public class SittingHandler
     {
         private Dictionary<int, ushort> _seatsTaken = new Dictionary<int, ushort>();
 
-        public Sitting()
+        public SittingHandler()
         {
             Alt.OnClient("takeSeat", TakeSeat);
             Alt.OnClient("leaveSeat", LeaveSeat);
