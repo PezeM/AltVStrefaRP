@@ -39,7 +39,8 @@ namespace AltVStrefaRPServer.Handlers
 
         private async Task OnPlayerLeaveVehicleAsync(IVehicle vehicle, IPlayer player, byte seat)
         {
-            if (vehicle.Driver != player) return;
+            // Saves vehicle only if the drivers exits
+            if(vehicle.Driver != null) return;
             var vehicleModel = _vehicleManager.GetVehicleModel(vehicle.Id);
             if (vehicleModel == null) return;
 
