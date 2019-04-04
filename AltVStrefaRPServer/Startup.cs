@@ -2,7 +2,9 @@
 using System.IO;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Handlers;
+using AltVStrefaRPServer.Modules.Admin;
 using AltVStrefaRPServer.Modules.Character.Customization;
+using AltVStrefaRPServer.Modules.Chat;
 using AltVStrefaRPServer.Modules.Environment;
 using AltVStrefaRPServer.Modules.Vehicle;
 using AltVStrefaRPServer.Services;
@@ -68,6 +70,8 @@ namespace AltVStrefaRPServer
             services.AddSingleton<VehicleManager>();
             services.AddSingleton<SittingHandler>();
 
+            services.AddSingleton<TemporaryChatHandler>();
+            services.AddTransient<AdminCommands>();
             services.AddTransient<CharacterCreator>();
 
             // Build provider

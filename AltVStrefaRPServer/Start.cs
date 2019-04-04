@@ -7,8 +7,10 @@ using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Handlers;
 using AltVStrefaRPServer.Models;
+using AltVStrefaRPServer.Modules.Admin;
 using AltVStrefaRPServer.Modules.Character;
 using AltVStrefaRPServer.Modules.Character.Customization;
+using AltVStrefaRPServer.Modules.Chat;
 using AltVStrefaRPServer.Modules.Environment;
 using AltVStrefaRPServer.Modules.Vehicle;
 using AltVStrefaRPServer.Services.Vehicles;
@@ -33,11 +35,12 @@ namespace AltVStrefaRPServer
             var playerDiconnectEvent = Startup.ServiceProvider.GetService<PlayerDisconnect>();
             var vehicleHandler = Startup.ServiceProvider.GetService<VehicleHandler>();
 
+            vehicleManager = Startup.ServiceProvider.GetService<VehicleManager>();
             var sittingHandler = Startup.ServiceProvider.GetService<SittingHandler>();
             var characterCreator = Startup.ServiceProvider.GetService<CharacterCreator>();
             var vehicleLoader = Startup.ServiceProvider.GetService<VehicleManagerService>();
-            vehicleManager = Startup.ServiceProvider.GetService<VehicleManager>();
-
+            var temporaryChatHandler = Startup.ServiceProvider.GetService<TemporaryChatHandler>();
+            var adminCommands = Startup.ServiceProvider.GetService<AdminCommands>();
 
             // For now not working on windows
             //var chat = new ChatHandler();

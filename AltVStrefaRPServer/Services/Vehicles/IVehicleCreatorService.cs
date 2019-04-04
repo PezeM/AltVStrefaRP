@@ -8,5 +8,6 @@ namespace AltVStrefaRPServer.Services.Vehicles
     {
         VehicleModel CreateVehicle(string vehicleModel, Position position, float heading, short dimension, int ownerId);
         Task SaveVehicleToDatabaseAsync(VehicleModel vehicle);
+        void SaveVehicleToDatabase(VehicleModel vehicle);
     }
 }

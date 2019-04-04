@@ -107,6 +107,15 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             return vehicle;
         }
 
+        public VehicleModel CreateVehicle(string vehicleModel, Position position, float heading, short dimension, int ownerId)
+        {
+            var vehicle = _vehicleCreator.CreateVehicle(vehicleModel, position, heading, dimension, ownerId);
+            _vehicleCreator.SaveVehicleToDatabase(vehicle);
+            Vehicles.Add(vehicle.Id, vehicle);
+            Alt.Log($"Created vehicle {vehicle.Model} UID({vehicle.Id}).");
+            return vehicle;
+        }
+
         public void SpawnVehicle(int vehicleId)
         {
             SpawnVehicle(GetVehicleModel(vehicleId));

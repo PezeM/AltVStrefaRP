@@ -20,6 +20,12 @@ namespace AltVStrefaRPServer.Services.Vehicles
             await _serverContext.SaveChangesAsync().ConfigureAwait(false);
         }
 
+        public void SaveVehicleToDatabase(VehicleModel vehicle)
+        {
+            _serverContext.Vehicles.Add(vehicle);
+            _serverContext.SaveChanges();
+        }
+
         /// <summary>
         /// Creates <see cref="VehicleModel"/> with default values
         /// </summary>
