@@ -14,7 +14,7 @@ namespace AltVStrefaRPServer.Services.Money
         }
 
         /// <summary>
-        /// Gives character a certain amount of money
+        /// Gives source a certain amount of money
         /// </summary>
         /// <param name="receiver"></param>
         /// <param name="amount"></param>
@@ -27,11 +27,11 @@ namespace AltVStrefaRPServer.Services.Money
         }
 
         /// <summary>
-        /// Removes certain amount of money from character
+        /// Removes certain amount of money from source
         /// </summary>
         /// <param name="receiver"></param>
         /// <param name="amount"></param>
-        /// <returns>True if character had enough money</returns>
+        /// <returns>True if source had enough money</returns>
         public bool RemoveMoney(Character receiver, float amount)
         {
             if (receiver.Money < amount) return false;
@@ -40,12 +40,12 @@ namespace AltVStrefaRPServer.Services.Money
         }
 
         /// <summary>
-        /// Transfers money from one character to another
+        /// Transfers money from one source to another
         /// </summary>
         /// <param name="source"></param>
         /// <param name="receiver"></param>
         /// <param name="amount"></param>
-        /// <returns>True if source character had enough money to transfer</returns>
+        /// <returns>True if source source had enough money to transfer</returns>
         public bool TransferMoneyToAnotherPlayer(Character source, Character receiver, float amount)
         {
             if (source.Money < amount) return false;
@@ -58,12 +58,12 @@ namespace AltVStrefaRPServer.Services.Money
         }
 
         /// <summary>
-        /// Transfers money from one character to another
+        /// Transfers money from one source to another
         /// </summary>
         /// <param name="source"></param>
         /// <param name="receiver"></param>
         /// <param name="amount"></param>
-        /// <returns>True if source character had enough money to transfer</returns>
+        /// <returns>True if source source had enough money to transfer</returns>
         public async Task<bool> TransferMoneyToAnotherPlayerAsync(Character source, Character receiver, float amount)
         {
             if (source.Money < amount) return false;
@@ -75,6 +75,61 @@ namespace AltVStrefaRPServer.Services.Money
             return true;
         }
 
+        public bool WithdrawMoneyFromBankAccount(Character source, BankAccount bankAccount, float amount)
+        {
+            if (!bankAccount.WithdrawMoney(amount)) return false;
+            source.Money += amount;
+            source.Player.SetSyncedMetaData("money", source.Money);
+            LogMoneyTransaction(source.Id, bankAccount.AccountNumber, TransactionType.BankWithdraw, amount);
+            return true;
+        }
+
+        public async Task<bool> WithdrawMoneyFromBankAccountAsync(Character source, BankAccount bankAccount, float amount)
+        {
+            if (!bankAccount.WithdrawMoney(amount)) return false;
+            source.Money += amount;
+            source.Player.SetSyncedMetaData("money", source.Money);
+            await LogMoneyTransactionAsync(source.Id, bankAccount.AccountNumber, TransactionType.BankWithdraw, amount).ConfigureAwait(false);
+            return true;
+        }
+
+        public bool DepositMoneyToBankAccount(Character source, BankAccount bankAccount, float amount)
+        {
+            if (source.Money < amount) return false;
+            bankAccount.DepositMoney(amount);
+            source.Money -= amount;
+            source.Player.SetSyncedMetaData("money", source.Money);
+            LogMoneyTransaction(source.Id, bankAccount.AccountNumber, TransactionType.BankDeposit, amount);
+            return true;
+        }
+
+        public async Task<bool> DepositMoneyToBankAccountAsync(Character source, BankAccount bankAccount, float amount)
+        {
+            if (source.Money < amount) return false;
+            bankAccount.DepositMoney(amount);
+            source.Money -= amount;
+            source.Player.SetSyncedMetaData("money", source.Money);
+            await LogMoneyTransactionAsync(source.Id, bankAccount.AccountNumber, TransactionType.BankDeposit, amount).ConfigureAwait(false);
+            return true;
+        }
+
+        public bool TransferMoneyFromBankAccountToBankAccount(BankAccount sender, BankAccount receiver, float amount)
+        {
+            if (receiver.AccountNumber < 1) return false;
+            if (!sender.TransferMoney(receiver, amount)) return false;
+            SaveBankAccount(new BankAccount[]{sender,receiver});
+            LogMoneyTransaction(sender.Id, receiver.Id, TransactionType.BankTransfer, amount);
+            return true;
+        }
+
+        public async Task<bool> TransferMoneyFromBankAccountToBankAccountAsync(BankAccount sender, BankAccount receiver, float amount)
+        {
+            if (receiver.AccountNumber < 1) return false;
+            if (!sender.TransferMoney(receiver, amount)) return false;
+            await SaveBankAccountAsync(new BankAccount[]{sender,receiver}).ConfigureAwait(false);
+            await LogMoneyTransactionAsync(sender.Id, receiver.Id, TransactionType.BankTransfer, amount).ConfigureAwait(false);
+            return true;
+        }
 
         /// <summary>
         /// Saves transaction information to database
@@ -100,6 +155,24 @@ namespace AltVStrefaRPServer.Services.Money
         {
             await _serverContext.MoneyTransactions.AddAsync(new MoneyTransaction(source, receiver, type, amount)).ConfigureAwait(false);
             await _serverContext.SaveChangesAsync().ConfigureAwait(false);
+        }
+
+        private async Task SaveBankAccountAsync(BankAccount bankAccount)
+        {
+            _serverContext.Update(bankAccount);
+            await _serverContext.SaveChangesAsync().ConfigureAwait(false);
+        }
+
+        private async Task SaveBankAccountAsync(BankAccount[] bankAccounts)
+        {
+            _serverContext.UpdateRange(bankAccounts);
+            await _serverContext.SaveChangesAsync().ConfigureAwait(false);
+        }
+
+        private void SaveBankAccount(BankAccount[] bankAccounts)
+        {
+            _serverContext.UpdateRange(bankAccounts);
+            _serverContext.SaveChanges();
         }
     }
 }
