@@ -3,7 +3,7 @@ using AltVStrefaRPServer.Models;
 
 namespace AltVStrefaRPServer.Services.Money
 {
-    public interface IMoneyManager
+    public interface IMoneyService
     {
         bool GiveMoney(Character receiver, float amount);
         bool RemoveMoney(Character receiver, float amount);

@@ -6,10 +6,12 @@ using AltVStrefaRPServer.Modules.Admin;
 using AltVStrefaRPServer.Modules.Character.Customization;
 using AltVStrefaRPServer.Modules.Chat;
 using AltVStrefaRPServer.Modules.Environment;
+using AltVStrefaRPServer.Modules.Money;
 using AltVStrefaRPServer.Modules.Vehicle;
 using AltVStrefaRPServer.Services;
-using AltVStrefaRPServer.Services.Character;
-using AltVStrefaRPServer.Services.Character.Customization;
+using AltVStrefaRPServer.Services.Characters;
+using AltVStrefaRPServer.Services.Characters.Customization;
+using AltVStrefaRPServer.Services.Money;
 using AltVStrefaRPServer.Services.Vehicles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -61,7 +63,8 @@ namespace AltVStrefaRPServer
             services.AddTransient<ILogin, Login>();
             services.AddTransient<ICharacterCreatorService, CharacterCreatorService>();
             services.AddTransient<IVehicleCreatorService, VehicleCreatorService>();
-            
+            services.AddTransient<IMoneyService, MoneyService>();
+
             services.AddSingleton<IVehicleManagerService, VehicleManagerService>();
             services.AddSingleton<HashingService>();
             services.AddSingleton<PlayerConnect>();
@@ -69,6 +72,7 @@ namespace AltVStrefaRPServer
             services.AddSingleton<VehicleHandler>();
             services.AddSingleton<VehicleManager>();
             services.AddSingleton<SittingHandler>();
+            services.AddSingleton<BankHandler>();
 
             services.AddSingleton<TemporaryChatHandler>();
             services.AddTransient<AdminCommands>();

@@ -12,6 +12,7 @@ using AltVStrefaRPServer.Modules.Character;
 using AltVStrefaRPServer.Modules.Character.Customization;
 using AltVStrefaRPServer.Modules.Chat;
 using AltVStrefaRPServer.Modules.Environment;
+using AltVStrefaRPServer.Modules.Money;
 using AltVStrefaRPServer.Modules.Vehicle;
 using AltVStrefaRPServer.Services.Vehicles;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,6 +35,7 @@ namespace AltVStrefaRPServer
             var playerConnectEvent = Startup.ServiceProvider.GetService<PlayerConnect>();
             var playerDiconnectEvent = Startup.ServiceProvider.GetService<PlayerDisconnect>();
             var vehicleHandler = Startup.ServiceProvider.GetService<VehicleHandler>();
+            var bankHandler = Startup.ServiceProvider.GetServices<BankHandler>();
 
             vehicleManager = Startup.ServiceProvider.GetService<VehicleManager>();
             var sittingHandler = Startup.ServiceProvider.GetService<SittingHandler>();
@@ -41,7 +43,6 @@ namespace AltVStrefaRPServer
             var vehicleLoader = Startup.ServiceProvider.GetService<VehicleManagerService>();
             var temporaryChatHandler = Startup.ServiceProvider.GetService<TemporaryChatHandler>();
             var adminCommands = Startup.ServiceProvider.GetService<AdminCommands>();
-
             // For now not working on windows
             //var chat = new ChatHandler();
             //chat.RegisterCommand("test", (player, strings) =>

@@ -2,7 +2,7 @@
 using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
-using AltVStrefaRPServer.Services.Character.Customization;
+using AltVStrefaRPServer.Services.Characters.Customization;
 
 namespace AltVStrefaRPServer.Modules.Character.Customization
 {

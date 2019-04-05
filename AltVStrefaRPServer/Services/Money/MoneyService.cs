@@ -4,7 +4,7 @@ using AltVStrefaRPServer.Models;
 
 namespace AltVStrefaRPServer.Services.Money
 {
-    public class MoneyService
+    public class MoneyService : IMoneyService
     {
         private ServerContext _serverContext;
 
