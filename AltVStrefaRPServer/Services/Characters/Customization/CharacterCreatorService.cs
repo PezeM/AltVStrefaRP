@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using AltVStrefaRPServer.Database;
+using AltVStrefaRPServer.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace AltVStrefaRPServer.Services.Characters.Customization
@@ -16,14 +17,15 @@ namespace AltVStrefaRPServer.Services.Characters.Customization
         public async Task<bool> CheckIfCharacterExistsAsync(string firstName, string lastName)
             => await _serverContext.Characters.AsNoTracking().AnyAsync(c => c.FirstName == firstName && c.LastName == lastName);
 
-        public async Task SaveNewCharacter(Models.Character character)
+        public async Task SaveNewCharacter(Character character)
         {
             await _serverContext.AddAsync(character).ConfigureAwait(false);
             await _serverContext.SaveChangesAsync().ConfigureAwait(false);
         }
-        public Models.Character CreateNewCharacter(int accountId, string firstName, string lastName, int age, int gender)
+
+        public Character CreateNewCharacter(int accountId, string firstName, string lastName, int age, int gender)
         {
-            return new Models.Character
+            return new Character
             {
                 FirstName = firstName,
                 LastName = lastName,

@@ -122,6 +122,14 @@ namespace AltVStrefaRPServer.Services.Money
             return true;
         }
 
+        /// <summary>
+        /// Transfers money from one bank account to another
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="receiver"></param>
+        /// <param name="amount"></param>
+        /// <returns>Returns true if the transaction was successful,
+        /// false if the receiver didn't have bank account or sender didn't have enough money</returns>
         public async Task<bool> TransferMoneyFromBankAccountToBankAccountAsync(BankAccount sender, BankAccount receiver, float amount)
         {
             if (receiver.AccountNumber < 1) return false;
