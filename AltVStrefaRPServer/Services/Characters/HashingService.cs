@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Security.Cryptography;
 
-namespace AltVStrefaRPServer.Services.Character
+namespace AltVStrefaRPServer.Services.Characters
 {
     /// <summary>
     /// Provides methods Hashing and Verification of clear texts

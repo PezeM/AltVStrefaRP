@@ -9,7 +9,7 @@ using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Dto;
 using Microsoft.EntityFrameworkCore;
 
-namespace AltVStrefaRPServer.Services.Character
+namespace AltVStrefaRPServer.Services.Characters
 {
     public class Login : ILogin
     {

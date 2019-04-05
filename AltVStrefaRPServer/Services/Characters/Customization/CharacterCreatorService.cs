@@ -2,7 +2,7 @@
 using AltVStrefaRPServer.Database;
 using Microsoft.EntityFrameworkCore;
 
-namespace AltVStrefaRPServer.Services.Character.Customization
+namespace AltVStrefaRPServer.Services.Characters.Customization
 {
     public class CharacterCreatorService : ICharacterCreatorService
     {

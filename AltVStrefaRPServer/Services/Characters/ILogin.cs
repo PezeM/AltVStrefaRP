@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Dto;
 
-namespace AltVStrefaRPServer.Services.Character
+namespace AltVStrefaRPServer.Services.Characters
 {
     public interface ILogin
     {

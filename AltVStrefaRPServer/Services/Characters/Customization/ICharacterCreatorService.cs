@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace AltVStrefaRPServer.Services.Character.Customization
+namespace AltVStrefaRPServer.Services.Characters.Customization
 {
     public interface ICharacterCreatorService
     {
