@@ -3,9 +3,15 @@
     public class BankAccount
     {
         public int Id { get; set; }
-        public int CharacterId { get; set; }
         public float Money { get; set; }
         public int AccountNumber { get; set; }
+        public Character Character { get; set; }
+        public int CharacterId { get; set; }
+
+        public BankAccount()
+        {
+            
+        }
 
         public bool DepositMoney(float amount)
         {

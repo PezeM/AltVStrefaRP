@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models;
@@ -16,7 +17,10 @@ namespace AltVStrefaRPServer.Services.Vehicles
         }
 
         public async Task<List<VehicleModel>> LoadVehiclesFromDatabaseAsync()
-            => await _serverContext.Vehicles.ToListAsync().ConfigureAwait(false);
+            => await _serverContext.Vehicles.AsNoTracking().ToListAsync().ConfigureAwait(false);
+
+        public List<VehicleModel> LoadVehiclesFromDatabase()
+            => _serverContext.Vehicles.AsNoTracking().ToList();
 
         public async Task RemoveVehicleAsync(VehicleModel vehicle)
         {

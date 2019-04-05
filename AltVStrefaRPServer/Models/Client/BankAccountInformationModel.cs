@@ -7,6 +7,7 @@
         public float Money { get; }
 
         public BankAccountInformationModel(string name, int accountNumber, float money)
+        {
             Name = name;
             AccountNumber = accountNumber;
             Money = money;

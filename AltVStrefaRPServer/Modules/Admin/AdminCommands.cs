@@ -5,6 +5,7 @@ using AltVStrefaRPServer.Modules.Chat;
 using AltVStrefaRPServer.Modules.Vehicle;
 using System;
 using AltV.Net.Data;
+using AltVStrefaRPServer.Modules.Money;
 
 namespace AltVStrefaRPServer.Modules.Admin
 {
@@ -12,11 +13,13 @@ namespace AltVStrefaRPServer.Modules.Admin
     {
         private TemporaryChatHandler _chatHandler;
         private VehicleManager _vehicleManager;
+        private BankHandler _bankHandler;
 
-        public AdminCommands(TemporaryChatHandler chatHandler, VehicleManager vehicleManager)
+        public AdminCommands(TemporaryChatHandler chatHandler, VehicleManager vehicleManager, BankHandler bankHandler)
         {
             _chatHandler = chatHandler;
             _vehicleManager = vehicleManager;
+            _bankHandler = bankHandler;
 
             Alt.Log($"Admin commands initialized");
             AddCommands();
@@ -28,6 +31,18 @@ namespace AltVStrefaRPServer.Modules.Admin
             _chatHandler.RegisterCommand("tp", TeleportToPosition);
             _chatHandler.RegisterCommand("pos", DisplayPositionCommand);
             _chatHandler.RegisterCommand("tptowp", TeleportToWaypointCommand);
+            _chatHandler.RegisterCommand("openbank", OpenBankMenu);
+            _chatHandler.RegisterCommand("createBankAccount", CreateBankAccount);
+        }
+
+        private void CreateBankAccount(IPlayer arg1, string[] arg2)
+        {
+            _bankHandler.CreateBankAccountAsync(arg1, arg2);
+        }
+
+        private void OpenBankMenu(IPlayer arg1, string[] arg2)
+        {
+            _bankHandler.TryToOpenBankMenu(arg1, arg2);
         }
 
         private void TeleportToWaypointCommand(IPlayer player, string[] args)

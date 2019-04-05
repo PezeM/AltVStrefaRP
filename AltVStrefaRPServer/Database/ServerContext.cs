@@ -25,7 +25,10 @@ namespace AltVStrefaRPServer.Database
                 .WithOne(a => a.Account);
 
             modelBuilder.Entity<Character>()
-                .Ignore(c => c.Player);
+                .Ignore(c => c.Player)
+                .HasOne(c => c.BankAccount)
+                .WithOne(b => b.Character)
+                .HasForeignKey<BankAccount>(b => b.CharacterId);
 
             modelBuilder.Entity<VehicleModel>()
                 .Ignore(v => v.VehicleHandle);
@@ -33,6 +36,7 @@ namespace AltVStrefaRPServer.Database
             modelBuilder.Entity<MoneyTransaction>()
                 .Property(m => m.Type)
                 .HasConversion<int>();
+
         }
     }
 }

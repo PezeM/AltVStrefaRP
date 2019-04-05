@@ -7,6 +7,7 @@ namespace AltVStrefaRPServer.Services.Vehicles
     public interface IVehicleManagerService
     {
         Task<List<VehicleModel>> LoadVehiclesFromDatabaseAsync();
+        List<VehicleModel> LoadVehiclesFromDatabase();
         Task RemoveVehicleAsync(VehicleModel vehicle);
     }
 }

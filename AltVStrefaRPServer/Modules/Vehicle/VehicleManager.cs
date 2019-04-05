@@ -28,10 +28,10 @@ namespace AltVStrefaRPServer.Modules.Vehicle
         /// <summary>
         /// Loads all vehicles from database to memory and sets every vehicle IsSpawned property to false
         /// </summary>
-        public async Task LoadVehiclesFromDatabaseAsync()
+        public void LoadVehiclesFromDatabaseAsync()
         {
             var startTime = Time.GetTimestampMs();
-            foreach (var vehicle in await _vehicleManagerService.LoadVehiclesFromDatabaseAsync().ConfigureAwait(false))
+            foreach (var vehicle in _vehicleManagerService.LoadVehiclesFromDatabase())
             {
                 vehicle.IsSpawned = false;
                 Vehicles.Add(vehicle.Id, vehicle);

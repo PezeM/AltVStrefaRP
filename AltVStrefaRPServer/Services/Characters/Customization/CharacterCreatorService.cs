@@ -30,7 +30,7 @@ namespace AltVStrefaRPServer.Services.Characters.Customization
                 FirstName = firstName,
                 LastName = lastName,
                 AccountId = accountId,
-                BankAccountId = 0,
+                BankAccount = null,
                 Age = age,
                 Money = 250f,
                 Gender = gender,

@@ -7,7 +7,7 @@ namespace AltVStrefaRPServer.Models
         public int Id { get; set; }
         public int AccountId { get; set; }
         public Account Account { get; set; }
-        public int BankAccountId { get; set; }
+        public BankAccount BankAccount { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string BackgroundImage { get; set; }

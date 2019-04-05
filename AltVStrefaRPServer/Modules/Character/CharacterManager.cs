@@ -4,6 +4,7 @@ using System.Linq;
 using AltV.Net;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
+using AltVStrefaRPServer.Models;
 
 namespace AltVStrefaRPServer.Modules.Character
 {
