@@ -9,6 +9,9 @@ namespace AltVStrefaRPServer.Database
         public DbSet<Account> Accounts { get; set; }
         public DbSet<VehicleModel> Vehicles { get; set; }
 
+        public DbSet<BankAccount> BankAccounts { get; set; }
+        public DbSet<MoneyTransaction> MoneyTransactions { get; set; }
+
         public ServerContext(DbContextOptions options) : base(options)
         {
         }
@@ -26,6 +29,10 @@ namespace AltVStrefaRPServer.Database
 
             modelBuilder.Entity<VehicleModel>()
                 .Ignore(v => v.VehicleHandle);
+
+            modelBuilder.Entity<MoneyTransaction>()
+                .Property(m => m.Type)
+                .HasConversion<int>();
         }
     }
 }
