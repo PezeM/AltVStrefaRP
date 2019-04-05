@@ -41,7 +41,7 @@ namespace AltVStrefaRPServer.Modules.Money
             if (character == null) return;
             if (character.BankAccount != null)
             {
-                await _notificationService.ShowErrorNotificationAsync(player, "Masz już konto w banku.", 400);
+                await _notificationService.ShowErrorNotificationAsync(player, "Masz już konto w banku.", 4000);
                 return;
             }
 
