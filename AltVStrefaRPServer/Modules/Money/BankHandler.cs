@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Database;
@@ -8,6 +9,7 @@ using AltVStrefaRPServer.Models.Client;
 using AltVStrefaRPServer.Modules.Character;
 using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Money;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace AltVStrefaRPServer.Modules.Money
@@ -32,6 +34,7 @@ namespace AltVStrefaRPServer.Modules.Money
             AltAsync.OnClient("DepositMoneyToBank", DepositMoneyToBankAsync);
             AltAsync.OnClient("WithdrawMoneyFromBank", WithdrawMoneyFromBankAsync);
             AltAsync.OnClient("TransferMoneyFromBankToBank", TransferMoneyFromBankToBankAsync);
+            AltAsync.OnClient("GetTransferHistoryInfo", GetTransferHistoryInfoAsync);
         }
 
         public async Task CreateBankAccountAsync(IPlayer player, object[] args)
@@ -178,6 +181,26 @@ namespace AltVStrefaRPServer.Modules.Money
             else
             {
                 await _notificationService.ShowErrorNotificationAsync(player, "Nie udało się przelać pieniędzy.").ConfigureAwait(false);
+            }
+        }
+
+        private async Task GetTransferHistoryInfoAsync(IPlayer player, object[] args)
+        {
+            var character = CharacterManager.Instance.GetCharacter(player);
+            if(character == null) return;
+
+            var bankTransactionHistory = await _serverContext.MoneyTransactions.AsNoTracking()
+                .Where(t => t.Receiver == character.Id || t.Source == character.Id).Take(50)
+                .ToListAsync().ConfigureAwait(false);
+
+            if (bankTransactionHistory.Count < 0)
+            {
+                await _notificationService.ShowErrorNotificationAsync(player, "Nie posiadasz jeszcze żadnych transakcji");
+            }
+            else
+            {
+                AltAsync.Log($"Bank transaction history for {character.Id} = {JsonConvert.SerializeObject(bankTransactionHistory)}");
+                await player.EmitAsync("openTransactionHistory", JsonConvert.SerializeObject(bankTransactionHistory));
             }
         }
     }
