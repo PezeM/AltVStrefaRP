@@ -95,8 +95,9 @@ namespace AltVStrefaRPServer.Modules.Money
             if (await _moneyService.WithdrawMoneyFromBankAccountAsync(character, character.BankAccount, moneyToWithdraw))
             {
                 AltAsync.Log($"{character.Id} withdraw {moneyToWithdraw}$ from his bank account.");
-                await _notificationService.ShowSuccessNotificationAsync(player, 
-                    $"Pomyślnie wypłacono {moneyToWithdraw}$ z konta. Obecny stan konta wynosi {character.BankAccount.Money}$.").ConfigureAwait(false);
+                await player.EmitAsync("updateBankMoneyWithNotification",
+                    $"Pomyślnie wypłacono {moneyToWithdraw}$ z konta. Obecny stan konta wynosi {character.BankAccount.Money}$.",
+                    character.BankAccount.Money).ConfigureAwait(false);
             }
             else
             {
@@ -118,8 +119,9 @@ namespace AltVStrefaRPServer.Modules.Money
             if (await _moneyService.DepositMoneyToBankAccountAsync(character, character.BankAccount, moneyToDeposit))
             {
                 AltAsync.Log($"{character.Id} deposited {moneyToDeposit}$ to his bank account.");
-                await _notificationService.ShowSuccessNotificationAsync(player, 
-                    $"Pomyślnie wpłacono {moneyToDeposit}$ na konto. Obecny stan konta wynosi {character.BankAccount.Money}$.").ConfigureAwait(false);
+                await player.EmitAsync("updateBankMoneyWithNotification",
+                    $"Pomyślnie wpłacono {moneyToDeposit}$ na konto. Obecny stan konta wynosi {character.BankAccount.Money}$.",
+                    character.BankAccount.Money).ConfigureAwait(false);
             }
             else
             {
@@ -148,10 +150,28 @@ namespace AltVStrefaRPServer.Modules.Money
 
             if (await _moneyService.TransferMoneyFromBankAccountToBankAccountAsync(character.BankAccount, receiverBankAccount, moneyToTransfer))
             {
-                AltAsync.Log($"{character.Id} transfered {moneyToTransfer} from his bank account to {receiverBankAccount} account.");
-                await _notificationService.ShowSuccessNotificationAsync(player, 
-                    $"Pomyślnie przesłano {moneyToTransfer}$ na konto o numerze{receiverBankAccount}. " +
-                    $"Twój aktualny stan konta wynosi {character.BankAccount.Money}$.").ConfigureAwait(false);
+                var receiverCharacter = CharacterManager.Instance.GetCharacterByBankAccount(receiverBankAccount.Id);
+
+                // Receiver character is currently offline so don't send any notification to him
+                if (receiverCharacter == null)
+                {
+                    AltAsync.Log($"{character.Id} transfered {moneyToTransfer} from his bank account to {receiverBankAccount} account.");
+                    await player.EmitAsync("updateBankMoneyWithNotification",
+                        $"Pomyślnie przesłano {moneyToTransfer}$ na konto o numerze {receiverBankAccount}. <br>" +
+                        $"Twój aktualny stan konta wynosi {character.BankAccount.Money}$.",
+                        character.BankAccount.Money).ConfigureAwait(false);
+                }
+                else
+                {
+                    AltAsync.Log($"{character.Id} transfered {moneyToTransfer} from his bank account to {receiverBankAccount} account.");
+                    await player.EmitAsync("updateBankMoneyWithNotification",
+                        $"Pomyślnie przesłano {moneyToTransfer}$ na konto o numerze {receiverBankAccount}. <br>" +
+                        $"Twój aktualny stan konta wynosi {character.BankAccount.Money}$.",
+                        character.BankAccount.Money).ConfigureAwait(false);
+                    await _notificationService.ShowSuccessNotificationAsync(receiverCharacter.Player,
+                        $"Właśnie otrzymałeś przelew od {character.GetFullName()} w wysokości {moneyToTransfer}. <br>" +
+                        $"Twój aktualny stan konta wynosi {receiverBankAccount.Money}$.",7000);
+                }
             }
             else
             {

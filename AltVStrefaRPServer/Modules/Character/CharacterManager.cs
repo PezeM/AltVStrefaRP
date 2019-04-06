@@ -4,7 +4,6 @@ using System.Linq;
 using AltV.Net;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
-using AltVStrefaRPServer.Models;
 
 namespace AltVStrefaRPServer.Modules.Character
 {
@@ -25,6 +24,14 @@ namespace AltVStrefaRPServer.Modules.Character
 
         public Models.Character GetCharacter(int characterId)
             => CharactersList.Values.FirstOrDefault(c => c.Id == characterId);
+
+        /// <summary>
+        /// Returns online character by bank account Id
+        /// </summary>
+        /// <param name="bankAccountId"></param>
+        /// <returns></returns>
+        public Models.Character GetCharacterByBankAccount(int bankAccountId)
+             => CharactersList.Values.FirstOrDefault(c => c.BankAccount.Id == bankAccountId);
 
         /// <summary>
         /// Initializes character in the game world
