@@ -71,13 +71,13 @@ namespace AltVStrefaRPServer
             services.AddSingleton<PlayerDisconnect>();
             services.AddSingleton<VehicleHandler>();
             services.AddSingleton<VehicleManager>();
+            services.AddSingleton<BankHandler>();
             services.AddSingleton<BankAccountManager>();
 
             services.AddSingleton<TemporaryChatHandler>();
             services.AddTransient<AdminCommands>();
             services.AddTransient<CharacterCreator>();
             services.AddTransient<SittingHandler>();
-            services.AddTransient<BankHandler>();
 
             // Build provider
             ServiceProvider = services.BuildServiceProvider();

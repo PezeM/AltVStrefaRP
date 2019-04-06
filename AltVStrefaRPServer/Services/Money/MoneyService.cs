@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using AltV.Net;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models;
 
@@ -6,7 +7,7 @@ namespace AltVStrefaRPServer.Services.Money
 {
     public class MoneyService : IMoneyService
     {
-        private ServerContext _serverContext;
+        private readonly ServerContext _serverContext;
 
         public MoneyService(ServerContext serverContext)
         {
@@ -162,7 +163,7 @@ namespace AltVStrefaRPServer.Services.Money
         private async Task LogMoneyTransactionAsync(int source, int receiver, TransactionType type, float amount)
         {
             await _serverContext.MoneyTransactions.AddAsync(new MoneyTransaction(source, receiver, type, amount)).ConfigureAwait(false);
-            await _serverContext.SaveChangesAsync().ConfigureAwait(false);
+            await _serverContext.SaveChangesAsync();
         }
 
         private async Task SaveBankAccountAsync(BankAccount bankAccount)

@@ -17,7 +17,7 @@ namespace AltVStrefaRPServer.Modules.Money
     public class BankHandler
     {
         private IMoneyService _moneyService;
-        private ServerContext _serverContext;
+        private readonly ServerContext _serverContext;
         private INotificationService _notificationService;
         private BankAccountManager _bankAccountManager;
 
@@ -65,7 +65,7 @@ namespace AltVStrefaRPServer.Modules.Money
             await _serverContext.SaveChangesAsync().ConfigureAwait(false);
 
             await _notificationService.ShowSuccessNotificationAsync(player,
-                $"Otworzyłeś nowe konto w banku. Twój numer konta to: {character.BankAccount.AccountNumber}.", 7000);
+                $"Otworzyłeś nowe konto w banku. Twój numer konta to: {character.BankAccount.AccountNumber}.", 7000).ConfigureAwait(false);
             AltAsync.Log($"{character.Id} created new bank account ({character.BankAccount.AccountNumber}) in {Time.GetTimestampMs() - startTime}ms.");
         }
 
@@ -98,7 +98,7 @@ namespace AltVStrefaRPServer.Modules.Money
                 return;
             }
 
-            if (await _moneyService.WithdrawMoneyFromBankAccountAsync(character, character.BankAccount, moneyToWithdraw))
+            if (await _moneyService.WithdrawMoneyFromBankAccountAsync(character, character.BankAccount, moneyToWithdraw).ConfigureAwait(false))
             {
                 AltAsync.Log($"{character.Id} withdraw {moneyToWithdraw}$ from his bank account.");
                 await player.EmitAsync("updateBankMoneyWithNotification",
@@ -122,12 +122,12 @@ namespace AltVStrefaRPServer.Modules.Money
                 return;
             }
 
-            if (await _moneyService.DepositMoneyToBankAccountAsync(character, character.BankAccount, moneyToDeposit))
+            if (await _moneyService.DepositMoneyToBankAccountAsync(character, character.BankAccount, moneyToDeposit).ConfigureAwait(false))
             {
                 AltAsync.Log($"{character.Id} deposited {moneyToDeposit}$ to his bank account.");
                 await player.EmitAsync("updateBankMoneyWithNotification",
                     $"Pomyślnie wpłacono {moneyToDeposit}$ na konto. Obecny stan konta wynosi {character.BankAccount.Money}$.",
-                    character.BankAccount.Money).ConfigureAwait(false);
+                    character.BankAccount.Money);
             }
             else
             {
@@ -193,7 +193,7 @@ namespace AltVStrefaRPServer.Modules.Money
                 .Where(t => t.Receiver == character.Id || t.Source == character.Id).Take(50)
                 .ToListAsync().ConfigureAwait(false);
 
-            if (bankTransactionHistory.Count < 0)
+            if (bankTransactionHistory.Count <= 0)
             {
                 await _notificationService.ShowErrorNotificationAsync(player, "Nie posiadasz jeszcze żadnych transakcji");
             }

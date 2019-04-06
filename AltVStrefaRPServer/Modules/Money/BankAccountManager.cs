@@ -11,7 +11,7 @@ namespace AltVStrefaRPServer.Modules.Money
     public class BankAccountManager
     {
         private Dictionary<int, BankAccount> _bankAccounts = new Dictionary<int, BankAccount>();
-        private ServerContext _serverContext;
+        private readonly ServerContext _serverContext;
     
         private static Random _rng = new Random();
 

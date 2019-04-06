@@ -40,9 +40,9 @@ namespace AltVStrefaRPServer.Modules.Admin
             _bankHandler.CreateBankAccountAsync(arg1, arg2);
         }
 
-        private void OpenBankMenu(IPlayer arg1, string[] arg2)
+        private async void OpenBankMenu(IPlayer arg1, string[] arg2)
         {
-            _bankHandler.TryToOpenBankMenu(arg1, arg2);
+            await _bankHandler.TryToOpenBankMenu(arg1, arg2);
         }
 
         private void TeleportToWaypointCommand(IPlayer player, string[] args)

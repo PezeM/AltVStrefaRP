@@ -8,11 +8,6 @@
         public Character Character { get; set; }
         public int CharacterId { get; set; }
 
-        public BankAccount()
-        {
-            
-        }
-
         public bool DepositMoney(float amount)
         {
             Money += amount;
