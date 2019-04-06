@@ -25,13 +25,13 @@ namespace AltVStrefaRPServer.Handlers
             var character = CharacterManager.Instance.GetCharacter(player);
             if (character == null) return;
 
-            Alt.Log($"ID({character.Id}) {player.Name} left the server. Reason {reason}");
             character.Dimension = player.Dimension;
             character.X = player.Position.X;
             character.Y = player.Position.Y;
             character.Z = player.Position.Z;
 
             CharacterManager.Instance.RemoveCharacterDataFromServer(character);
+            Alt.Log($"CID({character.Id}) ID({player.Id}) {player.Name} left the server. Reason {reason}");
             await SaveCharacterAsync(character);
         }
 

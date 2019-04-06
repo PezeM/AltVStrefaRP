@@ -117,7 +117,7 @@ namespace AltVStrefaRPServer.Services.Money
         {
             if (receiver.AccountNumber < 1) return false;
             if (!sender.TransferMoney(receiver, amount)) return false;
-            SaveBankAccount(new BankAccount[]{sender,receiver});
+            SaveBankAccounts(new BankAccount[]{sender,receiver});
             LogMoneyTransaction(sender.Id, receiver.Id, TransactionType.BankTransfer, amount);
             return true;
         }
@@ -134,7 +134,7 @@ namespace AltVStrefaRPServer.Services.Money
         {
             if (receiver.AccountNumber < 1) return false;
             if (!sender.TransferMoney(receiver, amount)) return false;
-            await SaveBankAccountAsync(new BankAccount[]{sender,receiver}).ConfigureAwait(false);
+            await SaveBankAccountsAsync(new BankAccount[]{sender,receiver}).ConfigureAwait(false);
             await LogMoneyTransactionAsync(sender.Id, receiver.Id, TransactionType.BankTransfer, amount).ConfigureAwait(false);
             return true;
         }
@@ -171,13 +171,13 @@ namespace AltVStrefaRPServer.Services.Money
             await _serverContext.SaveChangesAsync().ConfigureAwait(false);
         }
 
-        private async Task SaveBankAccountAsync(BankAccount[] bankAccounts)
+        private async Task SaveBankAccountsAsync(BankAccount[] bankAccounts)
         {
             _serverContext.UpdateRange(bankAccounts);
             await _serverContext.SaveChangesAsync().ConfigureAwait(false);
         }
 
-        private void SaveBankAccount(BankAccount[] bankAccounts)
+        private void SaveBankAccounts(BankAccount[] bankAccounts)
         {
             _serverContext.UpdateRange(bankAccounts);
             _serverContext.SaveChanges();

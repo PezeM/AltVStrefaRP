@@ -12,6 +12,7 @@ using AltVStrefaRPServer.Models.Client;
 using AltVStrefaRPServer.Modules.Character;
 using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Money;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace AltVStrefaRPServer.Modules.Money
@@ -32,6 +33,9 @@ namespace AltVStrefaRPServer.Modules.Money
 
             AltAsync.OnClient("tryToOpenBankMenu", TryToOpenBankMenu);
             AltAsync.OnClient("createBankAccount", CreateBankAccountAsync);
+            AltAsync.OnClient("DepositMoneyToBank", DepositMoneyToBankAsync);
+            AltAsync.OnClient("WithdrawMoneyFromBank", WithdrawMoneyFromBankAsync);
+            AltAsync.OnClient("TransferMoneyFromBankToBank", TransferMoneyFromBankToBankAsync);
         }
 
         public async Task CreateBankAccountAsync(IPlayer player, object[] args)
@@ -76,6 +80,83 @@ namespace AltVStrefaRPServer.Modules.Money
 
             player.Emit("openBankMenu", JsonConvert.SerializeObject(
                 new BankAccountInformationModel(character.GetFullName(), character.BankAccount.AccountNumber, character.BankAccount.Money)));
+        }
+
+        private async Task WithdrawMoneyFromBankAsync(IPlayer player, object[] args)
+        {
+            var character = CharacterManager.Instance.GetCharacter(player);
+            if (character == null || character.BankAccount == null) return;
+            if (!int.TryParse(args[0].ToString(), out int moneyToWithdraw))
+            {
+                await _notificationService.ShowErrorNotificationAsync(player, "Wystąpił bład podczas wypłaty pieniędzy.").ConfigureAwait(false);
+                return;
+            }
+
+            if (await _moneyService.WithdrawMoneyFromBankAccountAsync(character, character.BankAccount, moneyToWithdraw))
+            {
+                AltAsync.Log($"{character.Id} withdraw {moneyToWithdraw}$ from his bank account.");
+                await _notificationService.ShowSuccessNotificationAsync(player, 
+                    $"Pomyślnie wypłacono {moneyToWithdraw}$ z konta. Obecny stan konta wynosi {character.BankAccount.Money}$.").ConfigureAwait(false);
+            }
+            else
+            {
+                await _notificationService.ShowErrorNotificationAsync(player, "Nie udało się wypłacić pieniędzy z konta.").ConfigureAwait(false);
+            }
+
+        }
+
+        private async Task DepositMoneyToBankAsync(IPlayer player, object[] args)
+        {
+            var character = CharacterManager.Instance.GetCharacter(player);
+            if (character == null || character.BankAccount == null) return;
+            if (!int.TryParse(args[0].ToString(), out int moneyToDeposit))
+            {
+                await _notificationService.ShowErrorNotificationAsync(player, "Wystąpił bład podczas wpłaty pieniędzy.").ConfigureAwait(false);
+                return;
+            }
+
+            if (await _moneyService.DepositMoneyToBankAccountAsync(character, character.BankAccount, moneyToDeposit))
+            {
+                AltAsync.Log($"{character.Id} deposited {moneyToDeposit}$ to his bank account.");
+                await _notificationService.ShowSuccessNotificationAsync(player, 
+                    $"Pomyślnie wpłacono {moneyToDeposit}$ na konto. Obecny stan konta wynosi {character.BankAccount.Money}$.").ConfigureAwait(false);
+            }
+            else
+            {
+                await _notificationService.ShowErrorNotificationAsync(player, "Nie udało się wpłacić pieniędzy na konto.").ConfigureAwait(false);
+            }
+        }
+
+        private async Task TransferMoneyFromBankToBankAsync(IPlayer player, object[] args)
+        {
+            var character = CharacterManager.Instance.GetCharacter(player);
+            if (character == null || character.BankAccount == null) return;
+            if (!int.TryParse(args[0].ToString(), out int moneyToTransfer) || !int.TryParse(args[1].ToString(), out int receiverAccountNumber))
+            {
+                await _notificationService.ShowErrorNotificationAsync(player, "Wystąpił bład podczas wykonywania przelewu.").ConfigureAwait(false);
+                return;
+            }
+
+            // Temporary, preferable to load all accounts to memory on server start
+            var receiverBankAccount = await _serverContext.BankAccounts.AsNoTracking()
+                                        .FirstOrDefaultAsync(a => a.AccountNumber == receiverAccountNumber).ConfigureAwait(false);
+            if (receiverBankAccount == null)
+            {
+                await _notificationService.ShowErrorNotificationAsync(player, "Podano błędy numer konta bankowego.").ConfigureAwait(false);
+                return;
+            }
+
+            if (await _moneyService.TransferMoneyFromBankAccountToBankAccountAsync(character.BankAccount, receiverBankAccount, moneyToTransfer))
+            {
+                AltAsync.Log($"{character.Id} transfered {moneyToTransfer} from his bank account to {receiverBankAccount} account.");
+                await _notificationService.ShowSuccessNotificationAsync(player, 
+                    $"Pomyślnie przesłano {moneyToTransfer}$ na konto o numerze{receiverBankAccount}. " +
+                    $"Twój aktualny stan konta wynosi {character.BankAccount.Money}$.").ConfigureAwait(false);
+            }
+            else
+            {
+                await _notificationService.ShowErrorNotificationAsync(player, "Nie udało się przelać pieniędzy.").ConfigureAwait(false);
+            }
         }
 
         #region Temporary account number creator
