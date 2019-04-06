@@ -50,13 +50,13 @@ namespace AltVStrefaRPServer.Modules.Money
                 Money = 0,
                 AccountNumber = GenerateBankAccountNumber(),
             };
+
             _serverContext.Characters.Update(character);
             await _serverContext.SaveChangesAsync().ConfigureAwait(false);
 
-            AltAsync.Log($"{character.Id} created bank account with number {character.BankAccount.AccountNumber}");
             await _notificationService.ShowSuccessNotificationAsync(player,
                 $"Otworzyłeś nowe konto w banku. Twój numer konta to: {character.BankAccount.AccountNumber}.", 7000);
-            AltAsync.Log($"Created new bank account in {Time.GetTimestampMs() - startTime}ms.");
+            AltAsync.Log($"{character.Id} created new bank account ({character.BankAccount.AccountNumber}) in {Time.GetTimestampMs() - startTime}ms.");
         }
 
         public async Task TryToOpenBankMenu(IPlayer player, object[] args)
@@ -70,7 +70,7 @@ namespace AltVStrefaRPServer.Modules.Money
 
             if (character.BankAccount == null)
             {
-                await _notificationService.ShowErrorNotificationAsync(player, "Nie posiadsz konta w banku", 5000).ConfigureAwait(false);
+                await _notificationService.ShowErrorNotificationAsync(player, "Nie posiadsz konta w banku.", 4000).ConfigureAwait(false);
                 return;
             }
 

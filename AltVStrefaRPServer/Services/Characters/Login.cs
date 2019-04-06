@@ -67,8 +67,10 @@ namespace AltVStrefaRPServer.Services.Characters
                 TimePlayed = c.TimePlayed
             }).ToListAsync();
 
-        public async Task<Models.Character> GetCharacterById(int characterId)
-            => await _serverContext.Characters.AsNoTracking().FirstOrDefaultAsync(c => c.Id == characterId);
+        public async Task<Character> GetCharacterById(int characterId)
+            => await _serverContext.Characters.AsNoTracking()
+                .Include(c => c.BankAccount)
+                .FirstOrDefaultAsync(c => c.Id == characterId);
 
         public string GeneratePassword(string password) => _hashingService.Hash(password, 1000);
 
