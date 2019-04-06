@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using AltV.Net;
 using AltVStrefaRPServer.Database;
@@ -11,6 +12,8 @@ namespace AltVStrefaRPServer.Modules.Money
     {
         private Dictionary<int, BankAccount> _bankAccounts;
         private ServerContext _serverContext;
+    
+        private static Random _rng = new Random();
 
         public BankAccountManager(ServerContext serverContext)
         {
@@ -37,5 +40,22 @@ namespace AltVStrefaRPServer.Modules.Money
 
         public BankAccount GetBankAccountByCharacterId(int characterId)
             => _bankAccounts.Values.FirstOrDefault(b => b.CharacterId == characterId);
+
+        public bool AddNewBankAccount(BankAccount bankAccount) 
+            => _bankAccounts.TryAdd(bankAccount.AccountNumber, bankAccount);
+
+        /// <summary>
+        /// Generates unique bank account number
+        /// </summary>
+        /// <returns>Unique bank account number</returns>
+        public int GenerateBankAccountNumber()
+        {
+            int accountNumber;
+            do
+            {
+                accountNumber = _rng.Next(100000, 1000000);
+            } while (_bankAccounts.ContainsKey(accountNumber));
+            return accountNumber;
+        }
     }
 }
