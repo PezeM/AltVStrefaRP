@@ -36,13 +36,14 @@ namespace AltVStrefaRPServer
             var playerDiconnectEvent = Startup.ServiceProvider.GetService<PlayerDisconnect>();
             var vehicleHandler = Startup.ServiceProvider.GetService<VehicleHandler>();
             var bankHandler = Startup.ServiceProvider.GetServices<BankHandler>();
+            var sittingHandler = Startup.ServiceProvider.GetService<SittingHandler>();
+            var temporaryChatHandler = Startup.ServiceProvider.GetService<TemporaryChatHandler>();
 
             vehicleManager = Startup.ServiceProvider.GetService<VehicleManager>();
-            var sittingHandler = Startup.ServiceProvider.GetService<SittingHandler>();
             var characterCreator = Startup.ServiceProvider.GetService<CharacterCreator>();
             var vehicleLoader = Startup.ServiceProvider.GetService<VehicleManagerService>();
-            var temporaryChatHandler = Startup.ServiceProvider.GetService<TemporaryChatHandler>();
             var adminCommands = Startup.ServiceProvider.GetService<AdminCommands>();
+            var bankAccountsManager = Startup.ServiceProvider.GetServices<BankAccountManager>();
             // For now not working on windows
             //var chat = new ChatHandler();
             //chat.RegisterCommand("test", (player, strings) =>
