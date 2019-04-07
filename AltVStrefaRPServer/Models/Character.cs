@@ -1,4 +1,5 @@
-﻿using AltV.Net.Elements.Entities;
+﻿using System;
+using AltV.Net.Elements.Entities;
 
 namespace AltVStrefaRPServer.Models
 {
@@ -19,6 +20,8 @@ namespace AltVStrefaRPServer.Models
         public int Age { get; set; }
         public int Gender { get; set; }
         public float Money { get; set; }
+        public DateTime CreationDate { get; set; }
+        public DateTime LastPlayed { get; set; }
         public int TimePlayed { get; set; }
 
         public IPlayer Player { get; set; }

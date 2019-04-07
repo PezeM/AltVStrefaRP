@@ -17,6 +17,7 @@
     {
         public ConfigPosition SpawnPosition { get; set; }
         public ConfigPosition LoginPosition { get; set; }
+        public float StartingMoney { get; set; }
     }
 
     public class ConfigPosition

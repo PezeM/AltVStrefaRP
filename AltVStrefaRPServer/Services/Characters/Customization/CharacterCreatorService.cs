@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +8,7 @@ namespace AltVStrefaRPServer.Services.Characters.Customization
 {
     public class CharacterCreatorService : ICharacterCreatorService
     {
-        private ServerContext _serverContext;
+        private readonly ServerContext _serverContext;
 
         public CharacterCreatorService(ServerContext serverContext)
         {
@@ -32,7 +33,7 @@ namespace AltVStrefaRPServer.Services.Characters.Customization
                 AccountId = accountId,
                 BankAccount = null,
                 Age = age,
-                Money = 250f,
+                Money = AppSettings.Current.ServerConfig.StartingMoney,
                 Gender = gender,
                 Dimension = 0,
                 X = AppSettings.Current.ServerConfig.SpawnPosition.X,
@@ -40,6 +41,7 @@ namespace AltVStrefaRPServer.Services.Characters.Customization
                 Z = AppSettings.Current.ServerConfig.SpawnPosition.Z,
                 BackgroundImage = "../images/profile-card-background.jpg",
                 ProfileImage = "../images/default-profile-image.jpg",
+                CreationDate = DateTime.Now,
                 TimePlayed = 0
             };
         }

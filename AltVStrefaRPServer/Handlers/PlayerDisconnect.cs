@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Data;
@@ -29,6 +30,7 @@ namespace AltVStrefaRPServer.Handlers
             character.X = player.Position.X;
             character.Y = player.Position.Y;
             character.Z = player.Position.Z;
+            character.TimePlayed += (DateTime.Now - character.LastPlayed).Minutes;
 
             CharacterManager.Instance.RemoveCharacterDataFromServer(character);
             Alt.Log($"CID({character.Id}) ID({player.Id}) {player.Name} left the server. Reason {reason}");

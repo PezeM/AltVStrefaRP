@@ -46,6 +46,7 @@ namespace AltVStrefaRPServer.Modules.Character
             // TODO: Setting skin and shared data
             player.Dimension = character.Dimension;
             player.Position = new Position(character.X, character.Y, character.Z);
+            character.LastPlayed = DateTime.Now;
 
             CharactersList.Add(player.Id, character);
             Alt.Log($"Initialized character {character.GetFullName()} with ID({player.Id}) CID({character.Id}) in the world.");
