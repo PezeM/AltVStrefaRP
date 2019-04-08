@@ -100,6 +100,45 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             return false;
         }
 
+        public bool IsCharacterOwnerOfVehicle(Models.Character character, VehicleModel vehicle) => character.Id == vehicle.Id;
+
+        /// <summary>
+        /// Checks if character has permission to access vehicle
+        /// </summary>
+        /// <param name="character">Character which wants to acess vehicle</param>
+        /// <param name="vehicle">The vehicle character want to access</param>
+        /// <returns>True if character has permission</returns>
+        public bool HasVehiclePermission(Models.Character character, VehicleModel vehicle)
+        {
+            if (vehicle.OwnerType == OwnerType.Character)
+            {
+                return vehicle.Owner == character.Id;
+            }
+            else if (vehicle.OwnerType == OwnerType.Group)
+            {
+                // TODO Group management
+                return true;
+            }
+            else if (vehicle.OwnerType == OwnerType.Job)
+            {
+                return vehicle.Owner == character.Id;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// Returns vehicles owned by character
+        /// </summary>
+        /// <param name="character"></param>
+        /// <returns></returns>
+        public List<VehicleModel> GetPlayerVehicles(Models.Character character)
+        {
+            return Vehicles.Values.Where(v => v.Owner == character.Id && v.OwnerType == OwnerType.Character).ToList();
+        }
+
         public async Task<VehicleModel> CreateVehicleAsync(string vehicleModel, Position position, float heading, short dimension, int ownerId, 
             OwnerType ownerType)
         {
@@ -144,6 +183,14 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             Alt.Log($"Spawned vehicle UID({vehicleModel.Id}) ID({vehicleModel.VehicleHandle.Id})");
         }
 
+        public async Task<bool> DespawnVehicleAsync(int vehicleId)
+        {
+            var vehicle = GetVehicleModel(vehicleId);
+            if (vehicle == null) return false;
+
+            return await DespawnVehicleAsync(vehicle).ConfigureAwait(false);
+        }
+
         /// <summary>
         /// Despawns vehicle from game and saves its to database
         /// </summary>
@@ -161,34 +208,8 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             vehicleModel.Dimension = vehicleModel.VehicleHandle.Dimension;
             await _vehicleManagerService.SaveVehicleAsync(vehicleModel).ConfigureAwait(false);
             Alt.Server.RemoveVehicle(vehicleModel.VehicleHandle);
+            AltAsync.Log($"Despawned vehicle: {vehicleModel.Model} UID({vehicleModel.Id})");
             return true;
-        }
-
-        /// <summary>
-        /// Checks if character has permission to access vehicle
-        /// </summary>
-        /// <param name="character">Character which wants to acess vehicle</param>
-        /// <param name="vehicle">The vehicle character want to access</param>
-        /// <returns>True if character has permission</returns>
-        public bool HasVehiclePermission(Models.Character character, VehicleModel vehicle)
-        {
-            if (vehicle.OwnerType == OwnerType.Character)
-            {
-                return vehicle.Owner == character.Id;
-            }
-            else if (vehicle.OwnerType == OwnerType.Group)
-            {
-                // TODO Group management
-                return true;
-            }
-            else if (vehicle.OwnerType == OwnerType.Job)
-            {
-                return vehicle.Owner == character.Id;
-            }
-            else
-            {
-                return true;
-            }
         }
     }
 }
