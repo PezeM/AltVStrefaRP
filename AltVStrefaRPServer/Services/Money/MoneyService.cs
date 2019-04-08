@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using AltV.Net;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models;
 
@@ -54,7 +53,7 @@ namespace AltVStrefaRPServer.Services.Money
             receiver.Money += amount;
             receiver.Player.SetSyncedMetaData("money", receiver.Money);
             source.Player.SetSyncedMetaData("money", source.Money);
-            LogMoneyTransaction(source.Id, receiver.Id, TransactionType.PlayerToPlayer, amount);
+            LogMoneyTransaction(source.GetFullName(), receiver.GetFullName(), TransactionType.PlayerToPlayer, amount);
             return true;
         }
 
@@ -72,7 +71,7 @@ namespace AltVStrefaRPServer.Services.Money
             receiver.Money += amount;
             receiver.Player.SetSyncedMetaData("money", receiver.Money);
             source.Player.SetSyncedMetaData("money", source.Money);
-            await LogMoneyTransactionAsync(source.Id, receiver.Id, TransactionType.PlayerToPlayer, amount).ConfigureAwait(false);
+            await LogMoneyTransactionAsync(source.GetFullName(), receiver.GetFullName(), TransactionType.PlayerToPlayer, amount).ConfigureAwait(false);
             return true;
         }
 
@@ -81,7 +80,7 @@ namespace AltVStrefaRPServer.Services.Money
             if (!bankAccount.WithdrawMoney(amount)) return false;
             source.Money += amount;
             source.Player.SetSyncedMetaData("money", source.Money);
-            LogMoneyTransaction(source.Id, bankAccount.AccountNumber, TransactionType.BankWithdraw, amount);
+            LogMoneyTransaction(source.GetFullName(), bankAccount.ToString(), TransactionType.BankWithdraw, amount);
             return true;
         }
 
@@ -90,7 +89,7 @@ namespace AltVStrefaRPServer.Services.Money
             if (!bankAccount.WithdrawMoney(amount)) return false;
             source.Money += amount;
             source.Player.SetSyncedMetaData("money", source.Money);
-            await LogMoneyTransactionAsync(source.Id, bankAccount.AccountNumber, TransactionType.BankWithdraw, amount).ConfigureAwait(false);
+            await LogMoneyTransactionAsync(source.GetFullName(), bankAccount.ToString(), TransactionType.BankWithdraw, amount).ConfigureAwait(false);
             return true;
         }
 
@@ -100,7 +99,7 @@ namespace AltVStrefaRPServer.Services.Money
             bankAccount.DepositMoney(amount);
             source.Money -= amount;
             source.Player.SetSyncedMetaData("money", source.Money);
-            LogMoneyTransaction(source.Id, bankAccount.AccountNumber, TransactionType.BankDeposit, amount);
+            LogMoneyTransaction(source.GetFullName(), bankAccount.ToString(), TransactionType.BankDeposit, amount);
             return true;
         }
 
@@ -110,7 +109,7 @@ namespace AltVStrefaRPServer.Services.Money
             bankAccount.DepositMoney(amount);
             source.Money -= amount;
             source.Player.SetSyncedMetaData("money", source.Money);
-            await LogMoneyTransactionAsync(source.Id, bankAccount.AccountNumber, TransactionType.BankDeposit, amount).ConfigureAwait(false);
+            await LogMoneyTransactionAsync(source.GetFullName(), bankAccount.ToString(), TransactionType.BankDeposit, amount).ConfigureAwait(false);
             return true;
         }
 
@@ -119,7 +118,7 @@ namespace AltVStrefaRPServer.Services.Money
             if (receiver.AccountNumber < 1) return false;
             if (!sender.TransferMoney(receiver, amount)) return false;
             SaveBankAccounts(new BankAccount[]{sender,receiver});
-            LogMoneyTransaction(sender.Id, receiver.Id, TransactionType.BankTransfer, amount);
+            LogMoneyTransaction(sender.ToString(), receiver.ToString(), TransactionType.BankTransfer, amount);
             return true;
         }
 
@@ -136,7 +135,7 @@ namespace AltVStrefaRPServer.Services.Money
             if (receiver.AccountNumber < 1) return false;
             if (!sender.TransferMoney(receiver, amount)) return false;
             await SaveBankAccountsAsync(new BankAccount[]{sender,receiver}).ConfigureAwait(false);
-            await LogMoneyTransactionAsync(sender.Id, receiver.Id, TransactionType.BankTransfer, amount).ConfigureAwait(false);
+            await LogMoneyTransactionAsync(sender.ToString(), receiver.ToString(), TransactionType.BankTransfer, amount).ConfigureAwait(false);
             return true;
         }
 
@@ -147,7 +146,7 @@ namespace AltVStrefaRPServer.Services.Money
         /// <param name="receiver">Receiver of the transactions</param>
         /// <param name="type">Type of the transaction <see cref="TransactionType"/></param>
         /// <param name="amount">Amount of transaction</param>
-        private void LogMoneyTransaction(int source, int receiver, TransactionType type, float amount)
+        private void LogMoneyTransaction(string source, string receiver, TransactionType type, float amount)
         {
             _serverContext.MoneyTransactions.Add(new MoneyTransaction(source, receiver, type, amount));
             _serverContext.SaveChanges();
@@ -160,7 +159,7 @@ namespace AltVStrefaRPServer.Services.Money
         /// <param name="receiver">Receiver of the transactions</param>
         /// <param name="type">Type of the transaction <see cref="TransactionType"/></param>
         /// <param name="amount">Amount of transaction</param>
-        private async Task LogMoneyTransactionAsync(int source, int receiver, TransactionType type, float amount)
+        private async Task LogMoneyTransactionAsync(string source, string receiver, TransactionType type, float amount)
         {
             await _serverContext.MoneyTransactions.AddAsync(new MoneyTransaction(source, receiver, type, amount)).ConfigureAwait(false);
             await _serverContext.SaveChangesAsync();

@@ -28,8 +28,9 @@ namespace AltVStrefaRPServer.Handlers
 
             character.Dimension = player.Dimension;
             character.X = player.Position.X;
-            character.Y = player.Position.Y;
+            character.Y = player.Position.Y;       
             character.Z = player.Position.Z;
+
             character.TimePlayed += (DateTime.Now - character.LastPlayed).Minutes;
 
             CharacterManager.Instance.RemoveCharacterDataFromServer(character);

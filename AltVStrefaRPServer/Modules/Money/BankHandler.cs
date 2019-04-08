@@ -190,7 +190,7 @@ namespace AltVStrefaRPServer.Modules.Money
             if(character == null) return;
 
             var bankTransactionHistory = await _serverContext.MoneyTransactions.AsNoTracking()
-                .Where(t => t.Receiver == character.Id || t.Source == character.Id).Take(50)
+                .Where(t => t.Receiver == character.GetFullName() || t.Source == character.GetFullName()).Take(50)
                 .ToListAsync().ConfigureAwait(false);
 
             if (bankTransactionHistory.Count <= 0)
