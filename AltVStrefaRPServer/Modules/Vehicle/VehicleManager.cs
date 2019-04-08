@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AltV.Net;
+using AltV.Net.Async;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Helpers;
@@ -141,6 +142,53 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             vehicleModel.IsSpawned = true;
 
             Alt.Log($"Spawned vehicle UID({vehicleModel.Id}) ID({vehicleModel.VehicleHandle.Id})");
+        }
+
+        /// <summary>
+        /// Despawns vehicle from game and saves its to database
+        /// </summary>
+        /// <param name="vehicleModel"></param>
+        /// <returns></returns>
+        public async Task<bool> DespawnVehicleAsync(VehicleModel vehicleModel)
+        {
+            if (vehicleModel == null) return false;
+            if (!vehicleModel.IsSpawned) return true;
+
+            vehicleModel.IsSpawned = false;
+            vehicleModel.X = vehicleModel.VehicleHandle.Position.X;
+            vehicleModel.Y = vehicleModel.VehicleHandle.Position.Y;
+            vehicleModel.Z = vehicleModel.VehicleHandle.Position.Z;
+            vehicleModel.Dimension = vehicleModel.VehicleHandle.Dimension;
+            await _vehicleManagerService.SaveVehicleAsync(vehicleModel).ConfigureAwait(false);
+            Alt.Server.RemoveVehicle(vehicleModel.VehicleHandle);
+            return true;
+        }
+
+        /// <summary>
+        /// Checks if character has permission to access vehicle
+        /// </summary>
+        /// <param name="character">Character which wants to acess vehicle</param>
+        /// <param name="vehicle">The vehicle character want to access</param>
+        /// <returns>True if character has permission</returns>
+        public bool HasVehiclePermission(Models.Character character, VehicleModel vehicle)
+        {
+            if (vehicle.OwnerType == OwnerType.Character)
+            {
+                return vehicle.Owner == character.Id;
+            }
+            else if (vehicle.OwnerType == OwnerType.Group)
+            {
+                // TODO Group management
+                return true;
+            }
+            else if (vehicle.OwnerType == OwnerType.Job)
+            {
+                return vehicle.Owner == character.Id;
+            }
+            else
+            {
+                return true;
+            }
         }
     }
 }
