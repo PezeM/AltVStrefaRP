@@ -2,6 +2,7 @@
 using AltV.Net.Data;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models;
+using AltVStrefaRPServer.Models.Enums;
 
 namespace AltVStrefaRPServer.Services.Vehicles
 {
@@ -35,7 +36,7 @@ namespace AltVStrefaRPServer.Services.Vehicles
         /// <param name="dimension">todo: describe dimension parameter on CreateVehicle</param>
         /// <param name="ownerId">todo: describe ownerId parameter on CreateVehicle</param>
         /// <returns></returns>
-        public VehicleModel CreateVehicle(string vehicleModel, Position position, float heading, short dimension, int ownerId)
+        public VehicleModel CreateVehicle(string vehicleModel, Position position, float heading, short dimension, int ownerId, OwnerType ownerType)
         {
             return new VehicleModel
             {
@@ -46,6 +47,9 @@ namespace AltVStrefaRPServer.Services.Vehicles
                 Z = position.Z,
                 Dimension = dimension,
                 Heading = heading,
+                OwnerType = ownerType,
+                PlateNumber = 0,
+                PlateText = "", // Change it to unique plate text
                 // Temporary values
                 MaxFuel = 50.0f,
                 Fuel = 50.0f,

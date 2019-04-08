@@ -7,6 +7,7 @@ using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
+using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Services.Vehicles;
 
 namespace AltVStrefaRPServer.Modules.Vehicle
@@ -98,18 +99,20 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             return false;
         }
 
-        public async Task<VehicleModel> CreateVehicleAsync(string vehicleModel, Position position, float heading, short dimension, int ownerId)
+        public async Task<VehicleModel> CreateVehicleAsync(string vehicleModel, Position position, float heading, short dimension, int ownerId, 
+            OwnerType ownerType)
         {
-            var vehicle = _vehicleCreator.CreateVehicle(vehicleModel, position, heading, dimension, ownerId);
+            var vehicle = _vehicleCreator.CreateVehicle(vehicleModel, position, heading, dimension, ownerId, ownerType);
             await _vehicleCreator.SaveVehicleToDatabaseAsync(vehicle).ConfigureAwait(false);
             Vehicles.Add(vehicle.Id, vehicle);
             Alt.Log($"Created vehicle {vehicle.Model} UID({vehicle.Id}).");
             return vehicle;
         }
 
-        public VehicleModel CreateVehicle(string vehicleModel, Position position, float heading, short dimension, int ownerId)
+        public VehicleModel CreateVehicle(string vehicleModel, Position position, float heading, short dimension, int ownerId, 
+            OwnerType ownerType)
         {
-            var vehicle = _vehicleCreator.CreateVehicle(vehicleModel, position, heading, dimension, ownerId);
+            var vehicle = _vehicleCreator.CreateVehicle(vehicleModel, position, heading, dimension, ownerId, ownerType);
             _vehicleCreator.SaveVehicleToDatabase(vehicle);
             Vehicles.Add(vehicle.Id, vehicle);
             Alt.Log($"Created vehicle {vehicle.Model} UID({vehicle.Id}).");
@@ -130,8 +133,11 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             vehicleModel.VehicleHandle = Alt.CreateVehicle(vehicleModel.Model,
                 new Position(vehicleModel.X, vehicleModel.Y, vehicleModel.Z), vehicleModel.Heading);
 
+            vehicleModel.VehicleHandle.Dimension = vehicleModel.Dimension;
             vehicleModel.VehicleHandle.EngineOn = false;
             vehicleModel.VehicleHandle.SetData("vehicleId", vehicleModel.Id);
+            vehicleModel.VehicleHandle.NumberplateText = vehicleModel.PlateText;
+            vehicleModel.VehicleHandle.NumberplateIndex = vehicleModel.PlateNumber;
             vehicleModel.IsSpawned = true;
 
             Alt.Log($"Spawned vehicle UID({vehicleModel.Id}) ID({vehicleModel.VehicleHandle.Id})");

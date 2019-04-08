@@ -21,7 +21,7 @@ namespace AltVStrefaRPServer.Models
         public float MaxOil { get; set; }
         public float Oil { get; set; }
         public float Mileage { get; set; }
-        public int PlateNumber { get; set; }
+        public uint PlateNumber { get; set; }
         public string PlateText { get; set; }
 
         public bool IsSpawned { get; set; }

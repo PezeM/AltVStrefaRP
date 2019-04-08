@@ -7,6 +7,7 @@ using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Handlers;
 using AltVStrefaRPServer.Models;
+using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Modules.Admin;
 using AltVStrefaRPServer.Modules.Character;
 using AltVStrefaRPServer.Modules.Character.Customization;
@@ -121,7 +122,7 @@ namespace AltVStrefaRPServer
             if (character == null) return;
 
             var vehicle = await vehicleManager.CreateVehicleAsync(vehicleModel, player.Position, player.HeadRotation.pitch,
-                player.Dimension, character.Id).ConfigureAwait(false);
+                player.Dimension, character.Id, OwnerType.None).ConfigureAwait(false);
             vehicleManager.SpawnVehicle(vehicle.Id);
         }
 

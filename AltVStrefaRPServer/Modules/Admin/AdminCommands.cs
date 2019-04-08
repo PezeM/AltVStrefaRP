@@ -5,6 +5,7 @@ using AltVStrefaRPServer.Modules.Chat;
 using AltVStrefaRPServer.Modules.Vehicle;
 using System;
 using AltV.Net.Data;
+using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Modules.Money;
 
 namespace AltVStrefaRPServer.Modules.Admin
@@ -76,7 +77,7 @@ namespace AltVStrefaRPServer.Modules.Admin
             var character = CharacterManager.Instance.GetCharacter(player);
             if (character == null) return;
 
-            var vehicle = _vehicleManager.CreateVehicle(model, player.Position, player.HeadRotation.pitch, player.Dimension, character.Id);
+            var vehicle = _vehicleManager.CreateVehicle(model, player.Position, player.HeadRotation.pitch, player.Dimension, character.Id, OwnerType.None);
             _vehicleManager.SpawnVehicle(vehicle.Id);
         }
     }
