@@ -54,11 +54,11 @@ namespace AltVStrefaRPServer.Modules.Vehicle
         public VehicleModel GetVehicleModel(ushort vehicleID) => Vehicles.Values.FirstOrDefault(v => v.VehicleHandle?.Id == vehicleID);
 
         /// <summary>
-        /// Gets <see cref="VehicleModel"/> by vehicle handle id
+        /// Gets <see cref="VehicleModel"/> by IVehicle
         /// </summary>
         /// <param name="vehicle"><see cref="IVehicle"/></param>
         /// <returns></returns>
-        public VehicleModel GetVehicleModel(IVehicle vehicle) => Vehicles.Values.FirstOrDefault(v => v.VehicleHandle?.Id == vehicle.Id);
+        public VehicleModel GetVehicleModel(IVehicle vehicle) => vehicle.GetData("vehicleId", out int vehicleId) ? Vehicles[vehicleId] : null;
 
         /// <summary>
         /// Removes <see cref="VehicleModel"/> from vehicle list by id

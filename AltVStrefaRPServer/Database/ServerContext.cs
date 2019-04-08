@@ -31,7 +31,8 @@ namespace AltVStrefaRPServer.Database
                 .HasForeignKey<BankAccount>(b => b.CharacterId);
 
             modelBuilder.Entity<VehicleModel>()
-                .Ignore(v => v.VehicleHandle);
+                .Ignore(v => v.VehicleHandle)
+                .Ignore(v => v.IsJobVehicle);
 
             modelBuilder.Entity<MoneyTransaction>()
                 .Property(m => m.Type)
