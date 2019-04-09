@@ -43,6 +43,8 @@
 
   <ItemGroup>
     <Folder Include="Database\Migrations\" />
+    <Folder Include="Models\Jobs\" />
+    <Folder Include="Models\Business\" />
   </ItemGroup>
 
 </Project>

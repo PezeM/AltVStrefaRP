@@ -1,7 +1,11 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
+using AltV.Net;
 using AltV.Net.Async;
+using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
+using AltVStrefaRPServer.Data;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
@@ -35,6 +39,17 @@ namespace AltVStrefaRPServer.Modules.Money
             AltAsync.OnClient("WithdrawMoneyFromBank", WithdrawMoneyFromBankAsync);
             AltAsync.OnClient("TransferMoneyFromBankToBank", TransferMoneyFromBankToBankAsync);
             AltAsync.OnClient("GetTransferHistoryInfo", GetTransferHistoryInfoAsync);
+
+            CreateAtmBlips();
+        }
+
+        private void CreateAtmBlips()
+        {
+            foreach (var atm in GtaLocations.Atms)
+            {
+                var blip = Alt.CreateBlip(108, atm.Value);
+                blip.Color = 52;
+            }
         }
 
         public async Task CreateBankAccountAsync(IPlayer player, object[] args)

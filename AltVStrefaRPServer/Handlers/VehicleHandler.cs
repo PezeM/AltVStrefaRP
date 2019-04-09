@@ -1,8 +1,10 @@
 ﻿using System.Threading.Tasks;
+using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Helpers;
+using AltVStrefaRPServer.Modules.Character;
 using AltVStrefaRPServer.Modules.Vehicle;
 using AltVStrefaRPServer.Services;
 
@@ -33,6 +35,7 @@ namespace AltVStrefaRPServer.Handlers
 
         private Task OnVehicleRemoveAsync(IVehicle vehicle)
         {
+            AltAsync.Log($"Vehicle {vehicle.Model} ID({vehicle.Id}) was removed from the server");
             return Task.CompletedTask;
         }
 
