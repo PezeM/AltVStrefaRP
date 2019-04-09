@@ -1,9 +1,10 @@
-﻿using System;
+﻿using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
+using System;
 
 namespace AltVStrefaRPServer.Models
 {
-    public class Character
+    public class Character : IMoney
     {
         public int Id { get; set; }
         public int AccountId { get; set; }
@@ -29,6 +30,18 @@ namespace AltVStrefaRPServer.Models
         public string GetFullName()
         {
             return string.Join(' ', FirstName, LastName);
+        }
+
+        public void UpdatePosition(Position newPosition)
+        {
+            X = newPosition.X;
+            Y = newPosition.Y;
+            Z = newPosition.Z;
+        }
+
+        public Position GetPosition()
+        {
+            return new Position(X, Y, Z);
         }
     }
 }

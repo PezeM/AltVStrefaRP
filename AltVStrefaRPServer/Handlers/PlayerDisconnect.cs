@@ -27,9 +27,7 @@ namespace AltVStrefaRPServer.Handlers
             if (character == null) return;
 
             character.Dimension = player.Dimension;
-            character.X = player.Position.X;
-            character.Y = player.Position.Y;       
-            character.Z = player.Position.Z;
+            character.UpdatePosition(player.Position);
 
             character.TimePlayed += (DateTime.Now - character.LastPlayed).Minutes;
 

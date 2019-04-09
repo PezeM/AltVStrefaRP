@@ -8,6 +8,7 @@ namespace AltVStrefaRPServer.Database
         public DbSet<Character> Characters { get; set; }
         public DbSet<Account> Accounts { get; set; }
         public DbSet<VehicleModel> Vehicles { get; set; }
+        public DbSet<Business> Businesses { get; set; }
 
         public DbSet<BankAccount> BankAccounts { get; set; }
         public DbSet<MoneyTransaction> MoneyTransactions { get; set; }

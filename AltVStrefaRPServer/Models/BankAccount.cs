@@ -1,6 +1,6 @@
 ﻿namespace AltVStrefaRPServer.Models
 {
-    public class BankAccount
+    public class BankAccount : IMoney
     {
         public int Id { get; set; }
         public float Money { get; set; }
