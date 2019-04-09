@@ -3,12 +3,14 @@ using System.IO;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Handlers;
 using AltVStrefaRPServer.Modules.Admin;
+using AltVStrefaRPServer.Modules.Businesses;
 using AltVStrefaRPServer.Modules.Character.Customization;
 using AltVStrefaRPServer.Modules.Chat;
 using AltVStrefaRPServer.Modules.Environment;
 using AltVStrefaRPServer.Modules.Money;
 using AltVStrefaRPServer.Modules.Vehicle;
 using AltVStrefaRPServer.Services;
+using AltVStrefaRPServer.Services.Businesses;
 using AltVStrefaRPServer.Services.Characters;
 using AltVStrefaRPServer.Services.Characters.Customization;
 using AltVStrefaRPServer.Services.Money;
@@ -64,6 +66,7 @@ namespace AltVStrefaRPServer
             services.AddTransient<ICharacterCreatorService, CharacterCreatorService>();
             services.AddTransient<IVehicleCreatorService, VehicleCreatorService>();
             services.AddTransient<IMoneyService, MoneyService>();
+            services.AddTransient<IBusinessService, BusinessService>();
 
             services.AddSingleton<IVehicleManagerService, VehicleManagerService>();
             services.AddSingleton<HashingService>();
@@ -73,6 +76,7 @@ namespace AltVStrefaRPServer
             services.AddSingleton<VehicleManager>();
             services.AddSingleton<BankHandler>();
             services.AddSingleton<BankAccountManager>();
+            services.AddSingleton<BusinessManager>();
 
             services.AddSingleton<TemporaryChatHandler>();
             services.AddTransient<AdminCommands>();

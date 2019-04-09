@@ -1,4 +1,6 @@
-﻿namespace AltVStrefaRPServer.Models
+﻿using AltV.Net.Data;
+
+namespace AltVStrefaRPServer.Models
 {
     public class Business : IMoney
     {
@@ -9,5 +11,10 @@
         public float Y { get; set; }
         public float Z { get; set; }
         public float Money { get; set; }
+
+        public Position GetPosition()
+        {
+            return new Position(X,Y,Z);
+        }
     }
 }
