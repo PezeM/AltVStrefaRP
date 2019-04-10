@@ -5,7 +5,9 @@ using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
+using AltVStrefaRPServer.Models.Businesses;
 using AltVStrefaRPServer.Services.Businesses;
+using Microsoft.EntityFrameworkCore;
 
 namespace AltVStrefaRPServer.Modules.Businesses
 {
@@ -26,7 +28,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
         private void LoadBusinesses()
         {
             var startTime = Time.GetTimestampMs();
-            foreach (var business in _serverContext.Businesses.ToList())
+            foreach (var business in _serverContext.Businesses.AsNoTracking().ToList())
             {
                 Businesses.TryAdd(business.Id, business);
             }

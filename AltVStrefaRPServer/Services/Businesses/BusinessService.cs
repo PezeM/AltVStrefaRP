@@ -1,5 +1,6 @@
 ﻿using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models;
+using AltVStrefaRPServer.Models.Businesses;
 using System.Threading.Tasks;
 
 namespace AltVStrefaRPServer.Services.Businesses

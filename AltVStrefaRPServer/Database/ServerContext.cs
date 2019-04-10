@@ -1,4 +1,5 @@
 ﻿using AltVStrefaRPServer.Models;
+using AltVStrefaRPServer.Models.Businesses;
 using Microsoft.EntityFrameworkCore;
 
 namespace AltVStrefaRPServer.Database

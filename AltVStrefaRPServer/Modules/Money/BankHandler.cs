@@ -74,6 +74,7 @@ namespace AltVStrefaRPServer.Modules.Money
                 return;
             }
 
+            await _serverContext.BankAccounts.AddAsync(character.BankAccount).ConfigureAwait(false);
             _serverContext.Characters.Update(character);
             await _serverContext.SaveChangesAsync().ConfigureAwait(false);
 
