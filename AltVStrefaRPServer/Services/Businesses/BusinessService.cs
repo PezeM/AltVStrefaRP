@@ -23,7 +23,7 @@ namespace AltVStrefaRPServer.Services.Businesses
         public async Task UpdateOwnerAsync(Business business,Character newOwner)
         {
             business.OwnerId = newOwner.Id;
-            await Save(business).ConfigureAwait(false);
+            await SaveAsync(business).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -31,13 +31,13 @@ namespace AltVStrefaRPServer.Services.Businesses
         /// </summary>
         /// <param name="business">The business to save to database</param>
         /// <returns></returns>
-        public async Task Save(Business business)
+        public async Task SaveAsync(Business business)
         {
             _serverContext.Businesses.Update(business);
             await _serverContext.SaveChangesAsync().ConfigureAwait(false);
         }
 
-        public async Task AddNewBusiness(Business business)
+        public async Task AddNewBusinessAsync(Business business)
         {
             await _serverContext.Businesses.AddAsync(business).ConfigureAwait(false);
             await _serverContext.SaveChangesAsync().ConfigureAwait(false);

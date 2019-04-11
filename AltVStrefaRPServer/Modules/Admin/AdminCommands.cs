@@ -59,7 +59,7 @@ namespace AltVStrefaRPServer.Modules.Admin
                     return;
                 }
 
-                _businessManager.CreateNewBusiness(businessType, player.Position, args[1]);
+                _businessManager.CreateNewBusinessAsync(businessType, player.Position, args[1]);
             }
             catch (Exception e)
             {

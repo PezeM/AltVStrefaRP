@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using AltV.Net;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
@@ -75,11 +76,13 @@ namespace AltVStrefaRPServer.Modules.Businesses
         /// <param name="position">Position where the business will be located</param>
         /// <param name="name">Name of the business</param>
         /// <returns></returns>
-        public bool CreateNewBusiness(BusinessType businessType, Position position, string name)
+        public async Task<bool> CreateNewBusinessAsync(BusinessType businessType, Position position, string name)
         {
+            var startTime = Time.GetTimestampMs();
             if(businessType == BusinessType.None || string.IsNullOrEmpty(name)) return false;
             var business = _businessFactory.CreateBusiness(businessType, position, name);
-            _businessService.AddNewBusiness(business);
+            await _businessService.AddNewBusinessAsync(business).ConfigureAwait(false);
+            Alt.Log($"Created new business ID({business.Id}) Name({business.Title}) in {Time.GetTimestampMs() - startTime}ms.");
             return true;
         }
     }
