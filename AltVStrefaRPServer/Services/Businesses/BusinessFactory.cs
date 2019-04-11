@@ -1,5 +1,6 @@
 ﻿using System;
 using AltV.Net;
+using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Models.Businesses;
 using AltVStrefaRPServer.Models.Enums;
@@ -8,6 +9,21 @@ namespace AltVStrefaRPServer.Services.Businesses
 {
     public class BusinessFactory
     {
+        public Business CreateBusiness(BusinessType businessType, Position position, string name)
+        {
+            switch (businessType)
+            {
+                case BusinessType.Mechanic:
+                    return CreateDefaultMechanicBusiness(position, name);
+                case BusinessType.Restaurant:
+                    return CreateDefaultRestaurantBussiness(position, name);
+                case BusinessType.Pub:
+                    throw new NotImplementedException();
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
         /// <summary>
         /// Creates business depeding of the business type
         /// </summary>
@@ -26,6 +42,38 @@ namespace AltVStrefaRPServer.Services.Businesses
                 default:
                     throw new NotImplementedException();
             }
+        }
+
+        private MechanicBusiness CreateDefaultMechanicBusiness(Position position, string name)
+        {
+            var business = new MechanicBusiness
+            {
+                Title = name,
+                Money = 250,
+                X = position.X,
+                Y = position.X,
+                Z = position.Z,
+                CreatedAt = DateTime.Now,
+                Type = BusinessType.Mechanic,
+            };
+            business.Blip = CreateBlip(business);
+            return business;
+        }
+
+        private RestaurantBusiness CreateDefaultRestaurantBussiness(Position position, string name)
+        {
+            var business = new RestaurantBusiness()
+            {
+                Title = name,
+                Money = 250,
+                X = position.X,
+                Y = position.X,
+                Z = position.Z,
+                CreatedAt = DateTime.Now,
+                Type = BusinessType.Mechanic,
+            };
+            business.Blip = CreateBlip(business);
+            return business;
         }
 
         private Business CreateRestaurantBusiness(Business business)

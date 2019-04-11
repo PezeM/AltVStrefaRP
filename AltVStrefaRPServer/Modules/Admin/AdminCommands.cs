@@ -8,6 +8,7 @@ using AltV.Net.Data;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Modules.Businesses;
 using AltVStrefaRPServer.Modules.Money;
+using AltVStrefaRPServer.Services;
 
 namespace AltVStrefaRPServer.Modules.Admin
 {
@@ -17,12 +18,16 @@ namespace AltVStrefaRPServer.Modules.Admin
         private VehicleManager _vehicleManager;
         private BankHandler _bankHandler;
         private BusinessManager _businessManager;
+        private INotificationService _notificationService;
 
-        public AdminCommands(TemporaryChatHandler chatHandler, VehicleManager vehicleManager, BankHandler bankHandler, BusinessManager businessManager)
+        public AdminCommands(TemporaryChatHandler chatHandler, VehicleManager vehicleManager, BankHandler bankHandler, 
+            BusinessManager businessManager, INotificationService notificationService)
         {
             _chatHandler = chatHandler;
             _vehicleManager = vehicleManager;
             _bankHandler = bankHandler;
+            _businessManager = businessManager;
+            _notificationService = notificationService;
 
             Alt.Log($"Admin commands initialized");
             AddCommands();
@@ -36,6 +41,31 @@ namespace AltVStrefaRPServer.Modules.Admin
             _chatHandler.RegisterCommand("tptowp", TeleportToWaypointCommand);
             _chatHandler.RegisterCommand("openbank", OpenBankMenu);
             _chatHandler.RegisterCommand("createBankAccount", CreateBankAccount);
+            _chatHandler.RegisterCommand("createbusiness", CreateNewBusiness);
+        }
+
+        private void CreateNewBusiness(IPlayer player, string[] args)
+        {
+            if (args == null || args.Length < 2) return;
+            try
+            {
+                var character = CharacterManager.Instance.GetCharacter(player);
+                if (character == null) return;
+                // First arg is business type
+                // Second one is business name
+                if(!Enum.TryParse(args[0], out BusinessType businessType))
+                {
+                    _notificationService.ShowErrorNotfication(player, "Podano zły typ biznesu");
+                    return;
+                }
+
+                _businessManager.CreateNewBusiness(businessType, player.Position, args[1]);
+            }
+            catch (Exception e)
+            {
+                Alt.Log($"Error creating new business for player {player.Name}: {e}");
+                throw;
+            }
         }
 
         private void CreateBankAccount(IPlayer arg1, string[] arg2)

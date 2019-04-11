@@ -27,5 +27,12 @@ namespace AltVStrefaRPServer.Models.Businesses
         {
             return new Position(X,Y,Z);
         }
+
+        public void SetPosition(Position position)
+        {
+            X = position.X;
+            Y = position.Y;
+            Z = position.Z;
+        }
     }
 }

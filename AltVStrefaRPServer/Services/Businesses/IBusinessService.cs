@@ -8,5 +8,6 @@ namespace AltVStrefaRPServer.Services.Businesses
     {
         Task UpdateOwnerAsync(Business business, Character newOwner);
         Task Save(Business business);
+        Task AddNewBusiness(Business business);
     }
 }

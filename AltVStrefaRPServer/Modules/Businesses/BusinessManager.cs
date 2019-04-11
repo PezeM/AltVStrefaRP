@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using AltV.Net;
+using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models.Businesses;
+using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Services.Businesses;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,7 +33,8 @@ namespace AltVStrefaRPServer.Modules.Businesses
             var startTime = Time.GetTimestampMs();
             foreach (var business in _serverContext.Businesses.AsNoTracking().ToList())
             {
-                Businesses.TryAdd(business.Id, _businessFactory.CreateBusiness(business));
+                //Businesses.TryAdd(business.Id, _businessFactory.CreateBusiness(business));
+                Businesses.TryAdd(business.Id, business);
                 //_businessFactory.CreateBusiness(business);
             }
             Alt.Log($"Loaded {Businesses.Count} businesses from database in {Time.GetTimestampMs() - startTime}ms.");
@@ -63,6 +66,21 @@ namespace AltVStrefaRPServer.Modules.Businesses
                 }
             }
             return nearestBusiness;
+        }
+
+        /// <summary>
+        /// Create new business and save it to database
+        /// </summary>
+        /// <param name="businessType">Type of the business <see cref="BusinessType"/></param>
+        /// <param name="position">Position where the business will be located</param>
+        /// <param name="name">Name of the business</param>
+        /// <returns></returns>
+        public bool CreateNewBusiness(BusinessType businessType, Position position, string name)
+        {
+            if(businessType == BusinessType.None || string.IsNullOrEmpty(name)) return false;
+            var business = _businessFactory.CreateBusiness(businessType, position, name);
+            _businessService.AddNewBusiness(business);
+            return true;
         }
     }
 }

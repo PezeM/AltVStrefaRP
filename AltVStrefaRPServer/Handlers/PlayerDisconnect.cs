@@ -30,6 +30,7 @@ namespace AltVStrefaRPServer.Handlers
             character.UpdatePosition(player.Position);
 
             character.TimePlayed += (DateTime.Now - character.LastPlayed).Minutes;
+            character.LastPlayed = DateTime.Now;
 
             CharacterManager.Instance.RemoveCharacterDataFromServer(character);
             Alt.Log($"CID({character.Id}) ID({player.Id}) {player.Name} left the server. Reason {reason}");
