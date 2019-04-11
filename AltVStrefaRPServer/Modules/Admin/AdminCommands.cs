@@ -6,6 +6,7 @@ using AltVStrefaRPServer.Modules.Vehicle;
 using System;
 using AltV.Net.Data;
 using AltVStrefaRPServer.Models.Enums;
+using AltVStrefaRPServer.Modules.Businesses;
 using AltVStrefaRPServer.Modules.Money;
 
 namespace AltVStrefaRPServer.Modules.Admin
@@ -15,8 +16,9 @@ namespace AltVStrefaRPServer.Modules.Admin
         private TemporaryChatHandler _chatHandler;
         private VehicleManager _vehicleManager;
         private BankHandler _bankHandler;
+        private BusinessManager _businessManager;
 
-        public AdminCommands(TemporaryChatHandler chatHandler, VehicleManager vehicleManager, BankHandler bankHandler)
+        public AdminCommands(TemporaryChatHandler chatHandler, VehicleManager vehicleManager, BankHandler bankHandler, BusinessManager businessManager)
         {
             _chatHandler = chatHandler;
             _vehicleManager = vehicleManager;

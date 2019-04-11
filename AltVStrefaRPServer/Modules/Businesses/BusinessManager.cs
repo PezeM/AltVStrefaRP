@@ -4,7 +4,6 @@ using AltV.Net;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Helpers;
-using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Businesses;
 using AltVStrefaRPServer.Services.Businesses;
 using Microsoft.EntityFrameworkCore;
@@ -16,11 +15,13 @@ namespace AltVStrefaRPServer.Modules.Businesses
         private IBusinessService _businessService;
         private Dictionary<int, Business> Businesses = new Dictionary<int, Business>();
         private ServerContext _serverContext;
+        private BusinessFactory _businessFactory;
 
         public BusinessManager(IBusinessService businessService, ServerContext serverContext)
         {
             _businessService = businessService;
             _serverContext = serverContext;
+            _businessFactory = new BusinessFactory();
 
             LoadBusinesses();
         }
@@ -30,7 +31,8 @@ namespace AltVStrefaRPServer.Modules.Businesses
             var startTime = Time.GetTimestampMs();
             foreach (var business in _serverContext.Businesses.AsNoTracking().ToList())
             {
-                Businesses.TryAdd(business.Id, business);
+                Businesses.TryAdd(business.Id, _businessFactory.CreateBusiness(business));
+                //_businessFactory.CreateBusiness(business);
             }
             Alt.Log($"Loaded {Businesses.Count} businesses from database in {Time.GetTimestampMs() - startTime}ms.");
         }
