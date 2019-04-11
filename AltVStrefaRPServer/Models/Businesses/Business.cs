@@ -1,4 +1,7 @@
-﻿using AltV.Net.Data;
+﻿using System;
+using AltV.Net.Data;
+using AltV.Net.Elements.Entities;
+using AltVStrefaRPServer.Models.Enums;
 
 namespace AltVStrefaRPServer.Models.Businesses
 {
@@ -11,6 +14,14 @@ namespace AltVStrefaRPServer.Models.Businesses
         public float Y { get; set; }
         public float Z { get; set; }
         public float Money { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public BusinessType Type { get; set; }
+
+        public virtual byte BlipModel { get; protected set; }
+        public virtual string BlipName { get; protected set; }
+        public virtual byte BlipColor { get; protected set; }
+
+        public virtual IBlip Blip { get; set; }
 
         public Position GetPosition()
         {
