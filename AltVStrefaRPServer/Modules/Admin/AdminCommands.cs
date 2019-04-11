@@ -59,7 +59,15 @@ namespace AltVStrefaRPServer.Modules.Admin
                     return;
                 }
 
-                _businessManager.CreateNewBusinessAsync(businessType, player.Position, args[1]);
+                if (_businessManager.CreateNewBusinessAsync(businessType, player.Position, args[1]).Result)
+                {
+                    _notificationService.ShowSuccessNotification(player, 
+                        $"Pomyślnie stworzono nowy biznes: {businessType} z nazwą {args[1]}.", 6000);
+                }
+                else
+                {
+                    _notificationService.ShowErrorNotfication(player, $"Nie udało się stworzyć biznesu: {businessType} z nazwą {args[1]}.", 6000);
+                }
             }
             catch (Exception e)
             {
