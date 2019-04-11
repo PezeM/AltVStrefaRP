@@ -38,7 +38,7 @@ namespace AltVStrefaRPServer.Modules.Money
             AltAsync.OnClient("TransferMoneyFromBankToBank", TransferMoneyFromBankToBankAsync);
             AltAsync.OnClient("GetTransferHistoryInfo", GetTransferHistoryInfoAsync);
 
-            CreateAtmBlips();
+            //CreateAtmBlips();
         }
 
         private void CreateAtmBlips()

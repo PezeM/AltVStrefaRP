@@ -41,7 +41,19 @@ namespace AltVStrefaRPServer.Modules.Businesses
             Alt.Log($"Loaded {Businesses.Count} businesses from database in {Time.GetTimestampMs() - startTime}ms.");
         }
 
+        /// <summary>
+        /// Get business by it's id
+        /// </summary>
+        /// <param name="businessId"></param>
+        /// <returns></returns>
         public Business GetBusiness(int businessId) => Businesses.ContainsKey(businessId) ? Businesses[businessId] : null;
+
+        /// <summary>
+        /// Gets all owned businesses for given character id
+        /// </summary>
+        /// <param name="ownerId"></param>
+        /// <returns></returns>
+        public List<Business> GetCharacterBusinesses(int ownerId) => Businesses.Values.Where(b => b.OwnerId == ownerId).ToList();
 
         /// <summary>
         /// Get nearest business to player

@@ -18,7 +18,7 @@ namespace AltVStrefaRPServer.Services.Businesses
                 case BusinessType.Restaurant:
                     return CreateDefaultRestaurantBussiness(position, name);
                 case BusinessType.Pub:
-                    throw new NotImplementedException();
+                    return CreateDefaultPubBusiness(position, name);
                 default:
                     throw new NotImplementedException();
             }
@@ -63,6 +63,22 @@ namespace AltVStrefaRPServer.Services.Businesses
         private RestaurantBusiness CreateDefaultRestaurantBussiness(Position position, string name)
         {
             var business = new RestaurantBusiness()
+            {
+                Title = name,
+                Money = 250,
+                X = position.X,
+                Y = position.X,
+                Z = position.Z,
+                CreatedAt = DateTime.Now,
+                Type = BusinessType.Mechanic,
+            };
+            business.Blip = CreateBlip(business);
+            return business;
+        }
+
+        private Business CreateDefaultPubBusiness(Position position, string name)
+        {
+            var business = new PubBusiness()
             {
                 Title = name,
                 Money = 250,
