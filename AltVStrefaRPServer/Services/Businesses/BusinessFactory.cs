@@ -56,7 +56,7 @@ namespace AltVStrefaRPServer.Services.Businesses
                 CreatedAt = DateTime.Now,
                 Type = BusinessType.Mechanic,
             };
-            business.Blip = CreateBlip(business);
+            //business.Blip = CreateBlip(business);
             return business;
         }
 
@@ -72,7 +72,7 @@ namespace AltVStrefaRPServer.Services.Businesses
                 CreatedAt = DateTime.Now,
                 Type = BusinessType.Mechanic,
             };
-            business.Blip = CreateBlip(business);
+            //business.Blip = CreateBlip(business);
             return business;
         }
 
@@ -88,7 +88,7 @@ namespace AltVStrefaRPServer.Services.Businesses
                 CreatedAt = DateTime.Now,
                 Type = BusinessType.Mechanic,
             };
-            business.Blip = CreateBlip(business);
+            //business.Blip = CreateBlip(business);
             return business;
         }
 
@@ -105,7 +105,7 @@ namespace AltVStrefaRPServer.Services.Businesses
                 Z = business.Z,
                 CreatedAt = business.CreatedAt,
                 Type = business.Type,
-                Blip = CreateBlip(business)
+                //Blip = CreateBlip(business)
             };
         }
 
@@ -122,7 +122,7 @@ namespace AltVStrefaRPServer.Services.Businesses
                 Z = business.Z,
                 CreatedAt = business.CreatedAt,
                 Type = business.Type,
-                Blip = CreateBlip(business)
+                //Blip = CreateBlip(business)
             };
         }
 

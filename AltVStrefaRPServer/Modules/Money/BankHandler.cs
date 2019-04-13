@@ -41,16 +41,16 @@ namespace AltVStrefaRPServer.Modules.Money
             //CreateAtmBlips();
         }
 
-        private void CreateAtmBlips()
-        {
-            foreach (var atm in GtaLocations.Atms)
-            {
-                var blip = Alt.CreateBlip(BlipType.Ped, atm.Value);
-                blip.Color = 52;
-                blip.Sprite = 108;
-                blip.Dimension = 0;
-            }
-        }
+        //private void CreateAtmBlips()
+        //{
+        //    foreach (var atm in GtaLocations.Atms)
+        //    {
+        //        var blip = Alt.CreateBlip(BlipType.Ped, atm.Value);
+        //        blip.Color = 52;
+        //        blip.Sprite = 108;
+        //        blip.Dimension = 0;
+        //    }
+        //}
 
         public async Task CreateBankAccountAsync(IPlayer player, object[] args)
         {
