@@ -26,11 +26,31 @@ namespace AltVStrefaRPServer.Services.Businesses
             await UpdateAsync(business).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Adds new employee to business. Fails if can't add new emplyoyee or there is no default rank set
+        /// </summary>
+        /// <param name="business"></param>
+        /// <param name="newEmployee"></param>
+        /// <returns></returns>
         public bool AddEmployee(Business business, Character newEmployee)
         {
             if (!business.CanAddNewMember(newEmployee)) return false;
             business.AddNewMember(newEmployee);
             if (!business.SetDefaultRank(newEmployee)) return false;
+            return true;
+        }
+
+        /// <summary>
+        /// Removes employee from business and resets his permissions
+        /// </summary>
+        /// <param name="business"></param>
+        /// <param name="employeeToRemove"></param>
+        /// <returns></returns>
+        public bool RemoveEmployee(Business business, Character employeeToRemove)
+        {
+            if (!business.IsWorkingHere(employeeToRemove)) return false;
+            business.Employees.Remove(employeeToRemove);
+            employeeToRemove.BusinessRank = -1;
             return true;
         }
 

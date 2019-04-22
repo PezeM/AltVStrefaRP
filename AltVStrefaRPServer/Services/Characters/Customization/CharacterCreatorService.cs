@@ -42,7 +42,9 @@ namespace AltVStrefaRPServer.Services.Characters.Customization
                 BackgroundImage = "../images/profile-card-background.jpg",
                 ProfileImage = "../images/default-profile-image.jpg",
                 CreationDate = DateTime.Now,
-                TimePlayed = 0
+                LastPlayed = DateTime.Now,
+                TimePlayed = 0,
+                BusinessRank = -1,
             };
         }
     }
