@@ -61,7 +61,7 @@ namespace AltVStrefaRPServer.Database
 
             modelBuilder.Entity<BusinessRank>()
                 .HasOne(b => b.Permissions)
-                .WithOne(b => b.BusinessRank)
+                .WithOne(r=> r.BusinessRank)
                 .HasForeignKey<BusinessPermissions>(b => b.BusinessRankForeignKey);
         }
     }

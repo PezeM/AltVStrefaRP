@@ -51,7 +51,7 @@ namespace AltVStrefaRPServer.Models.Businesses
 
     public class BusinessPermissions
     {
-        public int BusinessPermissionId { get; set; }
+        public int Id { get; set; }
         public bool HaveCarKeys { get; set; }
         public bool HaveBusinessKeys { get; set; } 
         public bool CanOpenBusinessInventory { get; set; }
