@@ -49,33 +49,29 @@ namespace AltVStrefaRPServer.Modules.Environment
                 _elapsedMinutes = 0;
                 ChangeWeather();
             }
-
-            ApplyChangesToPlayers();
         }
 
         private void UpdateTime()
         {
             _gameTime.Minutes += AppSettings.Current.ServerConfig.OneMinuteIrlToGameTime;
+            foreach (var player in Alt.GetAllPlayers())
+            {
+                player.SetDateTime(_gameTime.Days, 0, 0, _gameTime.Hours, _gameTime.Minutes, 0);
+            }
         }
 
         private void ChangeWeather()
         {
-            
-        }
-
-        private void ApplyChangesToPlayers()
-        {
             foreach (var player in Alt.GetAllPlayers())
             {
                 player.SetWeather(_currentWeather);
-                player.SetDateTime(_gameTime.Days, 0, 0, _gameTime.Hours, _gameTime.Minutes, 0);
             }
         }
     }
 
     public struct GameTime
     {
-        public int Days { get;set; }
+        public int Days { get; set; }
 
         public int Hours
         {
