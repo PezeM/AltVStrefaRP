@@ -117,7 +117,9 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             else if (vehicle.OwnerType == OwnerType.Group)
             {
                 // TODO Group management
-                return true;
+                var businessRank = character.Business.BusinessRanks.FirstOrDefault(b => b.Id == character.BusinessRank);
+                if (businessRank == null) return false;
+                return businessRank.Permissions.HaveVehicleKeys;
             }
             else if (vehicle.OwnerType == OwnerType.Job)
             {

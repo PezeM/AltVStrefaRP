@@ -108,7 +108,7 @@ namespace AltVStrefaRPServer.Database.Migrations
 
                     b.Property<bool>("HaveBusinessKeys");
 
-                    b.Property<bool>("HaveCarKeys");
+                    b.Property<bool>("HaveVehicleKeys");
 
                     b.HasKey("Id");
 

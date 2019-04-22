@@ -143,7 +143,7 @@ namespace AltVStrefaRPServer.Services.Businesses
                         CanKickOldMembers = true,
                         CanOpenBusinessInventory = true,
                         HaveBusinessKeys = true,
-                        HaveCarKeys = true
+                        HaveVehicleKeys = true
                     }
                 },
                 new BusinessRank
@@ -156,7 +156,7 @@ namespace AltVStrefaRPServer.Services.Businesses
                         CanKickOldMembers = false,
                         CanOpenBusinessInventory = false,
                         HaveBusinessKeys = false,
-                        HaveCarKeys = false
+                        HaveVehicleKeys = false
                     }
                 }
             };
