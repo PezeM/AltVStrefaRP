@@ -9,6 +9,7 @@ namespace AltVStrefaRPServer.Database
         public DbSet<Character> Characters { get; set; }
         public DbSet<Account> Accounts { get; set; }
         public DbSet<VehicleModel> Vehicles { get; set; }
+
         // Businesses
         public DbSet<Business> Businesses { get; set; }
         public DbSet<MechanicBusiness> MechanicBusinesses { get; set; }
@@ -47,6 +48,10 @@ namespace AltVStrefaRPServer.Database
                 .Ignore(b => b.Blip)
                 .Property(b => b.Type)
                 .HasConversion<int>();
+
+            modelBuilder.Entity<Business>()
+                .HasMany(b => b.Employees)
+                .WithOne(c => c.Business);
         }
     }
 }

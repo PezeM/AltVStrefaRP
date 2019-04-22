@@ -1,6 +1,7 @@
 ﻿using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using System;
+using AltVStrefaRPServer.Models.Businesses;
 
 namespace AltVStrefaRPServer.Models
 {
@@ -24,8 +25,8 @@ namespace AltVStrefaRPServer.Models
         public DateTime CreationDate { get; set; }
         public DateTime LastPlayed { get; set; }
         public int TimePlayed { get; set; }
-
         public IPlayer Player { get; set; }
+        public Business Business { get; set; }
 
         public string GetFullName()
         {

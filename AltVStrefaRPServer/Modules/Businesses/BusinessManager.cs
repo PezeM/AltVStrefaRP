@@ -88,7 +88,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
         /// <returns></returns>
         public bool CheckIfBusinessExists(string businessName)
         {
-            return Businesses.Values.Any(b => b.Title == businessName);
+            return Businesses.Values.Any(b => b.BusinessName == businessName);
         }
 
         /// <summary>
@@ -106,7 +106,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
 
             var business = _businessFactory.CreateBusiness(businessType, position, name);
             await _businessService.AddNewBusinessAsync(business).ConfigureAwait(false);
-            Alt.Log($"Created new business ID({business.Id}) Name({business.Title}) in {Time.GetTimestampMs() - startTime}ms.");
+            Alt.Log($"Created new business ID({business.Id}) Name({business.BusinessName}) in {Time.GetTimestampMs() - startTime}ms.");
             return true;
         }
     }

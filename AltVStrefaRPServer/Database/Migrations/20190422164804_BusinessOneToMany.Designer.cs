@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AltVStrefaRPServer.Database.Migrations
 {
     [DbContext(typeof(ServerContext))]
-    [Migration("20190411171051_BusinessConversion")]
-    partial class BusinessConversion
+    [Migration("20190422164804_BusinessOneToMany")]
+    partial class BusinessOneToMany
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -63,16 +63,18 @@ namespace AltVStrefaRPServer.Database.Migrations
 
                     b.Property<string>("BlipName");
 
+                    b.Property<string>("BusinessName");
+
                     b.Property<DateTime>("CreatedAt");
 
                     b.Property<string>("Discriminator")
                         .IsRequired();
 
+                    b.Property<int>("MaxMembersCount");
+
                     b.Property<float>("Money");
 
                     b.Property<int>("OwnerId");
-
-                    b.Property<string>("BusinessName");
 
                     b.Property<int>("Type");
 
@@ -99,6 +101,8 @@ namespace AltVStrefaRPServer.Database.Migrations
                     b.Property<int>("Age");
 
                     b.Property<string>("BackgroundImage");
+
+                    b.Property<int?>("BusinessId");
 
                     b.Property<DateTime>("CreationDate");
 
@@ -127,6 +131,8 @@ namespace AltVStrefaRPServer.Database.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AccountId");
+
+                    b.HasIndex("BusinessId");
 
                     b.ToTable("Characters");
                 });
@@ -225,6 +231,10 @@ namespace AltVStrefaRPServer.Database.Migrations
                         .WithMany("Characters")
                         .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("AltVStrefaRPServer.Models.Businesses.Business", "Business")
+                        .WithMany("Employees")
+                        .HasForeignKey("BusinessId");
                 });
 #pragma warning restore 612, 618
         }

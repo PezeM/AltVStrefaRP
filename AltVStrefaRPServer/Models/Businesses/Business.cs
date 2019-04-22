@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Models.Enums;
@@ -9,13 +10,15 @@ namespace AltVStrefaRPServer.Models.Businesses
     {
         public int Id { get; set; }
         public int OwnerId { get; set; }
-        public string Title { get; set; }
+        public string BusinessName { get; set; }
         public float X { get; set; }
         public float Y { get; set; }
         public float Z { get; set; }
         public float Money { get; set; }
+        public virtual int MaxMembersCount { get; set; } = 20;
         public DateTime CreatedAt { get; set; }
         public BusinessType Type { get; set; }
+        public ICollection<Character> Employees { get; set; }
 
         public virtual byte BlipModel { get; protected set; }
         public virtual string BlipName { get; protected set; }

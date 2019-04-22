@@ -61,7 +61,7 @@ namespace AltVStrefaRPServer.Database.Migrations
 
                     b.Property<int>("OwnerId");
 
-                    b.Property<string>("Title");
+                    b.Property<string>("BusinessName");
 
                     b.Property<float>("X");
 

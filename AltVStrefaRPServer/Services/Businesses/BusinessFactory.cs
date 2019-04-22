@@ -48,7 +48,7 @@ namespace AltVStrefaRPServer.Services.Businesses
         {
             var business = new MechanicBusiness
             {
-                Title = name,
+                BusinessName = name,
                 Money = 250,
                 X = position.X,
                 Y = position.X,
@@ -64,7 +64,7 @@ namespace AltVStrefaRPServer.Services.Businesses
         {
             var business = new RestaurantBusiness()
             {
-                Title = name,
+                BusinessName = name,
                 Money = 250,
                 X = position.X,
                 Y = position.X,
@@ -80,7 +80,7 @@ namespace AltVStrefaRPServer.Services.Businesses
         {
             var business = new PubBusiness()
             {
-                Title = name,
+                BusinessName = name,
                 Money = 250,
                 X = position.X,
                 Y = position.X,
@@ -98,7 +98,7 @@ namespace AltVStrefaRPServer.Services.Businesses
             {
                 Id = business.Id,
                 OwnerId = business.OwnerId,
-                Title = business.Title,
+                BusinessName = business.BusinessName,
                 Money = business.Money,
                 X = business.X,
                 Y = business.Y,
@@ -115,7 +115,7 @@ namespace AltVStrefaRPServer.Services.Businesses
             {
                 Id = business.Id,
                 OwnerId = business.OwnerId,
-                Title = business.Title,
+                BusinessName = business.BusinessName,
                 Money = business.Money,
                 X = business.X,
                 Y = business.Y,
