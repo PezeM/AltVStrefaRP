@@ -7,7 +7,7 @@ namespace AltVStrefaRPServer.Services.Businesses
     public interface IBusinessService
     {
         Task UpdateOwnerAsync(Business business, Character newOwner);
-        Task SaveAsync(Business business);
+        Task UpdateAsync(Business business);
         Task AddNewBusinessAsync(Business business);
     }
 }

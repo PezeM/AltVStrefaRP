@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using AltV.Net;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
@@ -55,6 +56,7 @@ namespace AltVStrefaRPServer.Services.Businesses
                 Z = position.Z,
                 CreatedAt = DateTime.Now,
                 Type = BusinessType.Mechanic,
+                BusinessRanks = CreateDefaultBusinessRanks(),
             };
             //business.Blip = CreateBlip(business);
             return business;
@@ -71,6 +73,7 @@ namespace AltVStrefaRPServer.Services.Businesses
                 Z = position.Z,
                 CreatedAt = DateTime.Now,
                 Type = BusinessType.Mechanic,
+                BusinessRanks = CreateDefaultBusinessRanks(),
             };
             //business.Blip = CreateBlip(business);
             return business;
@@ -87,6 +90,7 @@ namespace AltVStrefaRPServer.Services.Businesses
                 Z = position.Z,
                 CreatedAt = DateTime.Now,
                 Type = BusinessType.Mechanic,
+                BusinessRanks = CreateDefaultBusinessRanks(),
             };
             //business.Blip = CreateBlip(business);
             return business;
@@ -123,6 +127,38 @@ namespace AltVStrefaRPServer.Services.Businesses
                 CreatedAt = business.CreatedAt,
                 Type = business.Type,
                 //Blip = CreateBlip(business)
+            };
+        }
+
+        private List<BusinessRank> CreateDefaultBusinessRanks()
+        {
+            return new List<BusinessRank>
+            {
+                new BusinessRank
+                {
+                    RankName = "Właściciel",
+                    Permissions = new BusinessPermissions
+                    {
+                        CanInviteNewMembers = true,
+                        CanKickOldMembers = true,
+                        CanOpenBusinessInventory = true,
+                        HaveBusinessKeys = true,
+                        HaveCarKeys = true
+                    }
+                },
+                new BusinessRank
+                {
+                    RankName = "Pracownik",
+                    IsDefaultRank = true,
+                    Permissions = new BusinessPermissions
+                    {
+                        CanInviteNewMembers = false,
+                        CanKickOldMembers = false,
+                        CanOpenBusinessInventory = false,
+                        HaveBusinessKeys = false,
+                        HaveCarKeys = false
+                    }
+                }
             };
         }
 
