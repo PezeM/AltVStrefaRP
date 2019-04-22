@@ -12,6 +12,8 @@ namespace AltVStrefaRPServer.Database
 
         // Businesses
         public DbSet<Business> Businesses { get; set; }
+        public DbSet<BusinessRank> BusinessesRanks { get; set; }
+        public DbSet<BusinessPermissions> BusinessesPermissions { get; set; }
         public DbSet<MechanicBusiness> MechanicBusinesses { get; set; }
         public DbSet<RestaurantBusiness> RestaurantBusinesses { get; set; }
 
@@ -52,6 +54,15 @@ namespace AltVStrefaRPServer.Database
             modelBuilder.Entity<Business>()
                 .HasMany(b => b.Employees)
                 .WithOne(c => c.Business);
+
+            modelBuilder.Entity<BusinessRank>()
+                .HasOne(b => b.Business)
+                .WithMany(b => b.BusinessRanks);
+
+            modelBuilder.Entity<BusinessRank>()
+                .HasOne(b => b.Permissions)
+                .WithOne(b => b.BusinessRank)
+                .HasForeignKey<BusinessPermissions>(b => b.BusinessRankForeignKey);
         }
     }
 }

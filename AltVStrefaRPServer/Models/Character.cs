@@ -27,6 +27,7 @@ namespace AltVStrefaRPServer.Models
         public int TimePlayed { get; set; }
         public IPlayer Player { get; set; }
         public Business Business { get; set; }
+        public int BusinessRank { get; set; }
 
         public string GetFullName()
         {
