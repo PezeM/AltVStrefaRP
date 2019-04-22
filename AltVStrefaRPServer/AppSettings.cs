@@ -17,7 +17,9 @@
     {
         public ConfigPosition SpawnPosition { get; set; }
         public ConfigPosition LoginPosition { get; set; }
-        public float StartingMoney { get; set; }
+        public float StartingMoney { get; set; } = 250.0f;
+        public int ChangeWeatherInterval { get; set; } = 30;
+        public int OneMinuteIrlToGameTime { get; set; } = 20;
     }
 
     public class ConfigPosition

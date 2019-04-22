@@ -40,6 +40,7 @@ namespace AltVStrefaRPServer
             var bankHandler = Startup.ServiceProvider.GetServices<BankHandler>();
             var sittingHandler = Startup.ServiceProvider.GetService<SittingHandler>();
             var temporaryChatHandler = Startup.ServiceProvider.GetService<TemporaryChatHandler>();
+            var timeManager = Startup.ServiceProvider.GetService<TimeManager>();
 
             vehicleManager = Startup.ServiceProvider.GetService<VehicleManager>();
             var businessesManager = Startup.ServiceProvider.GetService<BusinessManager>();

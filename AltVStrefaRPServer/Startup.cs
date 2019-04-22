@@ -82,6 +82,7 @@ namespace AltVStrefaRPServer
             services.AddTransient<AdminCommands>();
             services.AddTransient<CharacterCreator>();
             services.AddTransient<SittingHandler>();
+            services.AddTransient<TimeManager>();
 
             // Build provider
             ServiceProvider = services.BuildServiceProvider();
