@@ -13,9 +13,11 @@ namespace AltVStrefaRPServer.Modules.Environment
             ? 30 : AppSettings.Current.ServerConfig.ChangeWeatherInterval;
         private uint _currentWeather = (uint)Weathers.ExtraSunny;
         private GameTime _gameTime;
+        private Random _rng;
 
         public TimeManager()
         {
+            _rng = new Random();
             _gameTime = new GameTime
             {
                 Days = 0,
@@ -58,13 +60,50 @@ namespace AltVStrefaRPServer.Modules.Environment
             {
                 player.SetDateTime(_gameTime.Days, 0, 0, _gameTime.Hours, _gameTime.Minutes, 0);
             }
+            Alt.Log($"Updated game time to {_gameTime}");
         }
 
         private void ChangeWeather()
         {
+            var weatherChance = _rng.Next(0, 101);
+            GetNewWeather(weatherChance);
+
             foreach (var player in Alt.GetAllPlayers())
             {
                 player.SetWeather(_currentWeather);
+            }
+            Alt.Log($"Updated weather to ${_currentWeather}.");
+        }
+
+        private void GetNewWeather(int weatherChance)
+        {
+            if (weatherChance < 50)
+            {
+                _currentWeather = (uint)Weathers.Clear;
+            }
+            else if (weatherChance < 60)
+            {
+                _currentWeather = (uint)Weathers.ExtraSunny;
+            }
+            else if (weatherChance < 70)
+            {
+                _currentWeather = (uint)Weathers.Clouds;
+            }
+            else if (weatherChance < 80)
+            {
+                _currentWeather = (uint)Weathers.Smog;
+            }
+            else if (weatherChance < 85)
+            {
+                _currentWeather = (uint)Weathers.Overcast;
+            }
+            else if (weatherChance < 95)
+            {
+                _currentWeather = (uint)Weathers.Lightrain;
+            }
+            else if (weatherChance <= 100)
+            {
+                _currentWeather = (uint)Weathers.Thunderstorm;
             }
         }
     }
@@ -100,5 +139,7 @@ namespace AltVStrefaRPServer.Modules.Environment
                 }
             }
         }
+
+        public override string ToString() => $"Day: {Days} Hour: {Hours} Minute: {Minutes}";
     }
 }
