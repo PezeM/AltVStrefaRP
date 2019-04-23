@@ -33,7 +33,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
         private void LoadBusinesses()
         {
             var startTime = Time.GetTimestampMs();
-            foreach (var business in _serverContext.Businesses.AsNoTracking().ToList())
+            foreach (var business in _serverContext.Businesses.Include(b => b.BusinessRanks).Include(b => b.Employees).AsNoTracking().ToList())
             {
                 //Businesses.TryAdd(business.Id, _businessFactory.CreateNewBusiness(business));
                 Businesses.TryAdd(business.Id, business);
