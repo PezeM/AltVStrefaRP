@@ -4,7 +4,7 @@ using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Handlers;
 using AltVStrefaRPServer.Modules.Admin;
 using AltVStrefaRPServer.Modules.Businesses;
-using AltVStrefaRPServer.Modules.Character.Customization;
+using AltVStrefaRPServer.Modules.CharacterModule.Customization;
 using AltVStrefaRPServer.Modules.Chat;
 using AltVStrefaRPServer.Modules.Environment;
 using AltVStrefaRPServer.Modules.Money;

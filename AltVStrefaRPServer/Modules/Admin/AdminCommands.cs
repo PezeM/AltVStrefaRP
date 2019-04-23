@@ -1,6 +1,5 @@
 ﻿using AltV.Net;
 using AltV.Net.Elements.Entities;
-using AltVStrefaRPServer.Modules.Character;
 using AltVStrefaRPServer.Modules.Chat;
 using AltVStrefaRPServer.Modules.Vehicle;
 using System;
@@ -9,6 +8,7 @@ using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Modules.Businesses;
 using AltVStrefaRPServer.Modules.Money;
 using AltVStrefaRPServer.Services;
+using AltVStrefaRPServer.Modules.CharacterModule;
 
 namespace AltVStrefaRPServer.Modules.Admin
 {
@@ -18,15 +18,17 @@ namespace AltVStrefaRPServer.Modules.Admin
         private VehicleManager _vehicleManager;
         private BankHandler _bankHandler;
         private BusinessManager _businessManager;
+        private BusinessHandler _businessHandler;
         private INotificationService _notificationService;
 
         public AdminCommands(TemporaryChatHandler chatHandler, VehicleManager vehicleManager, BankHandler bankHandler, 
-            BusinessManager businessManager, INotificationService notificationService)
+            BusinessManager businessManager, BusinessHandler businessHandler, INotificationService notificationService)
         {
             _chatHandler = chatHandler;
             _vehicleManager = vehicleManager;
             _bankHandler = bankHandler;
             _businessManager = businessManager;
+            _businessHandler = businessHandler;
             _notificationService = notificationService;
 
             Alt.Log($"Admin commands initialized");

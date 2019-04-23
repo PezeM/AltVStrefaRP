@@ -5,7 +5,7 @@ using AltV.Net;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 
-namespace AltVStrefaRPServer.Modules.Character
+namespace AltVStrefaRPServer.Modules.CharacterModule
 {
     public class CharacterManager
     {

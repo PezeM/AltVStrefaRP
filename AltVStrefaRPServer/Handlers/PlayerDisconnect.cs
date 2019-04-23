@@ -5,7 +5,7 @@ using AltV.Net.Async;
 using AltV.Net.Data;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models;
-using AltVStrefaRPServer.Modules.Character;
+using AltVStrefaRPServer.Modules.CharacterModule;
 
 namespace AltVStrefaRPServer.Handlers
 {

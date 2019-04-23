@@ -1,14 +1,12 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
-using AltVStrefaRPServer.Data;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Client;
-using AltVStrefaRPServer.Modules.Character;
+using AltVStrefaRPServer.Modules.CharacterModule;
 using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Money;
 using Microsoft.EntityFrameworkCore;

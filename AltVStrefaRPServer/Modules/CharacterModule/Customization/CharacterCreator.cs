@@ -4,7 +4,7 @@ using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Services.Characters.Customization;
 
-namespace AltVStrefaRPServer.Modules.Character.Customization
+namespace AltVStrefaRPServer.Modules.CharacterModule.Customization
 {
     public class CharacterCreator
     {
