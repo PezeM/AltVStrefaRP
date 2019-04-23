@@ -140,10 +140,11 @@ namespace AltVStrefaRPServer.Services.Businesses
                     Permissions = new BusinessPermissions
                     {
                         CanInviteNewMembers = true,
-                        CanKickOldMembers = true,
                         CanOpenBusinessInventory = true,
                         HaveBusinessKeys = true,
-                        HaveVehicleKeys = true
+                        HaveVehicleKeys = true,
+                        CanManageRanks = true,
+                        CanOpenBusinessMenu = true,
                     }
                 },
                 new BusinessRank
@@ -153,10 +154,11 @@ namespace AltVStrefaRPServer.Services.Businesses
                     Permissions = new BusinessPermissions
                     {
                         CanInviteNewMembers = false,
-                        CanKickOldMembers = false,
                         CanOpenBusinessInventory = false,
                         HaveBusinessKeys = false,
-                        HaveVehicleKeys = false
+                        HaveVehicleKeys = false,
+                        CanOpenBusinessMenu = false,
+                        CanManageRanks = true,
                     }
                 }
             };

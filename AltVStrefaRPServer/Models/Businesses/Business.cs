@@ -18,6 +18,7 @@ namespace AltVStrefaRPServer.Models.Businesses
         public float Money { get; set; }
         public virtual int MaxMembersCount { get; set; } = 20;
         public virtual int MaxRanksCount { get; set; } = 5;
+        public virtual int Transactions { get; set; }
         public DateTime CreatedAt { get; set; }
         public BusinessType Type { get; set; }
         public int EmployeesCount => Employees.Count;
