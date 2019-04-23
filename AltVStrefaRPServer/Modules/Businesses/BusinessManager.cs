@@ -6,6 +6,7 @@ using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Helpers;
+using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Businesses;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Services.Businesses;
@@ -34,9 +35,9 @@ namespace AltVStrefaRPServer.Modules.Businesses
             var startTime = Time.GetTimestampMs();
             foreach (var business in _serverContext.Businesses.AsNoTracking().ToList())
             {
-                //Businesses.TryAdd(business.Id, _businessFactory.CreateBusiness(business));
+                //Businesses.TryAdd(business.Id, _businessFactory.CreateNewBusiness(business));
                 Businesses.TryAdd(business.Id, business);
-                //_businessFactory.CreateBusiness(business);
+                //_businessFactory.CreateNewBusiness(business);
             }
             Alt.Log($"Loaded {Businesses.Count} businesses from database in {Time.GetTimestampMs() - startTime}ms.");
         }
@@ -91,6 +92,11 @@ namespace AltVStrefaRPServer.Modules.Businesses
             return Businesses.Values.Any(b => b.BusinessName == businessName);
         }
 
+        public BusinessRank GetBusinessRankForPlayer(Character character)
+        {
+            return character.Business.BusinessRanks.FirstOrDefault(q => q.Id == character.BusinessRank);
+        }
+
         /// <summary>
         /// Create new business and save it to database
         /// </summary>
@@ -98,15 +104,26 @@ namespace AltVStrefaRPServer.Modules.Businesses
         /// <param name="position">Position where the business will be located</param>
         /// <param name="name">Name of the business</param>
         /// <returns></returns>
-        public async Task<bool> CreateNewBusinessAsync(BusinessType businessType, Position position, string name)
+        public async Task<bool> CreateNewBusinessAsync(int ownerId, BusinessType businessType, Position position, string name)
         {
             var startTime = Time.GetTimestampMs();
             if(businessType == BusinessType.None || string.IsNullOrEmpty(name)) return false;
             if (CheckIfBusinessExists(name)) return false;
 
-            var business = _businessFactory.CreateBusiness(businessType, position, name);
+            var business = _businessFactory.CreateNewBusiness(ownerId, businessType, position, name);
             await _businessService.AddNewBusinessAsync(business).ConfigureAwait(false);
+            Businesses.Add(business.Id, business);
             Alt.Log($"Created new business ID({business.Id}) Name({business.BusinessName}) in {Time.GetTimestampMs() - startTime}ms.");
+            return true;
+        }
+
+        public async Task<bool> UpdateBusinessOwner(Business business, Character newOwner)
+        {
+            if (newOwner.Business != business)
+            {
+                business.AddNewMember(newOwner);
+            }
+            await _businessService.UpdateOwnerAsync(business, newOwner).ConfigureAwait(false);
             return true;
         }
     }

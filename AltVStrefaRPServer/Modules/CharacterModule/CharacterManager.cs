@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using AltV.Net;
-using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
+using AltVStrefaRPServer.Models;
 
 namespace AltVStrefaRPServer.Modules.CharacterModule
 {
@@ -17,12 +17,12 @@ namespace AltVStrefaRPServer.Modules.CharacterModule
         {
         }
 
-        public static Dictionary<int, Models.Character> CharactersList { get; private set; } = new Dictionary<int, Models.Character>();
+        public static Dictionary<int, Character> CharactersList { get; private set; } = new Dictionary<int, Character>();
 
-        public Models.Character GetCharacter(IPlayer player)
+        public Character GetCharacter(IPlayer player)
             => CharactersList.ContainsKey(player.Id) ? CharactersList[player.Id] : null;
 
-        public Models.Character GetCharacter(int characterId)
+        public Character GetCharacter(int characterId)
             => CharactersList.Values.FirstOrDefault(c => c.Id == characterId);
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace AltVStrefaRPServer.Modules.CharacterModule
         /// </summary>
         /// <param name="bankAccountId"></param>
         /// <returns></returns>
-        public Models.Character GetCharacterByBankAccount(int bankAccountId)
+        public Character GetCharacterByBankAccount(int bankAccountId)
              => CharactersList.Values.FirstOrDefault(c => c.BankAccount.Id == bankAccountId);
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace AltVStrefaRPServer.Modules.CharacterModule
         /// </summary>
         /// <param name="player"></param>
         /// <param name="character"></param>
-        public void IntializeCharacter(IPlayer player, Models.Character character)
+        public void IntializeCharacter(IPlayer player, Character character)
         {
             character.Player = player;
             player.Name = character.GetFullName();
@@ -58,7 +58,7 @@ namespace AltVStrefaRPServer.Modules.CharacterModule
         /// Removes character data from server memory
         /// </summary>
         /// <param name="characterData"></param>
-        public void RemoveCharacterDataFromServer(Models.Character characterData)
+        public void RemoveCharacterDataFromServer(Character characterData)
         {
             CharactersList.Remove(characterData.Player.Id);
             Alt.Log($"Removed character data from server for ID({characterData.Player.Id}) CID({characterData.Id})");

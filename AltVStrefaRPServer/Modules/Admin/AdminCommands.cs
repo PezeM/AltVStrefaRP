@@ -44,12 +44,61 @@ namespace AltVStrefaRPServer.Modules.Admin
             _chatHandler.RegisterCommand("openbank", OpenBankMenu);
             _chatHandler.RegisterCommand("createBankAccount", CreateBankAccount);
             _chatHandler.RegisterCommand("createbusiness", CreateNewBusiness);
+            _chatHandler.RegisterCommand("setBusinessOwner", SetBusinessOwner);
             _chatHandler.RegisterCommand("openBusinessMenu", OpenBusinessMenu);
+        }
+
+        private void SetBusinessOwner(IPlayer player, string[] args)
+        {
+            if(args == null || args.Length < 2) return;
+            try
+            {
+                if (!int.TryParse(args[0].ToString(), out int characterId))
+                {
+                    _notificationService.ShowErrorNotfication(player,$"Podano zły numer postaci.", 5000);
+                    return;
+                }
+                var character = CharacterManager.Instance.GetCharacter(characterId);
+                if (character == null)
+                {
+                    _notificationService.ShowErrorNotfication(player,$"Nie znaleziono postaci z takim id.", 5000);
+                    return;
+                }
+
+                if (!int.TryParse(args[1].ToString(), out int businessId))
+                {
+                    _notificationService.ShowErrorNotfication(player,$"Podano złe id biznesu.", 5000);
+                    return;
+                }
+                var business = _businessManager.GetBusiness(businessId);
+                if (business == null)
+                {
+                    _notificationService.ShowErrorNotfication(player,$"Nie znaleziono biznesu z takim id.", 5000);
+                    return;
+                }
+
+                if (_businessManager.UpdateBusinessOwner(business, character).Result)
+                {
+                    _notificationService.ShowSuccessNotification(player, $"Pomyślnie zaktualizowano właściciela biznesu ID({business.Id}) " +
+                                                                         $"na {character.GetFullName()}", 6000);
+                }
+                else
+                {
+                    _notificationService.ShowErrorNotfication(player, "Nie udało się zaktualizować właściciela biznesu.");
+                }
+            }
+            catch (Exception e)
+            {
+                Alt.Log($"Error setting business owner. Ex: {e}");
+                throw;
+            }
         }
 
         private void OpenBusinessMenu(IPlayer player, string[] args)
         {
-            throw new NotImplementedException();
+            var character = player.GetCharacter();
+            if (character == null) return;
+            _businessHandler.OpenBusinessMenu(character);
         }
 
         private void CreateNewBusiness(IPlayer player, string[] args)
@@ -67,7 +116,7 @@ namespace AltVStrefaRPServer.Modules.Admin
                     return;
                 }
 
-                if (_businessManager.CreateNewBusinessAsync(businessType, player.Position, args[1]).Result)
+                if (_businessManager.CreateNewBusinessAsync(character.Id, businessType, player.Position, args[1]).Result)
                 {
                     _notificationService.ShowSuccessNotification(player, 
                         $"Pomyślnie stworzono nowy biznes: {businessType} z nazwą {args[1]}.", 6000);
