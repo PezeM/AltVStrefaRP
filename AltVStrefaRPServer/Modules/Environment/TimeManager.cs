@@ -72,7 +72,7 @@ namespace AltVStrefaRPServer.Modules.Environment
             {
                 player.SetWeather(_currentWeather);
             }
-            Alt.Log($"Updated weather to ${_currentWeather}.");
+            Alt.Log($"Updated weather to {_currentWeather}.");
         }
 
         private void GetNewWeather(int weatherChance)
@@ -110,17 +110,20 @@ namespace AltVStrefaRPServer.Modules.Environment
 
     public struct GameTime
     {
+        private int _hours;
+        private int _minutes;
+
         public int Days { get; set; }
 
         public int Hours
         {
-            get { return Hours; }
+            get { return _hours; }
             set
             {
-                Hours = value;
-                if (Hours >= 24)
+                _hours = value;
+                if (_hours >= 24)
                 {
-                    Hours = 0;
+                    _hours = 0;
                     Days++;
                 }
             }
@@ -128,13 +131,13 @@ namespace AltVStrefaRPServer.Modules.Environment
 
         public int Minutes
         {
-            get { return Minutes; }
+            get { return _minutes; }
             set
             {
-                Minutes = value;
-                if (Minutes >= 60)
+                _minutes = value;
+                if (_minutes >= 60)
                 {
-                    Minutes = 0;
+                    _minutes = 0;
                     Hours++;
                 }
             }
