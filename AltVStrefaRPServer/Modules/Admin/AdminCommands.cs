@@ -42,6 +42,12 @@ namespace AltVStrefaRPServer.Modules.Admin
             _chatHandler.RegisterCommand("openbank", OpenBankMenu);
             _chatHandler.RegisterCommand("createBankAccount", CreateBankAccount);
             _chatHandler.RegisterCommand("createbusiness", CreateNewBusiness);
+            _chatHandler.RegisterCommand("openBusinessMenu", OpenBusinessMenu);
+        }
+
+        private void OpenBusinessMenu(IPlayer player, string[] args)
+        {
+            throw new NotImplementedException();
         }
 
         private void CreateNewBusiness(IPlayer player, string[] args)

@@ -44,6 +44,7 @@ namespace AltVStrefaRPServer
 
             vehicleManager = Startup.ServiceProvider.GetService<VehicleManager>();
             var businessesManager = Startup.ServiceProvider.GetService<BusinessManager>();
+            var businessHandlerv = Startup.ServiceProvider.GetServices<BusinessHandler>();
             var characterCreator = Startup.ServiceProvider.GetService<CharacterCreator>();
             var vehicleLoader = Startup.ServiceProvider.GetService<VehicleManagerService>();
             var adminCommands = Startup.ServiceProvider.GetService<AdminCommands>();

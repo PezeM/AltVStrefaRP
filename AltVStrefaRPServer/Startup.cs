@@ -77,6 +77,7 @@ namespace AltVStrefaRPServer
             services.AddSingleton<BankHandler>();
             services.AddSingleton<BankAccountManager>();
             services.AddSingleton<BusinessManager>();
+            services.AddSingleton<BusinessHandler>();
 
             services.AddSingleton<TemporaryChatHandler>();
             services.AddTransient<AdminCommands>();

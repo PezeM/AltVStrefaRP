@@ -71,26 +71,4 @@ namespace AltVStrefaRPServer.Models.Businesses
         /// <returns></returns>
         public bool IsWorkingHere(Character character) => character.Business.Id == Id;
     }
-
-    public class BusinessRank
-    {
-        public int Id { get; set; }
-        public bool IsDefaultRank { get; set; }
-        public string RankName { get; set; }
-        public Business Business { get; set; }
-        public BusinessPermissions Permissions { get; set; }
-    }
-
-    public class BusinessPermissions
-    {
-        public int Id { get; set; }
-        public bool HaveVehicleKeys { get; set; }
-        public bool HaveBusinessKeys { get; set; } 
-        public bool CanOpenBusinessInventory { get; set; }
-        public bool CanInviteNewMembers { get; set; }
-        public bool CanKickOldMembers { get; set; }
-
-        public int BusinessRankForeignKey { get; set; }
-        public BusinessRank BusinessRank { get; set; }
-    }
 }
