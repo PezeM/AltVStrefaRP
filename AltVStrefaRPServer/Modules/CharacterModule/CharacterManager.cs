@@ -43,7 +43,6 @@ namespace AltVStrefaRPServer.Modules.CharacterModule
             character.Player = player;
             player.Name = character.GetFullName();
 
-            Alt.Log($"Putting character at position ${character.GetPosition()}");
             // TODO: Setting skin and shared data
             //player.Position = new Position(character.X, character.Y, character.Z);
             player.Spawn(character.GetPosition());

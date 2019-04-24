@@ -23,7 +23,8 @@ namespace AltVStrefaRPServer.Services.Businesses
         public async Task UpdateOwnerAsync(Business business,Character newOwner)
         {
             business.OwnerId = newOwner.Id;
-            await UpdateAsync(business).ConfigureAwait(false);
+            _serverContext.Characters.Update(newOwner);
+            await UpdateBusinessAsync(business).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -35,8 +36,8 @@ namespace AltVStrefaRPServer.Services.Businesses
         public bool AddEmployee(Business business, Character newEmployee)
         {
             if (!business.CanAddNewMember(newEmployee)) return false;
-            business.AddNewMember(newEmployee);
             if (!business.SetDefaultRank(newEmployee)) return false;
+            business.AddNewMember(newEmployee);
             return true;
         }
 
@@ -59,7 +60,7 @@ namespace AltVStrefaRPServer.Services.Businesses
         /// </summary>
         /// <param name="business">The business to save to database</param>
         /// <returns></returns>
-        public async Task UpdateAsync(Business business)
+        public async Task UpdateBusinessAsync(Business business)
         {
             _serverContext.Businesses.Update(business);
             await _serverContext.SaveChangesAsync().ConfigureAwait(false);

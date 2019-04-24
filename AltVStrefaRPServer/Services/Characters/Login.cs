@@ -67,7 +67,8 @@ namespace AltVStrefaRPServer.Services.Characters
 
         public async Task<Character> GetCharacterById(int characterId)
             => await _serverContext.Characters.AsNoTracking()
-                .Include(c => c.BankAccount).AsNoTracking()
+                .Include(c => c.BankAccount)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(c => c.Id == characterId);
 
         public string GeneratePassword(string password) => _hashingService.Hash(password, 1000);

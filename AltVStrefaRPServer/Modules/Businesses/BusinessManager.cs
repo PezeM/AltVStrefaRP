@@ -33,7 +33,10 @@ namespace AltVStrefaRPServer.Modules.Businesses
         private void LoadBusinesses()
         {
             var startTime = Time.GetTimestampMs();
-            foreach (var business in _serverContext.Businesses.Include(b => b.BusinessRanks).Include(b => b.Employees).AsNoTracking().ToList())
+            foreach (var business in _serverContext.Businesses.Include(b => b.Employees)
+                .Include(b => b.BusinessRanks)
+                .ThenInclude(r => r.Permissions)
+                .AsNoTracking().ToList())
             {
                 //Businesses.TryAdd(business.Id, _businessFactory.CreateNewBusiness(business));
                 Businesses.TryAdd(business.Id, business);
@@ -55,6 +58,11 @@ namespace AltVStrefaRPServer.Modules.Businesses
         /// <param name="ownerId"></param>
         /// <returns></returns>
         public List<Business> GetCharacterBusinesses(int ownerId) => Businesses.Values.Where(b => b.OwnerId == ownerId).ToList();
+
+        public Business GetBusiness(Character emplyoee)
+        {
+            return Businesses.Values.FirstOrDefault(b => b.Employees.Any(e => e.Id == emplyoee.Id));
+        }
 
         /// <summary>
         /// Get nearest business to player
@@ -92,9 +100,9 @@ namespace AltVStrefaRPServer.Modules.Businesses
             return Businesses.Values.Any(b => b.BusinessName == businessName);
         }
 
-        public BusinessRank GetBusinessRankForPlayer(Character character)
+        public BusinessRank GetBusinessRankForPlayer(Business business, Character character)
         {
-            return character.Business.BusinessRanks.FirstOrDefault(q => q.Id == character.BusinessRank);
+            return business.BusinessRanks.FirstOrDefault(q => q.Id == character.BusinessRank);
         }
 
         /// <summary>
@@ -121,10 +129,19 @@ namespace AltVStrefaRPServer.Modules.Businesses
         {
             if (newOwner.Business != business)
             {
-                business.AddNewMember(newOwner);
+                if (!_businessService.AddEmployee(business, newOwner)) return false;
+                await _businessService.UpdateOwnerAsync(business, newOwner).ConfigureAwait(false);
+                return true;
             }
-            await _businessService.UpdateOwnerAsync(business, newOwner).ConfigureAwait(false);
-            return true;
+            else if (newOwner.Business == business)
+            {
+                await _businessService.UpdateOwnerAsync(business, newOwner).ConfigureAwait(false);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

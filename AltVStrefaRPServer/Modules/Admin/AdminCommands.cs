@@ -81,6 +81,8 @@ namespace AltVStrefaRPServer.Modules.Admin
                 {
                     _notificationService.ShowSuccessNotification(player, $"Pomyślnie zaktualizowano właściciela biznesu ID({business.Id}) " +
                                                                          $"na {character.GetFullName()}", 6000);
+                    Alt.Log($"Updated owner of business ID({business.Id}) Name({business.BusinessName}) " +
+                            $"to character ID({character.Id}) Name({character.GetFullName()})");
                 }
                 else
                 {

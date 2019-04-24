@@ -126,7 +126,7 @@ namespace AltVStrefaRPServer.Handlers
                 player.SetData("accountId", account.AccountId);
                 var characterList = await _loginService.GetCharacterList(account.AccountId).ConfigureAwait(false);
                 await player.EmitAsync("loginSuccesfully", JsonConvert.SerializeObject(characterList));
-                Alt.Log($"LoginAccount data: {args[0]} password: {args[1]} Completed in {Time.GetTimestampMs() - startTime}ms.");
+                Alt.Log($"LoginAccount completed in {Time.GetTimestampMs() - startTime}ms.");
             }
             catch (Exception e)
             {

@@ -165,7 +165,7 @@ namespace AltVStrefaRPServer.Services.Businesses
                         HaveBusinessKeys = false,
                         HaveVehicleKeys = false,
                         CanOpenBusinessMenu = false,
-                        CanManageRanks = true,
+                        CanManageRanks = false,
                     }
                 }
             };
