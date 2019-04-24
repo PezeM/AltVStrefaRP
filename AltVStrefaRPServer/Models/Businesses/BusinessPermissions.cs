@@ -9,6 +9,7 @@
         public bool CanOpenBusinessInventory { get; set; }
         public bool CanInviteNewMembers { get; set; }
         public bool CanManageRanks { get; set; }
+        public bool CanManageEmployess { get; set; }
 
         public int BusinessRankForeignKey { get; set; }
         public BusinessRank BusinessRank { get; set; }

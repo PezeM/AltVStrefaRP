@@ -152,6 +152,7 @@ namespace AltVStrefaRPServer.Services.Businesses
                         HaveVehicleKeys = true,
                         CanManageRanks = true,
                         CanOpenBusinessMenu = true,
+                        CanManageEmployess = true,
                     }
                 },
                 new BusinessRank
@@ -166,6 +167,7 @@ namespace AltVStrefaRPServer.Services.Businesses
                         HaveVehicleKeys = false,
                         CanOpenBusinessMenu = false,
                         CanManageRanks = false,
+                        CanManageEmployess = false
                     }
                 }
             };

@@ -1,5 +1,10 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
 using AltV.Net;
+using AltV.Net.Async;
+using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Dto;
 using AltVStrefaRPServer.Services;
@@ -17,6 +22,63 @@ namespace AltVStrefaRPServer.Modules.Businesses
             _businessManager = businessManager;
             _notificationService = notificationService;
             Alt.Log("Intialized business handler.");
+            Alt.OnClient("GetBusinessesEmployess", GetBusinessesEmployessEvent);
+        }
+
+        private void GetBusinessesEmployessEvent(IPlayer player, object[] args)
+        {
+            if (!int.TryParse(args[0].ToString(), out int businessId))
+            {
+                _notificationService.ShowErrorNotfication(player, "Błędne ID biznesu,", 4000);
+                return;
+            }
+
+            var business = _businessManager.GetBusiness(businessId);
+            if (business == null)
+            {
+                _notificationService.ShowErrorNotfication(player, "Nie znaleziono takiego biznesu.", 4000);
+                return;
+            }
+
+            var character = player.GetCharacter();
+            if (character == null) return;
+
+            var businessRank = _businessManager.GetBusinessRankForPlayer(business, character);
+            if (businessRank == null)
+            {
+                _notificationService.ShowErrorNotfication(character.Player, "Nie masz ustalonych żadnych możliwości w biznesie.", 6000);
+                return;
+            }
+
+            if (!businessRank.Permissions.CanManageEmployess)
+            {
+                _notificationService.ShowErrorNotfication(character.Player, "Nie masz odpowiednich uprawień.");
+                return;
+            }
+
+            var businessEmployess = new BusinessEmployessDto
+            {
+                BusinessRanks = business.BusinessRanks.Select(e => new BusinessRanksDto
+                {
+                    Id = e.Id,
+                    RankName = e.RankName,
+                    IsDefaultRank = e.IsDefaultRank
+                }).ToList(),
+                BusinessEmployess = business.Employees.Select(e => new BusinessEmployeeExtendedDto
+                {
+                    Id = e.Id,
+                    LastName = e.LastName,
+                    Name = e.FirstName,
+                    Age = e.Age,
+                    Gender = e.Gender,
+                    RankId = e.BusinessRank,
+                    RankName = business.BusinessRanks.FirstOrDefault(br => br.Id == e.BusinessRank).RankName,
+                }).ToList()
+            };
+
+            var businessEmployessObject = JsonConvert.SerializeObject(businessEmployess);
+            Alt.Log($"Business employess object: {businessEmployessObject}");
+            player.Emit("populateBusinessEmployess", businessEmployessObject);
         }
 
         public void OpenBusinessMenu(Character character)
@@ -52,7 +114,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
                 OwnerId = business.OwnerId,
                 MaxMembersCount = business.MaxMembersCount,
                 Transactions = business.Transactions,
-                Employees = business.Employees.Select(q => new BusinessEmployee
+                Employees = business.Employees.Select(q => new BusinessEmployeeDto
                 {
                     Id = q.Id,
                     LastName = q.LastName,
