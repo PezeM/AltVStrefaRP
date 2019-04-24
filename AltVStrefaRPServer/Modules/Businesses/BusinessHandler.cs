@@ -58,7 +58,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
                     LastName = q.LastName,
                     Name = q.FirstName,
                     RankId = q.BusinessRank,
-                    RankName = business.BusinessRanks.FirstOrDefault(br => br.Id == q.Id).RankName,
+                    RankName = business.BusinessRanks.FirstOrDefault(br => br.Id == q.BusinessRank).RankName,
                 }).ToList(),
             };
 
