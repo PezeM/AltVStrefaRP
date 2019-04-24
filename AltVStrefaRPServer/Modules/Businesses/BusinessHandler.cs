@@ -1,10 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using AltV.Net;
-using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
+using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Dto;
 using AltVStrefaRPServer.Services;
@@ -27,6 +24,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
 
         private void GetBusinessesEmployeesEvent(IPlayer player, object[] args)
         {
+            var startTime = Time.GetTimestampMs();
             if (!int.TryParse(args[0].ToString(), out int businessId))
             {
                 _notificationService.ShowErrorNotfication(player, "Błędne ID biznesu,", 4000);
@@ -77,12 +75,14 @@ namespace AltVStrefaRPServer.Modules.Businesses
             };
 
             var businessEmployeesObject = JsonConvert.SerializeObject(businessEmployees);
-            Alt.Log($"Business employess object: {businessEmployeesObject}");
             player.Emit("populateBusinessEmployees", businessEmployeesObject);
+            Alt.Log($"Business employess object: {businessEmployeesObject}: in {Time.GetTimestampMs() - startTime}ms.");
+
         }
 
         public void OpenBusinessMenu(Character character)
         {
+            var startTime = Time.GetTimestampMs();
             var business = _businessManager.GetBusiness(character);
             if (business == null)
             {
@@ -125,8 +125,8 @@ namespace AltVStrefaRPServer.Modules.Businesses
             };
 
             var businessObject = JsonConvert.SerializeObject(businessInfo);
-            Alt.Log($"Business object: {businessObject}");
             character.Player.Emit("openBusinessMenu", businessObject);
+            Alt.Log($"Business object: {businessObject} in {Time.GetTimestampMs() - startTime}ms.");
         }
     }
 }
