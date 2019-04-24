@@ -22,10 +22,10 @@ namespace AltVStrefaRPServer.Modules.Businesses
             _businessManager = businessManager;
             _notificationService = notificationService;
             Alt.Log("Intialized business handler.");
-            Alt.OnClient("GetBusinessesEmployess", GetBusinessesEmployessEvent);
+            Alt.OnClient("GetBusinessesEmployees", GetBusinessesEmployeesEvent);
         }
 
-        private void GetBusinessesEmployessEvent(IPlayer player, object[] args)
+        private void GetBusinessesEmployeesEvent(IPlayer player, object[] args)
         {
             if (!int.TryParse(args[0].ToString(), out int businessId))
             {
@@ -56,7 +56,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
                 return;
             }
 
-            var businessEmployess = new BusinessEmployessDto
+            var businessEmployees = new BusinessEmployeesDto
             {
                 BusinessRanks = business.BusinessRanks.Select(e => new BusinessRanksDto
                 {
@@ -64,7 +64,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
                     RankName = e.RankName,
                     IsDefaultRank = e.IsDefaultRank
                 }).ToList(),
-                BusinessEmployess = business.Employees.Select(e => new BusinessEmployeeExtendedDto
+                BusinessEmployees = business.Employees.Select(e => new BusinessEmployeeExtendedDto
                 {
                     Id = e.Id,
                     LastName = e.LastName,
@@ -76,9 +76,9 @@ namespace AltVStrefaRPServer.Modules.Businesses
                 }).ToList()
             };
 
-            var businessEmployessObject = JsonConvert.SerializeObject(businessEmployess);
-            Alt.Log($"Business employess object: {businessEmployessObject}");
-            player.Emit("populateBusinessEmployess", businessEmployessObject);
+            var businessEmployeesObject = JsonConvert.SerializeObject(businessEmployees);
+            Alt.Log($"Business employess object: {businessEmployeesObject}");
+            player.Emit("populateBusinessEmployees", businessEmployeesObject);
         }
 
         public void OpenBusinessMenu(Character character)

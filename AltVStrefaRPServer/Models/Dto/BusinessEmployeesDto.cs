@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
-using AltVStrefaRPServer.Models.Businesses;
 
 namespace AltVStrefaRPServer.Models.Dto
 {
-    public class BusinessEmployessDto
+    public class BusinessEmployeesDto
     {
         public List<BusinessRanksDto> BusinessRanks { get; set; }
-        public List<BusinessEmployeeExtendedDto> BusinessEmployess { get; set; }
+        public List<BusinessEmployeeExtendedDto> BusinessEmployees { get; set; }
     }
 
     public class BusinessRanksDto
