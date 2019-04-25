@@ -201,6 +201,8 @@ namespace AltVStrefaRPServer.Modules.Businesses
             }
 
             await _businessManager.UpdateEmployeeRank(business, employee, newRankId).ConfigureAwait(false);
+            Alt.Log($"ID({character.Id}) changed business rank of player ID({employee.Id}) to RankID({newRankId})" +
+                    $" in {Time.GetTimestampMs() - startTime}ms.");
         }
     }
 }

@@ -3,19 +3,18 @@ using System.Threading.Tasks;
 using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Data;
-using AltVStrefaRPServer.Database;
-using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Modules.CharacterModule;
+using AltVStrefaRPServer.Services.Characters;
 
 namespace AltVStrefaRPServer.Handlers
 {
     public class PlayerDisconnect
     {
-        private ServerContext _serverContext;
+        private ICharacterDatabaseService _characterDatabaseService;
 
-        public PlayerDisconnect(ServerContext serverContext)
+        public PlayerDisconnect(ICharacterDatabaseService characterDatabaseService)
         {
-            _serverContext = serverContext;
+            _characterDatabaseService = characterDatabaseService;
 
             Alt.Log("Player disconnect handler intialized");
             AltAsync.OnPlayerDisconnect += OnPlayerDisconnectAsync;
@@ -34,13 +33,7 @@ namespace AltVStrefaRPServer.Handlers
 
             CharacterManager.Instance.RemoveCharacterDataFromServer(character);
             Alt.Log($"CID({character.Id}) ID({player.Id}) {player.Name} left the server. Reason {reason}");
-            await SaveCharacterAsync(character);
-        }
-
-        private async Task SaveCharacterAsync(Character character)
-        {
-            _serverContext.Characters.Update(character);
-            await _serverContext.SaveChangesAsync().ConfigureAwait(false);
+            await _characterDatabaseService.SaveCharacterAsync(character).ConfigureAwait(false);
         }
     }
 }
