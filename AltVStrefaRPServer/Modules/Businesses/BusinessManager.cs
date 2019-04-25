@@ -10,6 +10,7 @@ using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Businesses;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Services.Businesses;
+using AltVStrefaRPServer.Services.Characters;
 using Microsoft.EntityFrameworkCore;
 
 namespace AltVStrefaRPServer.Modules.Businesses
@@ -17,12 +18,14 @@ namespace AltVStrefaRPServer.Modules.Businesses
     public class BusinessManager
     {
         private IBusinessService _businessService;
+        private ICharacterDatabaseService _characterDatabaseService;
         private Dictionary<int, Business> Businesses = new Dictionary<int, Business>();
         private ServerContext _serverContext;
         private BusinessFactory _businessFactory;
 
-        public BusinessManager(IBusinessService businessService, ServerContext serverContext)
+        public BusinessManager(IBusinessService businessService, ServerContext serverContext, ICharacterDatabaseService characterDatabaseService)
         {
+            _characterDatabaseService = characterDatabaseService;
             _businessService = businessService;
             _serverContext = serverContext;
             _businessFactory = new BusinessFactory();
@@ -63,6 +66,15 @@ namespace AltVStrefaRPServer.Modules.Businesses
         {
             return Businesses.Values.FirstOrDefault(b => b.Employees.Any(e => e.Id == emplyoee.Id));
         }
+
+        /// <summary>
+        /// Checks if character is an employee at given business
+        /// </summary>
+        /// <param name="business"></param>
+        /// <param name="employee"></param>
+        /// <returns></returns>
+        public bool IsCharacterEmployee(Business business, Character employee) 
+            => business.Employees.Any(c => c.Id == employee.Id);
 
         /// <summary>
         /// Get nearest business to player
@@ -142,6 +154,14 @@ namespace AltVStrefaRPServer.Modules.Businesses
             {
                 return false;
             }
+        }
+
+        public Task UpdateEmployeeRank(Business business, Character employee, int newRankId)
+        {
+            employee.BusinessRank = newRankId;
+            var saveBusiness = _businessService.UpdateBusinessAsync(business);
+            var saveCharacter = _characterDatabaseService.SaveCharacterAsync(employee);
+            return Task.WhenAll(saveBusiness, saveCharacter);
         }
     }
 }
