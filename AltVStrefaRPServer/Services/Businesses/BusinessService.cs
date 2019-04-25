@@ -71,5 +71,12 @@ namespace AltVStrefaRPServer.Services.Businesses
             await _serverContext.Businesses.AddAsync(business).ConfigureAwait(false);
             await _serverContext.SaveChangesAsync().ConfigureAwait(false);
         }
+
+        public Task AddNewBusiness(Business business)
+        {
+            _serverContext.Businesses.Add(business);
+            _serverContext.SaveChanges();
+            return Task.CompletedTask;
+        }
     }
 }

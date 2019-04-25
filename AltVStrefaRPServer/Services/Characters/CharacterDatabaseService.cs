@@ -20,7 +20,7 @@ namespace AltVStrefaRPServer.Services.Characters
         /// <param name="characterId">find</param>
         /// <returns></returns>
         public async Task<Character> FindCharacterByIdAsync(int characterId) 
-            => await _serverContext.Characters.AsNoTracking().FirstOrDefaultAsync(c => c.Id == characterId);
+            => await _serverContext.Characters.FirstOrDefaultAsync(c => c.Id == characterId);
 
         public async Task SaveCharacterAsync(Character character)
         {

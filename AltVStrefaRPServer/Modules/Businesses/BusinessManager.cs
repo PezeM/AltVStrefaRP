@@ -39,7 +39,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
             foreach (var business in _serverContext.Businesses.Include(b => b.Employees)
                 .Include(b => b.BusinessRanks)
                 .ThenInclude(r => r.Permissions)
-                .AsNoTracking().ToList())
+                .ToList())
             {
                 //Businesses.TryAdd(business.Id, _businessFactory.CreateNewBusiness(business));
                 Businesses.TryAdd(business.Id, business);
@@ -156,12 +156,11 @@ namespace AltVStrefaRPServer.Modules.Businesses
             }
         }
 
-        public Task UpdateEmployeeRank(Business business, Character employee, int newRankId)
+        public async Task UpdateEmployeeRank(Business business, Character employee, int newRankId)
         {
             employee.BusinessRank = newRankId;
-            var saveBusiness = _businessService.UpdateBusinessAsync(business);
-            var saveCharacter = _characterDatabaseService.SaveCharacterAsync(employee);
-            return Task.WhenAll(saveBusiness, saveCharacter);
+            await _businessService.UpdateBusinessAsync(business).ConfigureAwait(false);
+            await _characterDatabaseService.SaveCharacterAsync(employee).ConfigureAwait(false);
         }
     }
 }

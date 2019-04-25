@@ -17,10 +17,10 @@ namespace AltVStrefaRPServer.Services.Vehicles
         }
 
         public async Task<List<VehicleModel>> LoadVehiclesFromDatabaseAsync()
-            => await _serverContext.Vehicles.AsNoTracking().ToListAsync().ConfigureAwait(false);
+            => await _serverContext.Vehicles.ToListAsync().ConfigureAwait(false);
 
         public List<VehicleModel> LoadVehiclesFromDatabase()
-            => _serverContext.Vehicles.AsNoTracking().ToList();
+            => _serverContext.Vehicles.ToList();
 
         public async Task RemoveVehicleAsync(VehicleModel vehicle)
         {

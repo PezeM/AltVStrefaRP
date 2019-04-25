@@ -9,6 +9,7 @@ namespace AltVStrefaRPServer.Services.Businesses
         Task UpdateOwnerAsync(Business business, Character newOwner);
         Task UpdateBusinessAsync(Business business);
         Task AddNewBusinessAsync(Business business);
+        Task AddNewBusiness(Business business);
         bool AddEmployee(Business business, Character newEmployee);
     }
 }

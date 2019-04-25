@@ -28,7 +28,7 @@ namespace AltVStrefaRPServer.Services.Characters
         /// <param name="username"></param>
         /// <returns>Account if found,null if account is not found</returns>
         public async Task<Account> GetAccountAsync(string username)
-            => await _serverContext.Accounts.AsNoTracking().FirstOrDefaultAsync(a => a.Username == username);
+            => await _serverContext.Accounts.FirstOrDefaultAsync(a => a.Username == username);
 
         /// <summary>
         /// Checks if account with given username is already in database
@@ -66,9 +66,8 @@ namespace AltVStrefaRPServer.Services.Characters
             }).ToListAsync();
 
         public async Task<Character> GetCharacterById(int characterId)
-            => await _serverContext.Characters.AsNoTracking()
+            => await _serverContext.Characters
                 .Include(c => c.BankAccount)
-                .AsNoTracking()
                 .FirstOrDefaultAsync(c => c.Id == characterId);
 
         public string GeneratePassword(string password) => _hashingService.Hash(password, 1000);

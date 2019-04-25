@@ -202,6 +202,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
             }
 
             await _businessManager.UpdateEmployeeRank(business, employee, newRankId).ConfigureAwait(false);
+            // Add callback to client with succesfull message and update player rank/close model
             Alt.Log($"ID({character.Id}) changed business rank of player ID({employee.Id}) to RankID({newRankId})" +
                     $" in {Time.GetTimestampMs() - startTime}ms.");
         }
