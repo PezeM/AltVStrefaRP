@@ -26,12 +26,12 @@ namespace AltVStrefaRPServer.Services
             await player.EmitAsync("showNotification", 0, message, time);
         }
 
-        public void ShowWarningNotification(IPlayer player, string message, int time = 5000)
+        public void ShowNoticeNotification(IPlayer player, string message, int time = 5000)
         {
             player.Emit("showNotification", 2, message, time);
         }
 
-        public async Task ShowWarningNotificationAsync(IPlayer player, string message, int time = 5000)
+        public async Task ShowNoticeNotificationAsync(IPlayer player, string message, int time = 5000)
         {
             await player.EmitAsync("showNotification", 2, message, time);
         }

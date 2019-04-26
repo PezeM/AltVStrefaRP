@@ -7,6 +7,8 @@ using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Dto;
+using AltVStrefaRPServer.Models.Enums;
+using AltVStrefaRPServer.Modules.CharacterModule;
 using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Characters;
 using Newtonsoft.Json;
@@ -250,23 +252,23 @@ namespace AltVStrefaRPServer.Modules.Businesses
                 return;
             }
 
-            var newEmployee = await _characterDatabaseService.FindCharacterAsync(name, lastName).ConfigureAwait(false);
+            var newEmployee = CharacterManager.Instance.GetCharacter(name, lastName);
             if (newEmployee == null)
             {
                 _notificationService.ShowErrorNotfication(player, "Nie znaleziono osoby z takim imieniem i nazwiskiem.", 7000);
                 return;
             }
 
-            // TODO: Send event to newEmployee with question if he wants to join this business
-
-            if (!await _businessManager.AddNewEmployee(business, newEmployee).ConfigureAwait(false))
+            if (!business.CanAddNewMember(newEmployee))
             {
-                _notificationService.ShowErrorNotfication(player, $"Nie udało się dodać {newEmployee.GetFullName()} do biznesu, " +
-                                                                  $"bo jest już zatrudniony w innym biznesie.", 8000);
+                _notificationService.ShowErrorNotfication(player, $"Nie można zatrudnić {newEmployee.GetFullName()}" +
+                                                                  $", ponieważ pracuje juz w jakimś biznesie.", 8000);
                 return;
             }
 
-            // TODO: Remove this after
+            // TODO: Send event to newEmployee with question if he wants to join this business
+            newEmployee.Player.Emit("showConfirmModal", "Oferta pracy", $"Otrzymałeś zaproszenie do firmy ${business.BusinessName}. " +
+                                                                        $"Czy chcesz je przyjąć?", ConfirmModalType.BusinessInvite, businessId);
             player.Emit("successfullyAddedNewEmployee");
             Alt.Log($"Character ID({character.Id}) added new member to business ID({business.Id})");
         }

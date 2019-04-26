@@ -25,6 +25,9 @@ namespace AltVStrefaRPServer.Modules.CharacterModule
         public Character GetCharacter(int characterId)
             => CharactersList.Values.FirstOrDefault(c => c.Id == characterId);
 
+        public Character GetCharacter(string name, string lastName)
+            => CharactersList.Values.FirstOrDefault(c => c.FirstName == name && c.LastName == lastName);
+
         /// <summary>
         /// Returns online character by bank account Id
         /// </summary>
@@ -62,5 +65,7 @@ namespace AltVStrefaRPServer.Modules.CharacterModule
             CharactersList.Remove(characterData.Player.Id);
             Alt.Log($"Removed character data from server for ID({characterData.Player.Id}) CID({characterData.Id})");
         }
+
+
     }
 }
