@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using AltV.Net;
 using AltV.Net.Async;
@@ -28,6 +29,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
             Alt.Log("Intialized business handler.");
             Alt.OnClient("GetBusinessesEmployees", GetBusinessesEmployeesEvent);
             AltAsync.OnClient("UpdateEmployeeRank", UpdateEmployeeRankEvent);
+            AltAsync.OnClient("AddNewEmployee", AddNewEmployeeEvent);
         }
 
         private void GetBusinessesEmployeesEvent(IPlayer player, object[] args)
@@ -202,9 +204,71 @@ namespace AltVStrefaRPServer.Modules.Businesses
             }
 
             await _businessManager.UpdateEmployeeRank(business, employee, newRankId).ConfigureAwait(false);
+            player.Emit("successfullyUpdatedEmployeeRank", employeeId, newRankId);
             // Add callback to client with succesfull message and update player rank/close model
             Alt.Log($"ID({character.Id}) changed business rank of player ID({employee.Id}) to RankID({newRankId})" +
                     $" in {Time.GetTimestampMs() - startTime}ms.");
+        }
+
+        private async Task AddNewEmployeeEvent(IPlayer player, object[] args)
+        {
+            var startTime = Time.GetTimestampMs();
+            if (args.Length < 3)
+            {
+                _notificationService.ShowErrorNotfication(player, "Nie podano imienia lub nazwiska pracownika.", 4000);
+                return;
+            }
+
+            var name = args[0].ToString();
+            var lastName = args[1].ToString();
+            if (!int.TryParse(args[0].ToString(), out int businessId))
+            {
+                _notificationService.ShowErrorNotfication(player, "Błędne ID biznesu.", 4000);
+                return;
+            }
+
+            var character = player.GetCharacter();
+            if (character == null) return;
+
+            var business = _businessManager.GetBusiness(businessId);
+            if (business == null)
+            {
+                _notificationService.ShowErrorNotfication(player, "Nie znaleziono takiego biznesu.", 4000);
+                return;
+            }
+
+            var businessRank = _businessManager.GetBusinessRankForPlayer(business, character);
+            if (businessRank == null)
+            {
+                _notificationService.ShowErrorNotfication(player, "Nie masz ustalonych żadnych uprawnień w biznesie.", 6000);
+                return;
+            }
+
+            if (!businessRank.Permissions.CanInviteNewMembers)
+            {
+                _notificationService.ShowErrorNotfication(player, "Nie posiadasz odpowiednich uprawień.", 4000);
+                return;
+            }
+
+            var newEmployee = await _characterDatabaseService.FindCharacterAsync(name, lastName).ConfigureAwait(false);
+            if (newEmployee == null)
+            {
+                _notificationService.ShowErrorNotfication(player, "Nie znaleziono osoby z takim imieniem i nazwiskiem.", 7000);
+                return;
+            }
+
+            // TODO: Send event to newEmployee with question if he wants to join this business
+
+            if (!await _businessManager.AddNewEmployee(business, newEmployee).ConfigureAwait(false))
+            {
+                _notificationService.ShowErrorNotfication(player, $"Nie udało się dodać {newEmployee.GetFullName()} do biznesu, " +
+                                                                  $"bo jest już zatrudniony w innym biznesie.", 8000);
+                return;
+            }
+
+            // TODO: Remove this after
+            player.Emit("successfullyAddedNewEmployee");
+            Alt.Log($"Character ID({character.Id}) added new member to business ID({business.Id})");
         }
     }
 }

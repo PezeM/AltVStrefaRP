@@ -156,6 +156,14 @@ namespace AltVStrefaRPServer.Modules.Businesses
             }
         }
 
+        public async Task<bool> AddNewEmployee(Business business, Character newEmployee)
+        {
+            if (!_businessService.AddEmployee(business, newEmployee)) return false;
+            await _businessService.UpdateBusinessAsync(business).ConfigureAwait(false);
+            await _characterDatabaseService.SaveCharacterAsync(newEmployee).ConfigureAwait(false);
+            return true;
+        }
+
         public async Task UpdateEmployeeRank(Business business, Character employee, int newRankId)
         {
             employee.BusinessRank = newRankId;
