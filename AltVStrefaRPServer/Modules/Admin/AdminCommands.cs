@@ -109,7 +109,7 @@ namespace AltVStrefaRPServer.Modules.Admin
             if (args == null || args.Length < 2) return;
             try
             {
-                var character = CharacterManager.Instance.GetCharacter(player);
+                var character = player.GetCharacter();
                 if (character == null) return;
                 // First arg is business type
                 // Second one is business name
@@ -174,7 +174,7 @@ namespace AltVStrefaRPServer.Modules.Admin
         {
             if (args == null || args.Length < 1) return;
             var model = args[0];
-            var character = CharacterManager.Instance.GetCharacter(player);
+            var character = player.GetCharacter();
             if (character == null) return;
 
             var vehicle = _vehicleManager.CreateVehicle(model, player.Position, player.HeadRotation.pitch, player.Dimension, character.Id, OwnerType.None);

@@ -97,7 +97,6 @@ namespace AltVStrefaRPServer
             else if (name == "vehicle")
             {
                 var model = args[0];
-                if (string.IsNullOrEmpty(model)) return;
                 if (model.IsNullOrEmpty()) return;
 
                 var player = Alt.GetAllPlayers().FirstOrDefault();
@@ -124,7 +123,7 @@ namespace AltVStrefaRPServer
 
         public async Task VehicleCommandAsync(string vehicleModel, IPlayer player)
         {
-            var character = CharacterManager.Instance.GetCharacter(player);
+            var character = player.GetCharacter();
             if (character == null) return;
 
             var vehicle = await vehicleManager.CreateVehicleAsync(vehicleModel, player.Position, player.HeadRotation.pitch,

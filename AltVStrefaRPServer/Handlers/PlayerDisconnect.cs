@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Data;
+using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Modules.CharacterModule;
 using AltVStrefaRPServer.Services.Characters;
 
@@ -22,7 +23,7 @@ namespace AltVStrefaRPServer.Handlers
 
         private async Task OnPlayerDisconnectAsync(ReadOnlyPlayer player, string reason)
         {
-            var character = CharacterManager.Instance.GetCharacter(player);
+            var character = player.GetCharacter();
             if (character == null) return;
 
             character.Dimension = player.Dimension;

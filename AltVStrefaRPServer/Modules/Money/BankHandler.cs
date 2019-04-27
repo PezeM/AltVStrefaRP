@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Database;
+using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Client;
@@ -53,7 +54,7 @@ namespace AltVStrefaRPServer.Modules.Money
         public async Task CreateBankAccountAsync(IPlayer player, object[] args)
         {
             var startTime = Time.GetTimestampMs();
-            var character = CharacterManager.Instance.GetCharacter(player);
+            var character = player.GetCharacter();
             if (character == null) return;
             if (character.BankAccount != null)
             {
@@ -85,7 +86,7 @@ namespace AltVStrefaRPServer.Modules.Money
 
         public async Task TryToOpenBankMenu(IPlayer player, object[] args)
         {
-            var character = CharacterManager.Instance.GetCharacter(player);
+            var character = player.GetCharacter();
             if (character == null) return;
 
             if (character.BankAccount == null)
@@ -100,7 +101,7 @@ namespace AltVStrefaRPServer.Modules.Money
 
         private async Task WithdrawMoneyFromBankAsync(IPlayer player, object[] args)
         {
-            var character = CharacterManager.Instance.GetCharacter(player);
+            var character = player.GetCharacter();
             if (character == null || character.BankAccount == null) return;
             if (!int.TryParse(args[0].ToString(), out int moneyToWithdraw))
             {
@@ -124,7 +125,7 @@ namespace AltVStrefaRPServer.Modules.Money
 
         private async Task DepositMoneyToBankAsync(IPlayer player, object[] args)
         {
-            var character = CharacterManager.Instance.GetCharacter(player);
+            var character = player.GetCharacter();
             if (character == null || character.BankAccount == null) return;
             if (!int.TryParse(args[0].ToString(), out int moneyToDeposit))
             {
@@ -147,7 +148,7 @@ namespace AltVStrefaRPServer.Modules.Money
 
         private async Task TransferMoneyFromBankToBankAsync(IPlayer player, object[] args)
         {
-            var character = CharacterManager.Instance.GetCharacter(player);
+            var character = player.GetCharacter();
             if (character == null || character.BankAccount == null) return;
             if (!int.TryParse(args[0].ToString(), out int moneyToTransfer) || !int.TryParse(args[1].ToString(), out int receiverAccountNumber))
             {
@@ -196,7 +197,7 @@ namespace AltVStrefaRPServer.Modules.Money
 
         private async Task GetTransferHistoryInfoAsync(IPlayer player, object[] args)
         {
-            var character = CharacterManager.Instance.GetCharacter(player);
+            var character = player.GetCharacter();
             if(character == null) return;
 
             var bankTransactionHistory = await _serverContext.MoneyTransactions.AsNoTracking()
