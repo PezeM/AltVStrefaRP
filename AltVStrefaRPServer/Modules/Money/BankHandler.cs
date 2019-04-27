@@ -57,7 +57,7 @@ namespace AltVStrefaRPServer.Modules.Money
             if (character == null) return;
             if (character.BankAccount != null)
             {
-                await _notificationService.ShowErrorNotificationAsync(player, "Masz już konto w banku.", 4000);
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Masz już konto w banku.", 4000);
                 return;
             }
 
@@ -70,7 +70,7 @@ namespace AltVStrefaRPServer.Modules.Money
             if (!_bankAccountManager.AddNewBankAccount(character.BankAccount))
             {
                 AltAsync.Log($"Error occured in adding new bank account. Account number: {character.BankAccount.AccountNumber}");
-                await _notificationService.ShowErrorNotificationAsync(player, "Wystąpił błąd z tworzeniem nowego konta bankowego.", 5000);
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Wystąpił błąd z tworzeniem nowego konta bankowego.", 5000);
                 return;
             }
 
@@ -78,7 +78,7 @@ namespace AltVStrefaRPServer.Modules.Money
             _serverContext.Characters.Update(character);
             await _serverContext.SaveChangesAsync().ConfigureAwait(false);
 
-            await _notificationService.ShowSuccessNotificationAsync(player,
+            await _notificationService.ShowSuccessNotificationAsync(player, "Nowe konto bankowe",
                 $"Otworzyłeś nowe konto w banku. Twój numer konta to: {character.BankAccount.AccountNumber}.", 7000).ConfigureAwait(false);
             AltAsync.Log($"{character.Id} created new bank account ({character.BankAccount.AccountNumber}) in {Time.GetTimestampMs() - startTime}ms.");
         }
@@ -88,13 +88,9 @@ namespace AltVStrefaRPServer.Modules.Money
             var character = CharacterManager.Instance.GetCharacter(player);
             if (character == null) return;
 
-            // Not needed because of relations
-            //var bankAccount = await _serverContext.BankAccounts.AsNoTracking()
-            //    .FirstOrDefaultAsync(b => b.CharacterId == character.Id).ConfigureAwait(false);
-
             if (character.BankAccount == null)
             {
-                await _notificationService.ShowErrorNotificationAsync(player, "Nie posiadsz konta w banku.", 4000).ConfigureAwait(false);
+                await _notificationService.ShowErrorNotificationAsync(player, "Brak konta", "Nie posiadsz konta w banku.", 4000).ConfigureAwait(false);
                 return;
             }
 
@@ -108,7 +104,7 @@ namespace AltVStrefaRPServer.Modules.Money
             if (character == null || character.BankAccount == null) return;
             if (!int.TryParse(args[0].ToString(), out int moneyToWithdraw))
             {
-                await _notificationService.ShowErrorNotificationAsync(player, "Wystąpił bład podczas wypłaty pieniędzy.").ConfigureAwait(false);
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd!", "Wystąpił bład podczas wypłaty pieniędzy.").ConfigureAwait(false);
                 return;
             }
 
@@ -121,7 +117,7 @@ namespace AltVStrefaRPServer.Modules.Money
             }
             else
             {
-                await _notificationService.ShowErrorNotificationAsync(player, "Nie udało się wypłacić pieniędzy z konta.").ConfigureAwait(false);
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd!", "Nie udało się wypłacić pieniędzy z konta.").ConfigureAwait(false);
             }
 
         }
@@ -132,7 +128,7 @@ namespace AltVStrefaRPServer.Modules.Money
             if (character == null || character.BankAccount == null) return;
             if (!int.TryParse(args[0].ToString(), out int moneyToDeposit))
             {
-                await _notificationService.ShowErrorNotificationAsync(player, "Wystąpił bład podczas wpłaty pieniędzy.").ConfigureAwait(false);
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Wystąpił bład podczas wpłaty pieniędzy.").ConfigureAwait(false);
                 return;
             }
 
@@ -145,7 +141,7 @@ namespace AltVStrefaRPServer.Modules.Money
             }
             else
             {
-                await _notificationService.ShowErrorNotificationAsync(player, "Nie udało się wpłacić pieniędzy na konto.").ConfigureAwait(false);
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie udało się wpłacić pieniędzy na konto.").ConfigureAwait(false);
             }
         }
 
@@ -155,7 +151,7 @@ namespace AltVStrefaRPServer.Modules.Money
             if (character == null || character.BankAccount == null) return;
             if (!int.TryParse(args[0].ToString(), out int moneyToTransfer) || !int.TryParse(args[1].ToString(), out int receiverAccountNumber))
             {
-                await _notificationService.ShowErrorNotificationAsync(player, "Wystąpił bład podczas wykonywania przelewu.").ConfigureAwait(false);
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Wystąpił bład podczas wykonywania przelewu.").ConfigureAwait(false);
                 return;
             }
 
@@ -163,7 +159,7 @@ namespace AltVStrefaRPServer.Modules.Money
 
             if (receiverBankAccount == null)
             {
-                await _notificationService.ShowErrorNotificationAsync(player, "Podano błędy numer konta bankowego.").ConfigureAwait(false);
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Podano błędy numer konta bankowego.").ConfigureAwait(false);
                 return;
             }
 
@@ -187,14 +183,14 @@ namespace AltVStrefaRPServer.Modules.Money
                         $"Pomyślnie przesłano {moneyToTransfer}$ na konto o numerze {receiverBankAccount}. <br>" +
                         $"Twój aktualny stan konta wynosi {character.BankAccount.Money}$.",
                         character.BankAccount.Money).ConfigureAwait(false);
-                    await _notificationService.ShowSuccessNotificationAsync(receiverCharacter.Player,
+                    await _notificationService.ShowSuccessNotificationAsync(receiverCharacter.Player, "Otrzymano przelew!",
                         $"Właśnie otrzymałeś przelew od {character.GetFullName()} w wysokości {moneyToTransfer}. <br>" +
                         $"Twój aktualny stan konta wynosi {receiverBankAccount.Money}$.",7000);
                 }
             }
             else
             {
-                await _notificationService.ShowErrorNotificationAsync(player, "Nie udało się przelać pieniędzy.").ConfigureAwait(false);
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie udało się przelać pieniędzy.").ConfigureAwait(false);
             }
         }
 
@@ -209,7 +205,7 @@ namespace AltVStrefaRPServer.Modules.Money
 
             if (bankTransactionHistory.Count <= 0)
             {
-                await _notificationService.ShowErrorNotificationAsync(player, "Nie posiadasz jeszcze żadnych transakcji");
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie posiadasz jeszcze żadnych transakcji");
             }
             else
             {

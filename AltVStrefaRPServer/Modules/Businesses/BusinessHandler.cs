@@ -1,7 +1,4 @@
-﻿using System.Linq;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
-using AltV.Net;
+﻿using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Helpers;
@@ -12,6 +9,8 @@ using AltVStrefaRPServer.Modules.CharacterModule;
 using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Characters;
 using Newtonsoft.Json;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace AltVStrefaRPServer.Modules.Businesses
 {
@@ -31,7 +30,8 @@ namespace AltVStrefaRPServer.Modules.Businesses
             Alt.Log("Intialized business handler.");
             Alt.OnClient("GetBusinessesEmployees", GetBusinessesEmployeesEvent);
             AltAsync.OnClient("UpdateEmployeeRank", UpdateEmployeeRankEvent);
-            AltAsync.OnClient("AddNewEmployee", AddNewEmployeeEvent);
+            Alt.OnClient("AddNewEmployee", AddNewEmployeeEvent);
+            AltAsync.OnClient("AcceptInviteToBusiness", AcceptInviteToBusinessEvent);
         }
 
         private void GetBusinessesEmployeesEvent(IPlayer player, object[] args)
@@ -39,14 +39,14 @@ namespace AltVStrefaRPServer.Modules.Businesses
             var startTime = Time.GetTimestampMs();
             if (!int.TryParse(args[0].ToString(), out int businessId))
             {
-                _notificationService.ShowErrorNotfication(player, "Błędne ID biznesu.", 4000);
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Błędne ID biznesu.", 4000);
                 return;
             }
 
             var business = _businessManager.GetBusiness(businessId);
             if (business == null)
             {
-                _notificationService.ShowErrorNotfication(player, "Nie znaleziono takiego biznesu.", 4000);
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
                 return;
             }
 
@@ -56,13 +56,13 @@ namespace AltVStrefaRPServer.Modules.Businesses
             var businessRank = _businessManager.GetBusinessRankForPlayer(business, character);
             if (businessRank == null)
             {
-                _notificationService.ShowErrorNotfication(character.Player, "Nie masz ustalonych żadnych możliwości w biznesie.", 6000);
+                _notificationService.ShowErrorNotfication(character.Player, "Błąd", "Nie masz ustalonych żadnych możliwości w biznesie.", 6000);
                 return;
             }
 
             if (!businessRank.Permissions.CanManageEmployess)
             {
-                _notificationService.ShowErrorNotfication(character.Player, "Nie masz odpowiednich uprawień.");
+                _notificationService.ShowErrorNotfication(character.Player, "Błąd", "Nie masz odpowiednich uprawień.");
                 return;
             }
 
@@ -98,20 +98,20 @@ namespace AltVStrefaRPServer.Modules.Businesses
             var business = _businessManager.GetBusiness(character);
             if (business == null)
             {
-                _notificationService.ShowErrorNotfication(character.Player, "Nie jesteś w żadnym biznesie.", 4000);
+                _notificationService.ShowErrorNotfication(character.Player, "Błąd", "Nie jesteś w żadnym biznesie.", 4000);
                 return;
             }
 
             var businessRank = _businessManager.GetBusinessRankForPlayer(business, character);
             if (businessRank == null)
             {
-                _notificationService.ShowErrorNotfication(character.Player, "Nie masz ustalonych żadnych uprawnień w biznesie.", 6000);
+                _notificationService.ShowErrorNotfication(character.Player, "Błąd", "Nie masz ustalonych żadnych uprawnień w biznesie.", 6000);
                 return;
             }
 
             if (!businessRank.Permissions.CanOpenBusinessMenu)
             {
-                _notificationService.ShowErrorNotfication(character.Player, "Nie możesz otwierać menu biznesu.",4000);
+                _notificationService.ShowErrorNotfication(character.Player, "Błąd", "Nie możesz otwierać menu biznesu.", 4000);
                 return;
             }
 
@@ -147,19 +147,19 @@ namespace AltVStrefaRPServer.Modules.Businesses
             var startTime = Time.GetTimestampMs();
             if (!int.TryParse(args[0].ToString(), out int employeeId))
             {
-                _notificationService.ShowErrorNotfication(player, "Podano błędne ID pracownika,", 4000);
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Podano błędne ID pracownika,", 4000);
                 return;
             }
 
             if (!int.TryParse(args[1].ToString(), out int newRankId))
             {
-                _notificationService.ShowErrorNotfication(player, "Podano błędne ID nowego stanowiska.", 4000);
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Podano błędne ID nowego stanowiska.", 4000);
                 return;
             }
 
             if (!int.TryParse(args[2].ToString(), out int businessId))
             {
-                _notificationService.ShowErrorNotfication(player, "Podano błędne ID biznesu.", 4000);
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Podano błędne ID biznesu.", 4000);
                 return;
             }
 
@@ -169,39 +169,39 @@ namespace AltVStrefaRPServer.Modules.Businesses
             var business = _businessManager.GetBusiness(businessId);
             if (business == null)
             {
-                _notificationService.ShowErrorNotfication(player, "Nie znaleziono takiego biznesu.", 4000);
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
                 return;
             }
 
             var businessRank = _businessManager.GetBusinessRankForPlayer(business, character);
             if (businessRank == null)
             {
-                _notificationService.ShowErrorNotfication(player, "Nie masz ustalonych żadnych uprawnień w biznesie.", 6000);
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie masz ustalonych żadnych uprawnień w biznesie.", 6000);
                 return;
             }
 
             if (!businessRank.Permissions.CanManageEmployess)
             {
-                _notificationService.ShowErrorNotfication(player, "Nie posiadasz odpowiednich uprawień.", 4000);
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie posiadasz odpowiednich uprawień.", 4000);
                 return;
             }
 
             if (business.BusinessRanks.FirstOrDefault(q => q.Id == newRankId) == null)
             {
-                _notificationService.ShowErrorNotfication(player, "Nie znaleziono podanego stanowiska.", 5000);
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie znaleziono podanego stanowiska.", 5000);
                 return;
             }
 
             var employee = await _characterDatabaseService.FindCharacterByIdAsync(employeeId).ConfigureAwait(false);
             if (employee == null)
             {
-                _notificationService.ShowErrorNotfication(player, "Nie znaleziono takiego pracownika.", 5000);
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie znaleziono takiego pracownika.", 5000);
                 return;
             }
 
             if (!_businessManager.IsCharacterEmployee(business, employee))
             {
-                _notificationService.ShowErrorNotfication(player, "Ten pracownik nie jest zatrudniony u ciebie w firmie.", 7000);
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Ten pracownik nie jest zatrudniony u ciebie w firmie.", 7000);
                 return;
             }
 
@@ -212,20 +212,20 @@ namespace AltVStrefaRPServer.Modules.Businesses
                     $" in {Time.GetTimestampMs() - startTime}ms.");
         }
 
-        private async Task AddNewEmployeeEvent(IPlayer player, object[] args)
+        private void AddNewEmployeeEvent(IPlayer player, object[] args)
         {
             var startTime = Time.GetTimestampMs();
             if (args.Length < 3)
             {
-                _notificationService.ShowErrorNotfication(player, "Nie podano imienia lub nazwiska pracownika.", 4000);
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie podano imienia lub nazwiska pracownika.", 4000);
                 return;
             }
 
             var name = args[0].ToString();
             var lastName = args[1].ToString();
-            if (!int.TryParse(args[0].ToString(), out int businessId))
+            if (!int.TryParse(args[2].ToString(), out int businessId))
             {
-                _notificationService.ShowErrorNotfication(player, "Błędne ID biznesu.", 4000);
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Błędne ID biznesu.", 4000);
                 return;
             }
 
@@ -235,42 +235,53 @@ namespace AltVStrefaRPServer.Modules.Businesses
             var business = _businessManager.GetBusiness(businessId);
             if (business == null)
             {
-                _notificationService.ShowErrorNotfication(player, "Nie znaleziono takiego biznesu.", 4000);
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
                 return;
             }
 
             var businessRank = _businessManager.GetBusinessRankForPlayer(business, character);
             if (businessRank == null)
             {
-                _notificationService.ShowErrorNotfication(player, "Nie masz ustalonych żadnych uprawnień w biznesie.", 6000);
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie masz ustalonych żadnych uprawnień w biznesie.", 6000);
                 return;
             }
 
             if (!businessRank.Permissions.CanInviteNewMembers)
             {
-                _notificationService.ShowErrorNotfication(player, "Nie posiadasz odpowiednich uprawień.", 4000);
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie posiadasz odpowiednich uprawień.", 4000);
                 return;
             }
 
             var newEmployee = CharacterManager.Instance.GetCharacter(name, lastName);
             if (newEmployee == null)
             {
-                _notificationService.ShowErrorNotfication(player, "Nie znaleziono osoby z takim imieniem i nazwiskiem.", 7000);
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie znaleziono osoby z takim imieniem i nazwiskiem.", 7000);
                 return;
             }
 
-            if (!business.CanAddNewMember(newEmployee))
-            {
-                _notificationService.ShowErrorNotfication(player, $"Nie można zatrudnić {newEmployee.GetFullName()}" +
-                                                                  $", ponieważ pracuje juz w jakimś biznesie.", 8000);
-                return;
-            }
+            //if (!business.CanAddNewMember(newEmployee))
+            //{
+            //    _notificationService.ShowErrorNotfication(player, "Błąd", $"Nie można zatrudnić {newEmployee.GetFullName()}" +
+            //                                                      $", ponieważ pracuje juz w jakimś biznesie.", 8000);
+            //    return;
+            //}
 
             // TODO: Send event to newEmployee with question if he wants to join this business
-            newEmployee.Player.Emit("showConfirmModal", "Oferta pracy", $"Otrzymałeś zaproszenie do firmy ${business.BusinessName}. " +
-                                                                        $"Czy chcesz je przyjąć?", ConfirmModalType.BusinessInvite, businessId);
+            //newEmployee.Player.Emit("showConfirmModal", "Oferta pracy", $"Otrzymałeś zaproszenie do firmy ${business.BusinessName}. " +
+            //                                                            $"Czy chcesz je przyjąć?", ConfirmModalType.BusinessInvite, businessId);
+
+            // To test
+            player.Emit("showConfirmModal", "Oferta pracy", $"Otrzymałeś zaproszenie do firmy {business.BusinessName}. " +
+                                                            $"Czy chcesz je przyjąć?", (int)ConfirmModalType.BusinessInvite, businessId);
+
             player.Emit("successfullyAddedNewEmployee");
             Alt.Log($"Character ID({character.Id}) added new member to business ID({business.Id})");
+        }
+
+        private Task AcceptInviteToBusinessEvent(IPlayer player, object[] args)
+        {
+            AltAsync.Log("Triggered event accept invite to business event.");
+            return Task.CompletedTask;
         }
     }
 }

@@ -20,7 +20,7 @@ namespace AltVStrefaRPServer.Services.Businesses
         /// <param name="business">The business to update</param>
         /// <param name="newOwner">New owner of the business</param>
         /// <returns></returns>
-        public async Task UpdateOwnerAsync(Business business,Character newOwner)
+        public async Task UpdateOwnerAsync(Business business, Character newOwner)
         {
             business.OwnerId = newOwner.Id;
             _serverContext.Characters.Update(newOwner);

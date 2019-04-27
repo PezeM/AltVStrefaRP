@@ -5,13 +5,13 @@ namespace AltVStrefaRPServer.Services
 {
     public interface INotificationService
     {
-        void ShowErrorNotfication(IPlayer player, string message, int time = 5000);
-        Task ShowErrorNotificationAsync(IPlayer player, string message, int time = 5000);
-        void ShowInfoNotification(IPlayer player, string message, int time = 5000);
-        Task ShowInfoNotificationAsync(IPlayer player, string message, int time = 5000);
-        void ShowNoticeNotification(IPlayer player, string message, int time = 5000);
-        Task ShowNoticeNotificationAsync(IPlayer player, string message, int time = 5000);
-        void ShowSuccessNotification(IPlayer player, string message, int time = 5000);
-        Task ShowSuccessNotificationAsync(IPlayer player, string message, int time = 5000);
+        void ShowErrorNotfication(IPlayer player, string title, string message, int time = 5000, string icon = null);
+        Task ShowErrorNotificationAsync(IPlayer player, string title, string message, int time = 5000, string icon = null);
+        void ShowInfoNotification(IPlayer player, string title,  string message, int time = 5000, string icon = null);
+        Task ShowInfoNotificationAsync(IPlayer player, string title,  string message, int time = 5000, string icon = null);
+        void ShowNoticeNotification(IPlayer player, string title, string message, int time = 5000, string icon = null);
+        Task ShowNoticeNotificationAsync(IPlayer player, string title, string message, int time = 5000, string icon = null);
+        void ShowSuccessNotification(IPlayer player, string title, string message, int time = 5000, string icon = null);
+        Task ShowSuccessNotificationAsync(IPlayer player, string title, string message, int time = 5000, string icon = null);
     }
 }

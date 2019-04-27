@@ -59,7 +59,7 @@ namespace AltVStrefaRPServer.Handlers
             _serverContext.Vehicles.Update(vehicleModel);
             await _serverContext.SaveChangesAsync().ConfigureAwait(false);
             AltAsync.Log($"Saved vehicle {vehicleModel.Model} UID({vehicleModel.Id}) in {Time.GetTimestampMs() - startTime}ms.");
-            _notificationService.ShowInfoNotification(player, 
+            _notificationService.ShowInfoNotification(player, "Pojazd zapisany!",
                 $"Zapisano pojazd UID({vehicleModel.Id}) w {Time.GetTimestampMs() - startTime}ms.");
         }
     }
