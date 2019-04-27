@@ -4,6 +4,7 @@ using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
+using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Modules.CharacterModule;
@@ -65,7 +66,7 @@ namespace AltVStrefaRPServer.Handlers
                 var startTime = Time.GetTimestampMs();
                 var login = args[0].ToString();
                 var password = args[1].ToString();
-                if (string.IsNullOrEmpty(login) || string.IsNullOrEmpty(password))
+                if (login.IsNullOrEmpty() || password.IsNullOrEmpty())
                 {
                     await player.EmitAsync("showLoginError", "Uzupełnij wszystkie pola");
                     return;
@@ -104,7 +105,7 @@ namespace AltVStrefaRPServer.Handlers
                 string password = args[1].ToString();
                 Alt.Log($"Trying to login as {login}");
 
-                if (string.IsNullOrEmpty(login) || string.IsNullOrEmpty(login))
+                if (login.IsNullOrEmpty() || password.IsNullOrEmpty())
                 {
                     Alt.Log($"Wrong data in try auth async");
                     await player.EmitAsync("showLoginError", "Uzupełnij wszystkie pola.");

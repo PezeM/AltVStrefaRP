@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
+using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Handlers;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Enums;
@@ -89,7 +90,7 @@ namespace AltVStrefaRPServer
             if (name == "stop")
             {
                 var resource = args[0];
-                if (string.IsNullOrEmpty(resource)) return;
+                if (resource.IsNullOrEmpty()) return;
 
                 Alt.Log($"Stopping resource: {resource}.");
             }
@@ -97,6 +98,7 @@ namespace AltVStrefaRPServer
             {
                 var model = args[0];
                 if (string.IsNullOrEmpty(model)) return;
+                if (model.IsNullOrEmpty()) return;
 
                 var player = Alt.GetAllPlayers().FirstOrDefault();
                 if (player == null)

@@ -5,6 +5,7 @@ using AltV.Net;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Database;
+using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Businesses;
@@ -127,7 +128,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
         public async Task<bool> CreateNewBusinessAsync(int ownerId, BusinessType businessType, Position position, string name)
         {
             var startTime = Time.GetTimestampMs();
-            if(businessType == BusinessType.None || string.IsNullOrEmpty(name)) return false;
+            if(businessType == BusinessType.None || name.IsNullOrEmpty()) return false;
             if (CheckIfBusinessExists(name)) return false;
 
             var business = _businessFactory.CreateNewBusiness(ownerId, businessType, position, name);
