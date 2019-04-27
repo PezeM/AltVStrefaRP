@@ -2,7 +2,7 @@
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Modules.CharacterModule;
 
-namespace AltVStrefaRPServer
+namespace AltVStrefaRPServer.Extensions
 {
     public static class PlayerExtensions
     {
