@@ -275,14 +275,41 @@ namespace AltVStrefaRPServer.Modules.Businesses
             player.Emit("showConfirmModal", "Oferta pracy", $"Otrzymałeś zaproszenie do firmy {business.BusinessName}. " +
                                                             $"Czy chcesz je przyjąć?", (int)ConfirmModalType.BusinessInvite, businessId);
 
-            player.Emit("successfullyAddedNewEmployee");
-            Alt.Log($"Character ID({character.Id}) added new member to business ID({business.Id})");
+            player.Emit("successfullyInvitedNewEmployee");
+            Alt.Log($"Character ID({character.Id}) invited {character.GetFullName()} ID({character.Id}) " +
+                    $"to business({business.BusinessName}) ID({business.Id})");
         }
 
-        private Task AcceptInviteToBusinessEvent(IPlayer player, object[] args)
+        private async Task AcceptInviteToBusinessEvent(IPlayer player, object[] args)
         {
-            AltAsync.Log("Triggered event accept invite to business event.");
-            return Task.CompletedTask;
+            if (args.Length < 1) return;
+            if (!int.TryParse(args[0].ToString(), out int businessId))
+            {
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Błędne ID biznesu.", 4000);
+                return;
+            }
+
+            var character = player.GetCharacter();
+            if (character == null) return;
+
+            var business = _businessManager.GetBusiness(businessId);
+            if (business == null)
+            {
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
+                return;
+            }
+
+            if (await _businessManager.AddNewEmployee(business, character).ConfigureAwait(false))
+            {
+                _notificationService.ShowSuccessNotification(player, "Nowa praca!", $"Pomyślnie dołączono do biznesu {business.BusinessName}.", 5000);
+            }
+            else
+            {
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Wystąpił błąd podczas dołączania do biznesu.", 4000);
+                return;
+            }
+
+            AltAsync.Log($"Character ID({character.Id}) joined business {business.BusinessName} ID({business.Id}).");
         }
     }
 }
