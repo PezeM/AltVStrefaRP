@@ -143,11 +143,13 @@ namespace AltVStrefaRPServer.Modules.Businesses
             if (newOwner.Business != business)
             {
                 if (!_businessService.AddEmployee(business, newOwner)) return false;
+                newOwner.BusinessRank = business.BusinessRanks.FirstOrDefault(r => r.IsOwnerRank).Id;
                 await _businessService.UpdateOwnerAsync(business, newOwner).ConfigureAwait(false);
                 return true;
             }
             else if (newOwner.Business == business)
             {
+                newOwner.BusinessRank = business.BusinessRanks.FirstOrDefault(r => r.IsOwnerRank).Id;
                 await _businessService.UpdateOwnerAsync(business, newOwner).ConfigureAwait(false);
                 return true;
             }

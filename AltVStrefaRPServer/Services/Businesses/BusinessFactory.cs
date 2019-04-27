@@ -144,6 +144,7 @@ namespace AltVStrefaRPServer.Services.Businesses
                 new BusinessRank
                 {
                     RankName = "Właściciel",
+                    IsOwnerRank = true,
                     Permissions = new BusinessPermissions
                     {
                         CanInviteNewMembers = true,
