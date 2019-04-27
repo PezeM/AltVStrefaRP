@@ -260,16 +260,16 @@ namespace AltVStrefaRPServer.Modules.Businesses
                 return;
             }
 
-            //if (!business.CanAddNewMember(newEmployee))
-            //{
-            //    _notificationService.ShowErrorNotfication(player, "Błąd", $"Nie można zatrudnić {newEmployee.GetFullName()}" +
-            //                                                      $", ponieważ pracuje juz w jakimś biznesie.", 8000);
-            //    return;
-            //}
+            if (!business.CanAddNewMember(newEmployee))
+            {
+                _notificationService.ShowErrorNotfication(player, "Błąd", $"Nie można zatrudnić {newEmployee.GetFullName()}" +
+                                                                  $", ponieważ pracuje juz w jakimś biznesie.", 8000);
+                return;
+            }
 
             // TODO: Send event to newEmployee with question if he wants to join this business
-            //newEmployee.Player.Emit("showConfirmModal", "Oferta pracy", $"Otrzymałeś zaproszenie do firmy ${business.BusinessName}. " +
-            //                                                            $"Czy chcesz je przyjąć?", ConfirmModalType.BusinessInvite, businessId);
+            newEmployee.Player.Emit("showConfirmModal", "Oferta pracy", $"Otrzymałeś zaproszenie do firmy {business.BusinessName}. " +
+                                                                        $"Czy chcesz je przyjąć?", (int)ConfirmModalType.BusinessInvite, businessId);
 
             // To test
             player.Emit("showConfirmModal", "Oferta pracy", $"Otrzymałeś zaproszenie do firmy {business.BusinessName}. " +
