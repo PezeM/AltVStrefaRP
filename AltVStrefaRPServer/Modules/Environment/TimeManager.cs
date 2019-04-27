@@ -2,6 +2,7 @@
 using System.Timers;
 using AltVStrefaRPServer.Models.Enums;
 using System;
+using AltVStrefaRPServer.Models;
 
 namespace AltVStrefaRPServer.Modules.Environment
 {

@@ -1,4 +1,4 @@
-﻿namespace AltVStrefaRPServer
+﻿namespace AltVStrefaRPServer.Models
 {
     public class AppSettings
     {

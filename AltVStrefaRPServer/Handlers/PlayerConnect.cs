@@ -5,6 +5,7 @@ using AltV.Net.Async;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Helpers;
+using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Modules.CharacterModule;
 using AltVStrefaRPServer.Services.Characters;
 using Newtonsoft.Json;
