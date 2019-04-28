@@ -67,29 +67,20 @@ namespace AltVStrefaRPServer.Modules.Businesses
                 return;
             }
 
-            var businessEmployees = new BusinessEmployeesDto
+            var employeeRanksInfo = new BusinessEmployeesDto
             {
                 BusinessRanks = business.BusinessRanks.Select(e => new BusinessRanksDto
                 {
                     Id = e.Id,
                     RankName = e.RankName,
-                    IsDefaultRank = e.IsDefaultRank
+                    IsDefaultRank = e.IsDefaultRank,
+                    IsOwnerRank = e.IsOwnerRank
                 }).ToList(),
-                BusinessEmployees = business.Employees.Select(e => new BusinessEmployeeExtendedDto
-                {
-                    Id = e.Id,
-                    LastName = e.LastName,
-                    Name = e.FirstName,
-                    Age = e.Age,
-                    Gender = e.Gender,
-                    RankId = e.BusinessRank,
-                    RankName = business.BusinessRanks.FirstOrDefault(br => br.Id == e.BusinessRank).RankName,
-                }).ToList()
             };
 
-            var businessEmployeesObject = JsonConvert.SerializeObject(businessEmployees);
-            player.Emit("populateBusinessEmployees", businessEmployeesObject);
-            Alt.Log($"Business employess object: {businessEmployeesObject}: in {Time.GetTimestampMs() - startTime}ms.");
+            var businessRanksObject = JsonConvert.SerializeObject(employeeRanksInfo);
+            player.Emit("populateEmployeeRanks", businessRanksObject);
+            Alt.Log($"Business employess object: {businessRanksObject}: in {Time.GetTimestampMs() - startTime}ms.");
 
         }
 
@@ -127,12 +118,13 @@ namespace AltVStrefaRPServer.Modules.Businesses
                 OwnerId = business.OwnerId,
                 MaxMembersCount = business.MaxMembersCount,
                 Transactions = business.Transactions,
-                Employees = business.Employees.Select(q => new BusinessEmployeeDto
+                Employees = business.Employees.Select(q => new BusinessEmployeeExtendedDto
                 {
                     Id = q.Id,
                     LastName = q.LastName,
                     Name = q.FirstName,
                     Gender = q.Gender,
+                    Age = q.Age,
                     RankId = q.BusinessRank,
                     RankName = business.BusinessRanks.FirstOrDefault(br => br.Id == q.BusinessRank).RankName,
                 }).ToList(),

@@ -15,14 +15,15 @@ namespace AltVStrefaRPServer.Models.Dto
         public DateTime CreatedAt { get; set; }
         public BusinessType Type { get; set; }
         public int EmployeesCount { get; set; }
-        public List<BusinessEmployeeDto> Employees { get; set; }
+        public List<BusinessEmployeeExtendedDto> Employees { get; set; }
     }
 
-    public class BusinessEmployeeDto
+    public class BusinessEmployeeExtendedDto
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public string LastName { get; set; }
+        public int Age { get; set; }
         public int Gender { get; set; }
         public int RankId { get; set; }
         public string RankName { get; set; }
