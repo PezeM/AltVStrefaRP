@@ -195,7 +195,6 @@ namespace AltVStrefaRPServer.Modules.Businesses
             business.BusinessRanks.Add(new BusinessRank
             {
                 RankName = newRank.RankName,
-                Business = business,
                 IsDefaultRank = false,
                 IsOwnerRank = false,
                 Permissions = new BusinessPermissions

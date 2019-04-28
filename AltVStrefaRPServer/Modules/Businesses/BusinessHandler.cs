@@ -273,6 +273,8 @@ namespace AltVStrefaRPServer.Modules.Businesses
             player.Emit("showConfirmModal", "Oferta pracy", $"Otrzymałeś zaproszenie do firmy {business.BusinessName}. " +
                                                             $"Czy chcesz je przyjąć?", (int)ConfirmModalType.BusinessInvite, businessId);
 
+            _notificationService.ShowSuccessNotification(player, "Wysłano zaproszenie", 
+                                                        $"Zaproszenie do firmy zostało wysłane do {newEmployee.GetFullName()}.", 6500);
             player.Emit("successfullyInvitedNewEmployee");
             Alt.Log($"Character ID({character.Id}) invited {character.GetFullName()} ID({character.Id}) " +
                     $"to business({business.BusinessName}) ID({business.Id})");
@@ -393,7 +395,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
             }
 
             await _businessManager.UpdateBusinessRank(businessRankToUpdate, newPermissions).ConfigureAwait(false);
-            player.Emit("successfullyUpdatedRankPermissions");
+            _notificationService.ShowSuccessNotification(player, "Zaktualizowano stanowisko", "Pomyślnie zaktualizowano stanowisko.");
             Alt.Log($"Character {character.GetFullName()} ID({character.Id}) changed permissions in rank ID({businessRank.Id})" +
                     $" in {Time.GetTimestampMs() - startTime}ms.");
         }
@@ -451,7 +453,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
             if(newRank == null) return;
             if (await _businessManager.AddNewBusinessRank(business, newRank).ConfigureAwait(false))
             {
-                player.Emit("successfullyAddedNewRole");
+                _notificationService.ShowSuccessNotification(player, "Zaktualizowano stanowisko", "Pomyślnie zaktualizowano stanowisko");
             }
             else
             {
