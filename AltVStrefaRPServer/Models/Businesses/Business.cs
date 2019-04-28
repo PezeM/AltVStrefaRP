@@ -71,5 +71,7 @@ namespace AltVStrefaRPServer.Models.Businesses
         /// <param name="character"></param>
         /// <returns></returns>
         public bool IsWorkingHere(Character character) => character.Business.Id == Id;
+
+        public bool CanAddNewRank() => BusinessRanks.Count < MaxRanksCount;
     }
 }

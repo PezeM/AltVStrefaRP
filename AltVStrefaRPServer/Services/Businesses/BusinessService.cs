@@ -78,5 +78,11 @@ namespace AltVStrefaRPServer.Services.Businesses
             _serverContext.SaveChanges();
             return Task.CompletedTask;
         }
+
+        public async Task UpdateBusinessRankAsync(BusinessRank newBusinessPermissions)
+        {
+            _serverContext.BusinessesRanks.Update(newBusinessPermissions);
+            await _serverContext.SaveChangesAsync().ConfigureAwait(false);
+        }
     }
 }

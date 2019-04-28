@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AltV.Net;
@@ -9,6 +10,7 @@ using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Businesses;
+using AltVStrefaRPServer.Models.Dto;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Services.Businesses;
 using AltVStrefaRPServer.Services.Characters;
@@ -172,6 +174,43 @@ namespace AltVStrefaRPServer.Modules.Businesses
             employee.BusinessRank = newRankId;
             await _businessService.UpdateBusinessAsync(business).ConfigureAwait(false);
             await _characterDatabaseService.SaveCharacterAsync(employee).ConfigureAwait(false);
+        }
+
+        public async Task UpdateBusinessRank(BusinessRank businessRankToUpdate, BusinessPermissionsDto newPermissions)
+        {
+            businessRankToUpdate.Permissions.CanInviteNewMembers = newPermissions.CanInviteNewMembers;
+            businessRankToUpdate.Permissions.CanManageEmployess = newPermissions.CanManageEmployees;
+            businessRankToUpdate.Permissions.CanManageRanks = newPermissions.CanManageRanks;
+            businessRankToUpdate.Permissions.CanOpenBusinessInventory = newPermissions.CanOpenBusinessInventory;
+            businessRankToUpdate.Permissions.CanOpenBusinessMenu = newPermissions.CanOpenBusinessMenu;
+            businessRankToUpdate.Permissions.HaveBusinessKeys = newPermissions.HaveBusinessKeys;
+            businessRankToUpdate.Permissions.HaveVehicleKeys = newPermissions.HaveVehicleKeys;
+
+            await _businessService.UpdateBusinessRankAsync(businessRankToUpdate);
+        }
+
+        public async Task<bool> AddNewBusinessRank(Business business, BusinessNewRankDto newRank)
+        {
+            if (!business.CanAddNewRank()) return false;
+            business.BusinessRanks.Add(new BusinessRank
+            {
+                RankName = newRank.RankName,
+                Business = business,
+                IsDefaultRank = false,
+                IsOwnerRank = false,
+                Permissions = new BusinessPermissions
+                {
+                    CanInviteNewMembers = newRank.Permissions.CanInviteNewMembers,
+                    CanManageEmployess = newRank.Permissions.CanManageEmployess,
+                    CanOpenBusinessInventory = newRank.Permissions.CanOpenBusinessInventory,
+                    CanOpenBusinessMenu = newRank.Permissions.CanOpenBusinessMenu,
+                    CanManageRanks = newRank.Permissions.CanManageRanks,
+                    HaveVehicleKeys = newRank.Permissions.HaveVehicleKeys,
+                    HaveBusinessKeys = newRank.Permissions.HaveBusinessKeys,
+                }
+            });
+            await _businessService.UpdateBusinessAsync(business).ConfigureAwait(false);
+            return true;
         }
     }
 }

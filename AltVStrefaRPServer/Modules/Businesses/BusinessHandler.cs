@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
@@ -35,6 +36,8 @@ namespace AltVStrefaRPServer.Modules.Businesses
             Alt.OnClient("AddNewEmployee", AddNewEmployeeEvent);
             AltAsync.OnClient("AcceptInviteToBusiness", AcceptInviteToBusinessEvent);
             Alt.OnClient("GetBusinessRoles", GetBusinessRolesEvent);
+            AltAsync.OnClient("UpdateBusinessRank", UpdateBusinessRank);
+            AltAsync.OnClient("AddNewRole", AddNewRoleEvent);
         }
 
         private void GetBusinessEmployeesEvent(IPlayer player, object[] args)
@@ -330,6 +333,134 @@ namespace AltVStrefaRPServer.Modules.Businesses
             var businessPermissionsObject = JsonConvert.SerializeObject(businessRanksInfo);
             player.Emit("populateBusinessRanksInfo", businessPermissionsObject);
             Alt.Log($"Business employess object: {businessPermissionsObject}: in {Time.GetTimestampMs() - startTime}ms.");
+        }
+
+        private async Task UpdateBusinessRank(IPlayer player, object[] args)
+        {
+            var startTime = Time.GetTimestampMs();
+            if (args.Length < 2)
+            {
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Wysłano niepełne dane do serwera.", 4000);
+                return;
+            }
+
+            if (!int.TryParse(args[1].ToString(), out int businessId))
+            {
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Błędne ID biznesu.", 4000);
+                return;
+            }
+
+            var character = player.GetCharacter();
+            if (character == null) return;
+
+            var business = _businessManager.GetBusiness(businessId);
+            if (business == null)
+            {
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
+                return;
+            }
+            
+            var businessRank = _businessManager.GetBusinessRankForPlayer(business, character);
+            if (businessRank == null)
+            {
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie masz ustalonych żadnych uprawnień w biznesie.", 6000);
+                return;
+            }
+
+            if (!businessRank.Permissions.CanManageRanks)
+            {
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie posiadasz odpowiednich uprawień.", 4000);
+                return;
+            }
+
+            BusinessPermissionsDto newPermissions;
+            try
+            {
+                newPermissions = JsonConvert.DeserializeObject<BusinessPermissionsDto>(args[0].ToString());
+
+            }
+            catch (Exception e)
+            {
+                Alt.Log($"Error in deserializing new business permissions: {e}");
+                throw;
+            }
+
+            var businessRankToUpdate = business.BusinessRanks.FirstOrDefault(r => r.Id == newPermissions.RankId);
+            if (businessRankToUpdate == null)
+            {
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie znaleziono takiego stanowiska w biznesie.", 4000);
+                return;
+            }
+
+            await _businessManager.UpdateBusinessRank(businessRankToUpdate, newPermissions).ConfigureAwait(false);
+            player.Emit("successfullyUpdatedRankPermissions");
+            Alt.Log($"Character {character.GetFullName()} ID({character.Id}) changed permissions in rank ID({businessRank.Id})" +
+                    $" in {Time.GetTimestampMs() - startTime}ms.");
+        }
+
+        private async Task AddNewRoleEvent(IPlayer player, object[] args)
+        {
+            var startTime = Time.GetTimestampMs();
+            if (args.Length < 2)
+            {
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie podano wszystkich danych.", 4000);
+                return;
+            }
+
+            if (!int.TryParse(args[1].ToString(), out int businessId))
+            {
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Błędne ID biznesu.", 4000);
+                return;
+            }
+
+            var character = player.GetCharacter();
+            if (character == null) return;
+
+            var business = _businessManager.GetBusiness(businessId);
+            if (business == null)
+            {
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
+                return;
+            }
+
+            var businessRank = _businessManager.GetBusinessRankForPlayer(business, character);
+            if (businessRank == null)
+            {
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie masz ustalonych żadnych uprawnień w biznesie.", 6000);
+                return;
+            }
+
+            if (!businessRank.Permissions.CanManageRanks)
+            {
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie posiadasz odpowiednich uprawień.", 4000);
+                return;
+            }
+
+            BusinessNewRankDto newRank;
+            try
+            {
+                newRank = JsonConvert.DeserializeObject<BusinessNewRankDto>(args[0].ToString());
+
+            }
+            catch (Exception e)
+            {
+                Alt.Log($"Error in deserializing new business permissions: {e}");
+                throw;
+            }
+
+            if(newRank == null) return;
+            if (await _businessManager.AddNewBusinessRank(business, newRank).ConfigureAwait(false))
+            {
+                player.Emit("successfullyAddedNewRole");
+            }
+            else
+            {
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie udało się dodać nowego stanowiska.", 5000);
+                return;
+            }
+
+            Alt.Log($"Character ID({character.Id}) added new role {newRank.RankName} to business ID({business.Id})" +
+                    $" in {Time.GetTimestampMs() - startTime}ms.");
         }
 
         private static List<BusinessPermissionsDto> GetBusinessRanksInfo(Models.Businesses.Business business)
