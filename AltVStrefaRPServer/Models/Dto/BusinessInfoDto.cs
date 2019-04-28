@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using AltVStrefaRPServer.Models.Enums;
 
 namespace AltVStrefaRPServer.Models.Dto
@@ -15,7 +14,8 @@ namespace AltVStrefaRPServer.Models.Dto
         public DateTime CreatedAt { get; set; }
         public BusinessType Type { get; set; }
         public int EmployeesCount { get; set; }
-        public List<BusinessEmployeeExtendedDto> Employees { get; set; }
+        public int Ranks { get; set; }
+        public int MaxRanksCount { get; set; }
     }
 
     public class BusinessEmployeeExtendedDto

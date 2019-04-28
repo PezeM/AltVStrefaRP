@@ -5,6 +5,7 @@ namespace AltVStrefaRPServer.Models.Dto
     public class BusinessEmployeesDto
     {
         public List<BusinessRanksDto> BusinessRanks { get; set; }
+        public List<BusinessEmployeeExtendedDto> BusinessEmployees { get; set; }
     }
 
     public class BusinessRanksDto

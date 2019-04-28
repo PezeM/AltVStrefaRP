@@ -1,4 +1,5 @@
-﻿using AltV.Net;
+﻿using System.Collections.Generic;
+using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Extensions;
@@ -29,13 +30,14 @@ namespace AltVStrefaRPServer.Modules.Businesses
             _characterDatabaseService = characterDatabaseService;
 
             Alt.Log("Intialized business handler.");
-            Alt.OnClient("GetBusinessesEmployees", GetBusinessesEmployeesEvent);
+            Alt.OnClient("GetBusinessEmployees", GetBusinessEmployeesEvent);
             AltAsync.OnClient("UpdateEmployeeRank", UpdateEmployeeRankEvent);
             Alt.OnClient("AddNewEmployee", AddNewEmployeeEvent);
             AltAsync.OnClient("AcceptInviteToBusiness", AcceptInviteToBusinessEvent);
+            Alt.OnClient("GetBusinessRoles", GetBusinessRolesEvent);
         }
 
-        private void GetBusinessesEmployeesEvent(IPlayer player, object[] args)
+        private void GetBusinessEmployeesEvent(IPlayer player, object[] args)
         {
             var startTime = Time.GetTimestampMs();
             if (!int.TryParse(args[0].ToString(), out int businessId))
@@ -76,6 +78,16 @@ namespace AltVStrefaRPServer.Modules.Businesses
                     IsDefaultRank = e.IsDefaultRank,
                     IsOwnerRank = e.IsOwnerRank
                 }).ToList(),
+                BusinessEmployees = business.Employees.Select(e => new BusinessEmployeeExtendedDto
+                {
+                    Id = e.Id,
+                    LastName = e.LastName,
+                    Name = e.FirstName,
+                    Age = e.Age,
+                    Gender = e.Gender,
+                    RankId = e.BusinessRank,
+                    RankName = business.BusinessRanks.FirstOrDefault(br => br.Id == e.BusinessRank).RankName,
+                }).ToList()
             };
 
             var businessRanksObject = JsonConvert.SerializeObject(employeeRanksInfo);
@@ -118,16 +130,8 @@ namespace AltVStrefaRPServer.Modules.Businesses
                 OwnerId = business.OwnerId,
                 MaxMembersCount = business.MaxMembersCount,
                 Transactions = business.Transactions,
-                Employees = business.Employees.Select(q => new BusinessEmployeeExtendedDto
-                {
-                    Id = q.Id,
-                    LastName = q.LastName,
-                    Name = q.FirstName,
-                    Gender = q.Gender,
-                    Age = q.Age,
-                    RankId = q.BusinessRank,
-                    RankName = business.BusinessRanks.FirstOrDefault(br => br.Id == q.BusinessRank).RankName,
-                }).ToList(),
+                Ranks = business.BusinessRanks.Count,
+                MaxRanksCount = business.MaxRanksCount
             };
 
             var businessObject = JsonConvert.SerializeObject(businessInfo);
@@ -200,7 +204,6 @@ namespace AltVStrefaRPServer.Modules.Businesses
 
             await _businessManager.UpdateEmployeeRank(business, employee, newRankId).ConfigureAwait(false);
             player.Emit("successfullyUpdatedEmployeeRank", employeeId, newRankId);
-            // Add callback to client with succesfull message and update player rank/close model
             Alt.Log($"ID({character.Id}) changed business rank of player ID({employee.Id}) to RankID({newRankId})" +
                     $" in {Time.GetTimestampMs() - startTime}ms.");
         }
@@ -302,6 +305,48 @@ namespace AltVStrefaRPServer.Modules.Businesses
             }
 
             AltAsync.Log($"Character ID({character.Id}) joined business {business.BusinessName} ID({business.Id}).");
+        }
+
+        private void GetBusinessRolesEvent(IPlayer player, object[] args)
+        {
+            var startTime = Time.GetTimestampMs();
+            if (!int.TryParse(args[0].ToString(), out int businessId))
+            {
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Błędne ID biznesu.", 4000);
+                return;
+            }
+
+            var business = _businessManager.GetBusiness(businessId);
+            if (business == null)
+            {
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
+                return;
+            }
+
+            var character = player.GetCharacter();
+            if (character == null) return;
+
+            List<BusinessPermissionsDto> businessRanksInfo = GetBusinessRanksInfo(business);
+            var businessPermissionsObject = JsonConvert.SerializeObject(businessRanksInfo);
+            player.Emit("populateBusinessRanksInfo", businessPermissionsObject);
+            Alt.Log($"Business employess object: {businessPermissionsObject}: in {Time.GetTimestampMs() - startTime}ms.");
+        }
+
+        private static List<BusinessPermissionsDto> GetBusinessRanksInfo(Models.Businesses.Business business)
+        {
+            return business.BusinessRanks.Select(q => new BusinessPermissionsDto
+            {
+                Id = q.Permissions.Id,
+                RankId = q.Id,
+                RankName = q.RankName,
+                CanOpenBusinessMenu = q.Permissions.CanOpenBusinessMenu,
+                HaveBusinessKeys = q.Permissions.HaveBusinessKeys,
+                CanOpenBusinessInventory = q.Permissions.CanOpenBusinessInventory,
+                HaveVehicleKeys = q.Permissions.HaveVehicleKeys,
+                CanInviteNewMembers = q.Permissions.CanInviteNewMembers,
+                CanManageEmployees = q.Permissions.CanManageEmployess,
+                CanManageRanks = q.Permissions.CanManageRanks,
+            }).ToList();
         }
     }
 }
