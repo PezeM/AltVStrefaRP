@@ -43,6 +43,11 @@ namespace AltVStrefaRPServer.Models.Businesses
             Z = position.Z;
         }
 
+        /// <summary>
+        /// Checks if business can have more members
+        /// </summary>
+        /// <param name="newEmployee"></param>
+        /// <returns></returns>
         public bool CanAddNewMember(Character newEmployee)
         {
             if (EmployeesCount >= MaxMembersCount) return false;
@@ -72,6 +77,53 @@ namespace AltVStrefaRPServer.Models.Businesses
         /// <returns></returns>
         public bool IsWorkingHere(Character character) => character.Business.Id == Id;
 
+        /// <summary>
+        /// Checks if business can have more ranks
+        /// </summary>
+        /// <returns></returns>
         public bool CanAddNewRank() => BusinessRanks.Count < MaxRanksCount;
+
+        /// <summary>
+        /// Returns a business rank if character is employee, otherwise returns null. 
+        /// </summary>
+        /// <param name="employee"></param>
+        /// <returns></returns>
+        public bool GetBusinessRankForEmployee(Character employee, out BusinessRank businessRank)
+        {
+            businessRank = BusinessRanks.FirstOrDefault(r => r.Id == employee.BusinessRank);
+            return businessRank != null;
+        }
+
+        /// <summary>
+        /// Checks whether character is an employee at this business
+        /// </summary>
+        /// <param name="employee"></param>
+        /// <returns></returns>
+        public bool IsCharacterEmployee(Character employee) => Employees.Any(q => q.Id == employee.Id);
+
+        /// <summary>
+        /// Checks whether character with given ID is an employee at this business
+        /// </summary>
+        /// <param name="characterId"></param>
+        /// <param name="employee"></param>
+        /// <returns></returns>
+        public bool IsCharacterEmployee(int characterId, out Character employee)
+        {
+            employee = Employees.FirstOrDefault(q => q.Id == characterId);
+            return employee != null;
+        }
+
+        /// <summary>
+        /// Checks whether rank with given rankId exists in business
+        /// </summary>
+        /// <param name="rankId"></param>
+        /// <returns></returns>
+        public bool CheckIfRankExists(int rankId) => BusinessRanks.Any(q => q.Id == rankId);
+
+        public bool GetBusinessRank(int rankId, out BusinessRank businessRankToUpdate)
+        {
+            businessRankToUpdate = BusinessRanks.FirstOrDefault(r => r.Id == rankId);
+            return businessRankToUpdate != null;
+        }
     }
 }

@@ -67,17 +67,8 @@ namespace AltVStrefaRPServer.Modules.Businesses
 
         public Business GetBusiness(Character emplyoee)
         {
-            return Businesses.Values.FirstOrDefault(b => b.Employees.Any(e => e.Id == emplyoee.Id));
+            return Businesses.Values.FirstOrDefault(b => b.Employees.Contains(emplyoee));
         }
-
-        /// <summary>
-        /// Checks if character is an employee at given business
-        /// </summary>
-        /// <param name="business"></param>
-        /// <param name="employee"></param>
-        /// <returns></returns>
-        public bool IsCharacterEmployee(Business business, Character employee) 
-            => business.Employees.Any(c => c.Id == employee.Id);
 
         /// <summary>
         /// Get nearest business to player
@@ -113,11 +104,6 @@ namespace AltVStrefaRPServer.Modules.Businesses
         public bool CheckIfBusinessExists(string businessName)
         {
             return Businesses.Values.Any(b => b.BusinessName == businessName);
-        }
-
-        public BusinessRank GetBusinessRankForPlayer(Business business, Character character)
-        {
-            return business.BusinessRanks.FirstOrDefault(q => q.Id == character.BusinessRank);
         }
 
         /// <summary>
