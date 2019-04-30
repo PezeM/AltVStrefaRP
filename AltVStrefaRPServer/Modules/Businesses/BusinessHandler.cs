@@ -141,15 +141,15 @@ namespace AltVStrefaRPServer.Modules.Businesses
                 return;
             }
 
-            if (!business.CheckIfRankExists(newRankId))
-            {
-                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie znaleziono podanego stanowiska.", 5000);
-                return;
-            }
-
             if (!business.IsCharacterEmployee(employeeId, out Character employee))
             {
                 _notificationService.ShowErrorNotfication(player, "Błąd", "Ten pracownik nie jest zatrudniony u ciebie w firmie.", 7000);
+                return;
+            }
+
+            if (!business.CheckIfRankExists(newRankId))
+            {
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie znaleziono podanego stanowiska.", 5000);
                 return;
             }
 
