@@ -1,7 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
+using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
+using AltV.Net.Enums;
 using AltVStrefaRPServer.Database;
+using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Modules.Vehicle;
 using AltVStrefaRPServer.Services;
@@ -24,6 +28,73 @@ namespace AltVStrefaRPServer.Handlers
             AltAsync.OnPlayerEnterVehicle += OnPlayerEnterVehicleAsync;
             AltAsync.OnVehicleRemove += OnVehicleRemoveAsync;
             AltAsync.OnPlayerChangeVehicleSeat += OnPlayerChangedVehicleSeatAsync;
+            AltAsync.OnClient("ToggleTrunkState", ToggleTrunkStateEvent);
+            AltAsync.OnClient("ToggleHoodState", ToggleHoodStateEvent);
+            AltAsync.OnClient("ToggleLockState", ToggleLockStateEvent);
+        }
+
+        private Task ToggleLockStateEvent(IPlayer player, object[] args)
+        {
+            var startTime = Time.GetTimestampMs();
+            var character = player.GetCharacter();
+            if (character == null) return Task.CompletedTask;
+
+            var closestVehicle = _vehicleManager.GetClosestVehicle(player, 2.3f);
+            if (closestVehicle == null) return Task.CompletedTask;
+
+            if (!_vehicleManager.HasVehiclePermission(character, closestVehicle)) return Task.CompletedTask;
+
+            closestVehicle.IsLocked = !closestVehicle.IsLocked;
+            closestVehicle.VehicleHandle.LockState = closestVehicle.IsLocked ? VehicleLockState.Locked : VehicleLockState.Unlocked;
+            player.Emit("toggleLockState", closestVehicle.IsLocked);
+            Alt.Log($"ToggleLockState completed in {Time.GetTimestampMs() - startTime}ms.");
+            return Task.CompletedTask;
+        }
+
+        private Task ToggleHoodStateEvent(IPlayer player, object[] args)
+        {
+            var startTime = Time.GetTimestampMs();
+
+            var closestVehicle = _vehicleManager.GetClosestVehicle(player, 4f);
+            if (closestVehicle == null || closestVehicle.VehicleHandle.LockState == VehicleLockState.Locked) return Task.CompletedTask;
+
+            var doorState = closestVehicle.VehicleHandle.GetDoorState(VehicleDoor.Hood);
+            if (doorState == VehicleDoorState.Closed)
+            {
+                closestVehicle.VehicleHandle.SetDoorState(VehicleDoor.Hood, VehicleDoorState.OpenedLevel7);
+                player.Emit("toggleHoodState", 1);
+            }
+            else 
+            {
+                closestVehicle.VehicleHandle.SetDoorState(VehicleDoor.Hood, VehicleDoorState.Closed);
+                player.Emit("toggleHoodState", 0);
+            }
+
+            Alt.Log($"ToggleTrunkState completed in {Time.GetTimestampMs() - startTime}ms.");
+            return Task.CompletedTask;
+        }
+
+        private Task ToggleTrunkStateEvent(IPlayer player, object[] args)
+        {
+            var startTime = Time.GetTimestampMs();
+
+            var closestVehicle = _vehicleManager.GetClosestVehicle(player, 4f);
+            if (closestVehicle == null || closestVehicle.VehicleHandle.LockState == VehicleLockState.Locked) return Task.CompletedTask;
+
+            var doorState = closestVehicle.VehicleHandle.GetDoorState(VehicleDoor.Trunk);
+            if (doorState == VehicleDoorState.Closed)
+            {
+                closestVehicle.VehicleHandle.SetDoorState(VehicleDoor.Trunk, VehicleDoorState.OpenedLevel7);
+                player.Emit("toggleTrunkState", 1);
+            }
+            else 
+            {
+                closestVehicle.VehicleHandle.SetDoorState(VehicleDoor.Trunk, VehicleDoorState.Closed);
+                player.Emit("toggleTrunkState", 0);
+            }
+
+            Alt.Log($"ToggleTrunkState completed in {Time.GetTimestampMs() - startTime}ms.");
+            return Task.CompletedTask;
         }
 
         private Task OnPlayerChangedVehicleSeatAsync(IVehicle vehicle, IPlayer player, byte oldseat, byte newseat)
@@ -39,6 +110,11 @@ namespace AltVStrefaRPServer.Handlers
 
         private Task OnPlayerEnterVehicleAsync(IVehicle vehicle, IPlayer player, byte seat)
         {
+            var trunk = vehicle.GetDoorState(VehicleDoor.Trunk);
+            if (trunk == VehicleDoorState.Closed)
+            {
+                vehicle.SetDoorState(VehicleDoor.Trunk, VehicleDoorState.OpenedLevel7);
+            }
             return Task.CompletedTask;
         }
 
@@ -47,7 +123,7 @@ namespace AltVStrefaRPServer.Handlers
             var startTime = Time.GetTimestampMs();
             // Saves vehicle only if the drivers exits
             if(vehicle.Driver != null) return;
-            var vehicleModel = _vehicleManager.GetVehicleModel(vehicle.Id);
+            var vehicleModel = _vehicleManager.GetVehicleModel(vehicle);
             if (vehicleModel == null) return;
 
             // For now saves vehicle when player leaves the vehicle and he was the driver

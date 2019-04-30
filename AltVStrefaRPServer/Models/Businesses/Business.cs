@@ -120,10 +120,10 @@ namespace AltVStrefaRPServer.Models.Businesses
         /// <returns></returns>
         public bool CheckIfRankExists(int rankId) => BusinessRanks.Any(q => q.Id == rankId);
 
-        public bool GetBusinessRank(int rankId, out BusinessRank businessRankToUpdate)
+        public bool GetBusinessRank(int rankId, out BusinessRank businessRank)
         {
-            businessRankToUpdate = BusinessRanks.FirstOrDefault(r => r.Id == rankId);
-            return businessRankToUpdate != null;
+            businessRank = BusinessRanks.FirstOrDefault(r => r.Id == rankId);
+            return businessRank != null;
         }
     }
 }

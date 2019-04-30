@@ -177,7 +177,7 @@ namespace AltVStrefaRPServer.Modules.Admin
             var character = player.GetCharacter();
             if (character == null) return;
 
-            var vehicle = _vehicleManager.CreateVehicle(model, player.Position, player.HeadRotation.pitch, player.Dimension, character.Id, OwnerType.None);
+            var vehicle = _vehicleManager.CreateVehicle(model, player.Position, player.HeadRotation.pitch, player.Dimension, character.Id, OwnerType.Character);
             _vehicleManager.SpawnVehicle(vehicle.Id);
         }
     }

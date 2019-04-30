@@ -6,10 +6,14 @@ using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
+using AltV.Net.Enums;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
+using AltVStrefaRPServer.Models.Businesses;
 using AltVStrefaRPServer.Models.Enums;
+using AltVStrefaRPServer.Modules.Businesses;
 using AltVStrefaRPServer.Services.Vehicles;
+using VehicleModel = AltVStrefaRPServer.Models.VehicleModel;
 
 namespace AltVStrefaRPServer.Modules.Vehicle
 {
@@ -18,8 +22,10 @@ namespace AltVStrefaRPServer.Modules.Vehicle
         private Dictionary<int, VehicleModel> Vehicles = new Dictionary<int, VehicleModel>();
         private IVehicleManagerService _vehicleManagerService;
         private IVehicleCreatorService _vehicleCreator;
+        private BusinessManager _businessManager;
 
-        public VehicleManager(IVehicleManagerService vehicleManagerService, IVehicleCreatorService vehicleCreatorService)
+        public VehicleManager(IVehicleManagerService vehicleManagerService, IVehicleCreatorService vehicleCreatorService, 
+            BusinessManager businessManager)
         {
             _vehicleManagerService = vehicleManagerService;
             _vehicleCreator = vehicleCreatorService;
@@ -100,7 +106,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             return false;
         }
 
-        public bool IsCharacterOwnerOfVehicle(Models.Character character, VehicleModel vehicle) => character.Id == vehicle.Id;
+        public bool IsCharacterOwnerOfVehicle(Character character, VehicleModel vehicle) => character.Id == vehicle.Id;
 
         /// <summary>
         /// Checks if character has permission to access vehicle
@@ -108,7 +114,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
         /// <param name="character">Character which wants to acess vehicle</param>
         /// <param name="vehicle">The vehicle character want to access</param>
         /// <returns>True if character has permission</returns>
-        public bool HasVehiclePermission(Models.Character character, VehicleModel vehicle)
+        public bool HasVehiclePermission(Character character, VehicleModel vehicle)
         {
             if (vehicle.OwnerType == OwnerType.Character)
             {
@@ -117,8 +123,9 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             else if (vehicle.OwnerType == OwnerType.Group)
             {
                 // TODO Group management
-                var businessRank = character.Business.BusinessRanks.FirstOrDefault(b => b.Id == character.BusinessRank);
-                if (businessRank == null) return false;
+                if (character.Business == null) character.Business = _businessManager.GetBusiness(character);
+                if (character.Business == null) return false;
+                if (!character.Business.GetBusinessRank(character.BusinessRank, out BusinessRank businessRank)) return false;
                 return businessRank.Permissions.HaveVehicleKeys;
             }
             else if (vehicle.OwnerType == OwnerType.Job)
@@ -172,11 +179,22 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             if (vehicleModel.IsSpawned) return;
             if (vehicleModel.VehicleHandle != null) return;
 
-            vehicleModel.VehicleHandle = Alt.CreateVehicle(vehicleModel.Model,
-                new Position(vehicleModel.X, vehicleModel.Y, vehicleModel.Z), vehicleModel.Heading);
+            try
+            {
+                vehicleModel.VehicleHandle = Alt.CreateVehicle(vehicleModel.Model,
+                    new Position(vehicleModel.X, vehicleModel.Y, vehicleModel.Z), vehicleModel.Heading);
+            }
+            catch (Exception e)
+            {
+                Alt.Log($"Error creating vehicle with model {vehicleModel.Model} ID({vehicleModel.Id}) ex: {e}");
+                throw;
+            }
+
 
             vehicleModel.VehicleHandle.Dimension = vehicleModel.Dimension;
             vehicleModel.VehicleHandle.EngineOn = false;
+            vehicleModel.IsLocked = false;
+            vehicleModel.VehicleHandle.LockState = VehicleLockState.Unlocked;
             vehicleModel.VehicleHandle.SetData("vehicleId", vehicleModel.Id);
             vehicleModel.VehicleHandle.NumberplateText = vehicleModel.PlateText;
             vehicleModel.VehicleHandle.NumberplateIndex = vehicleModel.PlateNumber;
@@ -212,6 +230,24 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             Alt.Server.RemoveVehicle(vehicleModel.VehicleHandle);
             AltAsync.Log($"Despawned vehicle: {vehicleModel.Model} UID({vehicleModel.Id})");
             return true;
+        }
+
+        public VehicleModel GetClosestVehicle(IPlayer player, float radius = 4f)
+        {
+            var startTime = Time.GetTimestampMs();
+            IVehicle returnVehicle = null;
+            foreach (var vehicle in Alt.GetAllVehicles())
+            {
+                var playerDistanceToVehicle = player.Position.Distance(vehicle.Position);
+                if (playerDistanceToVehicle < radius && player.Dimension == vehicle.Dimension)
+                {
+                    radius = playerDistanceToVehicle;
+                    returnVehicle = vehicle;
+                }
+            }
+            Alt.Log($"Found the nearest vehicle in {Time.GetTimestampMs() - startTime} ms.");
+
+            return returnVehicle == null ? null : GetVehicleModel(returnVehicle);
         }
     }
 }
