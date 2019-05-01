@@ -59,7 +59,7 @@ namespace AltVStrefaRPServer
                     mysqlOptions =>
                     {
                         mysqlOptions.ServerVersion(new Version(10, 1, 37), ServerType.MariaDb);
-                    }));
+                    }), ServiceLifetime.Transient);
 
             // Add services
             services.AddTransient<INotificationService, NotificationService>();
@@ -69,8 +69,8 @@ namespace AltVStrefaRPServer
             services.AddTransient<IVehicleCreatorService, VehicleCreatorService>();
             services.AddTransient<IMoneyService, MoneyService>();
             services.AddTransient<IBusinessService, BusinessService>();
+            services.AddTransient<IVehicleDatabaseService, VehicleDatabaseService>();
 
-            services.AddSingleton<IVehicleDatabaseService, VehicleDatabaseService>();
             services.AddSingleton<HashingService>();
             services.AddSingleton<PlayerConnect>();
             services.AddSingleton<PlayerDisconnect>();
@@ -80,8 +80,8 @@ namespace AltVStrefaRPServer
             services.AddSingleton<BankAccountManager>();
             services.AddSingleton<BusinessManager>();
             services.AddSingleton<BusinessHandler>();
-
             services.AddSingleton<TemporaryChatHandler>();
+
             services.AddTransient<AdminCommands>();
             services.AddTransient<CharacterCreator>();
             services.AddTransient<SittingHandler>();

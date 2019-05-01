@@ -16,6 +16,10 @@ namespace AltVStrefaRPServer.Services.Vehicles
             _serverContext = serverContext;
         }
 
+        /// <summary>
+        /// Gets all vehicles from database
+        /// </summary>
+        /// <returns></returns>
         public async Task<List<VehicleModel>> LoadVehiclesFromDatabaseAsync()
             => await _serverContext.Vehicles.ToListAsync().ConfigureAwait(false);
 

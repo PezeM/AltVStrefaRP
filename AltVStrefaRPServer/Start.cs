@@ -11,7 +11,6 @@ using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Modules.Admin;
 using AltVStrefaRPServer.Modules.Businesses;
-using AltVStrefaRPServer.Modules.CharacterModule;
 using AltVStrefaRPServer.Modules.CharacterModule.Customization;
 using AltVStrefaRPServer.Modules.Chat;
 using AltVStrefaRPServer.Modules.Environment;
@@ -45,7 +44,7 @@ namespace AltVStrefaRPServer
 
             vehicleManager = Startup.ServiceProvider.GetService<VehicleManager>();
             var businessesManager = Startup.ServiceProvider.GetService<BusinessManager>();
-            var businessHandlerv = Startup.ServiceProvider.GetServices<BusinessHandler>();
+            var businessHandler = Startup.ServiceProvider.GetServices<BusinessHandler>();
             var characterCreator = Startup.ServiceProvider.GetService<CharacterCreator>();
             var vehicleLoader = Startup.ServiceProvider.GetService<VehicleDatabaseService>();
             var adminCommands = Startup.ServiceProvider.GetService<AdminCommands>();

@@ -9,18 +9,21 @@ using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Modules.Vehicle;
 using AltVStrefaRPServer.Services;
+using AltVStrefaRPServer.Services.Vehicles;
 
 namespace AltVStrefaRPServer.Handlers
 {
     public class VehicleHandler
     {
+        private IVehicleDatabaseService _vehicleDatabaseService;
         private ServerContext _serverContext;
         private VehicleManager _vehicleManager;
         private INotificationService _notificationService;
 
-        public VehicleHandler(ServerContext serverContext, VehicleManager vehicleManager, INotificationService notificationService)
+        public VehicleHandler(VehicleManager vehicleManager, IVehicleDatabaseService vehiceVehicleDatabaseService,
+            INotificationService notificationService)
         {
-            _serverContext = serverContext;
+            _vehicleDatabaseService = vehiceVehicleDatabaseService;
             _vehicleManager = vehicleManager;
             _notificationService = notificationService;
 
@@ -132,8 +135,7 @@ namespace AltVStrefaRPServer.Handlers
             vehicleModel.Z = vehicle.Position.Z;
             vehicleModel.Dimension = vehicle.Dimension;
 
-            _serverContext.Vehicles.Update(vehicleModel);
-            await _serverContext.SaveChangesAsync().ConfigureAwait(false);
+            await _vehicleDatabaseService.SaveVehicleAsync(vehicleModel).ConfigureAwait(false);
             _notificationService.ShowInfoNotification(player, "Pojazd zapisany!",
                 $"Zapisano pojazd UID({vehicleModel.Id}) w {Time.GetTimestampMs() - startTime}ms.");
             AltAsync.Log($"Saved vehicle {vehicleModel.Model} UID({vehicleModel.Id}) in {Time.GetTimestampMs() - startTime}ms.");

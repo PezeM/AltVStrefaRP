@@ -15,8 +15,8 @@ namespace AltVStrefaRPServer.Handlers
 {
     public class PlayerConnect
     {
-        private AppSettings _appSettings;
-        private ILogin _loginService;
+        private readonly AppSettings _appSettings;
+        private readonly ILogin _loginService;
 
         public PlayerConnect(AppSettings appSettings, ILogin loginService)
         {
@@ -78,17 +78,16 @@ namespace AltVStrefaRPServer.Handlers
                     return;
                 }
 
-                if (await _loginService.CheckIfAccountExistsAsync(login).ConfigureAwait(false))
+                if (await _loginService.CheckIfAccountExistsAsync(login))
                 {
                     await player.EmitAsync("showLoginError", "Istnieje już konto z taką nazwą użytkownika.");
                     return;
                 }
 
-                await _loginService.CreateNewAccountAndSaveAsync(login, password).ConfigureAwait(false);
+                await _loginService.CreateNewAccountAndSaveAsync(login, password);
                 await player.EmitAsync("successfullyRegistered");
-
+                //await Task.WhenAll(_loginService.CreateNewAccountAndSaveAsync(login, password), player.EmitAsync("successfullyRegistered"));
                 Alt.Log($"Registered account in {Time.GetTimestampMs() - startTime}ms");
-
             }
             catch (Exception e)
             {

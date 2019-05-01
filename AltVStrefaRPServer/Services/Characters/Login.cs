@@ -11,8 +11,8 @@ namespace AltVStrefaRPServer.Services.Characters
 {
     public class Login : ILogin
     {
-        private ServerContext _serverContext;
-        private HashingService _hashingService;
+        private readonly ServerContext _serverContext;
+        private readonly HashingService _hashingService;
         private Regex _regex;
 
         public Login(ServerContext serverContext, HashingService hashingService)
@@ -35,7 +35,7 @@ namespace AltVStrefaRPServer.Services.Characters
         /// </summary>
         /// <param name="username"></param>
         /// <returns>Returns true if there is already account with given username</returns>
-        public async Task<bool> CheckIfAccountExistsAsync(string username)
+        public async Task<bool> CheckIfAccountExistsAsync(string username) 
             => await _serverContext.Accounts.AsNoTracking().AnyAsync(a => a.Username == username);
 
         /// <summary>
@@ -50,8 +50,8 @@ namespace AltVStrefaRPServer.Services.Characters
             {
                 Username = username,
                 Password = GeneratePassword(password),
-            }).ConfigureAwait(false);
-            await _serverContext.SaveChangesAsync().ConfigureAwait(false);
+            });
+            await _serverContext.SaveChangesAsync();
         }
 
         public async Task<List<CharacterSelectDto>> GetCharacterList(int accountId)
