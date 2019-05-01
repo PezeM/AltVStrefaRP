@@ -20,14 +20,14 @@ namespace AltVStrefaRPServer.Modules.Vehicle
     public class VehicleManager
     {
         private Dictionary<int, VehicleModel> Vehicles = new Dictionary<int, VehicleModel>();
-        private IVehicleManagerService _vehicleManagerService;
+        private IVehicleDatabaseService _vehicleDatabaseService;
         private IVehicleCreatorService _vehicleCreator;
         private BusinessManager _businessManager;
 
-        public VehicleManager(IVehicleManagerService vehicleManagerService, IVehicleCreatorService vehicleCreatorService, 
+        public VehicleManager(IVehicleDatabaseService vehicleDatabaseService, IVehicleCreatorService vehicleCreatorService, 
             BusinessManager businessManager)
         {
-            _vehicleManagerService = vehicleManagerService;
+            _vehicleDatabaseService = vehicleDatabaseService;
             _vehicleCreator = vehicleCreatorService;
 
             LoadVehiclesFromDatabaseAsync();
@@ -39,7 +39,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
         public void LoadVehiclesFromDatabaseAsync()
         {
             var startTime = Time.GetTimestampMs();
-            foreach (var vehicle in _vehicleManagerService.LoadVehiclesFromDatabase())
+            foreach (var vehicle in _vehicleDatabaseService.LoadVehiclesFromDatabase())
             {
                 vehicle.IsSpawned = false;
                 Vehicles.Add(vehicle.Id, vehicle);
@@ -94,7 +94,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
                 try
                 {
                     Alt.RemoveVehicle(vehicle.VehicleHandle);
-                    await _vehicleManagerService.RemoveVehicleAsync(vehicle).ConfigureAwait(false);
+                    await _vehicleDatabaseService.RemoveVehicleAsync(vehicle).ConfigureAwait(false);
                     return true;
                 }
                 catch (Exception e)
@@ -226,7 +226,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             vehicleModel.Y = vehicleModel.VehicleHandle.Position.Y;
             vehicleModel.Z = vehicleModel.VehicleHandle.Position.Z;
             vehicleModel.Dimension = vehicleModel.VehicleHandle.Dimension;
-            await _vehicleManagerService.SaveVehicleAsync(vehicleModel).ConfigureAwait(false);
+            await _vehicleDatabaseService.SaveVehicleAsync(vehicleModel).ConfigureAwait(false);
             Alt.Server.RemoveVehicle(vehicleModel.VehicleHandle);
             AltAsync.Log($"Despawned vehicle: {vehicleModel.Model} UID({vehicleModel.Id})");
             return true;

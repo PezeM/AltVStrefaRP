@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AltVStrefaRPServer.Services.Vehicles
 {
-    public class VehicleManagerService : IVehicleManagerService
+    public class VehicleDatabaseService : IVehicleDatabaseService
     {
         private ServerContext _serverContext;
 
-        public VehicleManagerService(ServerContext serverContext)
+        public VehicleDatabaseService(ServerContext serverContext)
         {
             _serverContext = serverContext;
         }

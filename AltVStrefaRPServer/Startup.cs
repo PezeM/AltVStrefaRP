@@ -70,7 +70,7 @@ namespace AltVStrefaRPServer
             services.AddTransient<IMoneyService, MoneyService>();
             services.AddTransient<IBusinessService, BusinessService>();
 
-            services.AddSingleton<IVehicleManagerService, VehicleManagerService>();
+            services.AddSingleton<IVehicleDatabaseService, VehicleDatabaseService>();
             services.AddSingleton<HashingService>();
             services.AddSingleton<PlayerConnect>();
             services.AddSingleton<PlayerDisconnect>();

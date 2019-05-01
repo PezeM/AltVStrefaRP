@@ -4,7 +4,7 @@ using AltVStrefaRPServer.Models;
 
 namespace AltVStrefaRPServer.Services.Vehicles
 {
-    public interface IVehicleManagerService
+    public interface IVehicleDatabaseService
     {
         Task<List<VehicleModel>> LoadVehiclesFromDatabaseAsync();
         List<VehicleModel> LoadVehiclesFromDatabase();

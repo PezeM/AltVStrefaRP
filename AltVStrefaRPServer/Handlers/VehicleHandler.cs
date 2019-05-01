@@ -39,7 +39,7 @@ namespace AltVStrefaRPServer.Handlers
             var character = player.GetCharacter();
             if (character == null) return Task.CompletedTask;
 
-            var closestVehicle = _vehicleManager.GetClosestVehicle(player, 2.3f);
+            var closestVehicle = _vehicleManager.GetClosestVehicle(player, 6f);
             if (closestVehicle == null) return Task.CompletedTask;
 
             if (!_vehicleManager.HasVehiclePermission(character, closestVehicle)) return Task.CompletedTask;
@@ -134,9 +134,9 @@ namespace AltVStrefaRPServer.Handlers
 
             _serverContext.Vehicles.Update(vehicleModel);
             await _serverContext.SaveChangesAsync().ConfigureAwait(false);
-            AltAsync.Log($"Saved vehicle {vehicleModel.Model} UID({vehicleModel.Id}) in {Time.GetTimestampMs() - startTime}ms.");
             _notificationService.ShowInfoNotification(player, "Pojazd zapisany!",
                 $"Zapisano pojazd UID({vehicleModel.Id}) w {Time.GetTimestampMs() - startTime}ms.");
+            AltAsync.Log($"Saved vehicle {vehicleModel.Model} UID({vehicleModel.Id}) in {Time.GetTimestampMs() - startTime}ms.");
         }
     }
 }
