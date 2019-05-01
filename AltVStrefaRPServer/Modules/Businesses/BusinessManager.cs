@@ -67,7 +67,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
 
         public Business GetBusiness(Character emplyoee)
         {
-            return Businesses.Values.FirstOrDefault(b => b.Employees.Contains(emplyoee));
+            return Businesses.Values.FirstOrDefault(b => b.Employees.Any(c => c.Id == emplyoee.Id));
         }
 
         /// <summary>
