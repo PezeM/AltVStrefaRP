@@ -63,7 +63,7 @@ namespace AltVStrefaRPServer
             return Task.CompletedTask;
         }
 
-        private async Task OnPlayerEnterVehicleAsync(IVehicle vehicle, IPlayer player, byte seat)
+        private Task OnPlayerEnterVehicleAsync(IVehicle vehicle, IPlayer player, byte seat)
         {
             try
             {
@@ -77,6 +77,8 @@ namespace AltVStrefaRPServer
             {
                 Alt.Log(ex.ToString());
             }
+
+            return Task.CompletedTask;
         }
 
         private async Task OnConsoleCommand(string name, string[] args)

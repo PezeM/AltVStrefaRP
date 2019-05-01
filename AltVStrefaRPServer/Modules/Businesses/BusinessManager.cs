@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AltV.Net;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
-using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
@@ -14,7 +12,6 @@ using AltVStrefaRPServer.Models.Dto;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Services.Businesses;
 using AltVStrefaRPServer.Services.Characters;
-using Microsoft.EntityFrameworkCore;
 
 namespace AltVStrefaRPServer.Modules.Businesses
 {
@@ -23,14 +20,12 @@ namespace AltVStrefaRPServer.Modules.Businesses
         private IBusinessService _businessService;
         private ICharacterDatabaseService _characterDatabaseService;
         private Dictionary<int, Business> Businesses = new Dictionary<int, Business>();
-        private ServerContext _serverContext;
         private BusinessFactory _businessFactory;
 
-        public BusinessManager(IBusinessService businessService, ServerContext serverContext, ICharacterDatabaseService characterDatabaseService)
+        public BusinessManager(IBusinessService businessService, ICharacterDatabaseService characterDatabaseService)
         {
             _characterDatabaseService = characterDatabaseService;
             _businessService = businessService;
-            _serverContext = serverContext;
             _businessFactory = new BusinessFactory();
 
             LoadBusinesses();
@@ -39,10 +34,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
         private void LoadBusinesses()
         {
             var startTime = Time.GetTimestampMs();
-            foreach (var business in _serverContext.Businesses.Include(b => b.Employees)
-                .Include(b => b.BusinessRanks)
-                .ThenInclude(r => r.Permissions)
-                .ToList())
+            foreach (var business in _businessService.GetAllBusinesses())
             {
                 //Businesses.TryAdd(business.Id, _businessFactory.CreateNewBusiness(business));
                 Businesses.TryAdd(business.Id, business);
@@ -195,6 +187,15 @@ namespace AltVStrefaRPServer.Modules.Businesses
                 }
             });
             await _businessService.UpdateBusinessAsync(business).ConfigureAwait(false);
+            return true;
+        }
+
+        public async Task<bool> RemoveEmployee(Business business, Character employee)
+        {
+            if (!business.RemoveEmployee(employee)) return false;
+            employee.BusinessRank = -1;
+
+            await Task.WhenAll(_businessService.UpdateBusinessAsync(business), _characterDatabaseService.SaveCharacterAsync(employee));
             return true;
         }
     }

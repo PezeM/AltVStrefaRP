@@ -19,8 +19,11 @@ namespace AltVStrefaRPServer.Services.Characters
         /// </summary>
         /// <param name="characterId">find</param>
         /// <returns></returns>
-        public async Task<Character> FindCharacterByIdAsync(int characterId) 
-            => await _serverContext.Characters.FirstOrDefaultAsync(c => c.Id == characterId);
+        public async Task<Character> FindCharacterByIdAsync(int characterId)
+        {
+            //=> await _serverContext.Characters.FirstOrDefaultAsync(c => c.Id == characterId);
+            return await _serverContext.Characters.FindAsync(characterId).ConfigureAwait(false);
+        }
 
         /// <summary>
         /// Searches for character in database by first name and last name. Null is returned if no entity was found

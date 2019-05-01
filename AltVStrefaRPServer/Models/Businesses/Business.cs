@@ -125,5 +125,13 @@ namespace AltVStrefaRPServer.Models.Businesses
             businessRank = BusinessRanks.FirstOrDefault(r => r.Id == rankId);
             return businessRank != null;
         }
+
+        public bool RemoveEmployee(Character employee)
+        {
+            if (!GetBusinessRankForEmployee(employee, out BusinessRank businessRank)) return false;
+            if (businessRank.IsOwnerRank) return false;
+
+            return Employees.Remove(employee);
+        }
     }
 }

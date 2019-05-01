@@ -16,7 +16,6 @@ namespace AltVStrefaRPServer.Handlers
     public class VehicleHandler
     {
         private IVehicleDatabaseService _vehicleDatabaseService;
-        private ServerContext _serverContext;
         private VehicleManager _vehicleManager;
         private INotificationService _notificationService;
 

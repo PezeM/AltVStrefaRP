@@ -1,7 +1,10 @@
-﻿using AltVStrefaRPServer.Database;
+﻿using System.Collections.Generic;
+using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Businesses;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace AltVStrefaRPServer.Services.Businesses
 {
@@ -13,6 +16,16 @@ namespace AltVStrefaRPServer.Services.Businesses
         {
             _serverContext = serverContext;
         }
+
+        /// <summary>
+        /// Gets all business from databse and load everything with eager loading
+        /// </summary>
+        /// <returns></returns>
+        public List<Business> GetAllBusinesses() 
+            => _serverContext.Businesses.Include(b => b.Employees)
+                .Include(b => b.BusinessRanks)
+                .ThenInclude(r => r.Permissions)
+                .ToList();
 
         /// <summary>
         /// Updates business owner and saves changes to database
@@ -38,20 +51,6 @@ namespace AltVStrefaRPServer.Services.Businesses
             if (!business.CanAddNewMember(newEmployee)) return false;
             if (!business.SetDefaultRank(newEmployee)) return false;
             business.AddNewMember(newEmployee);
-            return true;
-        }
-
-        /// <summary>
-        /// Removes employee from business and resets his permissions
-        /// </summary>
-        /// <param name="business"></param>
-        /// <param name="employeeToRemove"></param>
-        /// <returns></returns>
-        public bool RemoveEmployee(Business business, Character employeeToRemove)
-        {
-            if (!business.IsWorkingHere(employeeToRemove)) return false;
-            business.Employees.Remove(employeeToRemove);
-            employeeToRemove.BusinessRank = -1;
             return true;
         }
 
