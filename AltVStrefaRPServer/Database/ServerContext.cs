@@ -60,10 +60,6 @@ namespace AltVStrefaRPServer.Database
                 .WithOne(c => c.Business)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            //modelBuilder.Entity<BusinessRank>()
-            //    .HasOne(b => b.Business)
-            //    .WithMany(b => b.BusinessRanks);
-
             modelBuilder.Entity<BusinessRank>()
                 .HasOne(b => b.Permissions)
                 .WithOne(r=> r.BusinessRank)

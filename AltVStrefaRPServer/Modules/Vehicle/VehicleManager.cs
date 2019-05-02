@@ -192,7 +192,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
 
 
             vehicleModel.VehicleHandle.Dimension = vehicleModel.Dimension;
-            vehicleModel.VehicleHandle.EngineOn = false;
+            vehicleModel.VehicleHandle.EngineOn = true;
             vehicleModel.IsLocked = false;
             vehicleModel.VehicleHandle.LockState = VehicleLockState.Unlocked;
             vehicleModel.VehicleHandle.SetData("vehicleId", vehicleModel.Id);
