@@ -14,5 +14,6 @@ namespace AltVStrefaRPServer.Services.Businesses
         Task AddNewBusiness(Business business);
         bool AddEmployee(Business business, Character newEmployee);
         Task UpdateBusinessRankAsync(BusinessRank newBusinessPermissions);
+        Task RemoveBusinessAsync(Business business);
     }
 }

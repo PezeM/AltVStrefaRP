@@ -227,5 +227,21 @@ namespace AltVStrefaRPServer.Modules.Businesses
 
             return true;
         }
+
+        public async Task<bool> DeleteBusiness(Business business)
+        {
+            foreach (var employee in business.Employees)
+            {
+                employee.BusinessRank = -1;
+                //employee.Business = null;
+            }
+
+            //await _characterDatabaseService.UpdateCharactersAsync(business.Employees).ConfigureAwait(false);
+            business.Employees.Clear();
+            business.BusinessRanks.Clear();
+            Businesses.Remove(business.Id);
+            await _businessService.RemoveBusinessAsync(business).ConfigureAwait(false);
+            return true;
+        }
     }
 }

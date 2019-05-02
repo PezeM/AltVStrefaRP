@@ -22,14 +22,11 @@ namespace AltVStrefaRPServer.Modules.Businesses
     {
         private BusinessManager _businessManager;
         private INotificationService _notificationService;
-        private ICharacterDatabaseService _characterDatabaseService;
 
-        public BusinessHandler(BusinessManager businessManager, INotificationService notificationService,
-            ICharacterDatabaseService characterDatabaseService)
+        public BusinessHandler(BusinessManager businessManager, INotificationService notificationService)
         {
             _businessManager = businessManager;
             _notificationService = notificationService;
-            _characterDatabaseService = characterDatabaseService;
 
             Alt.Log("Intialized business handler.");
             Alt.OnClient("GetBusinessEmployees", GetBusinessEmployeesEvent);
@@ -41,6 +38,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
             AltAsync.OnClient("AddNewRole", AddNewRoleEvent);
             AltAsync.OnClient("DeleteEmployee", DeleteEmployeeEvent);
             AltAsync.OnClient("DeleteRole", DeleteRoleEvent);
+            AltAsync.OnClient("DeleteBusiness", DeleteBusinessEvent);
         }
 
         private bool GetBusiness(string businessIdString, out Business business)
@@ -440,6 +438,43 @@ namespace AltVStrefaRPServer.Modules.Businesses
             else
             {
                 _notificationService.ShowErrorNotfication(player, "Błąd", $"Nie udało się usunąć stanowiska: {businessRank.RankName}.");
+            }
+        }
+
+        private async Task DeleteBusinessEvent(IPlayer player, object[] args)
+        {
+            var startTime = Time.GetTimestampMs();
+            if (args.Length < 1) return;
+            var character = player.GetCharacter();
+            if (character == null) return;
+
+            if (!GetBusiness(args[0].ToString(), out Business business))
+            {
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
+                return;
+            }
+
+            if (!business.GetBusinessRankForEmployee(character, out BusinessRank businessRank))
+            {
+                _notificationService.ShowErrorNotfication(character.Player, "Błąd", "Nie masz ustalonych żadnych możliwości w biznesie.", 6000);
+                return;
+            }
+
+            if (!businessRank.IsOwnerRank)
+            {
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie posiadasz odpowiednich uprawień.", 4000);
+                return;
+            }
+
+            if (await _businessManager.DeleteBusiness(business))
+            {
+                _notificationService.ShowSuccessNotification(player, "Usunięto biznes", $"Pomyślnie usunięto biznes {business.BusinessName}.", 5000);
+                AltAsync.Log($"Character ID({character.Id}) deleted business ID({business.BusinessName}) " +
+                             $"ID({business.Id}) in {Time.GetTimestampMs() - startTime}ms.");
+            }
+            else
+            {
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie udało się usunąć biznesu.", 5000);
             }
         }
 
