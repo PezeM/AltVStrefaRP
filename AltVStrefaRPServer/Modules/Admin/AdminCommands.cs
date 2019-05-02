@@ -11,6 +11,7 @@ using AltVStrefaRPServer.Modules.Vehicle;
 using AltVStrefaRPServer.Services;
 using System;
 using AltVStrefaRPServer.Helpers;
+using AltVStrefaRPServer.Models;
 
 namespace AltVStrefaRPServer.Modules.Admin
 {
@@ -48,6 +49,33 @@ namespace AltVStrefaRPServer.Modules.Admin
             _chatHandler.RegisterCommand("createbusiness", CreateNewBusiness);
             _chatHandler.RegisterCommand("setBusinessOwner", SetBusinessOwner);
             _chatHandler.RegisterCommand("openBusinessMenu", OpenBusinessMenu);
+            _chatHandler.RegisterCommand("enterCinema", EnterCinema);
+            _chatHandler.RegisterCommand("exitCinema", ExitCinema);
+        }
+
+        private void ExitCinema(IPlayer player, string[] arg2)
+        {
+            if (!player.GetData("beforeCinemaPosition", out Position position))
+            {
+                player.Position = new Position(AppSettings.Current.ServerConfig.SpawnPosition.X,
+                    AppSettings.Current.ServerConfig.SpawnPosition.Y,
+                    AppSettings.Current.ServerConfig.SpawnPosition.Z);
+            }
+            else
+            {
+                player.Position = position;
+            }
+        }
+
+        private void EnterCinema(IPlayer arg1, string[] args)
+        {
+            foreach (var player in Alt.GetAllPlayers())
+            {
+                player.SetData("beforeCinemaPosition", player.Position);
+                player.Position = new Position(-1427.299f, -245.1012f, 16.8039f);
+            }
+
+            Alt.EmitAllClients("enterCinema");
         }
 
         private void SetBusinessOwner(IPlayer player, string[] args)
