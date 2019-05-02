@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AltV.Net;
@@ -143,7 +144,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
         {
             if (!_businessService.AddEmployee(business, newEmployee)) return false;
             await _businessService.UpdateBusinessAsync(business).ConfigureAwait(false);
-            await _characterDatabaseService.SaveCharacterAsync(newEmployee).ConfigureAwait(false);
+            await _characterDatabaseService.UpdateCharacterAsync(newEmployee).ConfigureAwait(false);
             return true;
         }
 
@@ -151,7 +152,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
         {
             employee.BusinessRank = newRankId;
             await _businessService.UpdateBusinessAsync(business).ConfigureAwait(false);
-            await _characterDatabaseService.SaveCharacterAsync(employee).ConfigureAwait(false);
+            await _characterDatabaseService.UpdateCharacterAsync(employee).ConfigureAwait(false);
         }
 
         public async Task UpdateBusinessRank(BusinessRank businessRankToUpdate, BusinessPermissionsDto newPermissions)
@@ -195,7 +196,35 @@ namespace AltVStrefaRPServer.Modules.Businesses
             if (!business.RemoveEmployee(employee)) return false;
             employee.BusinessRank = -1;
 
-            await Task.WhenAll(_businessService.UpdateBusinessAsync(business), _characterDatabaseService.SaveCharacterAsync(employee));
+            await Task.WhenAll(_businessService.UpdateBusinessAsync(business), _characterDatabaseService.UpdateCharacterAsync(employee));
+            return true;
+        }
+
+        /// <summary>
+        /// Removes rank from business, sets default rank for every employee that had this rank and updates business/characters to database
+        /// </summary>
+        /// <param name="business"></param>
+        /// <param name="rankId"></param>
+        /// <returns></returns>
+        public async Task<bool> RemoveRank(Business business, int rankId)
+        {
+            if (!business.RemoveRank(rankId)) return false;
+
+            var employeesToChange = business.GetEmployeesWithRank(rankId);
+            if (employeesToChange.Count() > 0)
+            {
+                foreach (var character in employeesToChange)
+                {
+                    business.SetDefaultRank(character);
+                }
+
+                await Task.WhenAll(_businessService.UpdateBusinessAsync(business), _characterDatabaseService.UpdateCharactersAsync(employeesToChange));
+            }
+            else
+            {
+                await _businessService.UpdateBusinessAsync(business);
+            }
+
             return true;
         }
     }

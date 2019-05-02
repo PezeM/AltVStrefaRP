@@ -1,5 +1,5 @@
-﻿using System.Threading.Tasks;
-using AltV.Net.Async;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using AltVStrefaRPServer.Models;
 
 namespace AltVStrefaRPServer.Services.Characters
@@ -8,6 +8,7 @@ namespace AltVStrefaRPServer.Services.Characters
     {
         Task<Character> FindCharacterByIdAsync(int characterId);
         Task<Character> FindCharacterAsync(string firstName, string lastName);
-        Task SaveCharacterAsync(Character character);
+        Task UpdateCharacterAsync(Character character);
+        Task UpdateCharactersAsync(IEnumerable<Character> characters);
     }
 }

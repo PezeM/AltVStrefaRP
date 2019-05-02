@@ -117,7 +117,7 @@ namespace AltVStrefaRPServer.Models.Businesses
         /// Checks whether rank with given rankId exists in business
         /// </summary>
         /// <param name="rankId"></param>
-        /// <returns></returns>
+        /// <returns>False if rank doesn't exits</returns>
         public bool CheckIfRankExists(int rankId) => BusinessRanks.Any(q => q.Id == rankId);
 
         public bool GetBusinessRank(int rankId, out BusinessRank businessRank)
@@ -126,12 +126,35 @@ namespace AltVStrefaRPServer.Models.Businesses
             return businessRank != null;
         }
 
+        /// <summary>
+        /// Get all employees with given rank id
+        /// </summary>
+        /// <param name="rankId"></param>
+        /// <returns></returns>
+        public IEnumerable<Character> GetEmployeesWithRank(int rankId) 
+            => Employees.Where(q => q.BusinessRank == rankId);
+
         public bool RemoveEmployee(Character employee)
         {
             if (!GetBusinessRankForEmployee(employee, out BusinessRank businessRank)) return false;
             if (businessRank.IsOwnerRank) return false;
 
             return Employees.Remove(employee);
+        }
+
+        public bool CanRemoveRank(BusinessRank rank)
+        {
+            if (rank.IsOwnerRank) return false;
+            else if (rank.IsDefaultRank) return false;
+            else return true;
+        }
+
+        public bool RemoveRank(int rankId)
+        {
+            if (!GetBusinessRank(rankId, out BusinessRank rank)) return false;
+            if (!CanRemoveRank(rank)) return false;
+            if (BusinessRanks.Remove(rank)) return false;
+            return true;
         }
     }
 }

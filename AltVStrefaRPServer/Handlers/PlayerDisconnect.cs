@@ -34,7 +34,7 @@ namespace AltVStrefaRPServer.Handlers
 
             CharacterManager.Instance.RemoveCharacterDataFromServer(character);
             Alt.Log($"CID({character.Id}) ID({player.Id}) {player.Name} left the server. Reason {reason}");
-            await _characterDatabaseService.SaveCharacterAsync(character).ConfigureAwait(false);
+            await _characterDatabaseService.UpdateCharacterAsync(character).ConfigureAwait(false);
         }
     }
 }

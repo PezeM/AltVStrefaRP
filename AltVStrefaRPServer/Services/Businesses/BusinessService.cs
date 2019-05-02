@@ -59,10 +59,10 @@ namespace AltVStrefaRPServer.Services.Businesses
         /// </summary>
         /// <param name="business">The business to save to database</param>
         /// <returns></returns>
-        public async Task UpdateBusinessAsync(Business business)
+        public Task UpdateBusinessAsync(Business business)
         {
             _serverContext.Businesses.Update(business);
-            await _serverContext.SaveChangesAsync().ConfigureAwait(false);
+            return _serverContext.SaveChangesAsync();
         }
 
         public async Task AddNewBusinessAsync(Business business)

@@ -40,6 +40,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
             AltAsync.OnClient("UpdateBusinessRank", UpdateBusinessRank);
             AltAsync.OnClient("AddNewRole", AddNewRoleEvent);
             AltAsync.OnClient("DeleteEmployee", DeleteEmployeeEvent);
+            AltAsync.OnClient("DeleteRole", DeleteRoleEvent);
         }
 
         private bool GetBusiness(string businessIdString, out Business business)
@@ -399,6 +400,46 @@ namespace AltVStrefaRPServer.Modules.Businesses
             else
             {
                 _notificationService.ShowErrorNotfication(player, "Błąd", $"Wystąpił błąd podczas usuwania {employee.GetFullName()} z firmy.", 6500);
+            }
+        }
+
+        private async Task DeleteRoleEvent(IPlayer player, object[] args)
+        {
+            var startTime = Time.GetTimestampMs();
+            if (args.Length < 2) return;
+            var character = player.GetCharacter();
+            if (character == null) return;
+
+            if (!int.TryParse(args[0].ToString(), out int rankId)) return;
+            if (!GetBusiness(args[1].ToString(), out Business business))
+            {
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
+                return;
+            }
+
+            if (!business.GetBusinessRankForEmployee(character, out BusinessRank businessRank))
+            {
+                _notificationService.ShowErrorNotfication(character.Player, "Błąd", "Nie masz ustalonych żadnych możliwości w biznesie.", 6000);
+                return;
+            }
+
+            if (!businessRank.Permissions.CanManageRanks)
+            {
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie posiadasz odpowiednich uprawień.", 4000);
+                return;
+            }
+
+            if (!business.CheckIfRankExists(rankId)) return;
+
+            if (await _businessManager.RemoveRank(business, rankId))
+            {
+                _notificationService.ShowSuccessNotification(player, "Usunięto stanowisko", $"Pomyślnie usunięto stanowisko {businessRank.RankName}.", 5000);
+                AltAsync.Log($"Character ID({character.Id}) deleted rank {businessRank.RankName} ID({businessRank.Id}) " +
+                             $"from business {business.BusinessName} ID({business.Id}) in {Time.GetTimestampMs() - startTime}ms.");
+            }
+            else
+            {
+                _notificationService.ShowErrorNotfication(player, "Błąd", $"Nie udało się usunąć stanowiska: {businessRank.RankName}.");
             }
         }
 

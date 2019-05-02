@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models;
 using Microsoft.EntityFrameworkCore;
@@ -34,10 +35,16 @@ namespace AltVStrefaRPServer.Services.Characters
         public async Task<Character> FindCharacterAsync(string firstName, string lastName) 
             => await _serverContext.Characters.FirstOrDefaultAsync(c => c.FirstName == firstName && c.LastName == lastName);
 
-        public async Task SaveCharacterAsync(Character character)
+        public async Task UpdateCharacterAsync(Character character)
         {
             _serverContext.Characters.Update(character);
             await _serverContext.SaveChangesAsync().ConfigureAwait(false);
+        }
+
+        public Task UpdateCharactersAsync(IEnumerable<Character> characters)
+        {
+            _serverContext.Characters.UpdateRange(characters);
+            return _serverContext.SaveChangesAsync();
         }
     }
 }
