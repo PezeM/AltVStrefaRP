@@ -433,8 +433,8 @@ namespace AltVStrefaRPServer.Modules.Businesses
 
             if (await _businessManager.RemoveRank(business, rankId))
             {
-                _notificationService.ShowSuccessNotification(player, "Usunięto stanowisko", $"Pomyślnie usunięto stanowisko {businessRank.RankName}.", 5000);
-                AltAsync.Log($"Character ID({character.Id}) deleted rank {businessRank.RankName} ID({businessRank.Id}) " +
+                _notificationService.ShowSuccessNotification(player, "Usunięto stanowisko", $"Pomyślnie usunięto stanowisko.", 5000);
+                AltAsync.Log($"Character ID({character.Id}) deleted rank ID({rankId}) " +
                              $"from business {business.BusinessName} ID({business.Id}) in {Time.GetTimestampMs() - startTime}ms.");
             }
             else

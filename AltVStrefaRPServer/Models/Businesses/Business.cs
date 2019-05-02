@@ -153,8 +153,7 @@ namespace AltVStrefaRPServer.Models.Businesses
         {
             if (!GetBusinessRank(rankId, out BusinessRank rank)) return false;
             if (!CanRemoveRank(rank)) return false;
-            if (BusinessRanks.Remove(rank)) return false;
-            return true;
+            return BusinessRanks.Remove(rank);
         }
     }
 }
