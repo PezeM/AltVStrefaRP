@@ -20,11 +20,8 @@ namespace AltVStrefaRPServer.Services.Characters
         /// </summary>
         /// <param name="characterId">find</param>
         /// <returns></returns>
-        public async Task<Character> FindCharacterByIdAsync(int characterId)
-        {
-            //=> await _serverContext.Characters.FirstOrDefaultAsync(c => c.Id == characterId);
-            return await _serverContext.Characters.FindAsync(characterId).ConfigureAwait(false);
-        }
+        public Task<Character> FindCharacterByIdAsync(int characterId)
+            => _serverContext.Characters.FindAsync(characterId);
 
         /// <summary>
         /// Searches for character in database by first name and last name. Null is returned if no entity was found
@@ -32,13 +29,14 @@ namespace AltVStrefaRPServer.Services.Characters
         /// <param name="firstName"></param>
         /// <param name="lastName"></param>
         /// <returns></returns>
-        public async Task<Character> FindCharacterAsync(string firstName, string lastName) 
-            => await _serverContext.Characters.FirstOrDefaultAsync(c => c.FirstName == firstName && c.LastName == lastName);
+        public Task<Character> FindCharacterAsync(string firstName, string lastName) 
+            => _serverContext.Characters.FirstOrDefaultAsync(c => c.FirstName == firstName && c.LastName == lastName);
 
-        public async Task UpdateCharacterAsync(Character character)
+        public Task UpdateCharacterAsync(Character character)
         {
             _serverContext.Characters.Update(character);
-            await _serverContext.SaveChangesAsync().ConfigureAwait(false);
+            //_serverContext.Entry(character).State = EntityState.Detached;
+            return _serverContext.SaveChangesAsync();
         }
 
         public Task UpdateCharactersAsync(IEnumerable<Character> characters)

@@ -27,16 +27,16 @@ namespace AltVStrefaRPServer.Services.Characters
         /// </summary>
         /// <param name="username"></param>
         /// <returns>Account if found,null if account is not found</returns>
-        public async Task<Account> GetAccountAsync(string username)
-            => await _serverContext.Accounts.FirstOrDefaultAsync(a => a.Username == username);
+        public Task<Account> GetAccountAsync(string username)
+            => _serverContext.Accounts.AsNoTracking().FirstOrDefaultAsync(a => a.Username == username);
 
         /// <summary>
         /// Checks if account with given username is already in database
         /// </summary>
         /// <param name="username"></param>
         /// <returns>Returns true if there is already account with given username</returns>
-        public async Task<bool> CheckIfAccountExistsAsync(string username) 
-            => await _serverContext.Accounts.AsNoTracking().AnyAsync(a => a.Username == username);
+        public Task<int> CheckIfAccountExistsAsync(string username) 
+            => _serverContext.Accounts.Where(a => a.Username == username).CountAsync();
 
         /// <summary>
         /// Generates new hashed password and creates new account in the database
@@ -50,12 +50,12 @@ namespace AltVStrefaRPServer.Services.Characters
             {
                 Username = username,
                 Password = GeneratePassword(password),
-            });
+            }).ConfigureAwait(false);
             await _serverContext.SaveChangesAsync();
         }
 
-        public async Task<List<CharacterSelectDto>> GetCharacterList(int accountId)
-            => await _serverContext.Characters.AsNoTracking().Where(c => c.AccountId == accountId).Select(c => new CharacterSelectDto
+        public Task<List<CharacterSelectDto>> GetCharacterList(int accountId)
+            => _serverContext.Characters.AsNoTracking().Where(c => c.AccountId == accountId).Select(c => new CharacterSelectDto
             {
                 Id = c.Id,
                 FirstName = c.FirstName,
@@ -65,10 +65,8 @@ namespace AltVStrefaRPServer.Services.Characters
                 TimePlayed = c.TimePlayed
             }).ToListAsync();
 
-        public async Task<Character> GetCharacterById(int characterId)
-            => await _serverContext.Characters
-                .Include(c => c.BankAccount)
-                .FirstOrDefaultAsync(c => c.Id == characterId);
+        public Task<Character> GetCharacterById(int characterId)
+            => _serverContext.Characters.Include(c => c.BankAccount).FirstOrDefaultAsync(c => c.Id == characterId);
 
         public string GeneratePassword(string password) => _hashingService.Hash(password, 1000);
 
@@ -82,6 +80,6 @@ namespace AltVStrefaRPServer.Services.Characters
         /// </summary>
         /// <param name="password"></param>
         /// <returns>True is password is valid</returns>
-        public bool IsPasswordValid(string password) => _regex.IsMatch(password);
+        public bool IsPasswordValid(string password) => true;
     }
 }

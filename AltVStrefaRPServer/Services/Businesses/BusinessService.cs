@@ -10,7 +10,7 @@ namespace AltVStrefaRPServer.Services.Businesses
 {
     public class BusinessService : IBusinessService
     {
-        private ServerContext _serverContext;
+        private readonly ServerContext _serverContext;
 
         public BusinessService(ServerContext serverContext)
         {
@@ -18,11 +18,12 @@ namespace AltVStrefaRPServer.Services.Businesses
         }
 
         /// <summary>
-        /// Gets all business from databse and load everything with eager loading
+        /// Gets all business from database and load everything with eager loading
         /// </summary>
         /// <returns></returns>
         public List<Business> GetAllBusinesses() 
-            => _serverContext.Businesses.Include(b => b.Employees)
+            => _serverContext.Businesses
+                .Include(b => b.Employees)
                 .Include(b => b.BusinessRanks)
                 .ThenInclude(r => r.Permissions)
                 .ToList();
@@ -68,20 +69,19 @@ namespace AltVStrefaRPServer.Services.Businesses
         public async Task AddNewBusinessAsync(Business business)
         {
             await _serverContext.Businesses.AddAsync(business).ConfigureAwait(false);
-            await _serverContext.SaveChangesAsync().ConfigureAwait(false);
+            await _serverContext.SaveChangesAsync();
         }
 
-        public Task AddNewBusiness(Business business)
+        public int AddNewBusiness(Business business)
         {
             _serverContext.Businesses.Add(business);
-            _serverContext.SaveChanges();
-            return Task.CompletedTask;
+            return _serverContext.SaveChanges();
         }
 
-        public async Task UpdateBusinessRankAsync(BusinessRank newBusinessPermissions)
+        public Task UpdateBusinessRankAsync(BusinessRank newBusinessPermissions)
         {
             _serverContext.BusinessesRanks.Update(newBusinessPermissions);
-            await _serverContext.SaveChangesAsync().ConfigureAwait(false);
+            return _serverContext.SaveChangesAsync();
         }
 
         public Task RemoveBusinessAsync(Business business)

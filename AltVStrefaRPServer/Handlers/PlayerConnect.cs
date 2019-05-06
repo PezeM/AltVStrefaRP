@@ -28,11 +28,11 @@ namespace AltVStrefaRPServer.Handlers
             AltAsync.OnClient("loginAccount", LoginAccountAsync);
             AltAsync.OnClient("registerAccount", RegisterAccountAsync);
             AltAsync.OnClient("tryToLoadCharacter", TryToLoadCharacterAsync);
-            async void function(IPlayer player, string login, string password)
-            {
-                AltAsync.Log($"Login account with arguments: {await player.GetNameAsync().ConfigureAwait(false)} login: {login} password: {password}.");
-            }
-            AltAsync.On<IPlayer, string, string>("loginAccount", function);
+            //async void function(IPlayer player, string login, string password)
+            //{
+            //    AltAsync.Log($"Login account with arguments: {await player.GetNameAsync().ConfigureAwait(false)} login: {login} password: {password}.");
+            //}
+            //AltAsync.On<IPlayer, string, string>("loginAccount", function);
         }
 
         private async Task TryToLoadCharacterAsync(IPlayer player, object[] args)
@@ -78,13 +78,13 @@ namespace AltVStrefaRPServer.Handlers
                     return;
                 }
 
-                if (await _loginService.CheckIfAccountExistsAsync(login))
+                if (await _loginService.CheckIfAccountExistsAsync(login).ConfigureAwait(false) > 0)
                 {
                     await player.EmitAsync("showLoginError", "Istnieje już konto z taką nazwą użytkownika.");
                     return;
                 }
 
-                await _loginService.CreateNewAccountAndSaveAsync(login, password);
+                await _loginService.CreateNewAccountAndSaveAsync(login, password).ConfigureAwait(false);
                 await player.EmitAsync("successfullyRegistered");
                 //await Task.WhenAll(_loginService.CreateNewAccountAndSaveAsync(login, password), player.EmitAsync("successfullyRegistered"));
                 Alt.Log($"Registered account in {Time.GetTimestampMs() - startTime}ms");

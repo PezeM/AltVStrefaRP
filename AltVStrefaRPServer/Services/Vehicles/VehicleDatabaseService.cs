@@ -9,7 +9,7 @@ namespace AltVStrefaRPServer.Services.Vehicles
 {
     public class VehicleDatabaseService : IVehicleDatabaseService
     {
-        private ServerContext _serverContext;
+        private readonly ServerContext _serverContext;
 
         public VehicleDatabaseService(ServerContext serverContext)
         {
@@ -20,16 +20,16 @@ namespace AltVStrefaRPServer.Services.Vehicles
         /// Gets all vehicles from database
         /// </summary>
         /// <returns></returns>
-        public async Task<List<VehicleModel>> LoadVehiclesFromDatabaseAsync()
-            => await _serverContext.Vehicles.ToListAsync().ConfigureAwait(false);
+        public Task<List<VehicleModel>> LoadVehiclesFromDatabaseAsync()
+            => _serverContext.Vehicles.ToListAsync();
 
         public List<VehicleModel> LoadVehiclesFromDatabase()
             => _serverContext.Vehicles.ToList();
 
-        public async Task RemoveVehicleAsync(VehicleModel vehicle)
+        public Task RemoveVehicleAsync(VehicleModel vehicle)
         {
             _serverContext.Vehicles.Remove(vehicle);
-            await _serverContext.SaveChangesAsync().ConfigureAwait(false);
+            return _serverContext.SaveChangesAsync();
         }
 
         public void SaveVehicle(VehicleModel vehicle)
@@ -38,10 +38,10 @@ namespace AltVStrefaRPServer.Services.Vehicles
             _serverContext.SaveChanges();
         }
 
-        public async Task SaveVehicleAsync(VehicleModel vehicle)
+        public Task SaveVehicleAsync(VehicleModel vehicle)
         {
             _serverContext.Vehicles.Update(vehicle);
-            await _serverContext.SaveChangesAsync().ConfigureAwait(false);
+            return _serverContext.SaveChangesAsync();
         }
     }
 }

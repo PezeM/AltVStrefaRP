@@ -63,9 +63,7 @@ namespace AltVStrefaRPServer.Modules.CharacterModule
         public void RemoveCharacterDataFromServer(Character characterData)
         {
             CharactersList.Remove(characterData.Player.Id);
-            Alt.Log($"Removed character data from server for ID({characterData.Player.Id}) CID({characterData.Id})");
+            Alt.Log($"Removed character data from server ID({characterData.Player.Id}) CID({characterData.Id})");
         }
-
-
     }
 }
