@@ -254,6 +254,17 @@ namespace AltVStrefaRPServer.Modules.Businesses
                 return;
             }
 
+            if (!business.GetBusinessRankForEmployee(character, out BusinessRank businessRank))
+            {
+                _notificationService.ShowErrorNotfication(character.Player, "Błąd", "Nie masz ustalonych żadnych możliwości w biznesie.", 6000);
+                return;
+            }
+
+            if (!businessRank.Permissions.CanManageEmployess)
+            {
+                _notificationService.ShowErrorNotfication(character.Player, "Błąd", "Nie masz odpowiednich uprawień.");
+                return;
+            }
             player.Emit("populateBusinessRanksInfo", JsonConvert.SerializeObject(GetBusinessRanksInfo(business)));
             Alt.Log($"Character ID({character.Id}) requested list of business roles in {Time.GetTimestampMs() - startTime}ms.");
         }
