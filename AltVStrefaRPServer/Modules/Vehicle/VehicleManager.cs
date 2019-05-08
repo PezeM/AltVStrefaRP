@@ -187,7 +187,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             try
             {
                 vehicleModel.VehicleHandle = await AltAsync.CreateVehicle(vehicleModel.Model,
-                    new Position(vehicleModel.X, vehicleModel.Y, vehicleModel.Z), vehicleModel.Heading).ConfigureAwait(false);
+                    new Position(vehicleModel.X, vehicleModel.Y, vehicleModel.Z), new Rotation(vehicleModel.Heading, 0,0)).ConfigureAwait(false);
             }
             catch (Exception e)
             {
@@ -197,7 +197,6 @@ namespace AltVStrefaRPServer.Modules.Vehicle
 
 
             vehicleModel.VehicleHandle.Dimension = vehicleModel.Dimension;
-            vehicleModel.VehicleHandle.EngineOn = true;
             vehicleModel.IsLocked = false;
             vehicleModel.VehicleHandle.LockState = VehicleLockState.Unlocked;
             vehicleModel.VehicleHandle.SetData("vehicleId", vehicleModel.Id);
@@ -217,7 +216,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             try
             {
                 vehicleModel.VehicleHandle = Alt.CreateVehicle(vehicleModel.Model,
-                    new Position(vehicleModel.X, vehicleModel.Y, vehicleModel.Z), vehicleModel.Heading);
+                    new Position(vehicleModel.X, vehicleModel.Y, vehicleModel.Z), new Rotation(vehicleModel.Heading, 0,0));
             }
             catch (Exception e)
             {
