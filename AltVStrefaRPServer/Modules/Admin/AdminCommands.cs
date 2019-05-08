@@ -206,8 +206,8 @@ namespace AltVStrefaRPServer.Modules.Admin
             var character = player.GetCharacter();
             if (character == null) return;
 
-            var vehicle = _vehicleManager.CreateVehicle(model, PositionHelper.GetPositionInFrontOf(player.Position, player.HeadRotation.roll, 4f), 
-                player.HeadRotation.roll, player.Dimension, character.Id, OwnerType.Character);
+            var vehicle = _vehicleManager.CreateVehicle(model, PositionHelper.GetPositionInFrontOf(player.Position, player.HeadRotation.Roll, 4f), 
+                player.HeadRotation.Roll, player.Dimension, character.Id, OwnerType.Character);
             _vehicleManager.SpawnVehicle(vehicle.Id);
             player.Emit("putIntoVehicle");
         }
