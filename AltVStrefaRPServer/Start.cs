@@ -127,7 +127,7 @@ namespace AltVStrefaRPServer
             var character = player.GetCharacter();
             if (character == null) return;
 
-            var vehicle = await vehicleManager.CreateVehicleAsync(vehicleModel, player.Position, player.HeadRotation.pitch,
+            var vehicle = await vehicleManager.CreateVehicleAsync(vehicleModel, player.Position, player.HeadRotation.Pitch,
                 player.Dimension, character.Id, OwnerType.None).ConfigureAwait(false);
             vehicleManager.SpawnVehicle(vehicle.Id);
         }

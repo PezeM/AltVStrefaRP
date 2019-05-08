@@ -173,6 +173,40 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             SpawnVehicle(GetVehicleModel(vehicleId));
         }
 
+        public async Task SpawnVehicleAsync(int vehicleId)
+        {
+            await SpawnVehicleAsync(GetVehicleModel(vehicleId));
+        }
+
+        public async Task SpawnVehicleAsync(VehicleModel vehicleModel)
+        {
+            if (vehicleModel == null) return;
+            if (vehicleModel.IsSpawned) return;
+            if (vehicleModel.VehicleHandle != null) return;
+
+            try
+            {
+                vehicleModel.VehicleHandle = await AltAsync.CreateVehicle(vehicleModel.Model,
+                    new Position(vehicleModel.X, vehicleModel.Y, vehicleModel.Z), new Rotation(vehicleModel.Heading, 0,0)).ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                Alt.Log($"Error creating vehicle with model {vehicleModel.Model} ID({vehicleModel.Id}) ex: {e}");
+                throw;
+            }
+
+
+            vehicleModel.VehicleHandle.Dimension = vehicleModel.Dimension;
+            vehicleModel.IsLocked = false;
+            vehicleModel.VehicleHandle.LockState = VehicleLockState.Unlocked;
+            vehicleModel.VehicleHandle.SetData("vehicleId", vehicleModel.Id);
+            vehicleModel.VehicleHandle.NumberplateText = vehicleModel.PlateText;
+            vehicleModel.VehicleHandle.NumberplateIndex = vehicleModel.PlateNumber;
+            vehicleModel.IsSpawned = true;
+
+            Alt.Log($"Spawned vehicle UID({vehicleModel.Id}) ID({vehicleModel.VehicleHandle.Id})");
+        }
+
         public void SpawnVehicle(VehicleModel vehicleModel)
         {
             if (vehicleModel == null) return;
@@ -182,7 +216,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             try
             {
                 vehicleModel.VehicleHandle = Alt.CreateVehicle(vehicleModel.Model,
-                    new Position(vehicleModel.X, vehicleModel.Y, vehicleModel.Z), vehicleModel.Heading);
+                    new Position(vehicleModel.X, vehicleModel.Y, vehicleModel.Z), new Rotation(vehicleModel.Heading, 0,0));
             }
             catch (Exception e)
             {
