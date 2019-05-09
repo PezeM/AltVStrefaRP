@@ -25,17 +25,16 @@ namespace AltVStrefaRPServer.Handlers
             _loginService = loginService;
 
             AltAsync.OnPlayerConnect += OnPlayerConnectAsync;
-            AltAsync.OnClient("loginAccount", LoginAccountAsync);
+            //AltAsync.OnClient("loginAccount", LoginAccountAsync);
             AltAsync.OnClient("registerAccount", RegisterAccountAsync);
+            //AltAsync.OnClient("registerAccount", );
             AltAsync.OnClient("tryToLoadCharacter", TryToLoadCharacterAsync);
-            //AltAsync.On<IPlayer, string, string>("loginAccount", (player, arg1, arg2) =>
-            //{   
-            //    AltAsync.Log($"{player.Name} {arg1} {arg2} async");
-            //});
-            //Alt.On<IPlayer, string, string>("loginAccount", (player, arg1, arg2) =>
-            //{   
-            //    AltAsync.Log($"{player.Name} {arg1} {arg2}");
-            //});
+            //AltAsync.On<IPlayer, string, string>("loginAccount", );
+            AltAsync.On<IPlayer, string, string>("loginAccount", async (player, arg1, arg2) =>
+            {
+                AltAsync.Log($"{player.Name} {arg1} {arg2} async");
+            });
+            AltAsync.On<IPlayer, string, string>("loginAccount", async (player, arg1, arg2) => await LoginAccountAsync(player, arg1, arg2));
         }
 
         private async Task TryToLoadCharacterAsync(IPlayer player, object[] args)
@@ -97,13 +96,13 @@ namespace AltVStrefaRPServer.Handlers
             }
         }
 
-        private async Task LoginAccountAsync(IPlayer player, object[] args)
+        private async Task LoginAccountAsync(IPlayer player, string login, string password)
         {
             try
             {
                 var startTime = Time.GetTimestampMs();
-                string login = args[0].ToString();
-                string password = args[1].ToString();
+                //string login = args[0].ToString();
+                //string password = args[1].ToString();
                 Alt.Log($"Trying to login as {login}");
 
                 if (login.IsNullOrEmpty() || password.IsNullOrEmpty())

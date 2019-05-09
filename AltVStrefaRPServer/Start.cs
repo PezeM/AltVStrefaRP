@@ -30,6 +30,7 @@ namespace AltVStrefaRPServer
             Alt.Server.LogInfo("Starting AltVTestResource...");
 
             AltAsync.OnConsoleCommand += OnConsoleCommand;
+            Alt.OnConsoleCommand += OnConsoleCommand2;
             AltAsync.OnPlayerEnterVehicle += OnPlayerEnterVehicleAsync;
             AltAsync.OnPlayerEvent += AltAsyncOnOnPlayerEvent;
 
@@ -55,6 +56,11 @@ namespace AltVStrefaRPServer
             //{
             //    Alt.Log($"{player.Id} triggered command test");
             //});
+        }
+
+        private void OnConsoleCommand2(string name, string[] args)
+        {
+            Alt.Log("Triggered console event");
         }
 
         private Task AltAsyncOnOnPlayerEvent(IPlayer player, string eventname, object[] args)
