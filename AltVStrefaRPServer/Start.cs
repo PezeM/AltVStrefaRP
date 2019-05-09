@@ -59,7 +59,7 @@ namespace AltVStrefaRPServer
 
         private Task AltAsyncOnOnPlayerEvent(IPlayer player, string eventname, object[] args)
         {
-            AltAsync.Log($"{eventname} event triggered for {player.Name}");
+            AltAsync.Log($"{eventname} event triggered for {player.Name} with {args.Length} args.");
             return Task.CompletedTask;
         }
 

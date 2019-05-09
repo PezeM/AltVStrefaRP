@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Threading.Tasks;
 using AltV.Net;
 using AltV.Net.Async;
@@ -27,23 +28,21 @@ namespace AltVStrefaRPServer.Handlers
             AltAsync.OnClient("loginAccount", LoginAccountAsync);
             AltAsync.OnClient("registerAccount", RegisterAccountAsync);
             AltAsync.OnClient("tryToLoadCharacter", TryToLoadCharacterAsync);
-            AltAsync.On<IPlayer, string, string>("loginAccount", (player, login, password) =>
-            {   
-                AltAsync.Log($"loginAccount with args ${player.Name} {login} {password}");
-            });
-            //async void function(IPlayer player, string login, string password)
-            //{
-            //    AltAsync.Log($"Login account with arguments: {await player.GetNameAsync().ConfigureAwait(false)} login: {login} password: {password}.");
-            //}
-            //AltAsync.On<IPlayer, string, string>("loginAccount", function);
+            //AltAsync.On<IPlayer, string, string>("loginAccount", (player, arg1, arg2) =>
+            //{   
+            //    AltAsync.Log($"{player.Name} {arg1} {arg2} async");
+            //});
+            //Alt.On<IPlayer, string, string>("loginAccount", (player, arg1, arg2) =>
+            //{   
+            //    AltAsync.Log($"{player.Name} {arg1} {arg2}");
+            //});
         }
 
         private async Task TryToLoadCharacterAsync(IPlayer player, object[] args)
         {
             try
             {
-                var characterId = Convert.ToInt32(args[0]);
-                if (characterId == 0) return;
+                if (!int.TryParse(args[0].ToString(), out int characterId)) return;
 
                 var character = await _loginService.GetCharacterById(characterId).ConfigureAwait(false);
                 if (character == null)
@@ -146,7 +145,6 @@ namespace AltVStrefaRPServer.Handlers
                 await player.SpawnAsync(new Position(_appSettings.ServerConfig.LoginPosition.X,
                     _appSettings.ServerConfig.LoginPosition.Y,
                     _appSettings.ServerConfig.LoginPosition.Z));
-
                 await player.EmitAsync("showAuthenticateWindow");
             }
             catch (Exception e)
