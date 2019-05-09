@@ -23,11 +23,14 @@ namespace AltVStrefaRPServer.Handlers
             _appSettings = appSettings;
             _loginService = loginService;
 
-            Alt.Log($"Player connect handler initialized.");
             AltAsync.OnPlayerConnect += OnPlayerConnectAsync;
             AltAsync.OnClient("loginAccount", LoginAccountAsync);
             AltAsync.OnClient("registerAccount", RegisterAccountAsync);
             AltAsync.OnClient("tryToLoadCharacter", TryToLoadCharacterAsync);
+            AltAsync.On<IPlayer, string, string>("loginAccount", (player, login, password) =>
+            {   
+                AltAsync.Log($"loginAccount with args ${player.Name} {login} {password}");
+            });
             //async void function(IPlayer player, string login, string password)
             //{
             //    AltAsync.Log($"Login account with arguments: {await player.GetNameAsync().ConfigureAwait(false)} login: {login} password: {password}.");
@@ -124,7 +127,6 @@ namespace AltVStrefaRPServer.Handlers
                     return;
                 }
 
-                player.SetData("accountId", account.AccountId);
                 var characterList = await _loginService.GetCharacterList(account.AccountId).ConfigureAwait(false);
                 await player.EmitAsync("loginSuccesfully", JsonConvert.SerializeObject(characterList));
                 Alt.Log($"LoginAccount completed in {Time.GetTimestampMs() - startTime}ms.");

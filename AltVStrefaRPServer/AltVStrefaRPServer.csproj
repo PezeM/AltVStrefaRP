@@ -9,6 +9,9 @@
     <AssemblyName>AltVStrefaRPServer</AssemblyName>
     <RootNamespace>AltVStrefaRPServer</RootNamespace>
     <Version>0.0.1</Version>
+    <ApplicationIcon />
+    <OutputType>Exe</OutputType>
+    <StartupObject />
   </PropertyGroup>
 
 
@@ -18,7 +21,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <OutputPath>E:\AltVServer\windows\resources\test\</OutputPath>
+    <OutputPath>E:\AltVServer\windows\resources\AltVStrefaRPServer\</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
