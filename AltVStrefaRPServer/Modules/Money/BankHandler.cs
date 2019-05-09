@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Database;
@@ -30,28 +31,29 @@ namespace AltVStrefaRPServer.Modules.Money
             _notificationService = notificationService;
             _bankAccountManager = bankAccountManager;
 
-            AltAsync.OnClient("tryToOpenBankMenu", TryToOpenBankMenu);
-            AltAsync.OnClient("createBankAccount", CreateBankAccountAsync);
-            AltAsync.OnClient("DepositMoneyToBank", DepositMoneyToBankAsync);
-            AltAsync.OnClient("WithdrawMoneyFromBank", WithdrawMoneyFromBankAsync);
-            AltAsync.OnClient("TransferMoneyFromBankToBank", TransferMoneyFromBankToBankAsync);
-            AltAsync.OnClient("GetTransferHistoryInfo", GetTransferHistoryInfoAsync);
+            AltAsync.On<IPlayer>("tryToOpenBankMenu", async (player) => await TryToOpenBankMenu(player));
+            AltAsync.On<IPlayer>("createBankAccount", async (player) => await CreateBankAccountAsync(player));
+            AltAsync.On<IPlayer, int>("DepositMoneyToBank", async (player, money) => await DepositMoneyToBankAsync(player, money));
+            AltAsync.On<IPlayer, int>("WithdrawMoneyFromBank", async (player, money) => await WithdrawMoneyFromBankAsync(player, money));
+            AltAsync.On<IPlayer, int, int>("TransferMoneyFromBankToBank", async (player, money, receiver) 
+                => await TransferMoneyFromBankToBankAsync(player, money, receiver));
+            AltAsync.On<IPlayer>("GetTransferHistoryInfo", async (player) => await GetTransferHistoryInfoAsync(player));
 
-            //CreateAtmBlips();
+            CreateAtmBlips();
         }
 
-        //private void CreateAtmBlips()
-        //{
-        //    foreach (var atm in GtaLocations.Atms)
-        //    {
-        //        var blip = Alt.CreateBlip(BlipType.Ped, atm.Value);
-        //        blip.Color = 52;
-        //        blip.Sprite = 108;
-        //        blip.Dimension = 0;
-        //    }
-        //}
+        private void CreateAtmBlips()
+        {
+            foreach (var atm in Data.GtaLocations.Atms)
+            {
+                var blip = Alt.CreateBlip(BlipType.Object, atm.Value);
+                blip.Color = 52;
+                blip.Sprite = 108;
+                blip.Dimension = 0;
+            }
+        }
 
-        public async Task CreateBankAccountAsync(IPlayer player, object[] args)
+        public async Task CreateBankAccountAsync(IPlayer player)
         {
             var startTime = Time.GetTimestampMs();
             var character = player.GetCharacter();
@@ -84,7 +86,7 @@ namespace AltVStrefaRPServer.Modules.Money
             AltAsync.Log($"{character.Id} created new bank account ({character.BankAccount.AccountNumber}) in {Time.GetTimestampMs() - startTime}ms.");
         }
 
-        public async Task TryToOpenBankMenu(IPlayer player, object[] args)
+        public async Task TryToOpenBankMenu(IPlayer player)
         {
             var character = player.GetCharacter();
             if (character == null) return;
@@ -99,21 +101,16 @@ namespace AltVStrefaRPServer.Modules.Money
                 new BankAccountInformationModel(character.GetFullName(), character.BankAccount.AccountNumber, character.BankAccount.Money)));
         }
 
-        private async Task WithdrawMoneyFromBankAsync(IPlayer player, object[] args)
+        private async Task WithdrawMoneyFromBankAsync(IPlayer player, int money)
         {
             var character = player.GetCharacter();
             if (character == null || character.BankAccount == null) return;
-            if (!int.TryParse(args[0].ToString(), out int moneyToWithdraw))
-            {
-                await _notificationService.ShowErrorNotificationAsync(player, "Błąd!", "Wystąpił bład podczas wypłaty pieniędzy.").ConfigureAwait(false);
-                return;
-            }
 
-            if (await _moneyService.WithdrawMoneyFromBankAccountAsync(character, character.BankAccount, moneyToWithdraw).ConfigureAwait(false))
+            if (await _moneyService.WithdrawMoneyFromBankAccountAsync(character, character.BankAccount, money).ConfigureAwait(false))
             {
-                AltAsync.Log($"{character.Id} withdraw {moneyToWithdraw}$ from his bank account.");
+                AltAsync.Log($"{character.Id} withdraw {money}$ from his bank account.");
                 await player.EmitAsync("updateBankMoneyWithNotification",
-                    $"Pomyślnie wypłacono {moneyToWithdraw}$ z konta. Obecny stan konta wynosi {character.BankAccount.Money}$.",
+                    $"Pomyślnie wypłacono {money}$ z konta. Obecny stan konta wynosi {character.BankAccount.Money}$.",
                     character.BankAccount.Money).ConfigureAwait(false);
             }
             else
@@ -123,21 +120,16 @@ namespace AltVStrefaRPServer.Modules.Money
 
         }
 
-        private async Task DepositMoneyToBankAsync(IPlayer player, object[] args)
+        private async Task DepositMoneyToBankAsync(IPlayer player, int money)
         {
             var character = player.GetCharacter();
             if (character == null || character.BankAccount == null) return;
-            if (!int.TryParse(args[0].ToString(), out int moneyToDeposit))
-            {
-                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Wystąpił bład podczas wpłaty pieniędzy.").ConfigureAwait(false);
-                return;
-            }
 
-            if (await _moneyService.DepositMoneyToBankAccountAsync(character, character.BankAccount, moneyToDeposit).ConfigureAwait(false))
+            if (await _moneyService.DepositMoneyToBankAccountAsync(character, character.BankAccount, money).ConfigureAwait(false))
             {
-                AltAsync.Log($"{character.Id} deposited {moneyToDeposit}$ to his bank account.");
+                AltAsync.Log($"{character.Id} deposited {money}$ to his bank account.");
                 await player.EmitAsync("updateBankMoneyWithNotification",
-                    $"Pomyślnie wpłacono {moneyToDeposit}$ na konto. Obecny stan konta wynosi {character.BankAccount.Money}$.",
+                    $"Pomyślnie wpłacono {money}$ na konto. Obecny stan konta wynosi {character.BankAccount.Money}$.",
                     character.BankAccount.Money);
             }
             else
@@ -146,17 +138,11 @@ namespace AltVStrefaRPServer.Modules.Money
             }
         }
 
-        private async Task TransferMoneyFromBankToBankAsync(IPlayer player, object[] args)
+        private async Task TransferMoneyFromBankToBankAsync(IPlayer player, int money, int receiver)
         {
             var character = player.GetCharacter();
             if (character == null || character.BankAccount == null) return;
-            if (!int.TryParse(args[0].ToString(), out int moneyToTransfer) || !int.TryParse(args[1].ToString(), out int receiverAccountNumber))
-            {
-                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Wystąpił bład podczas wykonywania przelewu.").ConfigureAwait(false);
-                return;
-            }
-
-            var receiverBankAccount = _bankAccountManager.GetBankAccountByNumber(receiverAccountNumber);
+            var receiverBankAccount = _bankAccountManager.GetBankAccountByNumber(receiver);
 
             if (receiverBankAccount == null)
             {
@@ -164,28 +150,28 @@ namespace AltVStrefaRPServer.Modules.Money
                 return;
             }
 
-            if (await _moneyService.TransferMoneyFromBankAccountToBankAccountAsync(character.BankAccount, receiverBankAccount, moneyToTransfer))
+            if (await _moneyService.TransferMoneyFromBankAccountToBankAccountAsync(character.BankAccount, receiverBankAccount, money))
             {
                 var receiverCharacter = CharacterManager.Instance.GetCharacterByBankAccount(receiverBankAccount.Id);
 
                 // Receiver character is currently offline so don't send any notification to him
                 if (receiverCharacter == null)
                 {
-                    AltAsync.Log($"{character.Id} transfered {moneyToTransfer} from his bank account to {receiverBankAccount} account.");
+                    AltAsync.Log($"{character.Id} transfered {money} from his bank account to {receiverBankAccount} account.");
                     await player.EmitAsync("updateBankMoneyWithNotification",
-                        $"Pomyślnie przesłano {moneyToTransfer}$ na konto o numerze {receiverBankAccount}. <br>" +
+                        $"Pomyślnie przesłano {money}$ na konto o numerze {receiverBankAccount}. <br>" +
                         $"Twój aktualny stan konta wynosi {character.BankAccount.Money}$.",
                         character.BankAccount.Money).ConfigureAwait(false);
                 }
                 else
                 {
-                    AltAsync.Log($"{character.Id} transfered {moneyToTransfer} from his bank account to {receiverBankAccount} account.");
+                    AltAsync.Log($"{character.Id} transfered {money} from his bank account to {receiverBankAccount} account.");
                     await player.EmitAsync("updateBankMoneyWithNotification",
-                        $"Pomyślnie przesłano {moneyToTransfer}$ na konto o numerze {receiverBankAccount}. <br>" +
+                        $"Pomyślnie przesłano {money}$ na konto o numerze {receiverBankAccount}. <br>" +
                         $"Twój aktualny stan konta wynosi {character.BankAccount.Money}$.",
                         character.BankAccount.Money).ConfigureAwait(false);
                     await _notificationService.ShowSuccessNotificationAsync(receiverCharacter.Player, "Otrzymano przelew!",
-                        $"Właśnie otrzymałeś przelew od {character.GetFullName()} w wysokości {moneyToTransfer}. <br>" +
+                        $"Właśnie otrzymałeś przelew od {character.GetFullName()} w wysokości {money}. <br>" +
                         $"Twój aktualny stan konta wynosi {receiverBankAccount.Money}$.",7000);
                 }
             }
@@ -195,7 +181,7 @@ namespace AltVStrefaRPServer.Modules.Money
             }
         }
 
-        private async Task GetTransferHistoryInfoAsync(IPlayer player, object[] args)
+        private async Task GetTransferHistoryInfoAsync(IPlayer player)
         {
             var character = player.GetCharacter();
             if(character == null) return;

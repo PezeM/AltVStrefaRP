@@ -12,14 +12,14 @@ namespace AltVStrefaRPServer.Modules.Environment
         private int _timerInterval = 60000;
         private int _elapsedMinutes = AppSettings.Current.ServerConfig.ChangeWeatherInterval == 0 
             ? 30 : AppSettings.Current.ServerConfig.ChangeWeatherInterval;
-        private uint _currentWeather = (uint)Weathers.ExtraSunny;
-        private GameTime _gameTime;
+        public uint CurrentWeather { get; set; } = (uint)Weathers.ExtraSunny;
+        public GameTime GameTime { get; set; }
         private Random _rng;
 
         public TimeManager()
         {
             _rng = new Random();
-            _gameTime = new GameTime
+            GameTime = new GameTime
             {
                 Days = 0,
                 Hours = 12,
@@ -29,8 +29,8 @@ namespace AltVStrefaRPServer.Modules.Environment
             // Update time and weathers for all players on startup
             foreach (var player in Alt.GetAllPlayers())
             {
-                player.SetWeather(_currentWeather);
-                player.SetDateTime(_gameTime.Days, 0, 0, _gameTime.Hours, _gameTime.Minutes, 0);
+                player.SetWeather(CurrentWeather);
+                player.SetDateTime(GameTime.Days, 0, 0, GameTime.Hours, GameTime.Minutes, 0);
             }
 
             _gameTimeTimer = new Timer();
@@ -56,12 +56,12 @@ namespace AltVStrefaRPServer.Modules.Environment
 
         private void UpdateTime()
         {
-            _gameTime.Minutes += AppSettings.Current.ServerConfig.OneMinuteIrlToGameTime;
+            GameTime.Minutes += AppSettings.Current.ServerConfig.OneMinuteIrlToGameTime;
             foreach (var player in Alt.GetAllPlayers())
             {
-                player.SetDateTime(_gameTime.Days, 0, 0, _gameTime.Hours, _gameTime.Minutes, 0);
+                player.SetDateTime(GameTime.Days, 0, 0, GameTime.Hours, GameTime.Minutes, 0);
             }
-            Alt.Log($"Updated game time to {_gameTime}");
+            Alt.Log($"Updated game time to {GameTime}");
         }
 
         private void ChangeWeather()
@@ -71,45 +71,45 @@ namespace AltVStrefaRPServer.Modules.Environment
 
             foreach (var player in Alt.GetAllPlayers())
             {
-                player.SetWeather(_currentWeather);
+                player.SetWeather(CurrentWeather);
             }
-            Alt.Log($"Updated weather to {_currentWeather}.");
+            Alt.Log($"Updated weather to {CurrentWeather}.");
         }
 
         private void GetNewWeather(int weatherChance)
         {
             if (weatherChance < 50)
             {
-                _currentWeather = (uint)Weathers.Clear;
+                CurrentWeather = (uint)Weathers.Clear;
             }
             else if (weatherChance < 60)
             {
-                _currentWeather = (uint)Weathers.ExtraSunny;
+                CurrentWeather = (uint)Weathers.ExtraSunny;
             }
             else if (weatherChance < 70)
             {
-                _currentWeather = (uint)Weathers.Clouds;
+                CurrentWeather = (uint)Weathers.Clouds;
             }
             else if (weatherChance < 80)
             {
-                _currentWeather = (uint)Weathers.Smog;
+                CurrentWeather = (uint)Weathers.Smog;
             }
             else if (weatherChance < 85)
             {
-                _currentWeather = (uint)Weathers.Overcast;
+                CurrentWeather = (uint)Weathers.Overcast;
             }
             else if (weatherChance < 95)
             {
-                _currentWeather = (uint)Weathers.Lightrain;
+                CurrentWeather = (uint)Weathers.Lightrain;
             }
             else if (weatherChance <= 100)
             {
-                _currentWeather = (uint)Weathers.Thunderstorm;
+                CurrentWeather = (uint)Weathers.Thunderstorm;
             }
         }
     }
 
-    public struct GameTime
+    public class GameTime
     {
         private int _hours;
         private int _minutes;

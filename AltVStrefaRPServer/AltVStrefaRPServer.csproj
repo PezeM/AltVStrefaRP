@@ -9,6 +9,9 @@
     <AssemblyName>AltVStrefaRPServer</AssemblyName>
     <RootNamespace>AltVStrefaRPServer</RootNamespace>
     <Version>0.0.1</Version>
+    <ApplicationIcon />
+    <OutputType>Exe</OutputType>
+    <StartupObject />
   </PropertyGroup>
 
 
@@ -18,12 +21,12 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <OutputPath>E:\AltVServer\windows\resources\test\</OutputPath>
+    <OutputPath>E:\AltVServer\windows\resources\AltVStrefaRPServer\</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AltV.Net" Version="1.4.0" />
-    <PackageReference Include="AltV.Net.Async" Version="1.4.0" />
+    <PackageReference Include="AltV.Net" Version="1.4.1" />
+    <PackageReference Include="AltV.Net.Async" Version="1.4.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.2.4" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="2.2.4" />

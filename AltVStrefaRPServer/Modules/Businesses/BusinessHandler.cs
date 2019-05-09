@@ -10,7 +10,6 @@ using AltVStrefaRPServer.Models.Dto;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Modules.CharacterModule;
 using AltVStrefaRPServer.Services;
-using AltVStrefaRPServer.Services.Characters;
 using Newtonsoft.Json;
 using System.Linq;
 using System.Threading.Tasks;
@@ -29,16 +28,23 @@ namespace AltVStrefaRPServer.Modules.Businesses
             _notificationService = notificationService;
 
             Alt.Log("Intialized business handler.");
-            Alt.OnClient("GetBusinessEmployees", GetBusinessEmployeesEvent);
-            AltAsync.OnClient("UpdateEmployeeRank", UpdateEmployeeRankEvent);
-            Alt.OnClient("AddNewEmployee", AddNewEmployeeEvent);
-            AltAsync.OnClient("AcceptInviteToBusiness", AcceptInviteToBusinessEvent);
-            Alt.OnClient("GetBusinessRoles", GetBusinessRolesEvent);
-            AltAsync.OnClient("UpdateBusinessRank", UpdateBusinessRank);
-            AltAsync.OnClient("AddNewRole", AddNewRoleEvent);
-            AltAsync.OnClient("DeleteEmployee", DeleteEmployeeEvent);
-            AltAsync.OnClient("DeleteRole", DeleteRoleEvent);
-            AltAsync.OnClient("DeleteBusiness", DeleteBusinessEvent);
+            Alt.On<IPlayer, int>("GetBusinessEmployees", GetBusinessEmployeesEvent);
+            AltAsync.On<IPlayer, int, int, int>("UpdateEmployeeRank", async (player, employeeId, newRankId, businessId) 
+                => await UpdateEmployeeRankEvent(player, employeeId, newRankId, businessId));
+            Alt.On<IPlayer, string, string, int>("AddNewEmployee", AddNewEmployeeEvent);
+            AltAsync.On<IPlayer, int>("AcceptInviteToBusiness", async (player, businessId) 
+                => await AcceptInviteToBusinessEvent(player, businessId));
+            Alt.On<IPlayer, int>("GetBusinessRoles", GetBusinessRolesEvent);
+            AltAsync.On<IPlayer, string, int>("UpdateBusinessRank", async (player, business, businessId) 
+                => await UpdateBusinessRank(player, business, businessId));
+            AltAsync.On<IPlayer, string, int>("AddNewRole", async (player, newRole, businessId) 
+                => await AddNewRoleEvent(player, newRole, businessId));
+            AltAsync.On<IPlayer, int, int>("DeleteEmployee", async (player, employeeId, businessId) 
+                => await DeleteEmployeeEvent(player, employeeId, businessId));
+            AltAsync.On<IPlayer, int, int>("DeleteRole", async (player, roleId, businessId) 
+                => await DeleteRoleEvent(player, roleId, businessId));
+            AltAsync.On<IPlayer, int>("DeleteRole", async (player, businessId) 
+                => await DeleteBusinessEvent(player, businessId));
         }
 
         private bool GetBusiness(string businessIdString, out Business business)
@@ -52,13 +58,19 @@ namespace AltVStrefaRPServer.Modules.Businesses
             return true;
         }
 
-        private void GetBusinessEmployeesEvent(IPlayer player, object[] args)
+        private bool GetBusiness(int businessId, out Business business)
+        {
+            business = _businessManager.GetBusiness(businessId);
+            return business != null;
+        }
+
+        private void GetBusinessEmployeesEvent(IPlayer player, int businessId)
         {
             var startTime = Time.GetTimestampMs();
             var character = player.GetCharacter();
             if (character == null) return;
 
-            if (!GetBusiness(args[0].ToString(), out Business business))
+            if (!GetBusiness(businessId, out Business business))
             {
                 _notificationService.ShowErrorNotfication(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
                 return;
@@ -106,26 +118,13 @@ namespace AltVStrefaRPServer.Modules.Businesses
             Alt.Log($"Character ID({character.Id}) opened business menu in {Time.GetTimestampMs() - startTime}ms.");
         }
 
-        private async Task UpdateEmployeeRankEvent(IPlayer player, object[] args)
+        private async Task UpdateEmployeeRankEvent(IPlayer player, int employeeId, int newRankId, int businessId)
         {
             var startTime = Time.GetTimestampMs();
             var character = player.GetCharacter();
             if (character == null) return;
-            if (args.Length < 3) return;
 
-            if (!int.TryParse(args[0].ToString(), out int employeeId))
-            {
-                _notificationService.ShowErrorNotfication(player, "Błąd", "Podano błędne ID pracownika,", 4000);
-                return;
-            }
-
-            if (!int.TryParse(args[1].ToString(), out int newRankId))
-            {
-                _notificationService.ShowErrorNotfication(player, "Błąd", "Podano błędne ID nowego stanowiska.", 4000);
-                return;
-            }
-
-            if (!GetBusiness(args[2].ToString(), out Business business))
+            if (!GetBusiness(businessId, out Business business))
             {
                 _notificationService.ShowErrorNotfication(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
                 return;
@@ -161,17 +160,13 @@ namespace AltVStrefaRPServer.Modules.Businesses
                     $" in {Time.GetTimestampMs() - startTime}ms.");
         }
 
-        private void AddNewEmployeeEvent(IPlayer player, object[] args)
+        private void AddNewEmployeeEvent(IPlayer player, string name, string lastName, int businessId)
         {
             var startTime = Time.GetTimestampMs();
             var character = player.GetCharacter();
             if (character == null) return;
-            if (args.Length < 3) return;
 
-            var name = args[0].ToString();
-            var lastName = args[1].ToString();
-
-            if (!GetBusiness(args[2].ToString(), out Business business))
+            if (!GetBusiness(businessId, out Business business))
             {
                 _notificationService.ShowErrorNotfication(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
                 return;
@@ -217,13 +212,12 @@ namespace AltVStrefaRPServer.Modules.Businesses
                     $"to business({business.BusinessName}) ID({business.Id}) in {Time.GetTimestampMs() - startTime}ms.");
         }
 
-        private async Task AcceptInviteToBusinessEvent(IPlayer player, object[] args)
+        private async Task AcceptInviteToBusinessEvent(IPlayer player, int businessId)
         {
-            if (args.Length < 1) return;
             var character = player.GetCharacter();
             if (character == null) return;
 
-            if (!GetBusiness(args[0].ToString(), out Business business))
+            if (!GetBusiness(businessId, out Business business))
             {
                 _notificationService.ShowErrorNotfication(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
                 return;
@@ -242,13 +236,13 @@ namespace AltVStrefaRPServer.Modules.Businesses
             AltAsync.Log($"Character ID({character.Id}) joined business {business.BusinessName} ID({business.Id}).");
         }
 
-        private void GetBusinessRolesEvent(IPlayer player, object[] args)
+        private void GetBusinessRolesEvent(IPlayer player, int businessId)
         {
             var startTime = Time.GetTimestampMs();
             var character = player.GetCharacter();
             if (character == null) return;
 
-            if (!GetBusiness(args[0].ToString(), out Business business))
+            if (!GetBusiness(businessId, out Business business))
             {
                 _notificationService.ShowErrorNotfication(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
                 return;
@@ -269,14 +263,13 @@ namespace AltVStrefaRPServer.Modules.Businesses
             Alt.Log($"Character ID({character.Id}) requested list of business roles in {Time.GetTimestampMs() - startTime}ms.");
         }
 
-        private async Task UpdateBusinessRank(IPlayer player, object[] args)
+        private async Task UpdateBusinessRank(IPlayer player, string newPermissionsString, int businessId)
         {
             var startTime = Time.GetTimestampMs();
-            if (args.Length < 2) return;
             var character = player.GetCharacter();
             if (character == null) return;
 
-            if (!GetBusiness(args[1].ToString(), out Business business))
+            if (!GetBusiness(businessId, out Business business))
             {
                 _notificationService.ShowErrorNotfication(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
                 return;
@@ -297,7 +290,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
             BusinessPermissionsDto newPermissions;
             try
             {
-                newPermissions = JsonConvert.DeserializeObject<BusinessPermissionsDto>(args[0].ToString());
+                newPermissions = JsonConvert.DeserializeObject<BusinessPermissionsDto>(newPermissionsString);
             }
             catch (Exception e)
             {
@@ -317,14 +310,13 @@ namespace AltVStrefaRPServer.Modules.Businesses
                     $" in {Time.GetTimestampMs() - startTime}ms.");
         }
 
-        private async Task AddNewRoleEvent(IPlayer player, object[] args)
+        private async Task AddNewRoleEvent(IPlayer player, string newRankString, int businessId)
         {
             var startTime = Time.GetTimestampMs();
-            if (args.Length < 2) return;
             var character = player.GetCharacter();
             if (character == null) return;
 
-            if (!GetBusiness(args[1].ToString(), out Business business))
+            if (!GetBusiness(businessId, out Business business))
             {
                 _notificationService.ShowErrorNotfication(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
                 return;
@@ -345,7 +337,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
             BusinessNewRankDto newRank;
             try
             {
-                newRank = JsonConvert.DeserializeObject<BusinessNewRankDto>(args[0].ToString());
+                newRank = JsonConvert.DeserializeObject<BusinessNewRankDto>(newRankString);
             }
             catch (Exception e)
             {
@@ -368,15 +360,13 @@ namespace AltVStrefaRPServer.Modules.Businesses
                     $" in {Time.GetTimestampMs() - startTime}ms.");
         }
 
-        private async Task DeleteEmployeeEvent(IPlayer player, object[] args)
+        private async Task DeleteEmployeeEvent(IPlayer player, int employeeId, int businessId)
         {
             var startTime = Time.GetTimestampMs();
-            if (args.Length < 2) return;
             var character = player.GetCharacter();
             if (character == null) return;
 
-            if (!int.TryParse(args[0].ToString(), out int employeeId)) return;
-            if (!GetBusiness(args[1].ToString(), out Business business))
+            if (!GetBusiness(businessId, out Business business))
             {
                 _notificationService.ShowErrorNotfication(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
                 return;
@@ -412,15 +402,13 @@ namespace AltVStrefaRPServer.Modules.Businesses
             }
         }
 
-        private async Task DeleteRoleEvent(IPlayer player, object[] args)
+        private async Task DeleteRoleEvent(IPlayer player, int rankId, int businessId)
         {
             var startTime = Time.GetTimestampMs();
-            if (args.Length < 2) return;
             var character = player.GetCharacter();
             if (character == null) return;
 
-            if (!int.TryParse(args[0].ToString(), out int rankId)) return;
-            if (!GetBusiness(args[1].ToString(), out Business business))
+            if (!GetBusiness(businessId, out Business business))
             {
                 _notificationService.ShowErrorNotfication(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
                 return;
@@ -452,14 +440,13 @@ namespace AltVStrefaRPServer.Modules.Businesses
             }
         }
 
-        private async Task DeleteBusinessEvent(IPlayer player, object[] args)
+        private async Task DeleteBusinessEvent(IPlayer player, int businessId)
         {
             var startTime = Time.GetTimestampMs();
-            if (args.Length < 1) return;
             var character = player.GetCharacter();
             if (character == null) return;
 
-            if (!GetBusiness(args[0].ToString(), out Business business))
+            if (!GetBusiness(businessId, out Business business))
             {
                 _notificationService.ShowErrorNotfication(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
                 return;

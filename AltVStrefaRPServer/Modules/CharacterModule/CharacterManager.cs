@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AltV.Net;
 using AltV.Net.Elements.Entities;
+using AltV.Net.Enums;
 using AltVStrefaRPServer.Models;
 
 namespace AltVStrefaRPServer.Modules.CharacterModule
@@ -47,8 +48,9 @@ namespace AltVStrefaRPServer.Modules.CharacterModule
             player.Name = character.GetFullName();
 
             // TODO: Setting skin and shared data
-            //player.Position = new Position(character.X, character.Y, character.Z);
-            player.Spawn(character.GetPosition());
+            player.SetPosition(character.X, character.Y, character.Z);
+            //player.Spawn(character.GetPosition());
+            player.Model = character.Gender == 0 ? (uint)PedModel.FreemodeMale01 : (uint)PedModel.FreemodeFemale01; 
             player.Dimension = character.Dimension;
             character.LastPlayed = DateTime.Now;
 

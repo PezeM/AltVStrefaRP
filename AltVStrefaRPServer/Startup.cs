@@ -83,11 +83,11 @@ namespace AltVStrefaRPServer
             services.AddSingleton<BusinessManager>();
             services.AddSingleton<BusinessHandler>();
             services.AddSingleton<TemporaryChatHandler>();
+            services.AddSingleton<TimeManager>();
 
             services.AddTransient<AdminCommands>();
             services.AddTransient<CharacterCreator>();
             services.AddTransient<SittingHandler>();
-            services.AddTransient<TimeManager>();
 
             // Build provider
             ServiceProvider = services.BuildServiceProvider();

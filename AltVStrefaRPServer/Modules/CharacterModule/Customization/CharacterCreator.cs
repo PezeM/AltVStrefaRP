@@ -15,10 +15,10 @@ namespace AltVStrefaRPServer.Modules.CharacterModule.Customization
             _characterCreatorService = characterCreatorService;
 
             Alt.Log("Character creator initialized.");
-            AltAsync.OnClient("tryToCreateNewCharacter", TryToCreateNewCharacterAsync);
+            AltAsync.On<IPlayer>("tryToCreateNewCharacter", async (player) => await TryToCreateNewCharacterAsync(player));
         }
 
-        private async Task TryToCreateNewCharacterAsync(IPlayer player, object[] args)
+        private async Task TryToCreateNewCharacterAsync(IPlayer player)
         {
             // Get name and username
 

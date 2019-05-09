@@ -165,14 +165,14 @@ namespace AltVStrefaRPServer.Modules.Admin
             }
         }
 
-        private void CreateBankAccount(IPlayer arg1, string[] arg2)
+        private void CreateBankAccount(IPlayer player, string[] arg2)
         {
-            _bankHandler.CreateBankAccountAsync(arg1, arg2);
+            _bankHandler.CreateBankAccountAsync(player);
         }
 
-        private async void OpenBankMenu(IPlayer arg1, string[] arg2)
+        private async void OpenBankMenu(IPlayer player, string[] arg2)
         {
-            await _bankHandler.TryToOpenBankMenu(arg1, arg2);
+            await _bankHandler.TryToOpenBankMenu(player);
         }
 
         private void TeleportToWaypointCommand(IPlayer player, string[] args)

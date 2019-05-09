@@ -61,7 +61,7 @@ namespace AltVStrefaRPServer.Services.Businesses
                 BusinessRanks = CreateDefaultBusinessRanks(),
                 Employees = new List<Character>(),
             };
-            //business.Blip = CreateBlip(business);
+            business.Blip = CreateBlip(business);
             return business;
         }
 
@@ -80,7 +80,7 @@ namespace AltVStrefaRPServer.Services.Businesses
                 BusinessRanks = CreateDefaultBusinessRanks(),
                 Employees = new List<Character>(),
             };
-            //business.Blip = CreateBlip(business);
+            business.Blip = CreateBlip(business);
             return business;
         }
 
@@ -99,7 +99,7 @@ namespace AltVStrefaRPServer.Services.Businesses
                 BusinessRanks = CreateDefaultBusinessRanks(),
                 Employees = new List<Character>(),
             };
-            //business.Blip = CreateBlip(business);
+            business.Blip = CreateBlip(business);
             return business;
         }
 
@@ -116,7 +116,7 @@ namespace AltVStrefaRPServer.Services.Businesses
                 Z = business.Z,
                 CreatedAt = business.CreatedAt,
                 Type = business.Type,
-                //Blip = CreateBlip(business)
+                Blip = CreateBlip(business)
             };
         }
 
@@ -133,7 +133,7 @@ namespace AltVStrefaRPServer.Services.Businesses
                 Z = business.Z,
                 CreatedAt = business.CreatedAt,
                 Type = business.Type,
-                //Blip = CreateBlip(business)
+                Blip = CreateBlip(business)
             };
         }
 
