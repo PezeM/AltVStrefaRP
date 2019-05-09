@@ -1,10 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
 using AltV.Net.Enums;
-using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Modules.Vehicle;
@@ -30,12 +28,12 @@ namespace AltVStrefaRPServer.Handlers
             AltAsync.OnPlayerEnterVehicle += OnPlayerEnterVehicleAsync;
             AltAsync.OnVehicleRemove += OnVehicleRemoveAsync;
             AltAsync.OnPlayerChangeVehicleSeat += OnPlayerChangedVehicleSeatAsync;
-            AltAsync.OnClient("ToggleTrunkState", ToggleTrunkStateEvent);
-            AltAsync.OnClient("ToggleHoodState", ToggleHoodStateEvent);
-            AltAsync.OnClient("ToggleLockState", ToggleLockStateEvent);
+            AltAsync.On<IPlayer>("ToggleLockState", async (player) => await ToggleLockStateEvent(player));
+            AltAsync.On<IPlayer>("ToggleHoodState", async (player) => await ToggleHoodStateEvent(player));
+            AltAsync.On<IPlayer>("ToggleTrunkState", async (player) => await ToggleTrunkStateEvent(player));
         }
 
-        private Task ToggleLockStateEvent(IPlayer player, object[] args)
+        private Task ToggleLockStateEvent(IPlayer player)
         {
             var startTime = Time.GetTimestampMs();
             var character = player.GetCharacter();
@@ -53,7 +51,7 @@ namespace AltVStrefaRPServer.Handlers
             return Task.CompletedTask;
         }
 
-        private Task ToggleHoodStateEvent(IPlayer player, object[] args)
+        private Task ToggleHoodStateEvent(IPlayer player)
         {
             var startTime = Time.GetTimestampMs();
 
@@ -76,7 +74,7 @@ namespace AltVStrefaRPServer.Handlers
             return Task.CompletedTask;
         }
 
-        private Task ToggleTrunkStateEvent(IPlayer player, object[] args)
+        private Task ToggleTrunkStateEvent(IPlayer player)
         {
             var startTime = Time.GetTimestampMs();
 

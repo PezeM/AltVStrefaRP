@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 using System.Threading.Tasks;
 using AltV.Net;
 using AltV.Net.Async;
@@ -9,6 +8,7 @@ using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Modules.CharacterModule;
+using AltVStrefaRPServer.Modules.Environment;
 using AltVStrefaRPServer.Services.Characters;
 using Newtonsoft.Json;
 
@@ -18,31 +18,27 @@ namespace AltVStrefaRPServer.Handlers
     {
         private readonly AppSettings _appSettings;
         private readonly ILogin _loginService;
+        private readonly TimeManager _timeManager;
 
-        public PlayerConnect(AppSettings appSettings, ILogin loginService)
+        public PlayerConnect(AppSettings appSettings, ILogin loginService, TimeManager timeManager)
         {
             _appSettings = appSettings;
             _loginService = loginService;
+            _timeManager = timeManager;
 
             AltAsync.OnPlayerConnect += OnPlayerConnectAsync;
-            //AltAsync.OnClient("loginAccount", LoginAccountAsync);
-            AltAsync.OnClient("registerAccount", RegisterAccountAsync);
-            //AltAsync.OnClient("registerAccount", );
-            AltAsync.OnClient("tryToLoadCharacter", TryToLoadCharacterAsync);
-            //AltAsync.On<IPlayer, string, string>("loginAccount", );
-            AltAsync.On<IPlayer, string, string>("loginAccount", async (player, arg1, arg2) =>
-            {
-                AltAsync.Log($"{player.Name} {arg1} {arg2} async");
-            });
-            AltAsync.On<IPlayer, string, string>("loginAccount", async (player, arg1, arg2) => await LoginAccountAsync(player, arg1, arg2));
+            AltAsync.On<IPlayer, string, string>("loginAccount", async (player, login, password) 
+                => await LoginAccountAsync(player, login, password));
+            AltAsync.On<IPlayer, string, string>("registerAccount", async (player, login, password) 
+                => await RegisterAccountAsync(player, login, password));
+            AltAsync.On<IPlayer, int>("tryToLoadCharacter", async (player, characterId) 
+                => await TryToLoadCharacterAsync(player, characterId));
         }
 
-        private async Task TryToLoadCharacterAsync(IPlayer player, object[] args)
+        private async Task TryToLoadCharacterAsync(IPlayer player, int characterId)
         {
             try
             {
-                if (!int.TryParse(args[0].ToString(), out int characterId)) return;
-
                 var character = await _loginService.GetCharacterById(characterId).ConfigureAwait(false);
                 if (character == null)
                 {
@@ -60,13 +56,11 @@ namespace AltVStrefaRPServer.Handlers
             }
         }
 
-        private async Task RegisterAccountAsync(IPlayer player, object[] args)
+        private async Task RegisterAccountAsync(IPlayer player, string login, string password)
         {
             try
             {
                 var startTime = Time.GetTimestampMs();
-                var login = args[0].ToString();
-                var password = args[1].ToString();
                 if (login.IsNullOrEmpty() || password.IsNullOrEmpty())
                 {
                     await player.EmitAsync("showLoginError", "Uzupełnij wszystkie pola");
@@ -85,9 +79,9 @@ namespace AltVStrefaRPServer.Handlers
                     return;
                 }
 
-                await _loginService.CreateNewAccountAndSaveAsync(login, password).ConfigureAwait(false);
-                await player.EmitAsync("successfullyRegistered");
-                //await Task.WhenAll(_loginService.CreateNewAccountAndSaveAsync(login, password), player.EmitAsync("successfullyRegistered"));
+                //await _loginService.CreateNewAccountAndSaveAsync(login, password).ConfigureAwait(false);
+                //await player.EmitAsync("successfullyRegistered");
+                await Task.WhenAll(_loginService.CreateNewAccountAndSaveAsync(login, password), player.EmitAsync("successfullyRegistered"));
                 Alt.Log($"Registered account in {Time.GetTimestampMs() - startTime}ms");
             }
             catch (Exception e)
@@ -101,8 +95,6 @@ namespace AltVStrefaRPServer.Handlers
             try
             {
                 var startTime = Time.GetTimestampMs();
-                //string login = args[0].ToString();
-                //string password = args[1].ToString();
                 Alt.Log($"Trying to login as {login}");
 
                 if (login.IsNullOrEmpty() || password.IsNullOrEmpty())
@@ -125,6 +117,7 @@ namespace AltVStrefaRPServer.Handlers
                     return;
                 }
 
+                player.SetData("accountId", account.AccountId);
                 var characterList = await _loginService.GetCharacterList(account.AccountId).ConfigureAwait(false);
                 await player.EmitAsync("loginSuccesfully", JsonConvert.SerializeObject(characterList));
                 Alt.Log($"LoginAccount completed in {Time.GetTimestampMs() - startTime}ms.");
@@ -141,9 +134,10 @@ namespace AltVStrefaRPServer.Handlers
                          $"Ping: {player.Ping}");
             try
             {
-                await player.SpawnAsync(new Position(_appSettings.ServerConfig.LoginPosition.X,
-                    _appSettings.ServerConfig.LoginPosition.Y,
-                    _appSettings.ServerConfig.LoginPosition.Z));
+                await Task.WhenAll(player.SpawnAsync(new Position(_appSettings.ServerConfig.LoginPosition.X, _appSettings.ServerConfig.LoginPosition.Y,
+                    _appSettings.ServerConfig.LoginPosition.Z)),
+                    player.SetDateTimeAsync(_timeManager.GameTime.Days, 0, 0, _timeManager.GameTime.Hours, _timeManager.GameTime.Minutes, 0),
+                    player.SetWeatherAsync(_timeManager.CurrentWeather));
                 await player.EmitAsync("showAuthenticateWindow");
             }
             catch (Exception e)

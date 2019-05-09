@@ -14,33 +14,29 @@ namespace AltVStrefaRPServer.Modules.Environment
         {
             _notificationService = notificationService;
 
-            Alt.OnClient("takeSeat", TakeSeat);
-            Alt.OnClient("leaveSeat", LeaveSeat);
+            Alt.On<IPlayer, int>("takeSeat", TakeSeat);
+            Alt.On<IPlayer, int>("leaveSeat", LeaveSeat);
         }
 
-        private void LeaveSeat(IPlayer player, object[] args)
+        private void LeaveSeat(IPlayer player, int seatId)
         {
-            if (!int.TryParse(args[0].ToString(), out int objectId)) return;
-
-            if (_seatsTaken.ContainsKey(objectId))
+            if (_seatsTaken.ContainsKey(seatId))
             {
-                Alt.Log($"Removing {objectId} from seatsTaken dict");
-                _seatsTaken.Remove(objectId);
+                Alt.Log($"Removing {seatId} from seatsTaken dict");
+                _seatsTaken.Remove(seatId);
             }
         }
 
-        private void TakeSeat(IPlayer player, object[] args)
+        private void TakeSeat(IPlayer player, int seatId)
         {
-            if (!int.TryParse(args[0].ToString(), out int objectId)) return;
-
-            if (_seatsTaken.ContainsKey(objectId))
+            if (_seatsTaken.ContainsKey(seatId))
             {
                 _notificationService.ShowErrorNotfication(player, "Zajęte", "To miejsce jest już zajęte.", 4000);
-                Alt.Log($"Someone sits at object {objectId}");
+                Alt.Log($"Someone sits at object {seatId}");
                 return;
             }
 
-            _seatsTaken.Add(objectId, player.Id);
+            _seatsTaken.Add(seatId, player.Id);
             player.Emit("canSeat");
         }
     }
