@@ -39,7 +39,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
             {
                 //Businesses.TryAdd(business.Id, _businessFactory.CreateNewBusiness(business));
                 Businesses.TryAdd(business.Id, business);
-                _businessFactory.CreateBusiness(business);
+                //_businessFactory.CreateBusiness(business);
             }
             Alt.Log($"Loaded {Businesses.Count} businesses from database in {Time.GetTimestampMs() - startTime}ms.");
         }

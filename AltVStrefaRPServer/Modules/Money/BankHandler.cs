@@ -31,8 +31,8 @@ namespace AltVStrefaRPServer.Modules.Money
             _notificationService = notificationService;
             _bankAccountManager = bankAccountManager;
 
-            AltAsync.On<IPlayer>("tryToOpenBankMenu", async (player) => await TryToOpenBankMenu(player));
-            AltAsync.On<IPlayer>("createBankAccount", async (player) => await CreateBankAccountAsync(player));
+            AltAsync.On<IPlayer>("TryToOpenBankMenu", async (player) => await TryToOpenBankMenu(player));
+            AltAsync.On<IPlayer>("CreateBankAccount", async (player) => await CreateBankAccountAsync(player));
             AltAsync.On<IPlayer, int>("DepositMoneyToBank", async (player, money) => await DepositMoneyToBankAsync(player, money));
             AltAsync.On<IPlayer, int>("WithdrawMoneyFromBank", async (player, money) => await WithdrawMoneyFromBankAsync(player, money));
             AltAsync.On<IPlayer, int, int>("TransferMoneyFromBankToBank", async (player, money, receiver) 
@@ -46,10 +46,9 @@ namespace AltVStrefaRPServer.Modules.Money
         {
             foreach (var atm in Data.GtaLocations.Atms)
             {
-                var blip = Alt.CreateBlip(BlipType.Object, atm.Value);
-                blip.Color = 52;
+                var blip = Alt.CreateBlip(BlipType.Radius, atm.Value);
+                blip.Color = 25;
                 blip.Sprite = 108;
-                blip.Dimension = 0;
             }
         }
 
