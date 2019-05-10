@@ -50,6 +50,7 @@ namespace AltVStrefaRPServer.Modules.CharacterModule
             // TODO: Setting skin and shared data
             player.SetPosition(character.X, character.Y, character.Z);
             //player.Spawn(character.GetPosition());
+            player.SetSyncedMetaData("remoteId", character.Id);
             player.Model = character.Gender == 0 ? (uint)PedModel.FreemodeMale01 : (uint)PedModel.FreemodeFemale01; 
             player.Dimension = character.Dimension;
             character.LastPlayed = DateTime.Now;
