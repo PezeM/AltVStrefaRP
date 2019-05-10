@@ -46,10 +46,9 @@ namespace AltVStrefaRPServer.Modules.Money
         {
             foreach (var atm in Data.GtaLocations.Atms)
             {
-                var blip = Alt.CreateBlip(BlipType.Object, atm.Value);
-                blip.Color = 52;
+                var blip = Alt.CreateBlip(BlipType.Radius, atm.Value);
+                blip.Color = 25;
                 blip.Sprite = 108;
-                blip.Dimension = 0;
             }
         }
 

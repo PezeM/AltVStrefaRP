@@ -29,6 +29,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
         {
             _vehicleDatabaseService = vehicleDatabaseService;
             _vehicleCreator = vehicleCreatorService;
+            _businessManager = businessManager;
 
             LoadVehiclesFromDatabaseAsync();
         }
@@ -200,6 +201,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             vehicleModel.IsLocked = false;
             vehicleModel.VehicleHandle.LockState = VehicleLockState.Unlocked;
             vehicleModel.VehicleHandle.SetData("vehicleId", vehicleModel.Id);
+            vehicleModel.VehicleHandle.SetSyncedMetaData("vehicleId", vehicleModel.Id);
             vehicleModel.VehicleHandle.NumberplateText = vehicleModel.PlateText;
             vehicleModel.VehicleHandle.NumberplateIndex = vehicleModel.PlateNumber;
             vehicleModel.IsSpawned = true;
@@ -230,6 +232,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             vehicleModel.IsLocked = false;
             vehicleModel.VehicleHandle.LockState = VehicleLockState.Unlocked;
             vehicleModel.VehicleHandle.SetData("vehicleId", vehicleModel.Id);
+            vehicleModel.VehicleHandle.SetSyncedMetaData("vehicleId", vehicleModel.Id);
             vehicleModel.VehicleHandle.NumberplateText = vehicleModel.PlateText;
             vehicleModel.VehicleHandle.NumberplateIndex = vehicleModel.PlateNumber;
             vehicleModel.IsSpawned = true;

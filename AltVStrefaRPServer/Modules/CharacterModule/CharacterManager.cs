@@ -48,6 +48,7 @@ namespace AltVStrefaRPServer.Modules.CharacterModule
             player.Name = character.GetFullName();
 
             // TODO: Setting skin and shared data
+            player.SetSyncedMetaData("remoteId", player.Id);
             player.SetPosition(character.X, character.Y, character.Z);
             //player.Spawn(character.GetPosition());
             player.SetSyncedMetaData("remoteId", character.Id);
