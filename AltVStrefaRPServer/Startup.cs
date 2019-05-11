@@ -75,6 +75,7 @@ namespace AltVStrefaRPServer
             services.AddTransient<PlayerConnect>();
             services.AddTransient<PlayerDisconnect>();
             services.AddTransient<VehicleHandler>();
+            services.AddTransient<ObjectSync>();
 
             services.AddSingleton<HashingService>();
             services.AddSingleton<VehicleManager>();
