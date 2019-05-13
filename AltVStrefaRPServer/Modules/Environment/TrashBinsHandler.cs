@@ -7,13 +7,13 @@ using AltVStrefaRPServer.Services.Money;
 
 namespace AltVStrefaRPServer.Modules.Environment
 {
-    public class ThrashBinsHandler
+    public class TrashBinsHandler
     {
         private Random _rng;
         private INotificationService _notificationService;
         private IMoneyService _moneyService;
 
-        public ThrashBinsHandler(INotificationService notificationService, IMoneyService moneyService)
+        public TrashBinsHandler(INotificationService notificationService, IMoneyService moneyService)
         {
             _notificationService = notificationService;
             _moneyService = moneyService;
