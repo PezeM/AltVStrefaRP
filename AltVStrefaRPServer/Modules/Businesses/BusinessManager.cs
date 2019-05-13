@@ -58,10 +58,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
         /// <returns></returns>
         public List<Business> GetCharacterBusinesses(int ownerId) => Businesses.Values.Where(b => b.OwnerId == ownerId).ToList();
 
-        public Business GetBusiness(Character emplyoee)
-        {
-            return Businesses.Values.FirstOrDefault(b => b.Employees.Any(c => c.Id == emplyoee.Id));
-        }
+        public Business GetBusiness(Character employee) => GetBusiness(employee.BusinessId);
 
         /// <summary>
         /// Get nearest business to player
@@ -121,14 +118,14 @@ namespace AltVStrefaRPServer.Modules.Businesses
 
         public async Task<bool> UpdateBusinessOwner(Business business, Character newOwner)
         {
-            if (newOwner.Business != business)
+            if (newOwner.BusinessId != business.Id)
             {
                 if (!_businessService.AddEmployee(business, newOwner)) return false;
                 newOwner.BusinessRank = business.BusinessRanks.FirstOrDefault(r => r.IsOwnerRank).Id;
                 await _businessService.UpdateOwnerAsync(business, newOwner).ConfigureAwait(false);
                 return true;
             }
-            else if (newOwner.Business == business)
+            else if (newOwner.BusinessId == business.Id)
             {
                 newOwner.BusinessRank = business.BusinessRanks.FirstOrDefault(r => r.IsOwnerRank).Id;
                 await _businessService.UpdateOwnerAsync(business, newOwner).ConfigureAwait(false);

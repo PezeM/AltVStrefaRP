@@ -124,6 +124,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             else if (vehicle.OwnerType == OwnerType.Group)
             {
                 // TODO Group management
+                if (character.BusinessId <= 0) return false;
                 if (character.Business == null) character.Business = _businessManager.GetBusiness(character);
                 if (character.Business == null) return false;
                 if (!character.Business.GetBusinessRank(character.BusinessRank, out BusinessRank businessRank)) return false;

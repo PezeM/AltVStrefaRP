@@ -47,17 +47,6 @@ namespace AltVStrefaRPServer.Modules.Businesses
                 => await DeleteBusinessEvent(player, businessId));
         }
 
-        private bool GetBusiness(string businessIdString, out Business business)
-        {
-            business = null;
-            if (!int.TryParse(businessIdString, out int businessId)) return false;
-
-            business = _businessManager.GetBusiness(businessId);
-            if (business == null) return false; 
-
-            return true;
-        }
-
         private bool GetBusiness(int businessId, out Business business)
         {
             business = _businessManager.GetBusiness(businessId);

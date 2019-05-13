@@ -51,8 +51,8 @@ namespace AltVStrefaRPServer.Models.Businesses
         public bool CanAddNewMember(Character newEmployee)
         {
             if (EmployeesCount >= MaxMembersCount) return false;
-            if (newEmployee.Business != null) return false;
-            if (newEmployee.Business == this) return false;
+            if (newEmployee.BusinessId > 0) return false;
+            if (newEmployee.Business != null && newEmployee.Business == this) return false;
             return true;
         }
 
@@ -75,7 +75,7 @@ namespace AltVStrefaRPServer.Models.Businesses
         /// </summary>
         /// <param name="character"></param>
         /// <returns></returns>
-        public bool IsWorkingHere(Character character) => character.Business.Id == Id;
+        public bool IsWorkingHere(Character character) => character.BusinessId == Id;
 
         /// <summary>
         /// Checks if business can have more ranks
