@@ -29,6 +29,7 @@ namespace AltVStrefaRPServer.Models
         public DateTime LastPlayed { get; set; }
         public int TimePlayed { get; set; }
         public IPlayer Player { get; set; }
+        public int BusinessId { get; set; }
         public Business Business { get; set; }
         public int BusinessRank { get; set; }
 

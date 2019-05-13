@@ -43,7 +43,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
                 => await DeleteEmployeeEvent(player, employeeId, businessId));
             AltAsync.On<IPlayer, int, int>("DeleteRole", async (player, roleId, businessId) 
                 => await DeleteRoleEvent(player, roleId, businessId));
-            AltAsync.On<IPlayer, int>("DeleteRole", async (player, businessId) 
+            AltAsync.On<IPlayer, int>("DeleteBusiness", async (player, businessId) 
                 => await DeleteBusinessEvent(player, businessId));
         }
 

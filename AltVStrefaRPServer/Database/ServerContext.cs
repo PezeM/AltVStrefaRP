@@ -45,6 +45,12 @@ namespace AltVStrefaRPServer.Database
                 .WithOne(b => b.Character)
                 .HasForeignKey<BankAccount>(b => b.CharacterId);
 
+
+            modelBuilder.Entity<Character>()
+                .HasOne<Business>(c => c.Business)
+                .WithMany(b => b.Employees)
+                .HasForeignKey(c => c.BusinessId);
+
             modelBuilder.Entity<VehicleModel>()
                 .Ignore(v => v.VehicleHandle)
                 .Ignore(v => v.IsJobVehicle);
@@ -58,9 +64,10 @@ namespace AltVStrefaRPServer.Database
                 .Property(b => b.Type)
                 .HasConversion<int>();
 
-            modelBuilder.Entity<Business>()
-                .HasMany(b => b.Employees)
-                .WithOne(c => c.Business);
+            //modelBuilder.Entity<Business>()
+            //    .HasMany(b => b.Employees)
+            //    .WithOne(c => c.Business)
+            //    .HasForeignKey(c => c.BusinessId);
 
             modelBuilder.Entity<Business>()
                 .HasMany(b => b.BusinessRanks)
