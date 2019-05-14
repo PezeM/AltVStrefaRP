@@ -10,8 +10,10 @@ using AltVStrefaRPServer.Modules.Money;
 using AltVStrefaRPServer.Modules.Vehicle;
 using AltVStrefaRPServer.Services;
 using System;
+using System.Linq;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
+using Newtonsoft.Json;
 
 namespace AltVStrefaRPServer.Modules.Admin
 {
@@ -23,9 +25,11 @@ namespace AltVStrefaRPServer.Modules.Admin
         private BusinessManager _businessManager;
         private BusinessHandler _businessHandler;
         private INotificationService _notificationService;
+        private VehicleShopsManager _vehicleShopsManager;
 
         public AdminCommands(TemporaryChatHandler chatHandler, VehicleManager vehicleManager, BankHandler bankHandler,
-            BusinessManager businessManager, BusinessHandler businessHandler, INotificationService notificationService)
+            BusinessManager businessManager, BusinessHandler businessHandler, INotificationService notificationService,
+            VehicleShopsManager vehicleShopsManager)
         {
             _chatHandler = chatHandler;
             _vehicleManager = vehicleManager;
@@ -33,6 +37,7 @@ namespace AltVStrefaRPServer.Modules.Admin
             _businessManager = businessManager;
             _businessHandler = businessHandler;
             _notificationService = notificationService;
+            _vehicleShopsManager = vehicleShopsManager;
 
             Alt.Log($"Admin commands initialized");
             AddCommands();
@@ -51,6 +56,17 @@ namespace AltVStrefaRPServer.Modules.Admin
             _chatHandler.RegisterCommand("openBusinessMenu", OpenBusinessMenu);
             _chatHandler.RegisterCommand("enterCinema", EnterCinema);
             _chatHandler.RegisterCommand("exitCinema", ExitCinema);
+            _chatHandler.RegisterCommand("bring", BringPlayer);
+            _chatHandler.RegisterCommand("tpToPlayer", TeleportToPlayer);
+            _chatHandler.RegisterCommand("openVehicleShop", OpenVehicleShop);
+        }
+
+        private void OpenVehicleShop(IPlayer player, string[] arg2)
+        {
+            var vehicleShop = _vehicleShopsManager.GetClosestVehicleShop(player.Position);
+            if (vehicleShop == null) return;
+
+            player.Emit("openVehicleShop", vehicleShop.VehicleShopId, JsonConvert.SerializeObject(vehicleShop.AvailableVehicles));
         }
 
         private void ExitCinema(IPlayer player, string[] arg2)
@@ -197,6 +213,34 @@ namespace AltVStrefaRPServer.Modules.Admin
                 Alt.Log($"Error teleporting player ID({player.Id}) to new position with command. {e}");
                 throw;
             }
+        }
+
+        private void BringPlayer(IPlayer player, string[] args)
+        {
+            if (args == null || args.Length < 1) return;
+            if (!int.TryParse(args[0].ToString(), out int playerId)) return;
+            var playerToBring = Alt.GetAllPlayers().FirstOrDefault(p => p.Id == playerId);
+            if (playerToBring == null)
+            {
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie znaleziono gracza z podanym ID.", 4000);
+                return;
+            }
+
+            playerToBring.Position = player.Position;
+        }
+
+        private void TeleportToPlayer(IPlayer player, string[] args)
+        {
+            if (args == null || args.Length < 1) return;
+            if (!int.TryParse(args[0].ToString(), out int playerId)) return;
+            var playerToTeleportTo = Alt.GetAllPlayers().FirstOrDefault(p => p.Id == playerId);
+            if (playerToTeleportTo == null)
+            {
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie znaleziono gracza z podanym ID.", 4000);
+                return;
+            }
+
+            player.Position = playerToTeleportTo.Position;
         }
 
         private void VehicleCommandCallback(IPlayer player, string[] args)

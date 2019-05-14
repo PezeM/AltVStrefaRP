@@ -46,6 +46,7 @@ namespace AltVStrefaRPServer
             var objectSync = Startup.ServiceProvider.GetService<ObjectSync>();
 
             vehicleManager = Startup.ServiceProvider.GetService<VehicleManager>();
+            var vehicleShopManager = Startup.ServiceProvider.GetService<VehicleShopsManager>();
             var businessesManager = Startup.ServiceProvider.GetService<BusinessManager>();
             var businessHandler = Startup.ServiceProvider.GetServices<BusinessHandler>();
             var characterCreator = Startup.ServiceProvider.GetService<CharacterCreator>();

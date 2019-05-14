@@ -85,6 +85,7 @@ namespace AltVStrefaRPServer
             services.AddSingleton<BusinessHandler>();
             services.AddSingleton<TemporaryChatHandler>();
             services.AddSingleton<TimeManager>();
+            services.AddSingleton<VehicleShopsManager>();
 
             services.AddTransient<AdminCommands>();
             services.AddTransient<CharacterCreator>();
