@@ -38,6 +38,7 @@ namespace AltVStrefaRPServer
             var playerConnectEvent = Startup.ServiceProvider.GetService<PlayerConnect>();
             var playerDiconnectEvent = Startup.ServiceProvider.GetService<PlayerDisconnect>();
             var vehicleHandler = Startup.ServiceProvider.GetService<VehicleHandler>();
+            var vehicleShopsHandler = Startup.ServiceProvider.GetService<VehicleShopsHandler>();
             var bankHandler = Startup.ServiceProvider.GetServices<BankHandler>();
             var sittingHandler = Startup.ServiceProvider.GetService<SittingHandler>();
             var thrashBinsHandler = Startup.ServiceProvider.GetService<TrashBinsHandler>();

@@ -71,7 +71,6 @@ namespace AltVStrefaRPServer
             services.AddTransient<IBusinessService, BusinessService>();
             services.AddTransient<IVehicleDatabaseService, VehicleDatabaseService>();
 
-
             services.AddTransient<PlayerConnect>();
             services.AddTransient<PlayerDisconnect>();
             services.AddTransient<VehicleHandler>();
@@ -91,6 +90,7 @@ namespace AltVStrefaRPServer
             services.AddTransient<CharacterCreator>();
             services.AddTransient<SittingHandler>();
             services.AddTransient<TrashBinsHandler>();
+            services.AddTransient<VehicleShopsHandler>();
 
             // Build provider
             ServiceProvider = services.BuildServiceProvider();
