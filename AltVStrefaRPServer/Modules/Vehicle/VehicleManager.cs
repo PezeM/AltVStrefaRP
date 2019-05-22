@@ -150,10 +150,8 @@ namespace AltVStrefaRPServer.Modules.Vehicle
         /// </summary>
         /// <param name="character"></param>
         /// <returns></returns>
-        public List<VehicleModel> GetPlayerVehicles(Models.Character character)
-        {
-            return _vehicles.Values.Where(v => v.Owner == character.Id && v.OwnerType == OwnerType.Character).ToList();
-        }
+        public List<VehicleModel> GetPlayerVehicles(Character character) 
+            => _vehicles.Values.Where(v => v.Owner == character.Id && v.OwnerType == OwnerType.Character).ToList();
 
         public async Task<VehicleModel> CreateVehicleAsync(string vehicleModel, Position position, Rotation rotation, short dimension, int ownerId, 
             OwnerType ownerType)
@@ -173,34 +171,6 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             _vehicles.Add(vehicle.Id, vehicle);
             Alt.Log($"Created vehicle {vehicle.Model} UID({vehicle.Id}).");
             return vehicle;
-        }
-
-        public async Task<bool> DespawnVehicleAsync(int vehicleId)
-        {
-            if (!GetVehicleModel(vehicleId, out VehicleModel vehicle)) return false;
-
-            return await DespawnVehicleAsync(vehicle).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Despawns vehicle from game and saves its to database
-        /// </summary>
-        /// <param name="vehicleModel"></param>
-        /// <returns></returns>
-        public async Task<bool> DespawnVehicleAsync(VehicleModel vehicleModel)
-        {
-            if (vehicleModel == null) return false;
-            if (!vehicleModel.IsSpawned) return true;
-
-            vehicleModel.IsSpawned = false;
-            vehicleModel.X = vehicleModel.VehicleHandle.Position.X;
-            vehicleModel.Y = vehicleModel.VehicleHandle.Position.Y;
-            vehicleModel.Z = vehicleModel.VehicleHandle.Position.Z;
-            vehicleModel.Dimension = vehicleModel.VehicleHandle.Dimension;
-            await _vehicleDatabaseService.SaveVehicleAsync(vehicleModel).ConfigureAwait(false);
-            Alt.Server.RemoveVehicle(vehicleModel.VehicleHandle);
-            AltAsync.Log($"Despawned vehicle: {vehicleModel.Model} UID({vehicleModel.Id})");
-            return true;
         }
     }
 }

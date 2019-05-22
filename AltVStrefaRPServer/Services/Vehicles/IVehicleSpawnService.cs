@@ -7,5 +7,7 @@ namespace AltVStrefaRPServer.Services.Vehicles
     {
         Task SpawnVehicleAsync(VehicleModel vehicleModel);
         void SpawnVehicle(VehicleModel vehicleModel);
+        Task DespawnVehicleAsync(VehicleModel vehicleModel);
+        void DespawnVehicle(VehicleModel vehicleModel);
     }
 }
