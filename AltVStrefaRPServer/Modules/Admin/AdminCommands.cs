@@ -27,11 +27,11 @@ namespace AltVStrefaRPServer.Modules.Admin
         private BusinessHandler _businessHandler;
         private INotificationService _notificationService;
         private VehicleShopsManager _vehicleShopsManager;
-        private IVehicleCreatorService _vehicleCreatorService;
+        private IVehicleSpawnService _vehicleSpawnService;
 
         public AdminCommands(TemporaryChatHandler chatHandler, VehicleManager vehicleManager, BankHandler bankHandler,
             BusinessManager businessManager, BusinessHandler businessHandler, INotificationService notificationService,
-            VehicleShopsManager vehicleShopsManager, IVehicleCreatorService _vehicleCreatorService)
+            VehicleShopsManager vehicleShopsManager, IVehicleSpawnService vehicleSpawnService)
         {
             _chatHandler = chatHandler;
             _vehicleManager = vehicleManager;
@@ -40,6 +40,7 @@ namespace AltVStrefaRPServer.Modules.Admin
             _businessHandler = businessHandler;
             _notificationService = notificationService;
             _vehicleShopsManager = vehicleShopsManager;
+            _vehicleSpawnService = vehicleSpawnService;
 
             Alt.Log($"Admin commands initialized");
             AddCommands();
@@ -255,7 +256,7 @@ namespace AltVStrefaRPServer.Modules.Admin
             var vehicle = _vehicleManager.CreateVehicle(model, PositionHelper.GetPositionInFrontOf(player.Position, player.HeadRotation.Roll, 4f), 
                 player.Rotation, player.Dimension, character.Id, OwnerType.Character);
 
-            _vehicleCreatorService.SpawnVehicle(vehicle);
+            _vehicleSpawnService.SpawnVehicle(vehicle);
             player.Emit("putIntoVehicle");
         }
     }
