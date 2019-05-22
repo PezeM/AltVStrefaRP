@@ -154,7 +154,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             OwnerType ownerType)
         {
             var vehicle = _vehicleCreator.CreateVehicle(vehicleModel, position, heading, dimension, ownerId, ownerType);
-            await _vehicleCreator.SaveVehicleToDatabaseAsync(vehicle).ConfigureAwait(false);
+            await _vehicleDatabaseService.AddVehicleToDatabaseAsync(vehicle);
             Vehicles.Add(vehicle.Id, vehicle);
             Alt.Log($"Created vehicle {vehicle.Model} UID({vehicle.Id}).");
             return vehicle;
@@ -164,7 +164,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             OwnerType ownerType)
         {
             var vehicle = _vehicleCreator.CreateVehicle(vehicleModel, position, heading, dimension, ownerId, ownerType);
-            _vehicleCreator.SaveVehicleToDatabase(vehicle);
+            _vehicleDatabaseService.AddVehicleToDatabase(vehicle);
             Vehicles.Add(vehicle.Id, vehicle);
             Alt.Log($"Created vehicle {vehicle.Model} UID({vehicle.Id}).");
             return vehicle;

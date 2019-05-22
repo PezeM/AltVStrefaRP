@@ -8,25 +8,6 @@ namespace AltVStrefaRPServer.Services.Vehicles
 {
     public class VehicleCreatorService : IVehicleCreatorService
     {
-        private ServerContext _serverContext;
-
-        public VehicleCreatorService(ServerContext serverContext)
-        {
-            _serverContext = serverContext;
-        }
-
-        public async Task SaveVehicleToDatabaseAsync(VehicleModel vehicle)
-        {
-            await _serverContext.Vehicles.AddAsync(vehicle).ConfigureAwait(false);
-            await _serverContext.SaveChangesAsync().ConfigureAwait(false);
-        }
-
-        public void SaveVehicleToDatabase(VehicleModel vehicle)
-        {
-            _serverContext.Vehicles.Add(vehicle);
-            _serverContext.SaveChanges();
-        }
-
         /// <summary>
         /// Creates <see cref="VehicleModel"/> with default values
         /// </summary>
