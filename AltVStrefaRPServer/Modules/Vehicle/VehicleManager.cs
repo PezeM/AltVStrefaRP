@@ -189,7 +189,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             try
             {
                 vehicleModel.VehicleHandle = await AltAsync.CreateVehicle(vehicleModel.Model,
-                    new Position(vehicleModel.X, vehicleModel.Y, vehicleModel.Z), new Rotation(vehicleModel.Heading, 0,0)).ConfigureAwait(false);
+                    new Position(vehicleModel.X, vehicleModel.Y, vehicleModel.Z), new Rotation(vehicleModel.Heading, 0, 0)).ConfigureAwait(false);
             }
             catch (Exception e)
             {
@@ -197,15 +197,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
                 throw;
             }
 
-
-            vehicleModel.VehicleHandle.Dimension = vehicleModel.Dimension;
-            vehicleModel.IsLocked = false;
-            vehicleModel.VehicleHandle.LockState = VehicleLockState.Unlocked;
-            vehicleModel.VehicleHandle.SetData("vehicleId", vehicleModel.Id);
-            vehicleModel.VehicleHandle.SetSyncedMetaData("vehicleId", vehicleModel.Id);
-            vehicleModel.VehicleHandle.NumberplateText = vehicleModel.PlateText;
-            vehicleModel.VehicleHandle.NumberplateIndex = vehicleModel.PlateNumber;
-            vehicleModel.IsSpawned = true;
+            SetVehicleData(vehicleModel);
 
             Alt.Log($"Spawned vehicle UID({vehicleModel.Id}) ID({vehicleModel.VehicleHandle.Id})");
         }
@@ -227,9 +219,15 @@ namespace AltVStrefaRPServer.Modules.Vehicle
                 throw;
             }
 
+            SetVehicleData(vehicleModel);
 
+            Alt.Log($"Spawned vehicle UID({vehicleModel.Id}) ID({vehicleModel.VehicleHandle.Id})");
+        }
+
+        private static void SetVehicleData(VehicleModel vehicleModel)
+        {
+            //vehicleModel.VehicleHandle.ManualEngineControl = true;
             vehicleModel.VehicleHandle.Dimension = vehicleModel.Dimension;
-            vehicleModel.VehicleHandle.EngineOn = true;
             vehicleModel.IsLocked = false;
             vehicleModel.VehicleHandle.LockState = VehicleLockState.Unlocked;
             vehicleModel.VehicleHandle.SetData("vehicleId", vehicleModel.Id);
@@ -237,8 +235,6 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             vehicleModel.VehicleHandle.NumberplateText = vehicleModel.PlateText;
             vehicleModel.VehicleHandle.NumberplateIndex = vehicleModel.PlateNumber;
             vehicleModel.IsSpawned = true;
-
-            Alt.Log($"Spawned vehicle UID({vehicleModel.Id}) ID({vehicleModel.VehicleHandle.Id})");
         }
 
         public async Task<bool> DespawnVehicleAsync(int vehicleId)

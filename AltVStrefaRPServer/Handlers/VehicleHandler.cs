@@ -31,6 +31,7 @@ namespace AltVStrefaRPServer.Handlers
             AltAsync.On<IPlayer>("ToggleLockState", async (player) => await ToggleLockStateEvent(player));
             AltAsync.On<IPlayer>("ToggleHoodState", async (player) => await ToggleHoodStateEvent(player));
             AltAsync.On<IPlayer>("ToggleTrunkState", async (player) => await ToggleTrunkStateEvent(player));
+            Alt.On<IPlayer>("ToggleVehicleEngine", ToggleVehicleEngineEvent);
         }
 
         private Task ToggleLockStateEvent(IPlayer player)
@@ -95,6 +96,27 @@ namespace AltVStrefaRPServer.Handlers
 
             Alt.Log($"ToggleTrunkState completed in {Time.GetTimestampMs() - startTime}ms.");
             return Task.CompletedTask;
+        }
+
+        private void ToggleVehicleEngineEvent(IPlayer player)
+        {
+            var character = player.GetCharacter();
+            if(character == null) return;
+
+            if (!player.IsInVehicle) return;
+            if (player.Seat != 0) return;
+
+            var vehicle = _vehicleManager.GetVehicleModel(player.Vehicle);
+            if (vehicle == null) return;
+
+            if (_vehicleManager.HasVehiclePermission(character, vehicle))
+            {
+                vehicle.VehicleHandle.EngineOn = !vehicle.VehicleHandle.EngineOn;
+            }
+            else
+            {
+                _notificationService.ShowErrorNotfication(player, "Brak kluczyków", "Nie posiadasz kluczyków do tego pojazdu.", 5500);
+            }
         }
 
         private Task OnPlayerChangedVehicleSeatAsync(IVehicle vehicle, IPlayer player, byte oldseat, byte newseat)
