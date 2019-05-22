@@ -6,7 +6,6 @@ using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
-using AltV.Net.Enums;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Businesses;
@@ -156,91 +155,24 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             return _vehicles.Values.Where(v => v.Owner == character.Id && v.OwnerType == OwnerType.Character).ToList();
         }
 
-        public async Task<VehicleModel> CreateVehicleAsync(string vehicleModel, Position position, float heading, short dimension, int ownerId, 
+        public async Task<VehicleModel> CreateVehicleAsync(string vehicleModel, Position position, Rotation rotation, short dimension, int ownerId, 
             OwnerType ownerType)
         {
-            var vehicle = _vehicleCreator.CreateVehicle(vehicleModel, position, heading, dimension, ownerId, ownerType);
+            var vehicle = _vehicleCreator.CreateVehicle(vehicleModel, position, rotation, dimension, ownerId, ownerType);
             await _vehicleDatabaseService.AddVehicleToDatabaseAsync(vehicle);
             _vehicles.Add(vehicle.Id, vehicle);
             Alt.Log($"Created vehicle {vehicle.Model} UID({vehicle.Id}).");
             return vehicle;
         }
 
-        public VehicleModel CreateVehicle(string vehicleModel, Position position, float heading, short dimension, int ownerId, 
+        public VehicleModel CreateVehicle(string vehicleModel, Position position, Rotation rotation, short dimension, int ownerId, 
             OwnerType ownerType)
         {
-            var vehicle = _vehicleCreator.CreateVehicle(vehicleModel, position, heading, dimension, ownerId, ownerType);
+            var vehicle = _vehicleCreator.CreateVehicle(vehicleModel, position, rotation, dimension, ownerId, ownerType);
             _vehicleDatabaseService.AddVehicleToDatabase(vehicle);
             _vehicles.Add(vehicle.Id, vehicle);
             Alt.Log($"Created vehicle {vehicle.Model} UID({vehicle.Id}).");
             return vehicle;
-        }
-
-        public void SpawnVehicle(int vehicleId)
-        {
-            if(GetVehicleModel(vehicleId, out VehicleModel vehicleModel)) SpawnVehicle(vehicleModel);
-        }
-
-        public async Task SpawnVehicleAsync(int vehicleId)
-        {
-            if (GetVehicleModel(vehicleId, out VehicleModel vehicleModel)) await SpawnVehicleAsync(vehicleModel);
-        }
-
-        public async Task SpawnVehicleAsync(VehicleModel vehicleModel)
-        {
-            if (vehicleModel == null) return;
-            if (vehicleModel.IsSpawned) return;
-            if (vehicleModel.VehicleHandle != null) return;
-
-            try
-            {
-                vehicleModel.VehicleHandle = await AltAsync.CreateVehicle(vehicleModel.Model,
-                    new Position(vehicleModel.X, vehicleModel.Y, vehicleModel.Z), new Rotation(vehicleModel.Heading, 0, 0)).ConfigureAwait(false);
-            }
-            catch (Exception e)
-            {
-                Alt.Log($"Error creating vehicle with model {vehicleModel.Model} ID({vehicleModel.Id}) ex: {e}");
-                throw;
-            }
-
-            SetVehicleData(vehicleModel);
-
-            Alt.Log($"Spawned vehicle UID({vehicleModel.Id}) ID({vehicleModel.VehicleHandle.Id})");
-        }
-
-        public void SpawnVehicle(VehicleModel vehicleModel)
-        {
-            if (vehicleModel == null) return;
-            if (vehicleModel.IsSpawned) return;
-            if (vehicleModel.VehicleHandle != null) return;
-
-            try
-            {
-                vehicleModel.VehicleHandle = Alt.CreateVehicle(vehicleModel.Model,
-                    new Position(vehicleModel.X, vehicleModel.Y, vehicleModel.Z), new Rotation(vehicleModel.Heading, 0,0));
-            }
-            catch (Exception e)
-            {
-                Alt.Log($"Error creating vehicle with model {vehicleModel.Model} ID({vehicleModel.Id}) ex: {e}");
-                throw;
-            }
-
-            SetVehicleData(vehicleModel);
-
-            Alt.Log($"Spawned vehicle UID({vehicleModel.Id}) ID({vehicleModel.VehicleHandle.Id})");
-        }
-
-        private static void SetVehicleData(VehicleModel vehicleModel)
-        {
-            //vehicleModel.VehicleHandle.ManualEngineControl = true;
-            vehicleModel.VehicleHandle.Dimension = vehicleModel.Dimension;
-            vehicleModel.IsLocked = false;
-            vehicleModel.VehicleHandle.LockState = VehicleLockState.Unlocked;
-            vehicleModel.VehicleHandle.SetData("vehicleId", vehicleModel.Id);
-            vehicleModel.VehicleHandle.SetSyncedMetaData("vehicleId", vehicleModel.Id);
-            vehicleModel.VehicleHandle.NumberplateText = vehicleModel.PlateText;
-            vehicleModel.VehicleHandle.NumberplateIndex = vehicleModel.PlateNumber;
-            vehicleModel.IsSpawned = true;
         }
 
         public async Task<bool> DespawnVehicleAsync(int vehicleId)

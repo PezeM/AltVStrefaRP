@@ -13,6 +13,7 @@ using System;
 using System.Linq;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
+using AltVStrefaRPServer.Services.Vehicles;
 using Newtonsoft.Json;
 
 namespace AltVStrefaRPServer.Modules.Admin
@@ -26,10 +27,11 @@ namespace AltVStrefaRPServer.Modules.Admin
         private BusinessHandler _businessHandler;
         private INotificationService _notificationService;
         private VehicleShopsManager _vehicleShopsManager;
+        private IVehicleCreatorService _vehicleCreatorService;
 
         public AdminCommands(TemporaryChatHandler chatHandler, VehicleManager vehicleManager, BankHandler bankHandler,
             BusinessManager businessManager, BusinessHandler businessHandler, INotificationService notificationService,
-            VehicleShopsManager vehicleShopsManager)
+            VehicleShopsManager vehicleShopsManager, IVehicleCreatorService _vehicleCreatorService)
         {
             _chatHandler = chatHandler;
             _vehicleManager = vehicleManager;
@@ -251,8 +253,9 @@ namespace AltVStrefaRPServer.Modules.Admin
             if (character == null) return;
 
             var vehicle = _vehicleManager.CreateVehicle(model, PositionHelper.GetPositionInFrontOf(player.Position, player.HeadRotation.Roll, 4f), 
-                player.HeadRotation.Roll, player.Dimension, character.Id, OwnerType.Character);
-            _vehicleManager.SpawnVehicle(vehicle.Id);
+                player.Rotation, player.Dimension, character.Id, OwnerType.Character);
+
+            _vehicleCreatorService.SpawnVehicle(vehicle);
             player.Emit("putIntoVehicle");
         }
     }

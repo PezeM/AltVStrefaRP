@@ -24,6 +24,7 @@ namespace AltVStrefaRPServer
     public class Start : AsyncResource
     {
         private VehicleManager vehicleManager;
+        private IVehicleCreatorService _vehicleCreatorService;
         protected Startup Startup;
         public override void OnStart()
         {
@@ -45,6 +46,7 @@ namespace AltVStrefaRPServer
             var temporaryChatHandler = Startup.ServiceProvider.GetService<TemporaryChatHandler>();
             var timeManager = Startup.ServiceProvider.GetService<TimeManager>();
             var objectSync = Startup.ServiceProvider.GetService<ObjectSync>();
+            _vehicleCreatorService = Startup.ServiceProvider.GetService<IVehicleCreatorService>();
 
             vehicleManager = Startup.ServiceProvider.GetService<VehicleManager>();
             var vehicleShopManager = Startup.ServiceProvider.GetService<VehicleShopsManager>();
@@ -137,14 +139,15 @@ namespace AltVStrefaRPServer
             var character = player.GetCharacter();
             if (character == null) return;
 
-            var vehicle = await vehicleManager.CreateVehicleAsync(vehicleModel, player.Position, player.HeadRotation.Pitch,
+            var vehicle = await vehicleManager.CreateVehicleAsync(vehicleModel, player.Position, player.Rotation,
                 player.Dimension, character.Id, OwnerType.None).ConfigureAwait(false);
-            vehicleManager.SpawnVehicle(vehicle.Id);
+            await _vehicleCreatorService.SpawnVehicleAsync(vehicle);
         }
 
         public void SpawnVehicleComand(int vehicleId)
         {
-            vehicleManager.SpawnVehicle(vehicleId);
+            if (!vehicleManager.GetVehicleModel(vehicleId, out VehicleModel vehicle)) return;
+            _vehicleCreatorService.SpawnVehicle(vehicle);
         }
 
         public override IEntityFactory<IVehicle> GetVehicleFactory()

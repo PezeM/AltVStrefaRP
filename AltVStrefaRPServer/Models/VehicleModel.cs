@@ -14,7 +14,9 @@ namespace AltVStrefaRPServer.Models
         public float Y { get; set; }
         public float Z { get; set; }
         public short Dimension { get; set; }
-        public float Heading { get; set; }
+        public float Roll { get; set; }
+        public float Pitch { get; set; }
+        public float Yaw { get; set; }
 
         public float MaxFuel { get; set; }
         public float Fuel { get; set; }
