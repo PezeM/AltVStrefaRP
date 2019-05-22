@@ -19,7 +19,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
 {
     public class VehicleManager
     {
-        private Dictionary<int, VehicleModel> Vehicles = new Dictionary<int, VehicleModel>();
+        private Dictionary<int, VehicleModel> _vehicles = new Dictionary<int, VehicleModel>();
         private IVehicleDatabaseService _vehicleDatabaseService;
         private IVehicleCreatorService _vehicleCreator;
         private BusinessManager _businessManager;
@@ -43,9 +43,9 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             foreach (var vehicle in _vehicleDatabaseService.LoadVehiclesFromDatabase())
             {
                 vehicle.IsSpawned = false;
-                Vehicles.Add(vehicle.Id, vehicle);
+                _vehicles.Add(vehicle.Id, vehicle);
             }
-            Alt.Log($"Loaded {Vehicles.Count} vehicles from database in {Time.GetTimestampMs() - startTime}ms.");
+            Alt.Log($"Loaded {_vehicles.Count} vehicles from database in {Time.GetTimestampMs() - startTime}ms.");
         }
 
         /// <summary>
@@ -53,35 +53,41 @@ namespace AltVStrefaRPServer.Modules.Vehicle
         /// </summary>
         /// <param name="vehicleId"></param>
         /// <returns>Returns <see cref="VehicleModel"/></returns>
-        public VehicleModel GetVehicleModel(int vehicleId) => Vehicles.ContainsKey(vehicleId) ? Vehicles[vehicleId] : null;
+        public bool GetVehicleModel(int vehicleId, out VehicleModel vehicleModel) => _vehicles.TryGetValue(vehicleId, out vehicleModel);
 
         /// <summary>
         /// Gets VehicleModel by vehicleHandle id
         /// </summary>
         /// <param name="vehicleID">Id of vehicle handle</param>
         /// <returns></returns>
-        public VehicleModel GetVehicleModel(ushort vehicleID) => Vehicles.Values.FirstOrDefault(v => v.VehicleHandle?.Id == vehicleID);
+        public VehicleModel GetVehicleModel(ushort vehicleID) => _vehicles.Values.FirstOrDefault(v => v.VehicleHandle?.Id == vehicleID);
 
         /// <summary>
         /// Gets <see cref="VehicleModel"/> by IVehicle
         /// </summary>
         /// <param name="vehicle"><see cref="IVehicle"/></param>
         /// <returns></returns>
-        public VehicleModel GetVehicleModel(IVehicle vehicle) => vehicle.GetData("vehicleId", out int vehicleId) ? Vehicles[vehicleId] : null;
+        public bool GetVehicleModel(IVehicle vehicle, out VehicleModel vehicleModel)
+        {
+            vehicleModel = null;
+            if (!vehicle.GetData("vehicleId", out int vehicleId)) return false;
+            return _vehicles.TryGetValue(vehicleId, out vehicleModel);
+        }
+
 
         /// <summary>
         /// Removes <see cref="VehicleModel"/> from vehicle list by id
         /// </summary>
         /// <param name="vehicleId"></param>
         /// <returns>True if vehicle was removed successfully</returns>
-        public bool RemoveVehicle(int vehicleId) => Vehicles.Remove(vehicleId);
+        public bool RemoveVehicle(int vehicleId) => _vehicles.Remove(vehicleId);
 
         /// <summary>
         /// Removes <see cref="VehicleModel"/> from vehicle list by value
         /// </summary>
         /// <param name="vehicle"></param>
         /// <returns>True if vehicle was removed successfully</returns>
-        public bool RemoveVehicle(VehicleModel vehicle) => Vehicles.Remove(vehicle.Id);
+        public bool RemoveVehicle(VehicleModel vehicle) => _vehicles.Remove(vehicle.Id);
 
         /// <summary>
         /// Completly removes vehicle. Removes it from the server/vehicle list and database
@@ -147,7 +153,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
         /// <returns></returns>
         public List<VehicleModel> GetPlayerVehicles(Models.Character character)
         {
-            return Vehicles.Values.Where(v => v.Owner == character.Id && v.OwnerType == OwnerType.Character).ToList();
+            return _vehicles.Values.Where(v => v.Owner == character.Id && v.OwnerType == OwnerType.Character).ToList();
         }
 
         public async Task<VehicleModel> CreateVehicleAsync(string vehicleModel, Position position, float heading, short dimension, int ownerId, 
@@ -155,7 +161,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
         {
             var vehicle = _vehicleCreator.CreateVehicle(vehicleModel, position, heading, dimension, ownerId, ownerType);
             await _vehicleDatabaseService.AddVehicleToDatabaseAsync(vehicle);
-            Vehicles.Add(vehicle.Id, vehicle);
+            _vehicles.Add(vehicle.Id, vehicle);
             Alt.Log($"Created vehicle {vehicle.Model} UID({vehicle.Id}).");
             return vehicle;
         }
@@ -165,19 +171,19 @@ namespace AltVStrefaRPServer.Modules.Vehicle
         {
             var vehicle = _vehicleCreator.CreateVehicle(vehicleModel, position, heading, dimension, ownerId, ownerType);
             _vehicleDatabaseService.AddVehicleToDatabase(vehicle);
-            Vehicles.Add(vehicle.Id, vehicle);
+            _vehicles.Add(vehicle.Id, vehicle);
             Alt.Log($"Created vehicle {vehicle.Model} UID({vehicle.Id}).");
             return vehicle;
         }
 
         public void SpawnVehicle(int vehicleId)
         {
-            SpawnVehicle(GetVehicleModel(vehicleId));
+            if(GetVehicleModel(vehicleId, out VehicleModel vehicleModel)) SpawnVehicle(vehicleModel);
         }
 
         public async Task SpawnVehicleAsync(int vehicleId)
         {
-            await SpawnVehicleAsync(GetVehicleModel(vehicleId));
+            if (GetVehicleModel(vehicleId, out VehicleModel vehicleModel)) await SpawnVehicleAsync(vehicleModel);
         }
 
         public async Task SpawnVehicleAsync(VehicleModel vehicleModel)
@@ -239,8 +245,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
 
         public async Task<bool> DespawnVehicleAsync(int vehicleId)
         {
-            var vehicle = GetVehicleModel(vehicleId);
-            if (vehicle == null) return false;
+            if (!GetVehicleModel(vehicleId, out VehicleModel vehicle)) return false;
 
             return await DespawnVehicleAsync(vehicle).ConfigureAwait(false);
         }
@@ -264,24 +269,6 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             Alt.Server.RemoveVehicle(vehicleModel.VehicleHandle);
             AltAsync.Log($"Despawned vehicle: {vehicleModel.Model} UID({vehicleModel.Id})");
             return true;
-        }
-
-        public VehicleModel GetClosestVehicle(IPlayer player, float radius = 4f)
-        {
-            var startTime = Time.GetTimestampMs();
-            IVehicle returnVehicle = null;
-            foreach (var vehicle in Alt.GetAllVehicles())
-            {
-                var playerDistanceToVehicle = player.Position.Distance(vehicle.Position);
-                if (playerDistanceToVehicle < radius && player.Dimension == vehicle.Dimension)
-                {
-                    radius = playerDistanceToVehicle;
-                    returnVehicle = vehicle;
-                }
-            }
-            Alt.Log($"Found the nearest vehicle in {Time.GetTimestampMs() - startTime} ms.");
-
-            return returnVehicle == null ? null : GetVehicleModel(returnVehicle);
         }
     }
 }
