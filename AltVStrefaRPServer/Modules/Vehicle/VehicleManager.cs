@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AltV.Net;
-using AltV.Net.Async;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Helpers;
@@ -112,7 +111,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             return false;
         }
 
-        public bool IsCharacterOwnerOfVehicle(Character character, VehicleModel vehicle) => character.Id == vehicle.Id;
+        public bool IsCharacterOwnerOfVehicle(Character character, VehicleModel vehicle) => character.Id == vehicle.Owner;
 
         /// <summary>
         /// Checks if character has permission to access vehicle
@@ -146,11 +145,11 @@ namespace AltVStrefaRPServer.Modules.Vehicle
         }
 
         /// <summary>
-        /// Returns vehicles owned by character
+        /// Returns all vehicles owned by character
         /// </summary>
         /// <param name="character"></param>
         /// <returns></returns>
-        public List<VehicleModel> GetPlayerVehicles(Character character) 
+        public List<VehicleModel> GetAllPlayerVehicles(Character character) 
             => _vehicles.Values.Where(v => v.Owner == character.Id && v.OwnerType == OwnerType.Character).ToList();
 
         public async Task<VehicleModel> CreateVehicleAsync(string vehicleModel, Position position, Rotation rotation, short dimension, int ownerId, 
