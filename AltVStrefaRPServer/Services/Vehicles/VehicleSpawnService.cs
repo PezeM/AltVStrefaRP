@@ -4,6 +4,7 @@ using AltV.Net.Data;
 using AltV.Net.Enums;
 using System;
 using System.Threading.Tasks;
+using AltVStrefaRPServer.Models;
 using VehicleModel = AltVStrefaRPServer.Models.VehicleModel;
 
 namespace AltVStrefaRPServer.Services.Vehicles
@@ -114,6 +115,11 @@ namespace AltVStrefaRPServer.Services.Vehicles
 
         private void SetVehicleData(VehicleModel vehicleModel)
         {
+            if (vehicleModel.VehicleHandle is IMyVehicle myVehicle)
+            {
+                myVehicle.DatabaseId = vehicleModel.Id;
+            }
+
             //vehicleModel.VehicleHandle.ManualEngineControl = true;
             vehicleModel.VehicleHandle.Dimension = vehicleModel.Dimension;
             vehicleModel.IsLocked = false;

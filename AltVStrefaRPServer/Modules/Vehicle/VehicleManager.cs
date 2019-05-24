@@ -60,6 +60,9 @@ namespace AltVStrefaRPServer.Modules.Vehicle
         /// <returns></returns>
         public VehicleModel GetVehicleModel(ushort vehicleID) => _vehicles.Values.FirstOrDefault(v => v.VehicleHandle?.Id == vehicleID);
 
+        public bool GetVehicleModel(IMyVehicle vehicle, out VehicleModel vehicleModel) 
+            => _vehicles.TryGetValue(vehicle.DatabaseId, out vehicleModel);
+
         /// <summary>
         /// Gets <see cref="VehicleModel"/> by IVehicle
         /// </summary>

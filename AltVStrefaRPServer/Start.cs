@@ -18,6 +18,7 @@ using AltVStrefaRPServer.Modules.Money;
 using AltVStrefaRPServer.Modules.Vehicle;
 using AltVStrefaRPServer.Services.Vehicles;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 
 namespace AltVStrefaRPServer
 {
@@ -33,7 +34,7 @@ namespace AltVStrefaRPServer
             AltAsync.OnConsoleCommand += OnConsoleCommand;
             Alt.OnConsoleCommand += OnConsoleCommand2;
             AltAsync.OnPlayerEnterVehicle += OnPlayerEnterVehicleAsync;
-            AltAsync.OnPlayerEvent += AltAsyncOnOnPlayerEvent;
+            Alt.OnPlayerEvent += OnOnPlayerEvent;
 
             Startup = new Startup();
             var playerConnectEvent = Startup.ServiceProvider.GetService<PlayerConnect>();
@@ -69,17 +70,16 @@ namespace AltVStrefaRPServer
             Alt.Log("Triggered console event");
         }
 
-        private Task AltAsyncOnOnPlayerEvent(IPlayer player, string eventname, object[] args)
+        private void OnOnPlayerEvent(IPlayer player, string eventName, object[] args)
         {
-            AltAsync.Log($"{eventname} event triggered for {player.Name} with {args.Length} args.");
-            return Task.CompletedTask;
+            Alt.Log($"{eventName} event triggered for {player.Name} with {args.Length} args.");
         }
 
         private Task OnPlayerEnterVehicleAsync(IVehicle vehicle, IPlayer player, byte seat)
         {
             try
             {
-                var myVehicle = vehicle as MyVehicle;
+                var myVehicle = vehicle as IMyVehicle;
                 if (myVehicle == null) Alt.Log("Pojazd nie jest customowym typem IMyVehicle.");
 
                 Alt.Log($"Pojazd jest customowym typem IMyVehicle. Paliwo {myVehicle.Fuel} Olej {myVehicle.Oil}");
@@ -152,7 +152,7 @@ namespace AltVStrefaRPServer
 
         public override IEntityFactory<IVehicle> GetVehicleFactory()
         {
-            return new MyVehicleFactory();
+            return new CustomVehicleFactory();
         }
 
         public override void OnStop()

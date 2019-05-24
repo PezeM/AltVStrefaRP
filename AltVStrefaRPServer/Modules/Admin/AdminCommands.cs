@@ -11,6 +11,7 @@ using AltVStrefaRPServer.Modules.Vehicle;
 using AltVStrefaRPServer.Services;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Services.Vehicles;
@@ -53,7 +54,7 @@ namespace AltVStrefaRPServer.Modules.Admin
             _chatHandler.RegisterCommand("pos", DisplayPositionCommand);
             _chatHandler.RegisterCommand("tptowp", TeleportToWaypointCommand);
             _chatHandler.RegisterCommand("openbank", OpenBankMenu);
-            _chatHandler.RegisterCommand("createBankAccount", CreateBankAccount);
+            _chatHandler.RegisterCommand("createBankAccount", async (player, args) => await CreateBankAccount(player, args));
             _chatHandler.RegisterCommand("createbusiness", CreateNewBusiness);
             _chatHandler.RegisterCommand("setBusinessOwner", SetBusinessOwner);
             _chatHandler.RegisterCommand("openBusinessMenu", OpenBusinessMenu);
@@ -184,9 +185,9 @@ namespace AltVStrefaRPServer.Modules.Admin
             }
         }
 
-        private void CreateBankAccount(IPlayer player, string[] arg2)
+        private async Task CreateBankAccount(IPlayer player, string[] arg2)
         {
-            _bankHandler.CreateBankAccountAsync(player);
+            await _bankHandler.CreateBankAccountAsync(player);
         }
 
         private async void OpenBankMenu(IPlayer player, string[] arg2)
