@@ -35,7 +35,7 @@ namespace AltVStrefaRPServer.Handlers
             Alt.On<IPlayer>("ToggleLockState", ToggleLockStateEvent);
             Alt.On<IPlayer>("ToggleHoodState", ToggleHoodStateEvent);
             Alt.On<IPlayer>("ToggleTrunkState", ToggleTrunkStateEvent);
-            Alt.On<IPlayer>("ToggleVehicleEngine", ToggleVehicleEngineEvent);
+            Alt.On<IPlayer, IMyVehicle>("ToggleVehicleEngine", ToggleVehicleEngineEvent);
             Alt.On<IPlayer, IMyVehicle>("TryToOpenVehicle", TryToOpenVehicleEvent);
             AltAsync.On<IPlayer, int>("DespawnVehicle", async (player, vehicleId) => await DespawnVehicleEvent(player, vehicleId));
         }
@@ -92,19 +92,20 @@ namespace AltVStrefaRPServer.Handlers
             }
         }
 
-        private void ToggleVehicleEngineEvent(IPlayer player)
+        private void ToggleVehicleEngineEvent(IPlayer player, IMyVehicle vehicle)
         {
             var character = player.GetCharacter();
-            if(character == null) return;
+            if (character == null) return;
 
-            if (!player.IsInVehicle) return;
-            if (player.Seat != 0) return;
+            if (player.Seat != 1) return;
 
-            if (!_vehicleManager.GetVehicleModel(player.Vehicle, out VehicleModel vehicle)) return;
+            if (!_vehicleManager.GetVehicleModel(vehicle, out VehicleModel vehicleModel)) return;
 
-            if (_vehicleManager.HasVehiclePermission(character, vehicle))
+            if (_vehicleManager.HasVehiclePermission(character, vehicleModel))
             {
-                vehicle.VehicleHandle.EngineOn = !vehicle.VehicleHandle.EngineOn;
+                Alt.Log($"Enginge vehicle status: {vehicle.EngineOn}");
+                vehicle.EngineOn = !vehicle.EngineOn;
+                Alt.Log($"Enginge vehicle status: {vehicle.EngineOn}");
             }
             else
             {
@@ -119,14 +120,16 @@ namespace AltVStrefaRPServer.Handlers
 
             if (!_vehicleManager.GetVehicleModel(myVehicle, out VehicleModel vehicleModel)) return;
 
-            if(!_vehicleManager.HasVehiclePermission(character, vehicleModel))
+            if (!_vehicleManager.HasVehiclePermission(character, vehicleModel))
             {
                 _notificationService.ShowErrorNotfication(player, "Brak kluczyków", "Nie posiadasz kluczyków do tego pojazdu.");
+                return;
             }
 
             vehicleModel.IsLocked = !vehicleModel.IsLocked;
             myVehicle.LockState = vehicleModel.IsLocked ? VehicleLockState.Locked : VehicleLockState.Unlocked;
-            player.Emit("toggleLockState", vehicleModel.VehicleHandle);
+
+            player.Emit("toggleLockState", myVehicle);
         }
 
         private async Task DespawnVehicleEvent(IPlayer player, int vehicleId)

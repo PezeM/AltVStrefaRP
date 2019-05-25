@@ -120,7 +120,7 @@ namespace AltVStrefaRPServer.Services.Vehicles
                 myVehicle.DatabaseId = vehicleModel.Id;
             }
 
-            //vehicleModel.VehicleHandle.ManualEngineControl = true;
+            //vehicleModel.VehicleHandle.ManualEngineControl = false;
             vehicleModel.VehicleHandle.Dimension = vehicleModel.Dimension;
             vehicleModel.IsLocked = false;
             vehicleModel.VehicleHandle.LockState = VehicleLockState.Unlocked;
