@@ -10,15 +10,20 @@ namespace AltVStrefaRPServer.Modules.Vehicle
     {
         public int VehicleShopId { get; set; }
         public Position Position { get; set; }
+        public Position PositionOfBoughtVehicles { get; set; }
+        public Rotation RotationOfBoughtVehicles { get; set; }
         public List<VehiclePrice> AvailableVehicles { get; set; }
         public IBlip ShopBlip { get; set; }
         public int BlipSprite { get; set; }
         public int BlipColor { get; set; }
 
-        public VehicleShop(int vehicleShopId, Position position, List<VehiclePrice> avaibleVehicles, int blipSprite = 67, int blipColor = 1)
+        public VehicleShop(int vehicleShopId, Position position, List<VehiclePrice> avaibleVehicles, Position positionOfBoughtVehicles, 
+            Rotation rotationOfBoughtVehicles, int blipSprite = 67, int blipColor = 1)
         {
-            Position = position;
             VehicleShopId = vehicleShopId;
+            Position = position;
+            PositionOfBoughtVehicles = positionOfBoughtVehicles;
+            RotationOfBoughtVehicles = rotationOfBoughtVehicles;
             AvailableVehicles = avaibleVehicles;
             BlipColor = blipColor;
             BlipSprite = blipSprite;

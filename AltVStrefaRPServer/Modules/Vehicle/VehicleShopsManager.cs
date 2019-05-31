@@ -45,7 +45,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
                         new VehiclePrice(150, VehicleModel.Baller5),
                         new VehiclePrice(150, VehicleModel.CogCabrio),
                         new VehiclePrice(150, VehicleModel.Cog552),
-                    }),
+                    }, new Position(-35, -1103, 26), new Rotation(0,0,0)),
                 // Planes
                 new VehicleShop(2, new Position(-986.62817f, -2947.9396f, 13.9450f), 
                     new List<VehiclePrice>
@@ -56,13 +56,13 @@ namespace AltVStrefaRPServer.Modules.Vehicle
                         new VehiclePrice(100000, VehicleModel.Velum),
                         new VehiclePrice(150000, VehicleModel.Velum2),
                         new VehiclePrice(100000, VehicleModel.Vestra),
-                    }),
+                    }, new Position(-986.62817f, -2947.9396f, 13.9450f), new Rotation(0,0,0)),
                 // Classic cars
                 new VehicleShop(3, new Position(-182.4818f, -1383.7307f, 31.2663f), 
                     new List<VehiclePrice>
                     {
                         new VehiclePrice(100, VehicleModel.Adder)
-                    })
+                    }, new Position(-182.4818f, -1383.7307f, 31.2663f), new Rotation(0,0,0))
             };
         }
     }

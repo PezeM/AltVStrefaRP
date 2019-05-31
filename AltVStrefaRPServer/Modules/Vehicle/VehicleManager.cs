@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AltV.Net;
+using AltV.Net.Async;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Helpers;
@@ -161,7 +162,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             var vehicle = _vehicleCreator.CreateVehicle(vehicleModel, position, rotation, dimension, ownerId, ownerType);
             await _vehicleDatabaseService.AddVehicleToDatabaseAsync(vehicle);
             _vehicles.Add(vehicle.Id, vehicle);
-            Alt.Log($"Created vehicle {vehicle.Model} UID({vehicle.Id}).");
+            AltAsync.Log($"Created vehicle {vehicle.Model} UID({vehicle.Id}).");
             return vehicle;
         }
 
