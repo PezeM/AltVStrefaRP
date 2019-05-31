@@ -93,6 +93,8 @@ namespace AltVStrefaRPServer
             services.AddTransient<TrashBinsHandler>();
             services.AddTransient<VehicleShopsHandler>();
 
+            services.AddSingleton<SerializatorTest>();
+
             // Build provider
             ServiceProvider = services.BuildServiceProvider();
         }

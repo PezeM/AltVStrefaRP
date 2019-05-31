@@ -16,6 +16,7 @@ using AltVStrefaRPServer.Modules.Chat;
 using AltVStrefaRPServer.Modules.Environment;
 using AltVStrefaRPServer.Modules.Money;
 using AltVStrefaRPServer.Modules.Vehicle;
+using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Vehicles;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -26,6 +27,8 @@ namespace AltVStrefaRPServer
     {
         private VehicleManager vehicleManager;
         private IVehicleSpawnService _vehicleSpawnService;
+        private SerializatorTest _serializatorTest;
+
         protected Startup Startup;
         public override void OnStart()
         {
@@ -57,6 +60,7 @@ namespace AltVStrefaRPServer
             var vehicleLoader = Startup.ServiceProvider.GetService<VehicleDatabaseService>();
             var adminCommands = Startup.ServiceProvider.GetService<AdminCommands>();
             var bankAccountsManager = Startup.ServiceProvider.GetServices<BankAccountManager>();
+            Test();
             // For now not working on windows
             //var chat = new ChatHandler();
             //chat.RegisterCommand("test", (player, strings) =>
@@ -158,6 +162,17 @@ namespace AltVStrefaRPServer
         public override void OnStop()
         {
             Alt.Log($"Stopped resource {GetType().Namespace}");
+        }
+
+
+        public void Test()
+        {
+            Task.Run(() =>
+            {
+                _serializatorTest = Startup.ServiceProvider.GetService<SerializatorTest>();
+                _serializatorTest.ConvertToJson(_serializatorTest.TestObject);
+                _serializatorTest.ConvertToMessagePack(_serializatorTest.TestObject);
+            });
         }
     }
 }
