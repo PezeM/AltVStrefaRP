@@ -1,9 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using AltV.Net.Async;
-using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
-using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Modules.CharacterModule;
 using AltVStrefaRPServer.Services;
@@ -28,7 +26,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             _vehicleManager = vehicleManager;
 
             AltAsync.On<IPlayer, int>("OpenVehicleShop", async (player, shopId) => await OpenVehicleShopEvent(player, shopId));
-            AltAsync.On<IPlayer, int, int>("BuyVehicle", async (player, shopId, vehicleModel) => await BuyVehicleEvent(player, shopId, vehicleModel));
+            AltAsync.On<IPlayer, int, long>("BuyVehicle", async (player, shopId, vehicleModel) => await BuyVehicleEvent(player, shopId, vehicleModel));
         }
 
         private async Task OpenVehicleShopEvent(IPlayer player, int shopId)
@@ -46,7 +44,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             player.Emit("openVehicleShop", shop.VehicleShopId, JsonConvert.SerializeObject(shop.AvailableVehicles));
         }
 
-        private async Task BuyVehicleEvent(IPlayer player, int shopId, int vehicleModel)
+        private async Task BuyVehicleEvent(IPlayer player, int shopId, long vehicleModel)
         {
             var character = CharacterManager.Instance.GetCharacter(player);
             if (character == null) return;
@@ -58,7 +56,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
                 return;
             }
 
-            var vehicleToBuy = shop.AvailableVehicles.FirstOrDefault(v => (int)v.VehicleModel == vehicleModel);
+            var vehicleToBuy = shop.AvailableVehicles.FirstOrDefault(v => (long)v.VehicleModel == vehicleModel);
             if (vehicleToBuy == null)
             {
                 await _notificationService.ShowErrorNotificationAsync(player, "Błąd!", "Nie znaleziono takiego pojazdu w tym sklepie samochodowym.");
@@ -73,9 +71,10 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             }
 
             // Player bought the vehicle, create vehicleModel and save it to database.
-            await _vehicleManager.CreateVehicleAsync(vehicleToBuy.VehicleModel.ToString(), shop.Position, new Rotation(), 0, character.Id,
-                OwnerType.Character);
-            await _notificationService.ShowSuccessNotificationAsync(player, "Zakupiono pojazd!", $"Pomyślnie zakupiono pojazd za {vehicleToBuy.Price}");
+            await _vehicleManager.CreateVehicleAsync(vehicleToBuy.VehicleModel.ToString(), shop.PositionOfBoughtVehicles, shop.RotationOfBoughtVehicles, 
+                0, character.Id, OwnerType.Character);
+            await _notificationService.ShowSuccessNotificationAsync(player, "Zakupiono pojazd!", 
+                $"Pomyślnie zakupiono pojazd ${vehicleToBuy.VehicleModel.ToString()} za {vehicleToBuy.Price}$");
         }
     }
 }
