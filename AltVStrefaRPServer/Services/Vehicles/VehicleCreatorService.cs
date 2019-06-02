@@ -7,11 +7,11 @@ namespace AltVStrefaRPServer.Services.Vehicles
     public class VehicleCreatorService : IVehicleCreatorService
     {
         /// <summary>
-        /// Creates <see cref="Models.VehicleModel"/> with default values
+        /// Creates <see cref="VehicleModel"/> with default values
         /// </summary>
         /// <param name="vehicleModel">todo: describe vehicleModel parameter on CreateVehicle</param>
         /// <param name="position">todo: describe position parameter on CreateVehicle</param>
-        /// <param name="heading">todo: describe heading parameter on CreateVehicle</param>
+        /// <param name="rotation">todo: describe heading parameter on CreateVehicle</param>
         /// <param name="dimension">todo: describe dimension parameter on CreateVehicle</param>
         /// <param name="ownerId">todo: describe ownerId parameter on CreateVehicle</param>
         /// <returns></returns>

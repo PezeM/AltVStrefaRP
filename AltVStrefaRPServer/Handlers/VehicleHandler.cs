@@ -176,9 +176,9 @@ namespace AltVStrefaRPServer.Handlers
             vehicleModel.Y = vehicle.Position.Y;
             vehicleModel.Z = vehicle.Position.Z;
             vehicleModel.Dimension = vehicle.Dimension;
-
-            await _vehicleDatabaseService.SaveVehicleAsync(vehicleModel).ConfigureAwait(false);
-            _notificationService.ShowInfoNotification(player, "Pojazd zapisany!",
+            
+            await _vehicleDatabaseService.SaveVehicleAsync(vehicleModel));
+            await _notificationService.ShowInfoNotificationAsync(player, "Pojazd zapisany!",
                 $"Zapisano pojazd UID({vehicleModel.Id}) w {Time.GetTimestampMs() - startTime}ms.");
             AltAsync.Log($"Saved vehicle {vehicleModel.Model} UID({vehicleModel.Id}) in {Time.GetTimestampMs() - startTime}ms.");
         }
