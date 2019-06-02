@@ -12,9 +12,10 @@ namespace AltVStrefaRPServer.Modules.Environment
         private int _timerInterval = 60000;
         private int _elapsedMinutes = AppSettings.Current.ServerConfig.ChangeWeatherInterval == 0 
             ? 30 : AppSettings.Current.ServerConfig.ChangeWeatherInterval;
+        private Random _rng;
+
         public uint CurrentWeather { get; set; } = (uint)Weathers.ExtraSunny;
         public GameTime GameTime { get; set; }
-        private Random _rng;
 
         public TimeManager()
         {
@@ -45,6 +46,7 @@ namespace AltVStrefaRPServer.Modules.Environment
         private void GameTimerOnElapsed(object sender, ElapsedEventArgs e)
         {
             _elapsedMinutes++;
+            if (Alt.GetAllPlayers().Count < 1) return;
             UpdateTime();
 
             if (_elapsedMinutes >= AppSettings.Current.ServerConfig.ChangeWeatherInterval)

@@ -50,8 +50,7 @@ namespace AltVStrefaRPServer.Models.Businesses
         /// <returns></returns>
         public bool CanAddNewMember(Character newEmployee)
         {
-            if (EmployeesCount >= MaxMembersCount) return false;
-            if (newEmployee.BusinessId > 0) return false;
+            if (EmployeesCount >= MaxMembersCount || newEmployee.BusinessId > 0) return false;
             if (newEmployee.Business != null && newEmployee.Business == this) return false;
             return true;
         }
@@ -136,23 +135,19 @@ namespace AltVStrefaRPServer.Models.Businesses
 
         public bool RemoveEmployee(Character employee)
         {
-            if (!GetBusinessRankForEmployee(employee, out BusinessRank businessRank)) return false;
-            if (businessRank.IsOwnerRank) return false;
-
+            if (!GetBusinessRankForEmployee(employee, out BusinessRank businessRank) || businessRank.IsOwnerRank) return false;
             return Employees.Remove(employee);
         }
 
         public bool CanRemoveRank(BusinessRank rank)
         {
-            if (rank.IsOwnerRank) return false;
-            else if (rank.IsDefaultRank) return false;
+            if (rank.IsOwnerRank || rank.IsDefaultRank) return false;
             else return true;
         }
 
         public bool RemoveRank(int rankId)
         {
-            if (!GetBusinessRank(rankId, out BusinessRank rank)) return false;
-            if (!CanRemoveRank(rank)) return false;
+            if (!GetBusinessRank(rankId, out BusinessRank rank) || !CanRemoveRank(rank)) return false;
             return BusinessRanks.Remove(rank);
         }
     }
