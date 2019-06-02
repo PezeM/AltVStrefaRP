@@ -10,5 +10,6 @@
         BankTransfer,
         BuyingClothes,
         BuyingFurnitures,
+        Uncategorized = 1000
     }
 }

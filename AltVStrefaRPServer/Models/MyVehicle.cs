@@ -1,21 +1,29 @@
 ﻿using System;
+using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 
 namespace AltVStrefaRPServer.Models
 {
     public class MyVehicle : Vehicle, IMyVehicle
     {
-        public float Fuel { get; set; }
+        public int DatabaseId { get; set; }
+        public float Fuel { get; set; } = 50f;
 
-        public float Oil { get; set; }
+        public float Oil { get; set; } = 50f;
 
         public string Owner { get; set; }
 
+        public string CustomData { get; set; }
+
+        public MyVehicle(uint model, Position position, Rotation rotation) : base(model, position, rotation)
+        {
+            CustomData = "By constructor";
+        }
+
         public MyVehicle(IntPtr nativePointer, ushort id) : base(nativePointer, id)
         {
-            Fuel = 50f;
-            Oil = 10f;
-            Owner = string.Empty;
+            Owner = id.ToString();
+            CustomData = "By entity factory";
         }
     }
 }

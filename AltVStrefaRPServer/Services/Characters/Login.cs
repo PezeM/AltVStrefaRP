@@ -60,6 +60,7 @@ namespace AltVStrefaRPServer.Services.Characters
                 Id = c.Id,
                 FirstName = c.FirstName,
                 LastName = c.LastName,
+                Money = c.Money,
                 BackgroundImage = c.BackgroundImage,
                 ProfileImage = c.ProfileImage,
                 TimePlayed = c.TimePlayed

@@ -11,5 +11,7 @@ namespace AltVStrefaRPServer.Services.Vehicles
         Task RemoveVehicleAsync(VehicleModel vehicle);
         void SaveVehicle(VehicleModel vehicle);
         Task SaveVehicleAsync(VehicleModel vehicle);
+        void AddVehicleToDatabase(VehicleModel vehicle);
+        Task AddVehicleToDatabaseAsync(VehicleModel vehicle);
     }
 }

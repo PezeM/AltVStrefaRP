@@ -1,34 +1,13 @@
-﻿using System.Threading.Tasks;
-using AltV.Net.Data;
-using AltVStrefaRPServer.Database;
-using AltVStrefaRPServer.Models;
+﻿using AltV.Net.Data;
 using AltVStrefaRPServer.Models.Enums;
+using VehicleModel = AltVStrefaRPServer.Models.VehicleModel;
 
 namespace AltVStrefaRPServer.Services.Vehicles
 {
     public class VehicleCreatorService : IVehicleCreatorService
     {
-        private ServerContext _serverContext;
-
-        public VehicleCreatorService(ServerContext serverContext)
-        {
-            _serverContext = serverContext;
-        }
-
-        public async Task SaveVehicleToDatabaseAsync(VehicleModel vehicle)
-        {
-            await _serverContext.Vehicles.AddAsync(vehicle).ConfigureAwait(false);
-            await _serverContext.SaveChangesAsync().ConfigureAwait(false);
-        }
-
-        public void SaveVehicleToDatabase(VehicleModel vehicle)
-        {
-            _serverContext.Vehicles.Add(vehicle);
-            _serverContext.SaveChanges();
-        }
-
         /// <summary>
-        /// Creates <see cref="VehicleModel"/> with default values
+        /// Creates <see cref="Models.VehicleModel"/> with default values
         /// </summary>
         /// <param name="vehicleModel">todo: describe vehicleModel parameter on CreateVehicle</param>
         /// <param name="position">todo: describe position parameter on CreateVehicle</param>
@@ -36,7 +15,7 @@ namespace AltVStrefaRPServer.Services.Vehicles
         /// <param name="dimension">todo: describe dimension parameter on CreateVehicle</param>
         /// <param name="ownerId">todo: describe ownerId parameter on CreateVehicle</param>
         /// <returns></returns>
-        public VehicleModel CreateVehicle(string vehicleModel, Position position, float heading, short dimension, int ownerId, OwnerType ownerType)
+        public VehicleModel CreateVehicle(string vehicleModel, Position position, Rotation rotation, short dimension, int ownerId, OwnerType ownerType)
         {
             return new VehicleModel
             {
@@ -46,7 +25,9 @@ namespace AltVStrefaRPServer.Services.Vehicles
                 Y = position.Y,
                 Z = position.Z,
                 Dimension = dimension,
-                Heading = heading,
+                Yaw = rotation.Yaw,
+                Pitch = rotation.Pitch,
+                Roll = rotation.Roll,
                 OwnerType = ownerType,
                 PlateNumber = 0,
                 PlateText = "", // Change it to unique plate text

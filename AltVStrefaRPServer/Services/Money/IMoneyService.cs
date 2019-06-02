@@ -7,6 +7,10 @@ namespace AltVStrefaRPServer.Services.Money
     {
         bool GiveMoney(Character receiver, float amount);
         bool RemoveMoney(Character receiver, float amount);
+        Task<bool> RemoveMoneyFromBankAccountAsync(Character receiver, float amount, string source,
+            TransactionType transactionType = TransactionType.Uncategorized);
+        bool RemoveMoneyFromBankAccount(Character receiver, float amount, string source,
+            TransactionType transactionType = TransactionType.Uncategorized);
         bool TransferMoneyToAnotherPlayer(Character source, Character receiver, float amount);
         Task<bool> TransferMoneyToAnotherPlayerAsync(Character source, Character receiver, float amount);
         bool WithdrawMoneyFromBankAccount(Character source, BankAccount bankAccount, float amount);

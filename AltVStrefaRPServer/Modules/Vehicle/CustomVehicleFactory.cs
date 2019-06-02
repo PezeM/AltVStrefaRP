@@ -5,7 +5,7 @@ using AltVStrefaRPServer.Models;
 
 namespace AltVStrefaRPServer.Modules.Vehicle
 {
-    public class MyVehicleFactory : IEntityFactory<IVehicle>
+    public class CustomVehicleFactory : IEntityFactory<IVehicle>
     {
         public IVehicle Create(IntPtr entityPointer, ushort id)
         {

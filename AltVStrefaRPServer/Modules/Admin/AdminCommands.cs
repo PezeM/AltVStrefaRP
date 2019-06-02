@@ -10,8 +10,12 @@ using AltVStrefaRPServer.Modules.Money;
 using AltVStrefaRPServer.Modules.Vehicle;
 using AltVStrefaRPServer.Services;
 using System;
+using System.Linq;
+using System.Threading.Tasks;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
+using AltVStrefaRPServer.Services.Vehicles;
+using Newtonsoft.Json;
 
 namespace AltVStrefaRPServer.Modules.Admin
 {
@@ -23,9 +27,12 @@ namespace AltVStrefaRPServer.Modules.Admin
         private BusinessManager _businessManager;
         private BusinessHandler _businessHandler;
         private INotificationService _notificationService;
+        private VehicleShopsManager _vehicleShopsManager;
+        private IVehicleSpawnService _vehicleSpawnService;
 
         public AdminCommands(TemporaryChatHandler chatHandler, VehicleManager vehicleManager, BankHandler bankHandler,
-            BusinessManager businessManager, BusinessHandler businessHandler, INotificationService notificationService)
+            BusinessManager businessManager, BusinessHandler businessHandler, INotificationService notificationService,
+            VehicleShopsManager vehicleShopsManager, IVehicleSpawnService vehicleSpawnService)
         {
             _chatHandler = chatHandler;
             _vehicleManager = vehicleManager;
@@ -33,6 +40,8 @@ namespace AltVStrefaRPServer.Modules.Admin
             _businessManager = businessManager;
             _businessHandler = businessHandler;
             _notificationService = notificationService;
+            _vehicleShopsManager = vehicleShopsManager;
+            _vehicleSpawnService = vehicleSpawnService;
 
             Alt.Log($"Admin commands initialized");
             AddCommands();
@@ -45,12 +54,23 @@ namespace AltVStrefaRPServer.Modules.Admin
             _chatHandler.RegisterCommand("pos", DisplayPositionCommand);
             _chatHandler.RegisterCommand("tptowp", TeleportToWaypointCommand);
             _chatHandler.RegisterCommand("openbank", OpenBankMenu);
-            _chatHandler.RegisterCommand("createBankAccount", CreateBankAccount);
+            _chatHandler.RegisterCommand("createBankAccount", async (player, args) => await CreateBankAccount(player, args));
             _chatHandler.RegisterCommand("createbusiness", CreateNewBusiness);
             _chatHandler.RegisterCommand("setBusinessOwner", SetBusinessOwner);
             _chatHandler.RegisterCommand("openBusinessMenu", OpenBusinessMenu);
             _chatHandler.RegisterCommand("enterCinema", EnterCinema);
             _chatHandler.RegisterCommand("exitCinema", ExitCinema);
+            _chatHandler.RegisterCommand("bring", BringPlayer);
+            _chatHandler.RegisterCommand("tpToPlayer", TeleportToPlayer);
+            _chatHandler.RegisterCommand("openVehicleShop", OpenVehicleShop);
+        }
+
+        private void OpenVehicleShop(IPlayer player, string[] arg2)
+        {
+            var vehicleShop = _vehicleShopsManager.GetClosestVehicleShop(player.Position);
+            if (vehicleShop == null) return;
+
+            player.Emit("openVehicleShop", vehicleShop.VehicleShopId, JsonConvert.SerializeObject(vehicleShop.AvailableVehicles));
         }
 
         private void ExitCinema(IPlayer player, string[] arg2)
@@ -165,9 +185,9 @@ namespace AltVStrefaRPServer.Modules.Admin
             }
         }
 
-        private void CreateBankAccount(IPlayer player, string[] arg2)
+        private async Task CreateBankAccount(IPlayer player, string[] arg2)
         {
-            _bankHandler.CreateBankAccountAsync(player);
+            await _bankHandler.CreateBankAccountAsync(player);
         }
 
         private async void OpenBankMenu(IPlayer player, string[] arg2)
@@ -199,6 +219,34 @@ namespace AltVStrefaRPServer.Modules.Admin
             }
         }
 
+        private void BringPlayer(IPlayer player, string[] args)
+        {
+            if (args == null || args.Length < 1) return;
+            if (!int.TryParse(args[0].ToString(), out int playerId)) return;
+            var playerToBring = Alt.GetAllPlayers().FirstOrDefault(p => p.Id == playerId);
+            if (playerToBring == null)
+            {
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie znaleziono gracza z podanym ID.", 4000);
+                return;
+            }
+
+            playerToBring.Position = player.Position;
+        }
+
+        private void TeleportToPlayer(IPlayer player, string[] args)
+        {
+            if (args == null || args.Length < 1) return;
+            if (!int.TryParse(args[0].ToString(), out int playerId)) return;
+            var playerToTeleportTo = Alt.GetAllPlayers().FirstOrDefault(p => p.Id == playerId);
+            if (playerToTeleportTo == null)
+            {
+                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie znaleziono gracza z podanym ID.", 4000);
+                return;
+            }
+
+            player.Position = playerToTeleportTo.Position;
+        }
+
         private void VehicleCommandCallback(IPlayer player, string[] args)
         {
             if (args == null || args.Length < 1) return;
@@ -206,9 +254,11 @@ namespace AltVStrefaRPServer.Modules.Admin
             var character = player.GetCharacter();
             if (character == null) return;
 
-            var vehicle = _vehicleManager.CreateVehicle(model, PositionHelper.GetPositionInFrontOf(player.Position, player.HeadRotation.Roll, 4f), 
-                player.HeadRotation.Roll, player.Dimension, character.Id, OwnerType.Character);
-            _vehicleManager.SpawnVehicle(vehicle.Id);
+            var vehicle = _vehicleManager.CreateVehicle(model, PositionHelper.GetPositionInFrontOf(player.Position, player.HeadRotation.Roll, 4f),
+                player.Rotation, player.Dimension, character.Id, OwnerType.Character);
+
+            _vehicleSpawnService.SpawnVehicle(vehicle);
+
             player.Emit("putIntoVehicle");
         }
     }

@@ -39,7 +39,7 @@ namespace AltVStrefaRPServer.Handlers
         {
             try
             {
-                var character = await _loginService.GetCharacterById(characterId).ConfigureAwait(false);
+                var character = await _loginService.GetCharacterById(characterId);
                 if (character == null)
                 {
                     Alt.Log($"Not found any character with id: {characterId}");
@@ -73,7 +73,7 @@ namespace AltVStrefaRPServer.Handlers
                     return;
                 }
 
-                if (await _loginService.CheckIfAccountExistsAsync(login).ConfigureAwait(false) > 0)
+                if (await _loginService.CheckIfAccountExistsAsync(login) > 0)
                 {
                     await player.EmitAsync("showLoginError", "Istnieje już konto z taką nazwą użytkownika.");
                     return;
@@ -82,11 +82,11 @@ namespace AltVStrefaRPServer.Handlers
                 //await _loginService.CreateNewAccountAndSaveAsync(login, password).ConfigureAwait(false);
                 //await player.EmitAsync("successfullyRegistered");
                 await Task.WhenAll(_loginService.CreateNewAccountAndSaveAsync(login, password), player.EmitAsync("successfullyRegistered"));
-                Alt.Log($"Registered account in {Time.GetTimestampMs() - startTime}ms");
+                AltAsync.Log($"Registered account in {Time.GetTimestampMs() - startTime}ms");
             }
             catch (Exception e)
             {
-                Alt.Log($"[RegisterAccount] Threw exception: {e}");
+                AltAsync.Log($"[RegisterAccount] Threw exception: {e}");
             }
         }
 
@@ -104,21 +104,21 @@ namespace AltVStrefaRPServer.Handlers
                     return;
                 }
 
-                var account = await _loginService.GetAccountAsync(login).ConfigureAwait(false);
+                var account = await _loginService.GetAccountAsync(login);
                 if (account == null)
                 {
-                    await player.EmitAsync("showLoginError", "Podano błędne dane.").ConfigureAwait(false);
+                    await player.EmitAsync("showLoginError", "Podano błędne dane.");
                     return;
                 }
 
                 if (!_loginService.VerifyPassword(password, account.Password))
                 {
-                    await player.EmitAsync("showLoginError", "Podano błędne dane.").ConfigureAwait(false);
+                    await player.EmitAsync("showLoginError", "Podano błędne dane.");
                     return;
                 }
 
                 player.SetData("accountId", account.AccountId);
-                var characterList = await _loginService.GetCharacterList(account.AccountId).ConfigureAwait(false);
+                var characterList = await _loginService.GetCharacterList(account.AccountId);
                 await player.EmitAsync("loginSuccesfully", JsonConvert.SerializeObject(characterList));
                 Alt.Log($"LoginAccount completed in {Time.GetTimestampMs() - startTime}ms.");
             }
@@ -142,7 +142,7 @@ namespace AltVStrefaRPServer.Handlers
             }
             catch (Exception e)
             {
-                Alt.Log($"[OnPlayerConnect] {e}");
+                AltAsync.Log($"[OnPlayerConnect] {e}");
             }
         }
     }

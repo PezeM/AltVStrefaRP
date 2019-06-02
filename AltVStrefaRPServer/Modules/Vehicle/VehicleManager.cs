@@ -6,7 +6,6 @@ using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
-using AltV.Net.Enums;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Businesses;
@@ -19,7 +18,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
 {
     public class VehicleManager
     {
-        private Dictionary<int, VehicleModel> Vehicles = new Dictionary<int, VehicleModel>();
+        private Dictionary<int, VehicleModel> _vehicles = new Dictionary<int, VehicleModel>();
         private IVehicleDatabaseService _vehicleDatabaseService;
         private IVehicleCreatorService _vehicleCreator;
         private BusinessManager _businessManager;
@@ -43,9 +42,9 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             foreach (var vehicle in _vehicleDatabaseService.LoadVehiclesFromDatabase())
             {
                 vehicle.IsSpawned = false;
-                Vehicles.Add(vehicle.Id, vehicle);
+                _vehicles.Add(vehicle.Id, vehicle);
             }
-            Alt.Log($"Loaded {Vehicles.Count} vehicles from database in {Time.GetTimestampMs() - startTime}ms.");
+            Alt.Log($"Loaded {_vehicles.Count} vehicles from database in {Time.GetTimestampMs() - startTime}ms.");
         }
 
         /// <summary>
@@ -53,35 +52,44 @@ namespace AltVStrefaRPServer.Modules.Vehicle
         /// </summary>
         /// <param name="vehicleId"></param>
         /// <returns>Returns <see cref="VehicleModel"/></returns>
-        public VehicleModel GetVehicleModel(int vehicleId) => Vehicles.ContainsKey(vehicleId) ? Vehicles[vehicleId] : null;
+        public bool GetVehicleModel(int vehicleId, out VehicleModel vehicleModel) => _vehicles.TryGetValue(vehicleId, out vehicleModel);
 
         /// <summary>
         /// Gets VehicleModel by vehicleHandle id
         /// </summary>
         /// <param name="vehicleID">Id of vehicle handle</param>
         /// <returns></returns>
-        public VehicleModel GetVehicleModel(ushort vehicleID) => Vehicles.Values.FirstOrDefault(v => v.VehicleHandle?.Id == vehicleID);
+        public VehicleModel GetVehicleModel(ushort vehicleID) => _vehicles.Values.FirstOrDefault(v => v.VehicleHandle?.Id == vehicleID);
+
+        public bool GetVehicleModel(IMyVehicle vehicle, out VehicleModel vehicleModel) 
+            => _vehicles.TryGetValue(vehicle.DatabaseId, out vehicleModel);
 
         /// <summary>
         /// Gets <see cref="VehicleModel"/> by IVehicle
         /// </summary>
         /// <param name="vehicle"><see cref="IVehicle"/></param>
         /// <returns></returns>
-        public VehicleModel GetVehicleModel(IVehicle vehicle) => vehicle.GetData("vehicleId", out int vehicleId) ? Vehicles[vehicleId] : null;
+        public bool GetVehicleModel(IVehicle vehicle, out VehicleModel vehicleModel)
+        {
+            vehicleModel = null;
+            if (!vehicle.GetData("vehicleId", out int vehicleId)) return false;
+            return _vehicles.TryGetValue(vehicleId, out vehicleModel);
+        }
+
 
         /// <summary>
         /// Removes <see cref="VehicleModel"/> from vehicle list by id
         /// </summary>
         /// <param name="vehicleId"></param>
         /// <returns>True if vehicle was removed successfully</returns>
-        public bool RemoveVehicle(int vehicleId) => Vehicles.Remove(vehicleId);
+        public bool RemoveVehicle(int vehicleId) => _vehicles.Remove(vehicleId);
 
         /// <summary>
         /// Removes <see cref="VehicleModel"/> from vehicle list by value
         /// </summary>
         /// <param name="vehicle"></param>
         /// <returns>True if vehicle was removed successfully</returns>
-        public bool RemoveVehicle(VehicleModel vehicle) => Vehicles.Remove(vehicle.Id);
+        public bool RemoveVehicle(VehicleModel vehicle) => _vehicles.Remove(vehicle.Id);
 
         /// <summary>
         /// Completly removes vehicle. Removes it from the server/vehicle list and database
@@ -107,7 +115,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             return false;
         }
 
-        public bool IsCharacterOwnerOfVehicle(Character character, VehicleModel vehicle) => character.Id == vehicle.Id;
+        public bool IsCharacterOwnerOfVehicle(Character character, VehicleModel vehicle) => character.Id == vehicle.Owner;
 
         /// <summary>
         /// Checks if character has permission to access vehicle
@@ -141,151 +149,31 @@ namespace AltVStrefaRPServer.Modules.Vehicle
         }
 
         /// <summary>
-        /// Returns vehicles owned by character
+        /// Returns all vehicles owned by character
         /// </summary>
         /// <param name="character"></param>
         /// <returns></returns>
-        public List<VehicleModel> GetPlayerVehicles(Models.Character character)
-        {
-            return Vehicles.Values.Where(v => v.Owner == character.Id && v.OwnerType == OwnerType.Character).ToList();
-        }
+        public List<VehicleModel> GetAllPlayerVehicles(Character character) 
+            => _vehicles.Values.Where(v => v.Owner == character.Id && v.OwnerType == OwnerType.Character).ToList();
 
-        public async Task<VehicleModel> CreateVehicleAsync(string vehicleModel, Position position, float heading, short dimension, int ownerId, 
+        public async Task<VehicleModel> CreateVehicleAsync(string vehicleModel, Position position, Rotation rotation, short dimension, int ownerId, 
             OwnerType ownerType)
         {
-            var vehicle = _vehicleCreator.CreateVehicle(vehicleModel, position, heading, dimension, ownerId, ownerType);
-            await _vehicleCreator.SaveVehicleToDatabaseAsync(vehicle).ConfigureAwait(false);
-            Vehicles.Add(vehicle.Id, vehicle);
-            Alt.Log($"Created vehicle {vehicle.Model} UID({vehicle.Id}).");
+            var vehicle = _vehicleCreator.CreateVehicle(vehicleModel, position, rotation, dimension, ownerId, ownerType);
+            await _vehicleDatabaseService.AddVehicleToDatabaseAsync(vehicle);
+            _vehicles.Add(vehicle.Id, vehicle);
+            AltAsync.Log($"Created vehicle {vehicle.Model} UID({vehicle.Id}).");
             return vehicle;
         }
 
-        public VehicleModel CreateVehicle(string vehicleModel, Position position, float heading, short dimension, int ownerId, 
+        public VehicleModel CreateVehicle(string vehicleModel, Position position, Rotation rotation, short dimension, int ownerId, 
             OwnerType ownerType)
         {
-            var vehicle = _vehicleCreator.CreateVehicle(vehicleModel, position, heading, dimension, ownerId, ownerType);
-            _vehicleCreator.SaveVehicleToDatabase(vehicle);
-            Vehicles.Add(vehicle.Id, vehicle);
+            var vehicle = _vehicleCreator.CreateVehicle(vehicleModel, position, rotation, dimension, ownerId, ownerType);
+            _vehicleDatabaseService.AddVehicleToDatabase(vehicle);
+            _vehicles.Add(vehicle.Id, vehicle);
             Alt.Log($"Created vehicle {vehicle.Model} UID({vehicle.Id}).");
             return vehicle;
-        }
-
-        public void SpawnVehicle(int vehicleId)
-        {
-            SpawnVehicle(GetVehicleModel(vehicleId));
-        }
-
-        public async Task SpawnVehicleAsync(int vehicleId)
-        {
-            await SpawnVehicleAsync(GetVehicleModel(vehicleId));
-        }
-
-        public async Task SpawnVehicleAsync(VehicleModel vehicleModel)
-        {
-            if (vehicleModel == null) return;
-            if (vehicleModel.IsSpawned) return;
-            if (vehicleModel.VehicleHandle != null) return;
-
-            try
-            {
-                vehicleModel.VehicleHandle = await AltAsync.CreateVehicle(vehicleModel.Model,
-                    new Position(vehicleModel.X, vehicleModel.Y, vehicleModel.Z), new Rotation(vehicleModel.Heading, 0,0)).ConfigureAwait(false);
-            }
-            catch (Exception e)
-            {
-                Alt.Log($"Error creating vehicle with model {vehicleModel.Model} ID({vehicleModel.Id}) ex: {e}");
-                throw;
-            }
-
-
-            vehicleModel.VehicleHandle.Dimension = vehicleModel.Dimension;
-            vehicleModel.IsLocked = false;
-            vehicleModel.VehicleHandle.LockState = VehicleLockState.Unlocked;
-            vehicleModel.VehicleHandle.SetData("vehicleId", vehicleModel.Id);
-            vehicleModel.VehicleHandle.SetSyncedMetaData("vehicleId", vehicleModel.Id);
-            vehicleModel.VehicleHandle.NumberplateText = vehicleModel.PlateText;
-            vehicleModel.VehicleHandle.NumberplateIndex = vehicleModel.PlateNumber;
-            vehicleModel.IsSpawned = true;
-
-            Alt.Log($"Spawned vehicle UID({vehicleModel.Id}) ID({vehicleModel.VehicleHandle.Id})");
-        }
-
-        public void SpawnVehicle(VehicleModel vehicleModel)
-        {
-            if (vehicleModel == null) return;
-            if (vehicleModel.IsSpawned) return;
-            if (vehicleModel.VehicleHandle != null) return;
-
-            try
-            {
-                vehicleModel.VehicleHandle = Alt.CreateVehicle(vehicleModel.Model,
-                    new Position(vehicleModel.X, vehicleModel.Y, vehicleModel.Z), new Rotation(vehicleModel.Heading, 0,0));
-            }
-            catch (Exception e)
-            {
-                Alt.Log($"Error creating vehicle with model {vehicleModel.Model} ID({vehicleModel.Id}) ex: {e}");
-                throw;
-            }
-
-
-            vehicleModel.VehicleHandle.Dimension = vehicleModel.Dimension;
-            vehicleModel.VehicleHandle.EngineOn = true;
-            vehicleModel.IsLocked = false;
-            vehicleModel.VehicleHandle.LockState = VehicleLockState.Unlocked;
-            vehicleModel.VehicleHandle.SetData("vehicleId", vehicleModel.Id);
-            vehicleModel.VehicleHandle.SetSyncedMetaData("vehicleId", vehicleModel.Id);
-            vehicleModel.VehicleHandle.NumberplateText = vehicleModel.PlateText;
-            vehicleModel.VehicleHandle.NumberplateIndex = vehicleModel.PlateNumber;
-            vehicleModel.IsSpawned = true;
-
-            Alt.Log($"Spawned vehicle UID({vehicleModel.Id}) ID({vehicleModel.VehicleHandle.Id})");
-        }
-
-        public async Task<bool> DespawnVehicleAsync(int vehicleId)
-        {
-            var vehicle = GetVehicleModel(vehicleId);
-            if (vehicle == null) return false;
-
-            return await DespawnVehicleAsync(vehicle).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Despawns vehicle from game and saves its to database
-        /// </summary>
-        /// <param name="vehicleModel"></param>
-        /// <returns></returns>
-        public async Task<bool> DespawnVehicleAsync(VehicleModel vehicleModel)
-        {
-            if (vehicleModel == null) return false;
-            if (!vehicleModel.IsSpawned) return true;
-
-            vehicleModel.IsSpawned = false;
-            vehicleModel.X = vehicleModel.VehicleHandle.Position.X;
-            vehicleModel.Y = vehicleModel.VehicleHandle.Position.Y;
-            vehicleModel.Z = vehicleModel.VehicleHandle.Position.Z;
-            vehicleModel.Dimension = vehicleModel.VehicleHandle.Dimension;
-            await _vehicleDatabaseService.SaveVehicleAsync(vehicleModel).ConfigureAwait(false);
-            Alt.Server.RemoveVehicle(vehicleModel.VehicleHandle);
-            AltAsync.Log($"Despawned vehicle: {vehicleModel.Model} UID({vehicleModel.Id})");
-            return true;
-        }
-
-        public VehicleModel GetClosestVehicle(IPlayer player, float radius = 4f)
-        {
-            var startTime = Time.GetTimestampMs();
-            IVehicle returnVehicle = null;
-            foreach (var vehicle in Alt.GetAllVehicles())
-            {
-                var playerDistanceToVehicle = player.Position.Distance(vehicle.Position);
-                if (playerDistanceToVehicle < radius && player.Dimension == vehicle.Dimension)
-                {
-                    radius = playerDistanceToVehicle;
-                    returnVehicle = vehicle;
-                }
-            }
-            Alt.Log($"Found the nearest vehicle in {Time.GetTimestampMs() - startTime} ms.");
-
-            return returnVehicle == null ? null : GetVehicleModel(returnVehicle);
         }
     }
 }

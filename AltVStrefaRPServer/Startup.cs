@@ -66,11 +66,11 @@ namespace AltVStrefaRPServer
             services.AddTransient<ILogin, Login>();
             services.AddTransient<ICharacterCreatorService, CharacterCreatorService>();
             services.AddTransient<ICharacterDatabaseService, CharacterDatabaseService>();
-            services.AddTransient<IVehicleCreatorService, VehicleCreatorService>();
             services.AddTransient<IMoneyService, MoneyService>();
             services.AddTransient<IBusinessService, BusinessService>();
+            services.AddTransient<IVehicleSpawnService, VehicleSpawnService>();
+            services.AddTransient<IVehicleCreatorService, VehicleCreatorService>();
             services.AddTransient<IVehicleDatabaseService, VehicleDatabaseService>();
-
 
             services.AddTransient<PlayerConnect>();
             services.AddTransient<PlayerDisconnect>();
@@ -85,11 +85,15 @@ namespace AltVStrefaRPServer
             services.AddSingleton<BusinessHandler>();
             services.AddSingleton<TemporaryChatHandler>();
             services.AddSingleton<TimeManager>();
+            services.AddSingleton<VehicleShopsManager>();
 
             services.AddTransient<AdminCommands>();
             services.AddTransient<CharacterCreator>();
             services.AddTransient<SittingHandler>();
             services.AddTransient<TrashBinsHandler>();
+            services.AddTransient<VehicleShopsHandler>();
+
+            services.AddSingleton<SerializatorTest>();
 
             // Build provider
             ServiceProvider = services.BuildServiceProvider();

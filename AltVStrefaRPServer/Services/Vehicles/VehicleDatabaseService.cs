@@ -43,5 +43,17 @@ namespace AltVStrefaRPServer.Services.Vehicles
             _serverContext.Vehicles.Update(vehicle);
             return _serverContext.SaveChangesAsync();
         }
+
+        public void AddVehicleToDatabase(VehicleModel vehicle)
+        {
+            _serverContext.Vehicles.Add(vehicle);
+            _serverContext.SaveChanges();
+        }
+
+        public Task AddVehicleToDatabaseAsync(VehicleModel vehicle)
+        {
+            _serverContext.Vehicles.Update(vehicle);
+            return _serverContext.SaveChangesAsync();
+        }
     }
 }
