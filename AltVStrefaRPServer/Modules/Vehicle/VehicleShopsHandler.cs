@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
+using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Modules.CharacterModule;
 using AltVStrefaRPServer.Services;
@@ -63,18 +64,18 @@ namespace AltVStrefaRPServer.Modules.Vehicle
                 return;
             }
 
-            if (!_moneyService.RemoveMoney(character, vehicleToBuy.Price))
+            if (!await _moneyService.RemoveMoneyFromBankAccountAsync(character, vehicleToBuy.Price, $"VehicleShop {shop.VehicleShopId}",
+                TransactionType.VehicleBuy))
             {
                 await _notificationService.ShowErrorNotificationAsync(player, 
                     "Błąd!", $"Nie posiadasz {vehicleToBuy.Price}$ aby zakupić ten pojazd.", 6000);
-                return;
             }
 
             // Player bought the vehicle, create vehicleModel and save it to database.
             await _vehicleManager.CreateVehicleAsync(vehicleToBuy.VehicleModel.ToString(), shop.PositionOfBoughtVehicles, shop.RotationOfBoughtVehicles, 
                 0, character.Id, OwnerType.Character);
             await _notificationService.ShowSuccessNotificationAsync(player, "Zakupiono pojazd!", 
-                $"Pomyślnie zakupiono pojazd ${vehicleToBuy.VehicleModel.ToString()} za {vehicleToBuy.Price}$");
+                $"Pomyślnie zakupiono pojazd {vehicleToBuy.VehicleModel.ToString()} za {vehicleToBuy.Price}$.");
         }
     }
 }
