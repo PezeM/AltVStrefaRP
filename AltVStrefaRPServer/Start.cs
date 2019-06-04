@@ -35,7 +35,6 @@ namespace AltVStrefaRPServer
             Alt.Server.LogInfo("Starting AltVTestResource...");
 
             AltAsync.OnConsoleCommand += OnConsoleCommand;
-            Alt.OnConsoleCommand += OnConsoleCommand2;
             AltAsync.OnPlayerEnterVehicle += OnPlayerEnterVehicleAsync;
             Alt.OnPlayerEvent += OnOnPlayerEvent;
 
@@ -57,7 +56,6 @@ namespace AltVStrefaRPServer
             var businessesManager = Startup.ServiceProvider.GetService<BusinessManager>();
             var businessHandler = Startup.ServiceProvider.GetServices<BusinessHandler>();
             var characterCreator = Startup.ServiceProvider.GetService<CharacterCreator>();
-            var vehicleLoader = Startup.ServiceProvider.GetService<VehicleDatabaseService>();
             var adminCommands = Startup.ServiceProvider.GetService<AdminCommands>();
             var bankAccountsManager = Startup.ServiceProvider.GetServices<BankAccountManager>();
             Test();
@@ -67,11 +65,6 @@ namespace AltVStrefaRPServer
             //{
             //    Alt.Log($"{player.Id} triggered command test");
             //});
-        }
-
-        private void OnConsoleCommand2(string name, string[] args)
-        {
-            Alt.Log("Triggered console event");
         }
 
         private void OnOnPlayerEvent(IPlayer player, string eventName, object[] args)
@@ -163,7 +156,6 @@ namespace AltVStrefaRPServer
         {
             Alt.Log($"Stopped resource {GetType().Namespace}");
         }
-
 
         public void Test()
         {

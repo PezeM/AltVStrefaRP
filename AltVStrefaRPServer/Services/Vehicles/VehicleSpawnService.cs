@@ -126,6 +126,9 @@ namespace AltVStrefaRPServer.Services.Vehicles
             vehicleModel.VehicleHandle.LockState = VehicleLockState.Unlocked;
             vehicleModel.VehicleHandle.SetData("vehicleId", vehicleModel.Id);
             vehicleModel.VehicleHandle.SetSyncedMetaData("vehicleId", vehicleModel.Id);
+            vehicleModel.VehicleHandle.SetSyncedMetaData("fuel", vehicleModel.Fuel);
+            vehicleModel.VehicleHandle.SetSyncedMetaData("oil", vehicleModel.Oil);
+            vehicleModel.VehicleHandle.SetSyncedMetaData("mileage", vehicleModel.Mileage);
             vehicleModel.VehicleHandle.NumberplateText = vehicleModel.PlateText;
             vehicleModel.VehicleHandle.NumberplateIndex = vehicleModel.PlateNumber;
             vehicleModel.IsSpawned = true;

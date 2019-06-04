@@ -30,7 +30,7 @@ namespace AltVStrefaRPServer.Services.Vehicles
                 Roll = rotation.Roll,
                 OwnerType = ownerType,
                 PlateNumber = 0,
-                PlateText = "", // Change it to unique plate text
+                PlateText = "BRAK", // Change it to unique plate text
                 // Temporary values
                 MaxFuel = 50.0f,
                 Fuel = 50.0f,
