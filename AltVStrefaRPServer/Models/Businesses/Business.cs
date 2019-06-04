@@ -7,7 +7,7 @@ using AltVStrefaRPServer.Models.Enums;
 
 namespace AltVStrefaRPServer.Models.Businesses
 {
-    public class Business : IMoney
+    public class Business : IMoney, IPosition
     {
         public int Id { get; set; }
         public int OwnerId { get; set; }
