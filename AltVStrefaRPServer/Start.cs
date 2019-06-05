@@ -9,6 +9,7 @@ using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Handlers;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Enums;
+using AltVStrefaRPServer.Models.Fractions;
 using AltVStrefaRPServer.Modules.Admin;
 using AltVStrefaRPServer.Modules.Businesses;
 using AltVStrefaRPServer.Modules.CharacterModule.Customization;

@@ -104,6 +104,10 @@ namespace AltVStrefaRPServer.Database
                 .WithOne(c => c.Fraction)
                 .HasForeignKey(c => c.CurrentFractionId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
+
+            var navigation = modelBuilder.Entity<Fraction>()
+                .Metadata.FindNavigation(nameof(Fraction.Employees));
+            navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
         }
     }
 }

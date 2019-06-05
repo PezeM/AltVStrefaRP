@@ -17,7 +17,8 @@ namespace AltVStrefaRPServer.Models.Fractions
         public virtual float Z { get; set; }
 
         public int EmployeesCount => Employees.Count;
-        public ICollection<Character> Employees { get; set; }
+        private readonly List<Character> _employees;
+        public IReadOnlyCollection<Character> Employees => _employees;
 
         public virtual byte BlipModel { get; protected set; }
         public virtual string BlipName { get; protected set; }
@@ -25,9 +26,31 @@ namespace AltVStrefaRPServer.Models.Fractions
         public virtual ushort BlipSprite { get; protected set; }
         public virtual IBlip Blip { get; set; }
 
+        protected Fraction(){}
+
         public Position GetPosition()
         {
             return new Position(X,Y,Z);
+        }
+
+        public virtual bool AddEmployee(Character newEmployee)
+        {
+            if (!CanAddNewEmployee(newEmployee)) return false;
+            _employees.Add(newEmployee);
+            return true;
+        }
+
+        protected virtual bool CanAddNewEmployee(Character newEmployee)
+        {
+            if (_employees != null)
+            {
+                if (newEmployee.Fraction != null || newEmployee.Fraction == this) return false;
+                else return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
