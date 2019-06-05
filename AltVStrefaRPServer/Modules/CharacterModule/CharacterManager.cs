@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using AltV.Net;
+﻿using AltV.Net;
 using AltV.Net.Elements.Entities;
 using AltV.Net.Enums;
 using AltVStrefaRPServer.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace AltVStrefaRPServer.Modules.CharacterModule
 {
@@ -22,6 +22,9 @@ namespace AltVStrefaRPServer.Modules.CharacterModule
 
         public Character GetCharacter(IPlayer player)
             => CharactersList.ContainsKey(player.Id) ? CharactersList[player.Id] : null;
+
+        public bool TryGetCharacter(IPlayer player, out Character character) 
+            => CharactersList.TryGetValue(player.Id, out character);
 
         public Character GetCharacter(int characterId)
             => CharactersList.Values.FirstOrDefault(c => c.Id == characterId);

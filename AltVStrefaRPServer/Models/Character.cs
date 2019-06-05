@@ -36,11 +36,11 @@ namespace AltVStrefaRPServer.Models
 
         public IPlayer Player { get; set; }
 
-        public int BusinessId { get; set; }
+        public int? CurrentBusinessId { get; set; }
         public Business Business { get; set; }
         public int BusinessRank { get; set; }
 
-        public int CurrentFractionId { get; set; }
+        public int? CurrentFractionId { get; set; }
         public Fraction Fraction { get; set; }
 
         public string GetFullName()

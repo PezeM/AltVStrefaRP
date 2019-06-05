@@ -67,7 +67,10 @@ namespace AltVStrefaRPServer.Services.Characters
             }).ToListAsync();
 
         public Task<Character> GetCharacterById(int characterId)
-            => _serverContext.Characters.Include(c => c.BankAccount).FirstOrDefaultAsync(c => c.Id == characterId);
+            => _serverContext.Characters
+                .Include(c => c.BankAccount)
+                .Include(c => c.Account)
+                .FirstOrDefaultAsync(c => c.Id == characterId);
 
         public string GeneratePassword(string password) => _hashingService.Hash(password, 1000);
 

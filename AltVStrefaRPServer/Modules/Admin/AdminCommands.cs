@@ -100,7 +100,9 @@ namespace AltVStrefaRPServer.Modules.Admin
 
         private void SetBusinessOwner(IPlayer player, string[] args)
         {
-            if (args == null || args.Length < 2) return;
+            if (args == null || args.Length < 2 || !player.TryGetCharacter(out Character sender)) return;
+            if (sender.Account.AdminLevel < AdminLevel.Admin) return;
+
             try
             {
                 if (!int.TryParse(args[0].ToString(), out int characterId))
@@ -155,11 +157,11 @@ namespace AltVStrefaRPServer.Modules.Admin
 
         private void CreateNewBusiness(IPlayer player, string[] args)
         {
-            if (args == null || args.Length < 2) return;
+            if (args == null || args.Length < 2 || player.TryGetCharacter(out Character character)) return;
+            if(character.Account.AdminLevel < AdminLevel.Admin) return;
+
             try
             {
-                var character = player.GetCharacter();
-                if (character == null) return;
                 // First arg is business type
                 // Second one is business name
                 if (!Enum.TryParse(args[0], out BusinessType businessType))
@@ -221,7 +223,8 @@ namespace AltVStrefaRPServer.Modules.Admin
 
         private void BringPlayer(IPlayer player, string[] args)
         {
-            if (args == null || args.Length < 1) return;
+            if (args == null || args.Length < 1 || player.TryGetCharacter(out Character character)) return;
+            if (character.Account.AdminLevel < AdminLevel.Support) return;
             if (!int.TryParse(args[0].ToString(), out int playerId)) return;
             var playerToBring = Alt.GetAllPlayers().FirstOrDefault(p => p.Id == playerId);
             if (playerToBring == null)
@@ -235,7 +238,8 @@ namespace AltVStrefaRPServer.Modules.Admin
 
         private void TeleportToPlayer(IPlayer player, string[] args)
         {
-            if (args == null || args.Length < 1) return;
+            if (args == null || args.Length < 1 || player.TryGetCharacter(out Character character)) return;
+            if (character.Account.AdminLevel < AdminLevel.TrialSupport) return;
             if (!int.TryParse(args[0].ToString(), out int playerId)) return;
             var playerToTeleportTo = Alt.GetAllPlayers().FirstOrDefault(p => p.Id == playerId);
             if (playerToTeleportTo == null)
@@ -249,10 +253,9 @@ namespace AltVStrefaRPServer.Modules.Admin
 
         private void VehicleCommandCallback(IPlayer player, string[] args)
         {
-            if (args == null || args.Length < 1) return;
+            if (args == null || args.Length < 1 || player.TryGetCharacter(out Character character)) return;
+            if(character.Account.AdminLevel < AdminLevel.Admin) return;
             var model = args[0];
-            var character = player.GetCharacter();
-            if (character == null) return;
 
             var vehicle = _vehicleManager.CreateVehicle(model, PositionHelper.GetPositionInFrontOf(player.Position, player.HeadRotation.Roll, 4f),
                 player.Rotation, player.Dimension, character.Id, OwnerType.Character);

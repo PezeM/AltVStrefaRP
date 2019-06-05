@@ -22,6 +22,10 @@ namespace AltVStrefaRPServer.Database.Migrations
                     b.Property<int>("AccountId")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<int>("AdminLevel")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValue(0);
+
                     b.Property<string>("Password");
 
                     b.Property<string>("Username");
@@ -153,13 +157,13 @@ namespace AltVStrefaRPServer.Database.Migrations
 
                     b.Property<string>("BackgroundImage");
 
-                    b.Property<int>("BusinessId");
-
                     b.Property<int>("BusinessRank");
 
                     b.Property<DateTime>("CreationDate");
 
-                    b.Property<int>("CurrentFractionId");
+                    b.Property<int?>("CurrentBusinessId");
+
+                    b.Property<int?>("CurrentFractionId");
 
                     b.Property<short>("Dimension");
 
@@ -187,7 +191,7 @@ namespace AltVStrefaRPServer.Database.Migrations
 
                     b.HasIndex("AccountId");
 
-                    b.HasIndex("BusinessId");
+                    b.HasIndex("CurrentBusinessId");
 
                     b.HasIndex("CurrentFractionId");
 
@@ -377,13 +381,11 @@ namespace AltVStrefaRPServer.Database.Migrations
 
                     b.HasOne("AltVStrefaRPServer.Models.Businesses.Business", "Business")
                         .WithMany("Employees")
-                        .HasForeignKey("BusinessId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("CurrentBusinessId");
 
                     b.HasOne("AltVStrefaRPServer.Models.Fractions.Fraction", "Fraction")
                         .WithMany("Employees")
-                        .HasForeignKey("CurrentFractionId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("CurrentFractionId");
                 });
 #pragma warning restore 612, 618
         }

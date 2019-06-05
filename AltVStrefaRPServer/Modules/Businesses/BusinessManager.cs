@@ -49,7 +49,10 @@ namespace AltVStrefaRPServer.Modules.Businesses
         /// </summary>
         /// <param name="businessId"></param>
         /// <returns></returns>
-        public Business GetBusiness(int businessId) => Businesses.ContainsKey(businessId) ? Businesses[businessId] : null;
+        public Business GetBusiness(int businessId)
+        {
+            return Businesses.ContainsKey(businessId) ? Businesses[businessId] : null;
+        }
 
         /// <summary>
         /// Gets all owned businesses for given character id
@@ -58,7 +61,11 @@ namespace AltVStrefaRPServer.Modules.Businesses
         /// <returns></returns>
         public List<Business> GetCharacterBusinesses(int ownerId) => Businesses.Values.Where(b => b.OwnerId == ownerId).ToList();
 
-        public Business GetBusiness(Character employee) => GetBusiness(employee.BusinessId);
+        public Business GetBusiness(Character employee) 
+            => employee.CurrentBusinessId.HasValue ? GetBusiness(employee.CurrentBusinessId.Value) : null;
+
+        public bool TryGetBusiness(Character employee, out Business business) 
+            => Businesses.TryGetValue(employee.CurrentBusinessId.GetValueOrDefault(), out business);
 
         /// <summary>
         /// Get nearest business to player
@@ -118,14 +125,14 @@ namespace AltVStrefaRPServer.Modules.Businesses
 
         public async Task<bool> UpdateBusinessOwner(Business business, Character newOwner)
         {
-            if (newOwner.BusinessId != business.Id)
+            if (newOwner.CurrentBusinessId != business.Id)
             {
                 if (!_businessService.AddEmployee(business, newOwner)) return false;
                 newOwner.BusinessRank = business.BusinessRanks.FirstOrDefault(r => r.IsOwnerRank).Id;
                 await _businessService.UpdateOwnerAsync(business, newOwner).ConfigureAwait(false);
                 return true;
             }
-            else if (newOwner.BusinessId == business.Id)
+            else if (newOwner.CurrentBusinessId == business.Id)
             {
                 newOwner.BusinessRank = business.BusinessRanks.FirstOrDefault(r => r.IsOwnerRank).Id;
                 await _businessService.UpdateOwnerAsync(business, newOwner).ConfigureAwait(false);

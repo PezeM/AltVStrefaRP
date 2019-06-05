@@ -13,5 +13,14 @@ namespace AltVStrefaRPServer.Extensions
         /// <returns></returns>
         public static Character GetCharacter(this IPlayer player) 
             => CharacterManager.Instance.GetCharacter(player);
+
+        /// <summary>
+        /// Try to get character from all online players in the server. Returns false if character was not found
+        /// </summary>
+        /// <param name="player"></param>
+        /// <param name="character"></param>
+        /// <returns></returns>
+        public static bool TryGetCharacter(this IPlayer player, out Character character) 
+            => CharacterManager.Instance.TryGetCharacter(player, out character);
     }
 }

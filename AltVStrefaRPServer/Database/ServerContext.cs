@@ -47,6 +47,12 @@ namespace AltVStrefaRPServer.Database
                 .WithOne(a => a.Account)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<Account>()
+                .Property(a => a.AdminLevel)
+                .HasDefaultValue(AdminLevel.None)
+                .HasConversion<int>();
+
+            // Character
             modelBuilder.Entity<Character>()
                 .Ignore(c => c.Player)
                 .HasOne(c => c.BankAccount)
@@ -56,13 +62,14 @@ namespace AltVStrefaRPServer.Database
             modelBuilder.Entity<Character>()
                 .HasOne<Business>(c => c.Business)
                 .WithMany(b => b.Employees)
-                .HasForeignKey(c => c.BusinessId);
+                .HasForeignKey(c => c.CurrentBusinessId);
+                //.OnDelete(DeleteBehavior.SetNull);
 
-            modelBuilder.Entity<Character>()
-                .HasOne(c => c.Fraction)
-                .WithMany(f => f.Employees)
-                .HasForeignKey(c => c.CurrentFractionId)
-                .OnDelete(DeleteBehavior.SetNull);
+                modelBuilder.Entity<Character>()
+                    .HasOne<Fraction>(c => c.Fraction)
+                    .WithMany(f => f.Employees)
+                    .HasForeignKey(c => c.CurrentFractionId);
+                //.OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<VehicleModel>()
                 .Ignore(v => v.VehicleHandle)
@@ -91,6 +98,12 @@ namespace AltVStrefaRPServer.Database
             // Fractions
             modelBuilder.Entity<Fraction>()
                 .Ignore(f => f.Blip);
+
+            modelBuilder.Entity<Fraction>()
+                .HasMany<Character>(f => f.Employees)
+                .WithOne(c => c.Fraction)
+                .HasForeignKey(c => c.CurrentFractionId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
         }
     }
 }
