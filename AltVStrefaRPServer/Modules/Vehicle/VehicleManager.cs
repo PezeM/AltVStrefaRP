@@ -52,7 +52,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
         /// </summary>
         /// <param name="vehicleId"></param>
         /// <returns>Returns <see cref="VehicleModel"/></returns>
-        public bool GetVehicleModel(int vehicleId, out VehicleModel vehicleModel) => _vehicles.TryGetValue(vehicleId, out vehicleModel);
+        public bool TryGetVehicleModel(int vehicleId, out VehicleModel vehicleModel) => _vehicles.TryGetValue(vehicleId, out vehicleModel);
 
         /// <summary>
         /// Gets VehicleModel by vehicleHandle id
@@ -61,7 +61,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
         /// <returns></returns>
         public VehicleModel GetVehicleModel(ushort vehicleID) => _vehicles.Values.FirstOrDefault(v => v.VehicleHandle?.Id == vehicleID);
 
-        public bool GetVehicleModel(IMyVehicle vehicle, out VehicleModel vehicleModel) 
+        public bool TryGetVehicleModel(IMyVehicle vehicle, out VehicleModel vehicleModel) 
             => _vehicles.TryGetValue(vehicle.DatabaseId, out vehicleModel);
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
         /// </summary>
         /// <param name="vehicle"><see cref="IVehicle"/></param>
         /// <returns></returns>
-        public bool GetVehicleModel(IVehicle vehicle, out VehicleModel vehicleModel)
+        public bool TryGetVehicleModel(IVehicle vehicle, out VehicleModel vehicleModel)
         {
             vehicleModel = null;
             if (!vehicle.GetData("vehicleId", out int vehicleId)) return false;

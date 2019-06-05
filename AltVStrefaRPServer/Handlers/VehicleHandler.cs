@@ -47,7 +47,7 @@ namespace AltVStrefaRPServer.Handlers
 
             var closestVehicle = VehicleHelper.GetClosestVehicle(player, 6f);
             if (closestVehicle == null) return;
-            if (!_vehicleManager.GetVehicleModel(closestVehicle, out VehicleModel vehicle)) return;
+            if (!_vehicleManager.TryGetVehicleModel(closestVehicle, out VehicleModel vehicle)) return;
             if (!_vehicleManager.HasVehiclePermission(character, vehicle)) return;
 
             vehicle.IsLocked = !vehicle.IsLocked;
@@ -59,7 +59,7 @@ namespace AltVStrefaRPServer.Handlers
         {
             var closestVehicle = VehicleHelper.GetClosestVehicle(player, 4f);
             if (closestVehicle == null || closestVehicle.LockState == VehicleLockState.Locked) return;
-            if (!_vehicleManager.GetVehicleModel(closestVehicle, out VehicleModel vehicleModel)) return;
+            if (!_vehicleManager.TryGetVehicleModel(closestVehicle, out VehicleModel vehicleModel)) return;
 
             if (vehicleModel.VehicleHandle.GetDoorState(VehicleDoor.Hood) == VehicleDoorState.Closed)
             {
@@ -77,7 +77,7 @@ namespace AltVStrefaRPServer.Handlers
         {
             var closestVehicle = VehicleHelper.GetClosestVehicle(player, 4f);
             if (closestVehicle == null || closestVehicle.LockState == VehicleLockState.Locked) return;
-            if (!_vehicleManager.GetVehicleModel(closestVehicle, out VehicleModel vehicleModel)) return;
+            if (!_vehicleManager.TryGetVehicleModel(closestVehicle, out VehicleModel vehicleModel)) return;
 
             var doorState = vehicleModel.VehicleHandle.GetDoorState(VehicleDoor.Trunk);
             if (doorState == VehicleDoorState.Closed)
@@ -99,7 +99,7 @@ namespace AltVStrefaRPServer.Handlers
 
             if (player.Seat != 1) return;
 
-            if (!_vehicleManager.GetVehicleModel(vehicle, out VehicleModel vehicleModel)) return;
+            if (!_vehicleManager.TryGetVehicleModel(vehicle, out VehicleModel vehicleModel)) return;
 
             if (_vehicleManager.HasVehiclePermission(character, vehicleModel))
             {
@@ -118,7 +118,7 @@ namespace AltVStrefaRPServer.Handlers
             var character = player.GetCharacter();
             if(character == null) return;
 
-            if (!_vehicleManager.GetVehicleModel(myVehicle, out VehicleModel vehicleModel)) return;
+            if (!_vehicleManager.TryGetVehicleModel(myVehicle, out VehicleModel vehicleModel)) return;
 
             if (!_vehicleManager.HasVehiclePermission(character, vehicleModel))
             {
@@ -169,7 +169,7 @@ namespace AltVStrefaRPServer.Handlers
             var startTime = Time.GetTimestampMs();
             // Saves vehicle only if the drivers exits
             if(vehicle.Driver != null) return;
-            if (!_vehicleManager.GetVehicleModel(vehicle, out VehicleModel vehicleModel)) return;
+            if (!_vehicleManager.TryGetVehicleModel(vehicle, out VehicleModel vehicleModel)) return;
 
             // For now saves vehicle when player leaves the vehicle and he was the driver
             vehicleModel.X = vehicle.Position.X;

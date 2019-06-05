@@ -35,8 +35,8 @@ namespace AltVStrefaRPServer.Modules.Money
         public BankAccount GetBankAccountById(int bankAccountId) 
             => _bankAccounts.Values.FirstOrDefault(b => b.Id == bankAccountId);
 
-        public BankAccount GetBankAccountByNumber(int bankAccountNumber) 
-            => _bankAccounts.ContainsKey(bankAccountNumber) ? _bankAccounts[bankAccountNumber] : null;
+        public bool TryToGetBankAccountByNumber(int bankAccountNumber, out BankAccount bankAccount)
+            => _bankAccounts.TryGetValue(bankAccountNumber, out bankAccount);
 
         public BankAccount GetBankAccountByCharacterId(int characterId)
             => _bankAccounts.Values.FirstOrDefault(b => b.CharacterId == characterId);
@@ -51,11 +51,14 @@ namespace AltVStrefaRPServer.Modules.Money
         public int GenerateBankAccountNumber()
         {
             int accountNumber;
-            do
+            lock (_bankAccounts)
             {
-                accountNumber = _rng.Next(100000, 1000000);
-            } while (_bankAccounts.ContainsKey(accountNumber));
-            return accountNumber;
+                do
+                {
+                    accountNumber = _rng.Next(100000, 1000000);
+                } while (_bankAccounts.ContainsKey(accountNumber));
+                return accountNumber;
+            }
         }
     }
 }

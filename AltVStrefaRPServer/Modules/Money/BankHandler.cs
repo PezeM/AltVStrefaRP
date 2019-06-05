@@ -142,13 +142,12 @@ namespace AltVStrefaRPServer.Modules.Money
         {
             var character = player.GetCharacter();
             if (character == null || character.BankAccount == null) return;
-            var receiverBankAccount = _bankAccountManager.GetBankAccountByNumber(receiver);
-
-            if (receiverBankAccount == null)
+            if (!_bankAccountManager.TryToGetBankAccountByNumber(receiver, out BankAccount receiverBankAccount))
             {
                 await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Podano błędy numer konta bankowego.").ConfigureAwait(false);
                 return;
             }
+
 
             if (await _moneyService.TransferMoneyFromBankAccountToBankAccountAsync(character.BankAccount, receiverBankAccount, money))
             {

@@ -143,7 +143,7 @@ namespace AltVStrefaRPServer
 
         public void SpawnVehicleComand(int vehicleId)
         {
-            if (!vehicleManager.GetVehicleModel(vehicleId, out VehicleModel vehicle)) return;
+            if (!vehicleManager.TryGetVehicleModel(vehicleId, out VehicleModel vehicle)) return;
             _vehicleSpawnService.SpawnVehicle(vehicle);
         }
 

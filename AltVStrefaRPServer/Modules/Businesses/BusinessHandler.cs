@@ -84,8 +84,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
         public void OpenBusinessMenu(Character character)
         {
             var startTime = Time.GetTimestampMs();
-            var business = _businessManager.GetBusiness(character);
-            if (business == null)
+            if (!_businessManager.TryGetBusiness(character, out Business business))
             {
                 _notificationService.ShowErrorNotfication(character.Player, "Błąd", "Nie jesteś w żadnym biznesie.", 4000);
                 return;

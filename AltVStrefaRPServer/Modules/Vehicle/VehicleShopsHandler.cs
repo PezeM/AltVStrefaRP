@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
+using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Enums;
-using AltVStrefaRPServer.Modules.CharacterModule;
 using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Money;
 using Newtonsoft.Json;
@@ -32,8 +32,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
 
         private async Task OpenVehicleShopEvent(IPlayer player, int shopId)
         {
-            var character = CharacterManager.Instance.GetCharacter(player);
-            if (character == null) return;
+            if (!player.TryGetCharacter(out Character character)) return;
 
             var shop = _vehicleShopsManager.GetVehicleShop(shopId);
             if (shop == null)
@@ -47,8 +46,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
 
         private async Task BuyVehicleEvent(IPlayer player, int shopId, long vehicleModel)
         {
-            var character = CharacterManager.Instance.GetCharacter(player);
-            if (character == null) return;
+            if (!player.TryGetCharacter(out Character character)) return;
 
             var shop = _vehicleShopsManager.GetVehicleShop(shopId);
             if (shop == null)
