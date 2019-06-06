@@ -8,7 +8,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
 {
     public class VehicleShopsManager
     {
-        public List<VehicleShop> VehicleShops { get; set; }
+        public List<VehicleShop> VehicleShops { get; private set; }
 
         public VehicleShopsManager()
         {

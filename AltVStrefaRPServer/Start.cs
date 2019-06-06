@@ -9,18 +9,17 @@ using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Handlers;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Enums;
-using AltVStrefaRPServer.Models.Fractions;
 using AltVStrefaRPServer.Modules.Admin;
 using AltVStrefaRPServer.Modules.Businesses;
 using AltVStrefaRPServer.Modules.CharacterModule.Customization;
 using AltVStrefaRPServer.Modules.Chat;
 using AltVStrefaRPServer.Modules.Environment;
+using AltVStrefaRPServer.Modules.Fractions;
 using AltVStrefaRPServer.Modules.Money;
 using AltVStrefaRPServer.Modules.Vehicle;
 using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Vehicles;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
 
 namespace AltVStrefaRPServer
 {
@@ -59,6 +58,7 @@ namespace AltVStrefaRPServer
             var characterCreator = Startup.ServiceProvider.GetService<CharacterCreator>();
             var adminCommands = Startup.ServiceProvider.GetService<AdminCommands>();
             var bankAccountsManager = Startup.ServiceProvider.GetServices<BankAccountManager>();
+            var fractionManager = Startup.ServiceProvider.GetService<FractionManager>();
             Test();
             // For now not working on windows
             //var chat = new ChatHandler();

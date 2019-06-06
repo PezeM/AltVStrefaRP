@@ -33,10 +33,22 @@ namespace AltVStrefaRPServer.Models.Fractions
             return new Position(X,Y,Z);
         }
 
+        public virtual bool RemoveEmployee(Character employee)
+        {
+            if (!CanRemoveEmployee(employee)) return false;
+            return _employees.Remove(employee);
+        }
+
         public virtual bool AddEmployee(Character newEmployee)
         {
             if (!CanAddNewEmployee(newEmployee)) return false;
             _employees.Add(newEmployee);
+            return true;
+        }
+
+        protected virtual bool CanRemoveEmployee(Character employee)
+        {
+            if (employee.CurrentFractionId != Id) return false;
             return true;
         }
 

@@ -8,6 +8,7 @@ using AltVStrefaRPServer.Modules.Businesses;
 using AltVStrefaRPServer.Modules.CharacterModule.Customization;
 using AltVStrefaRPServer.Modules.Chat;
 using AltVStrefaRPServer.Modules.Environment;
+using AltVStrefaRPServer.Modules.Fractions;
 using AltVStrefaRPServer.Modules.Money;
 using AltVStrefaRPServer.Modules.Vehicle;
 using AltVStrefaRPServer.Services;
@@ -86,7 +87,8 @@ namespace AltVStrefaRPServer
             services.AddSingleton<TemporaryChatHandler>();
             services.AddSingleton<TimeManager>();
             services.AddSingleton<VehicleShopsManager>();
-
+            services.AddSingleton<FractionManager>();
+                
             services.AddTransient<AdminCommands>();
             services.AddTransient<CharacterCreator>();
             services.AddTransient<SittingHandler>();
