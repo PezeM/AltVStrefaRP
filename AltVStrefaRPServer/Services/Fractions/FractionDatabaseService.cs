@@ -18,12 +18,16 @@ namespace AltVStrefaRPServer.Services.Fractions
 
         public List<Fraction> GetAllFractionsList()
         {
-            return _serverContext.Fractions.ToList();
+            return _serverContext.Fractions
+                .Include(f => f.FractionRanks)
+                .ToList();
         }
 
         public Task<List<Fraction>> GetAllFractionsListAsync()
         {
-            return _serverContext.Fractions.ToListAsync();
+            return _serverContext.Fractions
+                .Include(f => f.FractionRanks)
+                .ToListAsync();
         }
 
         public Fraction GetFractionById(int fractionId)

@@ -10,6 +10,8 @@ namespace AltVStrefaRPServer.Database
         public DbSet<Character> Characters { get; set; }
         public DbSet<Account> Accounts { get; set; }
         public DbSet<VehicleModel> Vehicles { get; set; }
+        public DbSet<BankAccount> BankAccounts { get; set; }
+        public DbSet<MoneyTransaction> MoneyTransactions { get; set; }
 
         // Businesses
         public DbSet<Business> Businesses { get; set; }
@@ -20,12 +22,15 @@ namespace AltVStrefaRPServer.Database
 
         // Fractions
         public DbSet<Fraction> Fractions { get; set; }
+        public DbSet<FractionRank> FractionRanks { get; set; }
+        public DbSet<FractionRankPermissions> FractionRankPermissions { get; set; }
+        public DbSet<FractionPermission> FractionPermissions { get; set; }
+        public DbSet<OpenFractionInventoryPermission> OpenFractionInventoryPermissions { get; set; }
+        public DbSet<OpenFractionMenuPermission> OpenFractionMenuPermission { get; set; }
+
         public DbSet<PoliceFraction> PoliceFractions { get; set; }
         public DbSet<SamsFraction> SamsFractions { get; set; }
         public DbSet<TownHallFraction> TownHallFractions { get; set; }
-
-        public DbSet<BankAccount> BankAccounts { get; set; }
-        public DbSet<MoneyTransaction> MoneyTransactions { get; set; }
 
         public ServerContext(DbContextOptions options) : base(options)
         {
@@ -108,6 +113,21 @@ namespace AltVStrefaRPServer.Database
             var navigation = modelBuilder.Entity<Fraction>()
                 .Metadata.FindNavigation(nameof(Fraction.Employees));
             navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+
+            modelBuilder.Entity<Fraction>()
+                .HasMany(f => f.FractionRanks)
+                .WithOne(fr => fr.Fraction)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<FractionRank>()
+                .HasOne(fr => fr.Permissions)
+                .WithOne(fp => fp.FractionRank)
+                .HasForeignKey<FractionRankPermissions>(fp => fp.FractionRankId);
+
+            modelBuilder.Entity<FractionRankPermissions>()
+                .HasMany(f => f.Permissions)
+                .WithOne(p => p.FractionRankPermissions)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

@@ -1,6 +1,8 @@
-﻿using AltVStrefaRPServer.Models;
+﻿using System.Threading.Tasks;
+using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Fractions;
 using AltVStrefaRPServer.Services;
+using Newtonsoft.Json;
 
 namespace AltVStrefaRPServer.Modules.Fractions
 {
@@ -13,6 +15,8 @@ namespace AltVStrefaRPServer.Modules.Fractions
         {
             _fractionManager = fractionManager;
             _notificationService = notificationService;
+
+            //CreateTestFraction();
         }
 
         public void OpenFractionMenu(Character character)
@@ -22,6 +26,13 @@ namespace AltVStrefaRPServer.Modules.Fractions
                 _notificationService.ShowErrorNotfication(character.Player, "Brak frakcji", "Nie jesteś zatrudniony w żadnej frakcji.");
                 return;
             }
+
+            character.Player.Emit("openFractionMenu", JsonConvert.SerializeObject(fraction));
         }
+
+        //public async Task CreateTestFraction()
+        //{
+
+        //}
     }
 }
