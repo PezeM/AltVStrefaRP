@@ -19,14 +19,20 @@ namespace AltVStrefaRPServer.Services.Fractions
         public List<Fraction> GetAllFractionsList()
         {
             return _serverContext.Fractions
+                .Include(f => f.Employees)
                 .Include(f => f.FractionRanks)
+                .ThenInclude(f => f.Permissions)
+                .ThenInclude(fr => fr.Permissions)
                 .ToList();
         }
 
         public Task<List<Fraction>> GetAllFractionsListAsync()
         {
             return _serverContext.Fractions
+                .Include(f => f.Employees)
                 .Include(f => f.FractionRanks)
+                .ThenInclude(f => f.Permissions)
+                .ThenInclude(fr => fr.Permissions)
                 .ToListAsync();
         }
 
@@ -50,6 +56,18 @@ namespace AltVStrefaRPServer.Services.Fractions
         {
             _serverContext.Fractions.Update(fraction);
             return _serverContext.SaveChangesAsync();
+        }
+
+        public async Task<int> AddNewFractionAsync(Fraction fraction)
+        {
+            await _serverContext.Fractions.AddAsync(fraction).ConfigureAwait(false);
+            return await _serverContext.SaveChangesAsync();
+        }
+
+        public int AddNewFraction(Fraction fraction)
+        {
+            _serverContext.Fractions.Add(fraction);
+            return _serverContext.SaveChanges();
         }
     }
 }

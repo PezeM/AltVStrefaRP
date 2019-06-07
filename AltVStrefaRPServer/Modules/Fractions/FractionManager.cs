@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using AltV.Net;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
@@ -18,6 +19,8 @@ namespace AltVStrefaRPServer.Modules.Fractions
             _fractionDatabaseService = fractionDatabaseService;
 
             _fractions = new Dictionary<int, Fraction>();
+
+            //CreateTestFraction();
             Initialize();
         }
 
@@ -30,6 +33,40 @@ namespace AltVStrefaRPServer.Modules.Fractions
             }
             Alt.Log($"Added {_fractions.Count} fractions in {Time.GetTimestampMs() - startTime}ms.");
         }
+
+        //public void CreateTestFraction()
+        //{
+        //    var fraction = new PoliceFraction
+        //    {
+        //        CreationDate = DateTime.Now,
+        //        Description = "Jednosta policji",
+        //        Name = "LSPD",
+        //        Money = 10000f,
+        //        X = 150.14f,
+        //        Y = 180.14f,
+        //        Z = 250.177f,
+        //        FractionRanks = new List<FractionRank>
+        //        {
+        //            new FractionRank
+        //            {
+        //                IsDefaultRank = true, 
+        //                IsHighestRank = false,
+        //                RankName = "Oficer I",
+        //                Permissions = new FractionRankPermissions
+        //                {
+        //                    Permissions = new List<FractionPermission>
+        //                    {
+        //                        new OpenFractionInventoryPermission(),
+        //                        new OpenFractionMenuPermission()
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    };
+
+        //    int fractionId = _fractionDatabaseService.AddNewFraction(fraction);
+        //    Alt.Log($"Added new fraction Name: {fraction.Name} with ID: {fractionId}");
+        //}
 
         public bool TryToGetFraction(int fractionId, out Fraction fraction)
             => _fractions.TryGetValue(fractionId, out fraction);

@@ -6,9 +6,9 @@ namespace AltVStrefaRPServer.Models.Fractions
     public class FractionPermission
     {
         public int Id { get; set; }
-        public virtual bool HasPermission { get; set; }
-        public virtual string Name { get; }
-        public virtual string Description { get; }
+        public virtual bool HasPermission { get; protected set; }
+        public virtual string Name { get; protected set; }
+        public virtual string Description { get; protected set; }
 
         public virtual FractionRankPermissions FractionRankPermissions { get; set; }
     }
@@ -38,20 +38,20 @@ namespace AltVStrefaRPServer.Models.Fractions
 
     public class OpenFractionMenuPermission : FractionPermission
     {
-        public override bool HasPermission { get; set; } = false;
+        public override bool HasPermission { get; protected set; } = false;
 
-        public override string Name => "Otwieranie menu";
-        public override string Description => "Możliwość otwierania menu frakcji";
+        public override string Name { get; protected set; } = "Otwieranie menu";
+        public override string Description { get; protected set; } = "Możliwość otwierania menu frakcji";
 
         public override FractionRankPermissions FractionRankPermissions { get; set; }
     }
 
     public class OpenFractionInventoryPermission : FractionPermission
     {
-        public override bool HasPermission { get; set; } = false;
+        public override bool HasPermission { get; protected set; } = false;
 
-        public override string Name => "Otwieranie inwentarza";
-        public override string Description => "Możliwość otwierania inwentarza frakcji";
+        public override string Name { get; protected set; } = "Otwieranie inwentarza";
+        public override string Description { get; protected set; } = "Możliwość otwierania inwentarza frakcji";
 
         public override FractionRankPermissions FractionRankPermissions { get; set; }
     }

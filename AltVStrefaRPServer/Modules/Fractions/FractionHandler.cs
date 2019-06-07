@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Fractions;
 using AltVStrefaRPServer.Services;
@@ -15,8 +17,6 @@ namespace AltVStrefaRPServer.Modules.Fractions
         {
             _fractionManager = fractionManager;
             _notificationService = notificationService;
-
-            //CreateTestFraction();
         }
 
         public void OpenFractionMenu(Character character)
@@ -29,10 +29,5 @@ namespace AltVStrefaRPServer.Modules.Fractions
 
             character.Player.Emit("openFractionMenu", JsonConvert.SerializeObject(fraction));
         }
-
-        //public async Task CreateTestFraction()
-        //{
-
-        //}
     }
 }

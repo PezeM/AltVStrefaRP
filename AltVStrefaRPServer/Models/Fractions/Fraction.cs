@@ -20,7 +20,7 @@ namespace AltVStrefaRPServer.Models.Fractions
         private readonly List<Character> _employees;
         public IReadOnlyCollection<Character> Employees => _employees;
 
-        public ICollection<FractionRank> FractionRanks { get; private set; }
+        public ICollection<FractionRank> FractionRanks { get; set; }
 
         public virtual byte BlipModel { get; protected set; }
         public virtual string BlipName { get; protected set; }

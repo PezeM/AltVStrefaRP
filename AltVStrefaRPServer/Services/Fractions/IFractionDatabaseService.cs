@@ -12,5 +12,7 @@ namespace AltVStrefaRPServer.Services.Fractions
         Fraction GetFractionById(int fractionId);
         Task UpdateFractionAsync(Fraction fraction);
         void UpdateFraction(Fraction fraction);
+        Task<int> AddNewFractionAsync(Fraction fraction);
+        int AddNewFraction(Fraction fraction);
     }
 }
