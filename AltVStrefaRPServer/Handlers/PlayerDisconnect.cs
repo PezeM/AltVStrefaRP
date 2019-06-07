@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Extensions;
+using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Modules.CharacterModule;
 using AltVStrefaRPServer.Services.Characters;
 
@@ -24,8 +26,7 @@ namespace AltVStrefaRPServer.Handlers
 
         private async Task OnPlayerDisconnectAsync(ReadOnlyPlayer player, IPlayer origin, string reason)
         {
-            var character = player.GetCharacter();
-            if (character == null) return;
+            if (!player.TryGetCharacter(out Character character)) return;
 
             character.Dimension = player.Dimension;
             character.UpdatePosition(player.Position);
@@ -34,7 +35,8 @@ namespace AltVStrefaRPServer.Handlers
             character.LastPlayed = DateTime.Now;
 
             CharacterManager.Instance.RemoveCharacterDataFromServer(character);
-            Alt.Log($"CID({character.Id}) ID({player.Id}) {player.Name} left the server. Reason {reason}");
+            Alt.Log($"CID({character.Id}) ID({player.Id}) {player.Name} left the server. Reason {reason} " +
+                    $"Executed on thread {Thread.CurrentThread.ManagedThreadId}");
             await _characterDatabaseService.UpdateCharacterAsync(character);
         }
     }

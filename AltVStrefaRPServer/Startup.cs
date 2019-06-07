@@ -15,6 +15,7 @@ using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Businesses;
 using AltVStrefaRPServer.Services.Characters;
 using AltVStrefaRPServer.Services.Characters.Customization;
+using AltVStrefaRPServer.Services.Fractions;
 using AltVStrefaRPServer.Services.Money;
 using AltVStrefaRPServer.Services.Vehicles;
 using Microsoft.EntityFrameworkCore;
@@ -72,6 +73,7 @@ namespace AltVStrefaRPServer
             services.AddTransient<IVehicleSpawnService, VehicleSpawnService>();
             services.AddTransient<IVehicleCreatorService, VehicleCreatorService>();
             services.AddTransient<IVehicleDatabaseService, VehicleDatabaseService>();
+            services.AddTransient<IFractionDatabaseService, FractionDatabaseService>();
 
             services.AddTransient<PlayerConnect>();
             services.AddTransient<PlayerDisconnect>();
@@ -88,6 +90,7 @@ namespace AltVStrefaRPServer
             services.AddSingleton<TimeManager>();
             services.AddSingleton<VehicleShopsManager>();
             services.AddSingleton<FractionManager>();
+            services.AddSingleton<FractionHandler>();
                 
             services.AddTransient<AdminCommands>();
             services.AddTransient<CharacterCreator>();

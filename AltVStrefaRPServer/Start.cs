@@ -59,6 +59,7 @@ namespace AltVStrefaRPServer
             var adminCommands = Startup.ServiceProvider.GetService<AdminCommands>();
             var bankAccountsManager = Startup.ServiceProvider.GetServices<BankAccountManager>();
             var fractionManager = Startup.ServiceProvider.GetService<FractionManager>();
+            var fractionHandler = Startup.ServiceProvider.GetService<FractionHandler>();
             Test();
             // For now not working on windows
             //var chat = new ChatHandler();
