@@ -58,6 +58,7 @@ namespace AltVStrefaRPServer
             var characterCreator = Startup.ServiceProvider.GetService<CharacterCreator>();
             var adminCommands = Startup.ServiceProvider.GetService<AdminCommands>();
             var bankAccountsManager = Startup.ServiceProvider.GetServices<BankAccountManager>();
+            // Fractions
             var fractionManager = Startup.ServiceProvider.GetService<FractionManager>();
             var fractionHandler = Startup.ServiceProvider.GetService<FractionHandler>();
             Test();

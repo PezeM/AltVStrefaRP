@@ -14,6 +14,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
+using AltVStrefaRPServer.Modules.Fractions;
 using AltVStrefaRPServer.Services.Vehicles;
 using Newtonsoft.Json;
 
@@ -29,10 +30,11 @@ namespace AltVStrefaRPServer.Modules.Admin
         private INotificationService _notificationService;
         private VehicleShopsManager _vehicleShopsManager;
         private IVehicleSpawnService _vehicleSpawnService;
+        private readonly FractionHandler _fractionHandler;
 
         public AdminCommands(TemporaryChatHandler chatHandler, VehicleManager vehicleManager, BankHandler bankHandler,
             BusinessManager businessManager, BusinessHandler businessHandler, INotificationService notificationService,
-            VehicleShopsManager vehicleShopsManager, IVehicleSpawnService vehicleSpawnService)
+            VehicleShopsManager vehicleShopsManager, IVehicleSpawnService vehicleSpawnService, FractionHandler fractionHandler)
         {
             _chatHandler = chatHandler;
             _vehicleManager = vehicleManager;
@@ -42,6 +44,7 @@ namespace AltVStrefaRPServer.Modules.Admin
             _notificationService = notificationService;
             _vehicleShopsManager = vehicleShopsManager;
             _vehicleSpawnService = vehicleSpawnService;
+            _fractionHandler = fractionHandler;
 
             Alt.Log($"Admin commands initialized");
             AddCommands();
@@ -63,7 +66,9 @@ namespace AltVStrefaRPServer.Modules.Admin
             _chatHandler.RegisterCommand("bring", BringPlayer);
             _chatHandler.RegisterCommand("tpToPlayer", TeleportToPlayer);
             _chatHandler.RegisterCommand("openVehicleShop", OpenVehicleShop);
+            _chatHandler.RegisterCommand("openFractionMenu", OpenFractionMenu);
         }
+
 
         private void OpenVehicleShop(IPlayer player, string[] arg2)
         {
@@ -153,6 +158,12 @@ namespace AltVStrefaRPServer.Modules.Admin
             var character = player.GetCharacter();
             if (character == null) return;
             _businessHandler.OpenBusinessMenu(character);
+        }
+
+        private void OpenFractionMenu(IPlayer player, string[] args)
+        {
+            if (!player.TryGetCharacter(out var character)) return;
+            _fractionHandler.OpenFractionMenu(character);
         }
 
         private void CreateNewBusiness(IPlayer player, string[] args)
