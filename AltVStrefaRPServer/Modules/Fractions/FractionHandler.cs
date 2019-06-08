@@ -22,8 +22,8 @@ namespace AltVStrefaRPServer.Modules.Fractions
             _fractionManager = fractionManager;
             _notificationService = notificationService;
 
-            AltAsync.On<IPlayer, int, string, string> ("AddEmployeeToFraction",
-                async (player, fractionId, firstName, lastName) => await AddEmployeeEvent (player, fractionId, firstName, lastName));
+            AltAsync.On<IPlayer, int, string, string> ("InviteEmployeeToFraction", async (player, fractionId, firstName, lastName) 
+                => await InviteEmployeeToFractionEvent (player, fractionId, firstName, lastName));
         }
 
         public void OpenFractionMenu (Character character)
@@ -37,7 +37,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
             character.Player.Emit ("openFractionMenu", JsonConvert.SerializeObject (fraction));
         }
 
-        public async Task AddEmployeeEvent (IPlayer player, int fractionId, string firstName, string lastName)
+        public async Task InviteEmployeeToFractionEvent (IPlayer player, int fractionId, string firstName, string lastName)
         {
             if ((firstName == null || firstName.Length < 3) || (lastName == null || lastName.Length < 3))
             {

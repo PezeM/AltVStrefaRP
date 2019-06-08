@@ -46,9 +46,11 @@ namespace AltVStrefaRPServer.Handlers
                     return;
                 }
 
-                // Trigger client-side event
-                CharacterManager.Instance.IntializeCharacter(player, character);
-                player.Emit("loadedCharacter");
+                await AltAsync.Do(() =>
+                {
+                    CharacterManager.Instance.IntializeCharacter(player, character);
+                    player.Emit("loadedCharacter");
+                });
             }
             catch (Exception e)
             {

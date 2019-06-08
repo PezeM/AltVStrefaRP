@@ -16,21 +16,22 @@ namespace AltVStrefaRPServer.Modules.CharacterModule
 
         private CharacterManager()
         {
+            _characterList = new Dictionary<int, Character>();
         }
 
-        public static Dictionary<int, Character> CharactersList { get; private set; } = new Dictionary<int, Character>();
+        private Dictionary<int, Character> _characterList;
 
         public Character GetCharacter(IPlayer player)
-            => CharactersList.ContainsKey(player.Id) ? CharactersList[player.Id] : null;
+            => _characterList.ContainsKey(player.Id) ? _characterList[player.Id] : null;
 
         public bool TryGetCharacter(IPlayer player, out Character character) 
-            => CharactersList.TryGetValue(player.Id, out character);
+            => _characterList.TryGetValue(player.Id, out character);
 
         public Character GetCharacter(int characterId)
-            => CharactersList.Values.FirstOrDefault(c => c.Id == characterId);
+            => _characterList.Values.FirstOrDefault(c => c.Id == characterId);
 
         public Character GetCharacter(string name, string lastName)
-            => CharactersList.Values.FirstOrDefault(c => c.FirstName == name && c.LastName == lastName);
+            => _characterList.Values.FirstOrDefault(c => c.FirstName == name && c.LastName == lastName);
 
         /// <summary>
         /// Returns online character by bank account Id
@@ -38,7 +39,7 @@ namespace AltVStrefaRPServer.Modules.CharacterModule
         /// <param name="bankAccountId"></param>
         /// <returns></returns>
         public Character GetCharacterByBankAccount(int bankAccountId)
-             => CharactersList.Values.FirstOrDefault(c => c.BankAccount.Id == bankAccountId);
+             => _characterList.Values.FirstOrDefault(c => c.BankAccount.Id == bankAccountId);
 
         /// <summary>
         /// Initializes character in the game world
@@ -58,7 +59,7 @@ namespace AltVStrefaRPServer.Modules.CharacterModule
             player.Dimension = character.Dimension;
             character.LastPlayed = DateTime.Now;
 
-            CharactersList.Add(player.Id, character);
+            _characterList.Add(player.Id, character);
             Alt.Log($"Initialized character {character.GetFullName()} with ID({player.Id}) CID({character.Id}) in the world.");
         }
 
@@ -68,7 +69,10 @@ namespace AltVStrefaRPServer.Modules.CharacterModule
         /// <param name="characterData"></param>
         public void RemoveCharacterDataFromServer(Character characterData)
         {
-            CharactersList.Remove(characterData.Player.Id);
+            lock (_characterList)
+            {
+                _characterList.Remove(characterData.Player.Id);
+            }
             Alt.Log($"Removed character data from server ID({characterData.Player.Id}) CID({characterData.Id})");
         }
     }

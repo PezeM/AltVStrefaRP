@@ -28,11 +28,14 @@ namespace AltVStrefaRPServer.Handlers
         {
             if (!player.TryGetCharacter(out Character character)) return;
 
-            character.Dimension = player.Dimension;
-            character.UpdatePosition(player.Position);
+            await AltAsync.Do(() =>
+            {
+                character.Dimension = player.Dimension;
+                character.UpdatePosition(player.Position);
 
-            character.TimePlayed += (DateTime.Now - character.LastPlayed).Minutes;
-            character.LastPlayed = DateTime.Now;
+                character.TimePlayed += (DateTime.Now - character.LastPlayed).Minutes;
+                character.LastPlayed = DateTime.Now;
+            });
 
             CharacterManager.Instance.RemoveCharacterDataFromServer(character);
             Alt.Log($"CID({character.Id}) ID({player.Id}) {player.Name} left the server. Reason {reason} " +
