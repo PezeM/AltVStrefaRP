@@ -7,7 +7,7 @@
         public bool HaveVehicleKeys { get; set; }
         public bool HaveFractionKeys { get; set; } 
         public bool CanManageRanks { get; set; }
-        public bool CanManageEmployess { get; set; }
+        public bool CanManageEmployees { get; set; }
 
         public int FractionRankFK { get; set; }
         public FractionRank FractionRank { get; set; }

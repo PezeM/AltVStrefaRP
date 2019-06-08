@@ -52,19 +52,31 @@ namespace AltVStrefaRPServer.Models.Fractions
             return _fractionRanks.FirstOrDefault(q => q.IsDefaultRank);
         }
 
-        public virtual bool RemoveEmployee(Character employee)
+        public FractionRank GetEmployeeRank(Character employee)
         {
-            if (!CanRemoveEmployee(employee)) return false;
-            return _employees.Remove(employee);
+            return _fractionRanks.FirstOrDefault(q => q.Id == employee.FractionRank);
         }
 
-        public virtual async Task<bool> AddNewEmployee(Character newEmployee, IFractionDatabaseService fractionDatabaseService)
+        public virtual async Task<bool> RemoveEmployeeAsync(int employeeId, IFractionDatabaseService fractionDatabaseService)
+        {
+            if (!IsCharacterEmployee(employeeId, out Character employee)) return false;
+            if (!CanRemoveEmployee(employee)) return false;
+
+            if (_employees.Remove(employee))
+            {
+                await fractionDatabaseService.UpdateFractionAsync(this);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public virtual async Task<bool> AddNewEmployeeAsync(Character newEmployee, IFractionDatabaseService fractionDatabaseService)
         {
             if (!CanAddNewEmployee(newEmployee)) return false;
-            lock (_employees)
-            {
-                _employees.Add(newEmployee);
-            }
+            _employees.Add(newEmployee);
 
             var defaultRank = GetDefaultRank();
             if (defaultRank == null) return false;
@@ -75,13 +87,17 @@ namespace AltVStrefaRPServer.Models.Fractions
             return true;
         }
 
-        protected virtual bool CanRemoveEmployee(Character employee)
+        protected virtual bool IsCharacterEmployee(int characterId, out Character character)
         {
-            if (employee.CurrentFractionId != Id) return false;
-            else
-            {
-                return _employees.Any(e => e.Id == employee.Id);
-            }
+            character = _employees.FirstOrDefault(q => q.Id == characterId);
+            return character != null;
+        }
+
+        protected bool CanRemoveEmployee(Character employee)
+        {
+            var employeeRank = GetEmployeeRank(employee);
+            if (employeeRank == null) return false;
+            else return !employeeRank.IsHighestRank;
         }
 
         protected virtual bool CanAddNewEmployee(Character newEmployee)

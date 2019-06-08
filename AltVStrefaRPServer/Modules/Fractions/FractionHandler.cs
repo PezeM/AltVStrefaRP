@@ -30,7 +30,10 @@ namespace AltVStrefaRPServer.Modules.Fractions
             AltAsync.On<IPlayer, int, string, string> ("InviteEmployeeToFraction", async (player, fractionId, firstName, lastName) 
                 => await InviteEmployeeToFractionEvent (player, fractionId, firstName, lastName));
             AltAsync.On<IPlayer, int>("AcceptFractionInvite", async (player, fractionId) => await AcceptFractionInviteEvent(player, fractionId));
+            AltAsync.On<IPlayer, int, int>("RemoveEmployeeFromFraction", async (player, employeeId, fractionId)
+                => await RemoveEmployeeFromFractionEvent(player, employeeId, fractionId));
         }
+
 
         public void OpenFractionMenu (Character character)
         {
@@ -49,7 +52,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
             if (!player.TryGetCharacter (out Character character)) return;
             if (!_fractionManager.TryToGetFraction (fractionId, out Fraction fraction)) return;
 
-            if (!(fraction.GetEmployeePermissions(character)?.CanManageEmployess).Value)
+            if (!(fraction.GetEmployeePermissions(character)?.CanManageEmployees).Value)
             {
                 await _notificationService.ShowErrorNotificationAsync(player, "Brak uprawnień",
                     "Nie posiadasz uprawnień do zapraszania nowych pracowników.", 6000);
@@ -74,13 +77,34 @@ namespace AltVStrefaRPServer.Modules.Fractions
             if(!player.TryGetCharacter(out Character character)) return;
             if (!_fractionManager.TryToGetFraction(fractionId, out Fraction fraction)) return;
 
-            if (await fraction.AddNewEmployee(character, _fractionDatabaseService))
+            if (await fraction.AddNewEmployeeAsync(character, _fractionDatabaseService))
             {
                 await _notificationService.ShowSuccessNotificationAsync(player, "Sukces", $"Pomyślnie dołączono do frakcji {fraction.Name}.");
             }
             else
             {
                 await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Wystąpił błąd w dołączaniu do frakcji.");
+            }
+        }
+
+        private async Task RemoveEmployeeFromFractionEvent(IPlayer player, int employeeId, int fractionId)
+        {
+            if (!player.TryGetCharacter(out Character character)) return;
+            if(!_fractionManager.TryToGetFraction(fractionId, out Fraction fraction)) return;
+
+            if (!(fraction.GetEmployeePermissions(character)?.CanManageEmployees).Value)
+            {
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie posiadasz odpowiednich uprawnień.");
+                return;
+            }
+
+            if (await fraction.RemoveEmployeeAsync(employeeId, _fractionDatabaseService))
+            {
+                await _notificationService.ShowSuccessNotificationAsync(player, "Sukces", "Pomyślnie usunięto pracownika z frakcji.");
+            }
+            else
+            {
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie udało się usunąć pracownika.");
             }
         }
     }

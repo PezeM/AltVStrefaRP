@@ -131,12 +131,23 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             }
             else if (vehicle.OwnerType == OwnerType.Group)
             {
-                // TODO Group management
-                if (character.CurrentBusinessId <= 0) return false;
-                if (character.Business == null) character.Business = _businessManager.GetBusiness(character);
-                if (character.Business == null) return false;
-                if (!character.Business.GetBusinessRank(character.BusinessRank, out BusinessRank businessRank)) return false;
-                return businessRank.Permissions.HaveVehicleKeys;
+                if (character.CurrentBusinessId > 0)
+                {
+                    if (character.Business == null) return false;
+                    else
+                    {
+                        if (!character.Business.GetBusinessRankForEmployee(character, out BusinessRank rank)) return false;
+                        return rank.Permissions.HaveVehicleKeys;
+                    }
+                }
+                else if (character.CurrentFractionId > 0)
+                {
+                    return (character.Fraction?.GetEmployeePermissions(character)?.HaveVehicleKeys).Value;
+                }
+                else
+                {
+                    return false;
+                }
             }
             else if (vehicle.OwnerType == OwnerType.Job)
             {

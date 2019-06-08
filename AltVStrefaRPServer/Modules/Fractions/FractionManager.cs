@@ -54,7 +54,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
         //                RankName = "Oficer I",
         //                Permissions = new FractionRankPermissions
         //                {
-        //                    CanManageEmployess = false,
+        //                    CanManageEmployees = false,
         //                    CanManageRanks = false,
         //                    CanOpenFractionMenu = true,
         //                    HaveVehicleKeys = true,
@@ -68,7 +68,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
         //                RankName = "Chief of Police",
         //                Permissions = new FractionRankPermissions
         //                {
-        //                    CanManageEmployess = true,
+        //                    CanManageEmployees = true,
         //                    CanManageRanks = true,
         //                    CanOpenFractionMenu = true,
         //                    HaveVehicleKeys = true,
