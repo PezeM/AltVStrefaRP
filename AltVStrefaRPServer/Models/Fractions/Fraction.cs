@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
+using AltVStrefaRPServer.Services.Fractions;
 
 namespace AltVStrefaRPServer.Models.Fractions
 {
@@ -21,7 +23,8 @@ namespace AltVStrefaRPServer.Models.Fractions
         private List<Character> _employees;
         public IReadOnlyCollection<Character> Employees => _employees;
 
-        public ICollection<FractionRank> FractionRanks { get; set; }
+        private List<FractionRank> _fractionRanks { get; set; }
+        public IReadOnlyCollection<FractionRank> FractionRanks => _fractionRanks;
 
         public virtual byte BlipModel { get; protected set; }
         public virtual string BlipName { get; protected set; }
@@ -39,16 +42,36 @@ namespace AltVStrefaRPServer.Models.Fractions
             return new Position(X,Y,Z);
         }
 
+        public FractionRankPermissions GetEmployeePermissions(Character employee)
+        {
+            return _fractionRanks.FirstOrDefault(q => q.Id == employee.FractionRank)?.Permissions;
+        }
+
+        public FractionRank GetDefaultRank()
+        {
+            return _fractionRanks.FirstOrDefault(q => q.IsDefaultRank);
+        }
+
         public virtual bool RemoveEmployee(Character employee)
         {
             if (!CanRemoveEmployee(employee)) return false;
             return _employees.Remove(employee);
         }
 
-        public virtual bool AddEmployee(Character newEmployee)
+        public virtual async Task<bool> AddNewEmployee(Character newEmployee, IFractionDatabaseService fractionDatabaseService)
         {
             if (!CanAddNewEmployee(newEmployee)) return false;
-            _employees.Add(newEmployee);
+            lock (_employees)
+            {
+                _employees.Add(newEmployee);
+            }
+
+            var defaultRank = GetDefaultRank();
+            if (defaultRank == null) return false;
+            newEmployee.FractionRank = defaultRank.Id;
+
+            // Save fraction, need to check if its neede to save employee
+            await fractionDatabaseService.UpdateFractionAsync(this);
             return true;
         }
 
