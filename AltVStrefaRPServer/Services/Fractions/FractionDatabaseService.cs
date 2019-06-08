@@ -22,7 +22,6 @@ namespace AltVStrefaRPServer.Services.Fractions
                 .Include(f => f.Employees)
                 .Include(f => f.FractionRanks)
                 .ThenInclude(f => f.Permissions)
-                .ThenInclude(fr => fr.Permissions)
                 .ToList();
         }
 
@@ -32,7 +31,6 @@ namespace AltVStrefaRPServer.Services.Fractions
                 .Include(f => f.Employees)
                 .Include(f => f.FractionRanks)
                 .ThenInclude(f => f.Permissions)
-                .ThenInclude(fr => fr.Permissions)
                 .ToListAsync();
         }
 

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace AltVStrefaRPServer.Database.Migrations
 {
-    public partial class FractionsPermissions : Migration
+    public partial class FractionPermissions : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -35,49 +35,28 @@ namespace AltVStrefaRPServer.Database.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    FractionRankId = table.Column<int>(nullable: false)
+                    CanOpenFractionMenu = table.Column<bool>(nullable: false),
+                    HaveVehicleKeys = table.Column<bool>(nullable: false),
+                    HaveFractionKeys = table.Column<bool>(nullable: false),
+                    CanManageRanks = table.Column<bool>(nullable: false),
+                    CanManageEmployess = table.Column<bool>(nullable: false),
+                    FractionRankFK = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_FractionRankPermissions", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_FractionRankPermissions_FractionRanks_FractionRankId",
-                        column: x => x.FractionRankId,
+                        name: "FK_FractionRankPermissions_FractionRanks_FractionRankFK",
+                        column: x => x.FractionRankFK,
                         principalTable: "FractionRanks",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "FractionPermissions",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    HasPermission = table.Column<bool>(nullable: false),
-                    FractionRankPermissionsId = table.Column<int>(nullable: true),
-                    Discriminator = table.Column<string>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_FractionPermissions", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_FractionPermissions_FractionRankPermissions_FractionRankPerm~",
-                        column: x => x.FractionRankPermissionsId,
-                        principalTable: "FractionRankPermissions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
-                });
-
             migrationBuilder.CreateIndex(
-                name: "IX_FractionPermissions_FractionRankPermissionsId",
-                table: "FractionPermissions",
-                column: "FractionRankPermissionsId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_FractionRankPermissions_FractionRankId",
+                name: "IX_FractionRankPermissions_FractionRankFK",
                 table: "FractionRankPermissions",
-                column: "FractionRankId",
+                column: "FractionRankFK",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -88,9 +67,6 @@ namespace AltVStrefaRPServer.Database.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "FractionPermissions");
-
             migrationBuilder.DropTable(
                 name: "FractionRankPermissions");
 

@@ -42,6 +42,7 @@ namespace AltVStrefaRPServer.Models
 
         public int? CurrentFractionId { get; set; }
         public Fraction Fraction { get; set; }
+        public int FractionRank { get; set; }
 
         public string GetFullName()
         {

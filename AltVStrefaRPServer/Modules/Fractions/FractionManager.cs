@@ -49,23 +49,37 @@ namespace AltVStrefaRPServer.Modules.Fractions
         //        {
         //            new FractionRank
         //            {
-        //                IsDefaultRank = true, 
+        //                IsDefaultRank = true,
         //                IsHighestRank = false,
         //                RankName = "Oficer I",
         //                Permissions = new FractionRankPermissions
         //                {
-        //                    Permissions = new List<FractionPermission>
-        //                    {
-        //                        new OpenFractionInventoryPermission(),
-        //                        new OpenFractionMenuPermission()
-        //                    }
+        //                    CanManageEmployess = false,
+        //                    CanManageRanks = false,
+        //                    CanOpenFractionMenu = true,
+        //                    HaveVehicleKeys = true,
+        //                    HaveFractionKeys = false,
         //                }
-        //            }
+        //            },
+        //            new FractionRank
+        //            {
+        //                IsDefaultRank = false,
+        //                IsHighestRank = true,
+        //                RankName = "Chief of Police",
+        //                Permissions = new FractionRankPermissions
+        //                {
+        //                    CanManageEmployess = true,
+        //                    CanManageRanks = true,
+        //                    CanOpenFractionMenu = true,
+        //                    HaveVehicleKeys = true,
+        //                    HaveFractionKeys = true,
+        //                }
+        //            },
         //        }
         //    };
 
-        //    int fractionId = _fractionDatabaseService.AddNewFraction(fraction);
-        //    Alt.Log($"Added new fraction Name: {fraction.Name} with ID: {fractionId}");
+        //    _fractionDatabaseService.AddNewFraction(fraction);
+        //    Alt.Log($"Added new fraction Name: {fraction.Name} with ID: {fraction.Id}");
         //}
 
         public bool TryToGetFraction(int fractionId, out Fraction fraction)

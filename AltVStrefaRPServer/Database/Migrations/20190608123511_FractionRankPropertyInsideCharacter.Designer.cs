@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AltVStrefaRPServer.Database.Migrations
 {
     [DbContext(typeof(ServerContext))]
-    [Migration("20190607155855_ChangesInFractionPermissions")]
-    partial class ChangesInFractionPermissions
+    [Migration("20190608123511_FractionRankPropertyInsideCharacter")]
+    partial class FractionRankPropertyInsideCharacter
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -171,6 +171,8 @@ namespace AltVStrefaRPServer.Database.Migrations
 
                     b.Property<string>("FirstName");
 
+                    b.Property<int>("FractionRank");
+
                     b.Property<int>("Gender");
 
                     b.Property<string>("LastName");
@@ -237,31 +239,6 @@ namespace AltVStrefaRPServer.Database.Migrations
                     b.HasDiscriminator<string>("Discriminator").HasValue("Fraction");
                 });
 
-            modelBuilder.Entity("AltVStrefaRPServer.Models.Fractions.FractionPermission", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Description");
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired();
-
-                    b.Property<int?>("FractionRankPermissionsId");
-
-                    b.Property<bool>("HasPermission");
-
-                    b.Property<string>("Name");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FractionRankPermissionsId");
-
-                    b.ToTable("FractionPermissions");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("FractionPermission");
-                });
-
             modelBuilder.Entity("AltVStrefaRPServer.Models.Fractions.FractionRank", b =>
                 {
                     b.Property<int>("Id")
@@ -287,11 +264,21 @@ namespace AltVStrefaRPServer.Database.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("FractionRankId");
+                    b.Property<bool>("CanManageEmployess");
+
+                    b.Property<bool>("CanManageRanks");
+
+                    b.Property<bool>("CanOpenFractionMenu");
+
+                    b.Property<int>("FractionRankFK");
+
+                    b.Property<bool>("HaveFractionKeys");
+
+                    b.Property<bool>("HaveVehicleKeys");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FractionRankId")
+                    b.HasIndex("FractionRankFK")
                         .IsUnique();
 
                     b.ToTable("FractionRankPermissions");
@@ -410,20 +397,6 @@ namespace AltVStrefaRPServer.Database.Migrations
                     b.HasDiscriminator().HasValue("TownHallFraction");
                 });
 
-            modelBuilder.Entity("AltVStrefaRPServer.Models.Fractions.OpenFractionInventoryPermission", b =>
-                {
-                    b.HasBaseType("AltVStrefaRPServer.Models.Fractions.FractionPermission");
-
-                    b.HasDiscriminator().HasValue("OpenFractionInventoryPermission");
-                });
-
-            modelBuilder.Entity("AltVStrefaRPServer.Models.Fractions.OpenFractionMenuPermission", b =>
-                {
-                    b.HasBaseType("AltVStrefaRPServer.Models.Fractions.FractionPermission");
-
-                    b.HasDiscriminator().HasValue("OpenFractionMenuPermission");
-                });
-
             modelBuilder.Entity("AltVStrefaRPServer.Models.BankAccount", b =>
                 {
                     b.HasOne("AltVStrefaRPServer.Models.Character", "Character")
@@ -464,14 +437,6 @@ namespace AltVStrefaRPServer.Database.Migrations
                         .HasForeignKey("CurrentFractionId");
                 });
 
-            modelBuilder.Entity("AltVStrefaRPServer.Models.Fractions.FractionPermission", b =>
-                {
-                    b.HasOne("AltVStrefaRPServer.Models.Fractions.FractionRankPermissions", "FractionRankPermissions")
-                        .WithMany("Permissions")
-                        .HasForeignKey("FractionRankPermissionsId")
-                        .OnDelete(DeleteBehavior.SetNull);
-                });
-
             modelBuilder.Entity("AltVStrefaRPServer.Models.Fractions.FractionRank", b =>
                 {
                     b.HasOne("AltVStrefaRPServer.Models.Fractions.Fraction", "Fraction")
@@ -484,7 +449,7 @@ namespace AltVStrefaRPServer.Database.Migrations
                 {
                     b.HasOne("AltVStrefaRPServer.Models.Fractions.FractionRank", "FractionRank")
                         .WithOne("Permissions")
-                        .HasForeignKey("AltVStrefaRPServer.Models.Fractions.FractionRankPermissions", "FractionRankId")
+                        .HasForeignKey("AltVStrefaRPServer.Models.Fractions.FractionRankPermissions", "FractionRankFK")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618

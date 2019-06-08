@@ -1,4 +1,5 @@
-﻿using AltVStrefaRPServer.Models;
+﻿using System.Linq;
+using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Businesses;
 using AltVStrefaRPServer.Models.Fractions;
 using Microsoft.EntityFrameworkCore;
@@ -24,9 +25,6 @@ namespace AltVStrefaRPServer.Database
         public DbSet<Fraction> Fractions { get; set; }
         public DbSet<FractionRank> FractionRanks { get; set; }
         public DbSet<FractionRankPermissions> FractionRankPermissions { get; set; }
-        public DbSet<FractionPermission> FractionPermissions { get; set; }
-        public DbSet<OpenFractionInventoryPermission> OpenFractionInventoryPermissions { get; set; }
-        public DbSet<OpenFractionMenuPermission> OpenFractionMenuPermission { get; set; }
 
         public DbSet<PoliceFraction> PoliceFractions { get; set; }
         public DbSet<SamsFraction> SamsFractions { get; set; }
@@ -122,12 +120,7 @@ namespace AltVStrefaRPServer.Database
             modelBuilder.Entity<FractionRank>()
                 .HasOne(fr => fr.Permissions)
                 .WithOne(fp => fp.FractionRank)
-                .HasForeignKey<FractionRankPermissions>(fp => fp.FractionRankId);
-
-            modelBuilder.Entity<FractionRankPermissions>()
-                .HasMany(f => f.Permissions)
-                .WithOne(p => p.FractionRankPermissions)
-                .OnDelete(DeleteBehavior.SetNull);
+                .HasForeignKey<FractionRankPermissions>(fp => fp.FractionRankFK);
         }
     }
 }
