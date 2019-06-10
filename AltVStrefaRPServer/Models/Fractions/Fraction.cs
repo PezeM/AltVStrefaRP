@@ -71,6 +71,21 @@ namespace AltVStrefaRPServer.Models.Fractions
             return _fractionRanks.FirstOrDefault(q => q.Id == employee.FractionRank);
         }
 
+        public FractionRank GetRankById(int rankId)
+        {
+            return _fractionRanks.FirstOrDefault(r => r.Id == rankId);
+        }
+
+        public IEnumerable<Character> GetEmployeesWithRank(FractionRank rank)
+        {
+            return _employees.Where(e => e.FractionRank == rank.Id);
+        }
+
+        public void SetEmployeeRank(Character employee, FractionRank defaultRank)
+        {
+            employee.FractionRank = defaultRank.Id;
+        }
+
         public virtual async Task<bool> RemoveEmployeeAsync(int employeeId, IFractionDatabaseService fractionDatabaseService)
         {
             if (!IsCharacterEmployee(employeeId, out Character employee)) return false;
@@ -101,6 +116,33 @@ namespace AltVStrefaRPServer.Models.Fractions
             return true;
         }
 
+        public async Task<bool> RemoveRankAsync(int rankId, IFractionDatabaseService fractionDatabaseService)
+        {
+            var rank = GetRankById(rankId);
+            if (rank == null) return false;
+            if (!CanRemoveRank(rank)) return false;
+
+            if (_fractionRanks.Remove(rank))
+            {
+                var employeesWithRank = GetEmployeesWithRank(rank);
+                var defaultRank = GetDefaultRank();
+                if (employeesWithRank.Count() > 0)
+                {
+                    foreach (var employee in employeesWithRank)
+                    {
+                        SetEmployeeRank(employee, defaultRank);
+                    }
+                }
+
+                await fractionDatabaseService.UpdateFractionAsync(this);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         protected virtual bool IsCharacterEmployee(int characterId, out Character character)
         {
             character = _employees.FirstOrDefault(q => q.Id == characterId);
@@ -125,6 +167,12 @@ namespace AltVStrefaRPServer.Models.Fractions
             {
                 return false;
             }
+        }
+
+        private bool CanRemoveRank(FractionRank rank)
+        {
+            if (rank.IsHighestRank || rank.IsDefaultRank) return false;
+            else return true;
         }
     }
 }

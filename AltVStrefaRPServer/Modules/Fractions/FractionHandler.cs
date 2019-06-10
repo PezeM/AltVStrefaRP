@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Extensions;
@@ -29,8 +30,9 @@ namespace AltVStrefaRPServer.Modules.Fractions
             AltAsync.On<IPlayer, int>("AcceptFractionInvite", async (player, fractionId) => await AcceptFractionInviteEvent(player, fractionId));
             AltAsync.On<IPlayer, int, int>("RemoveEmployeeFromFraction", async (player, employeeId, fractionId)
                 => await RemoveEmployeeFromFractionEvent(player, employeeId, fractionId));
+            AltAsync.On<IPlayer, int, int>("RemoveFractionRank", async (player, fractionId, rankId) 
+                => await RemoveFractionRankEvent(player, fractionId, rankId));
         }
-
 
         public void OpenFractionMenu (Character character)
         {
@@ -82,6 +84,8 @@ namespace AltVStrefaRPServer.Modules.Fractions
             {
                 await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Wystąpił błąd w dołączaniu do frakcji.");
             }
+
+            AltAsync.Log($"[JOIN FRACTION] ({character.Id}) {character.GetFullName()} joined fraction ID({fraction.Id}) {fraction.Name}");
         }
 
         private async Task RemoveEmployeeFromFractionEvent(IPlayer player, int employeeId, int fractionId)
@@ -103,6 +107,31 @@ namespace AltVStrefaRPServer.Modules.Fractions
             {
                 await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie udało się usunąć pracownika.");
             }
+
+            AltAsync.Log($"[REMOVE EMPLOYEE FROM FRACTION] ({character.Id}) removed employee ID({employeeId}) " +
+                         $"from fraction ID({fraction.Id}) {fraction.Name}");
+        }
+
+        private async Task RemoveFractionRankEvent(IPlayer player, int fractionId, int rankId)
+        {
+            if (!player.TryGetCharacter (out Character character)) return;
+            if (!_fractionManager.TryToGetFraction (fractionId, out Fraction fraction)) return;
+            if(!((fraction.GetEmployeePermissions(character)?.CanManageRanks).Value))
+            {
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie posiadasz odpowiednich uprawnień.");
+                return;
+            }
+
+            if (await fraction.RemoveRankAsync(rankId, _fractionDatabaseService))
+            {
+                await _notificationService.ShowSuccessNotificationAsync(player, "Sukces", $"Pomyślnie usunięto rolę.");
+            }
+            else
+            {
+
+            }
+
+            AltAsync.Log($"[REMOVE FRACTION] ({character.Id}) deleted rank ID({rankId}) from fraction ID({fractionId}) {fraction.Name}");
         }
     }
 }

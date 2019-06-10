@@ -31,7 +31,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
             Alt.On<IPlayer, int>("GetBusinessEmployees", GetBusinessEmployeesEvent);
             AltAsync.On<IPlayer, int, int, int>("UpdateEmployeeRank", async (player, employeeId, newRankId, businessId) 
                 => await UpdateEmployeeRankEvent(player, employeeId, newRankId, businessId));
-            Alt.On<IPlayer, string, string, int>("AddNewEmployeeAsync", AddNewEmployeeEvent);
+            Alt.On<IPlayer, string, string, int>("AddNewEmployee", AddNewEmployeeEvent);
             AltAsync.On<IPlayer, int>("AcceptInviteToBusiness", async (player, businessId) 
                 => await AcceptInviteToBusinessEvent(player, businessId));
             Alt.On<IPlayer, int>("GetBusinessRoles", GetBusinessRolesEvent);
