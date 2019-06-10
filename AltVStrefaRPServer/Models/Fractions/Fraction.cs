@@ -19,11 +19,11 @@ namespace AltVStrefaRPServer.Models.Fractions
         public virtual float Y { get; set; }
         public virtual float Z { get; set; }
 
-        public int EmployeesCount => Employees.Count;
         private List<Character> _employees;
         public IReadOnlyCollection<Character> Employees => _employees;
+        public int EmployeesCount => Employees.Count;
 
-        private List<FractionRank> _fractionRanks { get; set; }
+        private List<FractionRank> _fractionRanks;
         public IReadOnlyCollection<FractionRank> FractionRanks => _fractionRanks;
 
         public virtual byte BlipModel { get; protected set; }
@@ -34,6 +34,20 @@ namespace AltVStrefaRPServer.Models.Fractions
 
         protected Fraction()
         {
+            _employees = new List<Character>();
+            _fractionRanks = new List<FractionRank>();
+        }
+
+        public Fraction(string name, string description, float money, Position position)
+        {
+            Name = name;
+            Description = description;
+            Money = money;
+            X = position.X;
+            Y = position.Y;
+            Z = position.Z;
+
+            _fractionRanks = new List<FractionRank>();
             _employees = new List<Character>();
         }
 

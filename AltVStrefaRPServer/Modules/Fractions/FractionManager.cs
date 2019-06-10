@@ -30,54 +30,61 @@ namespace AltVStrefaRPServer.Modules.Fractions
             foreach (var fraction in _fractionDatabaseService.GetAllFractionsList())
             {
                 _fractions.Add(fraction.Id, fraction);
+                Alt.Log($"Added fraction {fraction.Name} of type {fraction.GetType()}");
             }
             Alt.Log($"Added {_fractions.Count} fractions in {Time.GetTimestampMs() - startTime}ms.");
         }
 
         //public void CreateTestFraction()
         //{
-        //    var fraction = new PoliceFraction
+        //    var fraction = new TownHallFraction()
         //    {
         //        CreationDate = DateTime.Now,
-        //        Description = "Jednosta policji",
-        //        Name = "LSPD",
+        //        Description = "Urząd miasta los santos",
+        //        Name = "Urząd miasta",
         //        Money = 10000f,
-        //        X = 150.14f,
-        //        Y = 180.14f,
-        //        Z = 250.177f,
-        //        FractionRanks = new List<FractionRank>
+        //        X = 250.14f,
+        //        Y = 380.14f,
+        //        Z = 250.177f
+        //    };
+
+        //    fraction._fractionRanks = new List<FractionRank>
+        //    {
+        //        new FractionRank
         //        {
-        //            new FractionRank
+        //            IsDefaultRank = false,
+        //            IsHighestRank = true,
+        //            RankName = "Burmistrz",
+        //            Permissions = new FractionRankPermissions
         //            {
-        //                IsDefaultRank = true,
-        //                IsHighestRank = false,
-        //                RankName = "Oficer I",
-        //                Permissions = new FractionRankPermissions
-        //                {
-        //                    CanManageEmployees = false,
-        //                    CanManageRanks = false,
-        //                    CanOpenFractionMenu = true,
-        //                    HaveVehicleKeys = true,
-        //                    HaveFractionKeys = false,
-        //                }
-        //            },
-        //            new FractionRank
+        //                CanManageEmployees = true,
+        //                CanManageRanks = true,
+        //                HaveFractionKeys = true,
+        //                HaveVehicleKeys = true,
+        //                CanOpenFractionMenu = true
+        //            }
+        //        },
+        //        new FractionRank
+        //        {
+        //            IsDefaultRank = true,
+        //            IsHighestRank = false,
+        //            RankName = "Pracownik",
+        //            Permissions = new FractionRankPermissions
         //            {
-        //                IsDefaultRank = false,
-        //                IsHighestRank = true,
-        //                RankName = "Chief of Police",
-        //                Permissions = new FractionRankPermissions
-        //                {
-        //                    CanManageEmployees = true,
-        //                    CanManageRanks = true,
-        //                    CanOpenFractionMenu = true,
-        //                    HaveVehicleKeys = true,
-        //                    HaveFractionKeys = true,
-        //                }
-        //            },
+        //                CanOpenFractionMenu = true,
+        //                CanManageEmployees = false,
+        //                CanManageRanks = false,
+        //                HaveVehicleKeys = true,
+        //                HaveFractionKeys =  true
+        //            }
         //        }
         //    };
 
+
+        //    fraction.SetVehicleTax(0.30f);
+        //    fraction.SetPropertyTax(0.25f);
+        //    fraction.SetGunTaxk(0.25f);
+        //    fraction.SetGlobalTax(0.10f);
         //    _fractionDatabaseService.AddNewFraction(fraction);
         //    Alt.Log($"Added new fraction Name: {fraction.Name} with ID: {fraction.Id}");
         //}

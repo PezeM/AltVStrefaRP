@@ -17,6 +17,7 @@
     {
         public ConfigPosition SpawnPosition { get; set; }
         public ConfigPosition LoginPosition { get; set; }
+        public EconomySettings EconomySettings { get; set; }
         public float StartingMoney { get; set; } = 250.0f;
         public int ChangeWeatherInterval { get; set; } = 30;
         public int OneMinuteIrlToGameTime { get; set; } = 20;
@@ -32,5 +33,19 @@
         {
             return $"X: {X} Y: {Y} Z: {Z}";
         }
+    }
+
+    public class EconomySettings
+    {
+        public TaxSettings VehicleTaxSettings { get; set; }
+        public TaxSettings PropertyTax { get; set; }
+        public TaxSettings GunTax { get; set; }
+        public TaxSettings GlobalTax { get; set; }
+    }
+
+    public class TaxSettings
+    {
+        public float Max { get; set; }
+        public float Min { get; set; }
     }
 }

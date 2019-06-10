@@ -112,6 +112,10 @@ namespace AltVStrefaRPServer.Database
                 .Metadata.FindNavigation(nameof(Fraction.Employees));
             navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
 
+            var fractionRankNavigation = modelBuilder.Entity<Fraction>()
+                .Metadata.FindNavigation(nameof(Fraction.FractionRanks));
+            fractionRankNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+
             modelBuilder.Entity<Fraction>()
                 .HasMany(f => f.FractionRanks)
                 .WithOne(fr => fr.Fraction)
