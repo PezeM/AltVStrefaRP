@@ -97,6 +97,7 @@ namespace AltVStrefaRPServer
             services.AddTransient<SittingHandler>();
             services.AddTransient<TrashBinsHandler>();
             services.AddTransient<VehicleShopsHandler>();
+            services.AddTransient<TownHallFractionHandler>();
 
             services.AddSingleton<SerializatorTest>();
 
