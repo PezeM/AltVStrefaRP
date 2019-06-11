@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.Design;
 using System.Threading.Tasks;
 using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
@@ -44,7 +45,23 @@ namespace AltVStrefaRPServer.Modules.Fractions
                 return;
             }
 
-            character.Player.Emit ("openFractionMenu", JsonConvert.SerializeObject (fraction));
+            int fractionType = 0;
+            object fractionDto = null;
+            if (fraction is PoliceFraction)
+            {
+                fractionType = 1;
+            }
+            else if (fraction is SamsFraction)
+            {
+                fractionType = 2;
+            }
+            else if (fraction is TownHallFraction)
+            {
+                fractionType = 3;
+            }
+
+            fractionDto = fraction;
+            character.Player.Emit ("openFractionMenu", fractionType, JsonConvert.SerializeObject (fractionDto));
         }
 
         public async Task InviteEmployeeToFractionEvent (IPlayer player, int fractionId, string firstName, string lastName)
