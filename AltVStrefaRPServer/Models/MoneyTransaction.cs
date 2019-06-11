@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AltVStrefaRPServer.Models.Enums;
+using System;
 
 namespace AltVStrefaRPServer.Models
 {

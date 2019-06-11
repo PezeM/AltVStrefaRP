@@ -30,8 +30,10 @@ namespace AltVStrefaRPServer.Modules.Fractions
             AltAsync.On<IPlayer, int>("AcceptFractionInvite", async (player, fractionId) => await AcceptFractionInviteEvent(player, fractionId));
             AltAsync.On<IPlayer, int, int>("RemoveEmployeeFromFraction", async (player, employeeId, fractionId)
                 => await RemoveEmployeeFromFractionEvent(player, employeeId, fractionId));
-            AltAsync.On<IPlayer, int, int>("RemoveFractionRank", async (player, fractionId, rankId) 
-                => await RemoveFractionRankEvent(player, fractionId, rankId));
+            AltAsync.On<IPlayer, int, int>("DeleteFractionRank", async (player, fractionId, rankId) 
+                => await DeleteFractionRankEvent(player, fractionId, rankId));
+            AltAsync.On<IPlayer, int, int, int>("UpdateFractionEmployeeRank", async (player, fractionId, employeeId, newRankId)
+                => await UpdateFractionEmployeeRankEvent(player, fractionId, employeeId, newRankId));
         }
 
         public void OpenFractionMenu (Character character)
@@ -67,7 +69,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
 
             // Send inv to newEmployee
             await _notificationService.ShowSuccessNotificationAsync (player, "Wysłano zaprosznie",
-                $"Pomyślnie wysłano zaproszenie do biznesu do {newEmployee.GetFullName()}", 6000);
+                $"Pomyślnie wysłano zaproszenie do frakcji do {newEmployee.GetFullName()}", 6000);
             newEmployee.Player.EmitLocked ("showFractionInvite", fraction.Name, fractionId);
         }
 
@@ -112,7 +114,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
                          $"from fraction ID({fraction.Id}) {fraction.Name}");
         }
 
-        private async Task RemoveFractionRankEvent(IPlayer player, int fractionId, int rankId)
+        private async Task DeleteFractionRankEvent(IPlayer player, int fractionId, int rankId)
         {
             if (!player.TryGetCharacter (out Character character)) return;
             if (!_fractionManager.TryToGetFraction (fractionId, out Fraction fraction)) return;
@@ -124,14 +126,35 @@ namespace AltVStrefaRPServer.Modules.Fractions
 
             if (await fraction.RemoveRankAsync(rankId, _fractionDatabaseService))
             {
-                await _notificationService.ShowSuccessNotificationAsync(player, "Sukces", $"Pomyślnie usunięto rolę.");
+                await _notificationService.ShowSuccessNotificationAsync(player, "Sukces", "Pomyślnie usunięto rolę.");
             }
             else
             {
-
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie udało się usunąć roli.");
             }
 
             AltAsync.Log($"[REMOVE FRACTION] ({character.Id}) deleted rank ID({rankId}) from fraction ID({fractionId}) {fraction.Name}");
+        }
+
+        private async Task UpdateFractionEmployeeRankEvent(IPlayer player, int fractionId, int employeeId, int newRankId)
+        {
+            if (!player.TryGetCharacter (out Character character)) return;
+            if (!_fractionManager.TryToGetFraction (fractionId, out Fraction fraction)) return;
+            if (!((fraction.GetEmployeePermissions(character)?.CanManageEmployees).Value))
+            {
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie posiadasz odpowiednich uprawnień.");
+            }
+
+            if (await fraction.UpdateEmployeeRank(employeeId, newRankId, _fractionDatabaseService))
+            {
+                await _notificationService.ShowSuccessNotificationAsync(player, "Sukces", "Pomyślnie zmieniono rolę.");
+            }
+            else
+            {
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie udało się zmienić roli.");
+            }
+
+            AltAsync.Log($"[UPDATE EMPLOYEE RANK] ({character.Id}) changed employee rank to ID({newRankId}) in fraction ID({fractionId}) {fraction.Name}");
         }
     }
 }

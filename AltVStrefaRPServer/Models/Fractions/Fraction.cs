@@ -143,6 +143,21 @@ namespace AltVStrefaRPServer.Models.Fractions
             }
         }
 
+        public async Task<bool> UpdateEmployeeRank(int employeeId, int newRankId, IFractionDatabaseService fractionDatabaseService)
+        {
+            if (!IsCharacterEmployee(employeeId, out Character employee)) return false;
+            if (!CanChangeEmployeeRank(employee)) return false;
+
+            var newRank = GetRankById(newRankId);
+            if (newRank == null) return false;
+
+            SetEmployeeRank(employee, newRank);
+
+            await fractionDatabaseService.UpdateFractionAsync(this);
+
+            return true;
+        }
+
         protected virtual bool IsCharacterEmployee(int characterId, out Character character)
         {
             character = _employees.FirstOrDefault(q => q.Id == characterId);
@@ -167,6 +182,14 @@ namespace AltVStrefaRPServer.Models.Fractions
             {
                 return false;
             }
+        }
+
+        private bool CanChangeEmployeeRank(Character employee)
+        {
+            var employeeRank = GetEmployeeRank(employee);
+            if (employeeRank == null) return false;
+            else if (employeeRank.IsHighestRank) return false;
+            else return true;
         }
 
         private bool CanRemoveRank(FractionRank rank)

@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models;
+using AltVStrefaRPServer.Models.Enums;
 
 namespace AltVStrefaRPServer.Services.Money
 {

@@ -1,4 +1,4 @@
-﻿namespace AltVStrefaRPServer.Models
+﻿namespace AltVStrefaRPServer.Models.Enums
 {
     public enum TransactionType
     {
