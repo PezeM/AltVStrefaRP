@@ -181,6 +181,22 @@ namespace AltVStrefaRPServer.Models.Fractions
             await fractionDatabaseService.UpdateFractionAsync(this);
             return true;
         }
+        
+        public async Task<bool> UpdateRank(int rankId, NewFractionRankDto updatedPermissions, IFractionDatabaseService fractionDatabaseService)
+        {
+            var rank = GetRankById(rankId);
+            if (rank == null) return false;
+
+            rank.RankName = updatedPermissions.RankName;
+            rank.Permissions.CanManageEmployees = updatedPermissions.Permissions.CanManageEmployees;
+            rank.Permissions.CanManageRanks = updatedPermissions.Permissions.CanManageRanks;
+            rank.Permissions.CanOpenFractionMenu = updatedPermissions.Permissions.CanOpenFractionMenu;
+            rank.Permissions.HaveFractionKeys = updatedPermissions.Permissions.HaveFractionKeys;
+            rank.Permissions.HaveVehicleKeys = updatedPermissions.Permissions.HaveVehicleKeys;
+
+            await fractionDatabaseService.UpdateFractionAsync(this);
+            return true;
+        }
 
         protected virtual bool IsCharacterEmployee(int characterId, out Character character)
         {
