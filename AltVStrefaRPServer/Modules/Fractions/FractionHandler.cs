@@ -1,10 +1,12 @@
 ﻿using System;
 using System.ComponentModel.Design;
 using System.Threading.Tasks;
+using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Models;
+using AltVStrefaRPServer.Models.Dto;
 using AltVStrefaRPServer.Models.Fractions;
 using AltVStrefaRPServer.Modules.CharacterModule;
 using AltVStrefaRPServer.Services;
@@ -35,6 +37,8 @@ namespace AltVStrefaRPServer.Modules.Fractions
                 => await DeleteFractionRankEvent(player, fractionId, rankId));
             AltAsync.On<IPlayer, int, int, int>("UpdateFractionEmployeeRank", async (player, fractionId, employeeId, newRankId)
                 => await UpdateFractionEmployeeRankEvent(player, fractionId, employeeId, newRankId));
+            AltAsync.On<IPlayer, int, string>("AddNewFractionRank", async (player, fractionId, newRank) 
+                => await AddNewFractionRankEvent(player, fractionId, newRank));
         }
 
         public void OpenFractionMenu (Character character)
@@ -172,6 +176,40 @@ namespace AltVStrefaRPServer.Modules.Fractions
             }
 
             AltAsync.Log($"[UPDATE EMPLOYEE RANK] ({character.Id}) changed employee rank to ID({newRankId}) in fraction ID({fractionId}) {fraction.Name}");
+        }
+
+        private async Task AddNewFractionRankEvent(IPlayer player, int fractionId, string newRankString)
+        {
+            if (!player.TryGetCharacter (out Character character)) return;
+            if (!_fractionManager.TryToGetFraction (fractionId, out Fraction fraction)) return;
+            if (!((fraction.GetEmployeePermissions(character)?.CanManageRanks).Value))
+            {
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie posiadasz odpowiednich uprawnień.");
+            }
+
+            NewFractionRankDto newRank;
+            try
+            {
+                newRank = JsonConvert.DeserializeObject<NewFractionRankDto>(newRankString);
+            }
+            catch (Exception e)
+            {
+                AltAsync.Log($"Error in deserializing new fraction permissions: {e}");
+                return;
+            }
+
+            if(newRank == null) return;
+
+            if (await fraction.AddNewRank(newRank, _fractionDatabaseService))
+            {
+                await _notificationService.ShowSuccessNotificationAsync(player, "Sukces", $"Pomyślnie dodano nową rolę o nazwie {newRank.RankName}.");
+            }
+            else
+            {
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie udało się dodać nowej roli.");
+            }
+
+            AltAsync.Log($"[ADD NEW FRACTION RANK] ({character.Id}) added new role ({newRank.RankName}) to fraction ID({fraction.Id}) {fraction.Name}");
         }
     }
 }

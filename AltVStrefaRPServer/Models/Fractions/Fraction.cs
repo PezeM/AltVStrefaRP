@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
+using AltVStrefaRPServer.Models.Dto;
 using AltVStrefaRPServer.Services.Fractions;
 
 namespace AltVStrefaRPServer.Models.Fractions
@@ -158,6 +159,29 @@ namespace AltVStrefaRPServer.Models.Fractions
             return true;
         }
 
+        public async Task<bool> AddNewRank(NewFractionRankDto newRank, IFractionDatabaseService fractionDatabaseService)
+        {
+            if (!CanAddRank(newRank)) return false;
+
+            _fractionRanks.Add(new FractionRank
+            {
+                RankName = newRank.RankName,
+                IsDefaultRank = false,
+                IsHighestRank = false,
+                Permissions = new FractionRankPermissions
+                {
+                    CanManageEmployees = newRank.Permissions.CanManageEmployees,
+                    CanManageRanks = newRank.Permissions.CanManageRanks,
+                    HaveFractionKeys = newRank.Permissions.HaveFractionKeys,
+                    CanOpenFractionMenu = newRank.Permissions.CanOpenFractionMenu,
+                    HaveVehicleKeys = newRank.Permissions.HaveVehicleKeys,
+                }
+            });
+
+            await fractionDatabaseService.UpdateFractionAsync(this);
+            return true;
+        }
+
         protected virtual bool IsCharacterEmployee(int characterId, out Character character)
         {
             character = _employees.FirstOrDefault(q => q.Id == characterId);
@@ -196,6 +220,11 @@ namespace AltVStrefaRPServer.Models.Fractions
         {
             if (rank.IsHighestRank || rank.IsDefaultRank) return false;
             else return true;
+        }
+
+        private bool CanAddRank(NewFractionRankDto newRank)
+        {
+            return !_fractionRanks.Any(r => r.RankName == newRank.RankName);
         }
     }
 }
