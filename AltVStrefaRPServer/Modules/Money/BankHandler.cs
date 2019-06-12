@@ -8,6 +8,7 @@ using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Client;
+using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Modules.CharacterModule;
 using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Money;
@@ -104,7 +105,7 @@ namespace AltVStrefaRPServer.Modules.Money
             if (!player.TryGetCharacter(out Character character)) return;
             if (character.BankAccount == null) return;
 
-            if (await _moneyService.WithdrawMoneyFromBankAccountAsync(character, character.BankAccount, money).ConfigureAwait(false))
+            if(await _moneyService.TransferMoneyFromEntityToEntity(character.BankAccount, character, money, TransactionType.BankWithdraw))
             {
                 AltAsync.Log($"{character.Id} withdraw {money}$ from his bank account.");
                 await player.EmitAsync("updateBankMoneyWithNotification",
@@ -115,7 +116,6 @@ namespace AltVStrefaRPServer.Modules.Money
             {
                 await _notificationService.ShowErrorNotificationAsync(player, "Błąd!", "Nie udało się wypłacić pieniędzy z konta.").ConfigureAwait(false);
             }
-
         }
 
         private async Task DepositMoneyToBankAsync(IPlayer player, int money)
@@ -123,7 +123,7 @@ namespace AltVStrefaRPServer.Modules.Money
             if (!player.TryGetCharacter(out Character character)) return;
             if (character.BankAccount == null) return;
 
-            if (await _moneyService.DepositMoneyToBankAccountAsync(character, character.BankAccount, money).ConfigureAwait(false))
+            if (await _moneyService.TransferMoneyFromEntityToEntity(character, character.BankAccount, money, TransactionType.BankDeposit))
             {
                 AltAsync.Log($"{character.Id} deposited {money}$ to his bank account.");
                 await player.EmitAsync("updateBankMoneyWithNotification",
@@ -146,8 +146,7 @@ namespace AltVStrefaRPServer.Modules.Money
                 return;
             }
 
-
-            if (await _moneyService.TransferMoneyFromBankAccountToBankAccountAsync(character.BankAccount, receiverBankAccount, money))
+            if (await _moneyService.TransferMoneyFromEntityToEntity(character.BankAccount, receiverBankAccount, money, TransactionType.BankTransfer))
             {
                 var receiverCharacter = CharacterManager.Instance.GetCharacterByBankAccount(receiverBankAccount.Id);
 
