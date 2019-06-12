@@ -6,6 +6,9 @@ namespace AltVStrefaRPServer.Services.Money
 {
     public interface IMoneyService
     {
+        void GiveMoney(IMoney receiver, float amount);
+        bool RemoveMoney(IMoney receiver, float amount);
+
         bool GiveMoney(Character receiver, float amount);
         bool RemoveMoney(Character receiver, float amount);
         Task<bool> RemoveMoneyFromBankAccountAsync(Character receiver, float amount, string source,

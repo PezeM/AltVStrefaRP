@@ -14,6 +14,24 @@ namespace AltVStrefaRPServer.Services.Money
             _serverContext = serverContext;
         }
 
+        public void GiveMoney(IMoney receiver, float amount)
+        {
+            receiver.Money += amount;
+            if(receiver.UpdateOnMoneyChange)
+                receiver.OnMoneyChange();
+        }
+
+        public bool RemoveMoney(IMoney receiver, float amount)
+        {
+            if (receiver.Money < amount) return false;
+            receiver.Money += amount;
+
+            if(receiver.UpdateOnMoneyChange)
+                receiver.OnMoneyChange();
+
+            return true;
+        }
+
         /// <summary>
         /// Gives source a certain amount of money
         /// </summary>

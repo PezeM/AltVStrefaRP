@@ -17,16 +17,15 @@ namespace AltVStrefaRPServer.Modules.Fractions
             _fractionManager = fractionManager;
             _notificationService = notificationService;
 
-            Alt.On<IPlayer, int, int, float>("TryToUpdateTax", TryToUpdateTax);    
+            Alt.On<IPlayer, int, float>("TryToUpdateTax", TryToUpdateTax);    
         }
 
-        private void TryToUpdateTax(IPlayer player, int fractionId, int taxId, float newTax)
+        private void TryToUpdateTax(IPlayer player, int taxId, float newTax)
         {
             if (!player.TryGetCharacter(out Character character)) return;
-            if (!_fractionManager.TryToGetFraction(fractionId, out Fraction fraction)) return;
-            if (!(fraction is TownHallFraction townHallFraction)) return;
+            if(!_fractionManager.TryToGetTownHallFraction(out TownHallFraction townHallFraction)) return;
 
-            if (!((fraction.GetEmployeeRank(character)?.IsHighestRank).Value))
+            if (!((townHallFraction.GetEmployeeRank(character)?.IsHighestRank).Value))
             {
                 _notificationService.ShowErrorNotfication(player, "Brak uprawnień",
                     "Nie posiadasz odpowiednich uprawnień do wykonania tej akcji.", 6500);

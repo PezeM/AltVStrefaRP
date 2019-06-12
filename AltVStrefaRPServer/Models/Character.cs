@@ -1,6 +1,7 @@
 ﻿using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using AltVStrefaRPServer.Models.Businesses;
 using AltVStrefaRPServer.Models.Fractions;
 
@@ -24,6 +25,7 @@ namespace AltVStrefaRPServer.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public int Age { get; set; }
+
         /// <summary>
         /// 0 is male, 1 is female
         /// </summary>
@@ -44,6 +46,9 @@ namespace AltVStrefaRPServer.Models
         public Fraction Fraction { get; set; }
         public int FractionRank { get; set; }
 
+        [NotMapped]
+        public bool UpdateOnMoneyChange { get; } = true;
+
         public string GetFullName()
         {
             return string.Join(' ', FirstName, LastName);
@@ -59,6 +64,13 @@ namespace AltVStrefaRPServer.Models
         public Position GetPosition()
         {
             return new Position(X, Y, Z);
+        }
+
+        public string MoneyTransactionDisplayName() => GetFullName();
+
+        public void OnMoneyChange()
+        {
+            Player?.SetSyncedMetaData("money", Money);
         }
     }
 }
