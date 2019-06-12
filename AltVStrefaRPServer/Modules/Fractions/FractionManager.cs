@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using AltV.Net;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
@@ -12,6 +11,9 @@ namespace AltVStrefaRPServer.Modules.Fractions
     {
         private Dictionary<int, Fraction> _fractions;
         private IFractionDatabaseService _fractionDatabaseService;
+        private TownHallFraction _townHallFraction;
+        private PoliceFraction _policeFraction;
+        private SamsFraction _samsFraction;
 
         public FractionManager(IFractionDatabaseService fractionDatabaseService)
         {
@@ -30,7 +32,18 @@ namespace AltVStrefaRPServer.Modules.Fractions
             foreach (var fraction in _fractionDatabaseService.GetAllFractionsList())
             {
                 _fractions.Add(fraction.Id, fraction);
-                Alt.Log($"Added fraction {fraction.Name} of type {fraction.GetType()}");
+                if (fraction.GetType() == typeof(TownHallFraction))
+                {
+                    _townHallFraction = (TownHallFraction)fraction;
+                } 
+                else if (fraction.GetType() == typeof(PoliceFraction))
+                {
+                    _policeFraction = (PoliceFraction)fraction;
+                }
+                else if (fraction.GetType() == typeof(SamsFraction))
+                {
+                    _samsFraction = (SamsFraction)fraction;
+                }
             }
             Alt.Log($"Added {_fractions.Count} fractions in {Time.GetTimestampMs() - startTime}ms.");
         }
@@ -94,5 +107,35 @@ namespace AltVStrefaRPServer.Modules.Fractions
 
         public bool TryToGetFraction(Character character, out Fraction fraction) 
             => _fractions.TryGetValue(character.CurrentFractionId.GetValueOrDefault(), out fraction);
+
+        public Fraction GetFraction<T>() where T : Fraction
+        {
+            if (_townHallFraction.GetType() == typeof(T)) 
+                return _townHallFraction;
+            else if (_policeFraction.GetType() == typeof(T)) 
+                return _policeFraction;
+            else if (_samsFraction.GetType() == typeof(T)) 
+                return _samsFraction;
+            else 
+                return null;
+        }
+
+        public bool TryToGetTownHallFraction(out TownHallFraction townHallFraction)
+        {
+            townHallFraction = _townHallFraction;
+            return townHallFraction != null;
+        }
+
+        public bool TryToGetPoliceFraction(out PoliceFraction policeFraction)
+        {
+            policeFraction = _policeFraction;
+            return policeFraction != null;
+        }
+
+        public bool TryToGetSamsFraction(out SamsFraction samsFraction)
+        {
+            samsFraction = _samsFraction;
+            return samsFraction != null;
+        }
     }
 }
