@@ -14,11 +14,22 @@ namespace AltVStrefaRPServer.Services.Money
             _serverContext = serverContext;
         }
 
+        /// <summary>
+        /// Gives money to <see cref="IMoney"/>
+        /// </summary>
+        /// <param name="receiver"></param>
+        /// <param name="amount"></param>
         public void GiveMoney(IMoney receiver, float amount)
         {
             receiver.Money += amount;
         }
 
+        /// <summary>
+        /// Removes money from <see cref="IMoney"/>
+        /// </summary>
+        /// <param name="receiver"></param>
+        /// <param name="amount"></param>
+        /// <returns></returns>
         public bool RemoveMoney(IMoney receiver, float amount)
         {
             if (receiver.Money < amount) return false;
@@ -26,6 +37,14 @@ namespace AltVStrefaRPServer.Services.Money
             return true;
         }
 
+        /// <summary>
+        /// Transfers money from <see cref="IMoney"/> to <see cref="IMoney"/>
+        /// </summary>
+        /// <param name="source">Source of the money</param>
+        /// <param name="receiver">Receiver of the money</param>
+        /// <param name="amount">Amount of money to transfer</param>
+        /// <param name="transactionType">Type of transaction</param>
+        /// <returns></returns>
         public async Task<bool> TransferMoneyFromEntityToEntity(IMoney source, IMoney receiver, float amount, TransactionType transactionType)
         {
             if (source.Money < amount) return false;
