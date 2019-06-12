@@ -31,7 +31,7 @@ namespace AltVStrefaRPServer.Modules.Environment
         {
             if (_seatsTaken.ContainsKey(seatId))
             {
-                _notificationService.ShowErrorNotfication(player, "Zajęte", "To miejsce jest już zajęte.", 4000);
+                _notificationService.ShowErrorNotification(player, "Zajęte", "To miejsce jest już zajęte.", 4000);
                 Alt.Log($"Someone sits at object {seatId}");
                 return;
             }

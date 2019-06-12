@@ -91,7 +91,7 @@ namespace AltVStrefaRPServer.Modules.Money
 
             if (character.BankAccount == null)
             {
-                _notificationService.ShowErrorNotfication(player, "Brak konta", "Nie posiadsz konta w banku.", 4000);
+                _notificationService.ShowErrorNotification(player, "Brak konta", "Nie posiadsz konta w banku.", 4000);
                 return;
             }
 

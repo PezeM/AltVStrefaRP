@@ -9,6 +9,8 @@ namespace AltVStrefaRPServer.Models
 {
     public class Character : IMoney, IPosition
     {
+        private float _money;
+
         public int Id { get; set; }
         public int AccountId { get; set; }
         public Account Account { get; set; }
@@ -30,7 +32,15 @@ namespace AltVStrefaRPServer.Models
         /// 0 is male, 1 is female
         /// </summary>
         public int Gender { get; set; }
-        public float Money { get; set; }
+        public float Money
+        {
+            get { return _money; }
+            set
+            {
+                _money = value;
+                if(UpdateOnMoneyChange) OnMoneyChange();
+            }
+        }
 
         public DateTime CreationDate { get; set; }
         public DateTime LastPlayed { get; set; }
@@ -47,7 +57,7 @@ namespace AltVStrefaRPServer.Models
         public int FractionRank { get; set; }
 
         [NotMapped]
-        public bool UpdateOnMoneyChange { get; } = true;
+        public bool UpdateOnMoneyChange => false;
 
         public string GetFullName()
         {

@@ -61,19 +61,19 @@ namespace AltVStrefaRPServer.Modules.Businesses
 
             if (!GetBusiness(businessId, out Business business))
             {
-                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
+                _notificationService.ShowErrorNotification(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
                 return;
             }
 
             if (!business.GetBusinessRankForEmployee(character, out BusinessRank businessRank))
             {
-                _notificationService.ShowErrorNotfication(character.Player, "Błąd", "Nie masz ustalonych żadnych możliwości w biznesie.", 6000);
+                _notificationService.ShowErrorNotification(character.Player, "Błąd", "Nie masz ustalonych żadnych możliwości w biznesie.", 6000);
                 return;
             }
 
             if (!businessRank.Permissions.CanManageEmployess)
             {
-                _notificationService.ShowErrorNotfication(character.Player, "Błąd", "Nie masz odpowiednich uprawień.");
+                _notificationService.ShowErrorNotification(character.Player, "Błąd", "Nie masz odpowiednich uprawień.");
                 return;
             }
 
@@ -86,19 +86,19 @@ namespace AltVStrefaRPServer.Modules.Businesses
             var startTime = Time.GetTimestampMs();
             if (!_businessManager.TryGetBusiness(character, out Business business))
             {
-                _notificationService.ShowErrorNotfication(character.Player, "Błąd", "Nie jesteś w żadnym biznesie.", 4000);
+                _notificationService.ShowErrorNotification(character.Player, "Błąd", "Nie jesteś w żadnym biznesie.", 4000);
                 return;
             }
 
             if (!business.GetBusinessRankForEmployee(character, out BusinessRank businessRank))
             {
-                _notificationService.ShowErrorNotfication(character.Player, "Błąd", "Nie masz ustalonych żadnych możliwości w biznesie.", 6000);
+                _notificationService.ShowErrorNotification(character.Player, "Błąd", "Nie masz ustalonych żadnych możliwości w biznesie.", 6000);
                 return;
             }
 
             if (!businessRank.Permissions.CanOpenBusinessMenu)
             {
-                _notificationService.ShowErrorNotfication(character.Player, "Błąd", "Nie możesz otwierać menu biznesu.", 4000);
+                _notificationService.ShowErrorNotification(character.Player, "Błąd", "Nie możesz otwierać menu biznesu.", 4000);
                 return;
             }
 
@@ -114,31 +114,31 @@ namespace AltVStrefaRPServer.Modules.Businesses
 
             if (!GetBusiness(businessId, out Business business))
             {
-                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
+                _notificationService.ShowErrorNotification(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
                 return;
             }
 
             if (!business.GetBusinessRankForEmployee(character, out BusinessRank businessRank))
             {
-                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie masz ustalonych żadnych możliwości w biznesie.", 6000);
+                _notificationService.ShowErrorNotification(player, "Błąd", "Nie masz ustalonych żadnych możliwości w biznesie.", 6000);
                 return;
             }
 
             if (!businessRank.Permissions.CanManageEmployess)
             {
-                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie posiadasz odpowiednich uprawień.", 4000);
+                _notificationService.ShowErrorNotification(player, "Błąd", "Nie posiadasz odpowiednich uprawień.", 4000);
                 return;
             }
 
             if (!business.IsCharacterEmployee(employeeId, out Character employee))
             {
-                _notificationService.ShowErrorNotfication(player, "Błąd", "Ten pracownik nie jest zatrudniony u ciebie w firmie.", 7000);
+                _notificationService.ShowErrorNotification(player, "Błąd", "Ten pracownik nie jest zatrudniony u ciebie w firmie.", 7000);
                 return;
             }
 
             if (!business.CheckIfRankExists(newRankId))
             {
-                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie znaleziono podanego stanowiska.", 5000);
+                _notificationService.ShowErrorNotification(player, "Błąd", "Nie znaleziono podanego stanowiska.", 5000);
                 return;
             }
 
@@ -156,32 +156,32 @@ namespace AltVStrefaRPServer.Modules.Businesses
 
             if (!GetBusiness(businessId, out Business business))
             {
-                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
+                _notificationService.ShowErrorNotification(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
                 return;
             }
 
             if (!business.GetBusinessRankForEmployee(character, out BusinessRank businessRank))
             {
-                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie masz ustalonych żadnych możliwości w biznesie.", 6000);
+                _notificationService.ShowErrorNotification(player, "Błąd", "Nie masz ustalonych żadnych możliwości w biznesie.", 6000);
                 return;
             }
 
             if (!businessRank.Permissions.CanInviteNewMembers)
             {
-                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie posiadasz odpowiednich uprawień.", 4000);
+                _notificationService.ShowErrorNotification(player, "Błąd", "Nie posiadasz odpowiednich uprawień.", 4000);
                 return;
             }
 
             var newEmployee = CharacterManager.Instance.GetCharacter(name, lastName);
             if (newEmployee == null)
             {
-                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie znaleziono osoby z takim imieniem i nazwiskiem.", 7000);
+                _notificationService.ShowErrorNotification(player, "Błąd", "Nie znaleziono osoby z takim imieniem i nazwiskiem.", 7000);
                 return;
             }
 
             if (!business.CanAddNewMember(newEmployee))
             {
-                _notificationService.ShowErrorNotfication(player, "Błąd", $"Nie można zatrudnić {newEmployee.GetFullName()}" +
+                _notificationService.ShowErrorNotification(player, "Błąd", $"Nie można zatrudnić {newEmployee.GetFullName()}" +
                                                                   $", ponieważ pracuje juz w jakimś biznesie.", 8000);
                 return;
             }
@@ -207,7 +207,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
 
             if (!GetBusiness(businessId, out Business business))
             {
-                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
+                _notificationService.ShowErrorNotification(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
                 return;
             }
 
@@ -217,7 +217,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
             }
             else
             {
-                _notificationService.ShowErrorNotfication(player, "Błąd", "Wystąpił błąd podczas dołączania do biznesu.", 5000);
+                _notificationService.ShowErrorNotification(player, "Błąd", "Wystąpił błąd podczas dołączania do biznesu.", 5000);
                 return;
             }
 
@@ -232,19 +232,19 @@ namespace AltVStrefaRPServer.Modules.Businesses
 
             if (!GetBusiness(businessId, out Business business))
             {
-                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
+                _notificationService.ShowErrorNotification(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
                 return;
             }
 
             if (!business.GetBusinessRankForEmployee(character, out BusinessRank businessRank))
             {
-                _notificationService.ShowErrorNotfication(character.Player, "Błąd", "Nie masz ustalonych żadnych możliwości w biznesie.", 6000);
+                _notificationService.ShowErrorNotification(character.Player, "Błąd", "Nie masz ustalonych żadnych możliwości w biznesie.", 6000);
                 return;
             }
 
             if (!businessRank.Permissions.CanManageEmployess)
             {
-                _notificationService.ShowErrorNotfication(character.Player, "Błąd", "Nie masz odpowiednich uprawień.");
+                _notificationService.ShowErrorNotification(character.Player, "Błąd", "Nie masz odpowiednich uprawień.");
                 return;
             }
             player.Emit("populateBusinessRanksInfo", JsonConvert.SerializeObject(GetBusinessRanksInfo(business)));
@@ -259,19 +259,19 @@ namespace AltVStrefaRPServer.Modules.Businesses
 
             if (!GetBusiness(businessId, out Business business))
             {
-                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
+                _notificationService.ShowErrorNotification(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
                 return;
             }
             
             if (!business.GetBusinessRankForEmployee(character, out BusinessRank businessRank))
             {
-                _notificationService.ShowErrorNotfication(character.Player, "Błąd", "Nie masz ustalonych żadnych możliwości w biznesie.", 6000);
+                _notificationService.ShowErrorNotification(character.Player, "Błąd", "Nie masz ustalonych żadnych możliwości w biznesie.", 6000);
                 return;
             }
 
             if (!businessRank.Permissions.CanManageRanks)
             {
-                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie posiadasz odpowiednich uprawień.", 4000);
+                _notificationService.ShowErrorNotification(player, "Błąd", "Nie posiadasz odpowiednich uprawień.", 4000);
                 return;
             }
 
@@ -288,7 +288,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
 
             if (!business.GetBusinessRank(newPermissions.RankId, out BusinessRank businessRankToUpdate))
             {
-                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie znaleziono takiego stanowiska w biznesie.", 4000);
+                _notificationService.ShowErrorNotification(player, "Błąd", "Nie znaleziono takiego stanowiska w biznesie.", 4000);
                 return;
             }
 
@@ -306,19 +306,19 @@ namespace AltVStrefaRPServer.Modules.Businesses
 
             if (!GetBusiness(businessId, out Business business))
             {
-                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
+                _notificationService.ShowErrorNotification(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
                 return;
             }
 
             if (!business.GetBusinessRankForEmployee(character, out BusinessRank businessRank))
             {
-                _notificationService.ShowErrorNotfication(character.Player, "Błąd", "Nie masz ustalonych żadnych możliwości w biznesie.", 6000);
+                _notificationService.ShowErrorNotification(character.Player, "Błąd", "Nie masz ustalonych żadnych możliwości w biznesie.", 6000);
                 return;
             }
 
             if (!businessRank.Permissions.CanManageRanks)
             {
-                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie posiadasz odpowiednich uprawień.", 4000);
+                _notificationService.ShowErrorNotification(player, "Błąd", "Nie posiadasz odpowiednich uprawień.", 4000);
                 return;
             }
 
@@ -340,7 +340,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
             }
             else
             {
-                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie udało się dodać nowego stanowiska.", 5000);
+                _notificationService.ShowErrorNotification(player, "Błąd", "Nie udało się dodać nowego stanowiska.", 5000);
                 return;
             }
 
@@ -356,25 +356,25 @@ namespace AltVStrefaRPServer.Modules.Businesses
 
             if (!GetBusiness(businessId, out Business business))
             {
-                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
+                _notificationService.ShowErrorNotification(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
                 return;
             }
 
             if (!business.GetBusinessRankForEmployee(character, out BusinessRank businessRank))
             {
-                _notificationService.ShowErrorNotfication(character.Player, "Błąd", "Nie masz ustalonych żadnych możliwości w biznesie.", 6000);
+                _notificationService.ShowErrorNotification(character.Player, "Błąd", "Nie masz ustalonych żadnych możliwości w biznesie.", 6000);
                 return;
             }
 
             if (!businessRank.Permissions.CanManageEmployess)
             {
-                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie posiadasz odpowiednich uprawień.", 4000);
+                _notificationService.ShowErrorNotification(player, "Błąd", "Nie posiadasz odpowiednich uprawień.", 4000);
                 return;
             }
 
             if (!business.IsCharacterEmployee(employeeId, out Character employee))
             {
-                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie jest pracownikiem w firmie.", 4000);
+                _notificationService.ShowErrorNotification(player, "Błąd", "Nie jest pracownikiem w firmie.", 4000);
                 return;
             }
 
@@ -386,7 +386,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
             }
             else
             {
-                _notificationService.ShowErrorNotfication(player, "Błąd", $"Wystąpił błąd podczas usuwania {employee.GetFullName()} z firmy.", 6500);
+                _notificationService.ShowErrorNotification(player, "Błąd", $"Wystąpił błąd podczas usuwania {employee.GetFullName()} z firmy.", 6500);
             }
         }
 
@@ -398,19 +398,19 @@ namespace AltVStrefaRPServer.Modules.Businesses
 
             if (!GetBusiness(businessId, out Business business))
             {
-                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
+                _notificationService.ShowErrorNotification(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
                 return;
             }
 
             if (!business.GetBusinessRankForEmployee(character, out BusinessRank businessRank))
             {
-                _notificationService.ShowErrorNotfication(character.Player, "Błąd", "Nie masz ustalonych żadnych możliwości w biznesie.", 6000);
+                _notificationService.ShowErrorNotification(character.Player, "Błąd", "Nie masz ustalonych żadnych możliwości w biznesie.", 6000);
                 return;
             }
 
             if (!businessRank.Permissions.CanManageRanks)
             {
-                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie posiadasz odpowiednich uprawień.", 4000);
+                _notificationService.ShowErrorNotification(player, "Błąd", "Nie posiadasz odpowiednich uprawień.", 4000);
                 return;
             }
 
@@ -424,7 +424,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
             }
             else
             {
-                _notificationService.ShowErrorNotfication(player, "Błąd", $"Nie udało się usunąć stanowiska: {businessRank.RankName}.");
+                _notificationService.ShowErrorNotification(player, "Błąd", $"Nie udało się usunąć stanowiska: {businessRank.RankName}.");
             }
         }
 
@@ -436,19 +436,19 @@ namespace AltVStrefaRPServer.Modules.Businesses
 
             if (!GetBusiness(businessId, out Business business))
             {
-                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
+                _notificationService.ShowErrorNotification(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
                 return;
             }
 
             if (!business.GetBusinessRankForEmployee(character, out BusinessRank businessRank))
             {
-                _notificationService.ShowErrorNotfication(character.Player, "Błąd", "Nie masz ustalonych żadnych możliwości w biznesie.", 6000);
+                _notificationService.ShowErrorNotification(character.Player, "Błąd", "Nie masz ustalonych żadnych możliwości w biznesie.", 6000);
                 return;
             }
 
             if (!businessRank.IsOwnerRank)
             {
-                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie posiadasz odpowiednich uprawień.", 4000);
+                _notificationService.ShowErrorNotification(player, "Błąd", "Nie posiadasz odpowiednich uprawień.", 4000);
                 return;
             }
 
@@ -460,7 +460,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
             }
             else
             {
-                _notificationService.ShowErrorNotfication(player, "Błąd", "Nie udało się usunąć biznesu.", 5000);
+                _notificationService.ShowErrorNotification(player, "Błąd", "Nie udało się usunąć biznesu.", 5000);
             }
         }
 

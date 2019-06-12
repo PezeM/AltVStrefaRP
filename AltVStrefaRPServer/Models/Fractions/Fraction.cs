@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 using AltV.Net.Data;
@@ -11,10 +12,22 @@ namespace AltVStrefaRPServer.Models.Fractions
 {
     public class Fraction : IMoney, IPosition
     {
+        private float _money;
+
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public float Money { get; set; }
+
+        public float Money
+        {
+            get { return _money; }
+            set
+            {
+                _money = value;
+                if(UpdateOnMoneyChange) OnMoneyChange();
+            }
+        }
+
         public DateTime CreationDate { get; set; }
         public virtual float X { get; set; }
         public virtual float Y { get; set; }
@@ -32,6 +45,9 @@ namespace AltVStrefaRPServer.Models.Fractions
         public virtual byte BlipColor { get; protected set; }
         public virtual ushort BlipSprite { get; protected set; }
         public virtual IBlip Blip { get; set; }
+
+        [NotMapped] 
+        public bool UpdateOnMoneyChange => false;
 
         protected Fraction()
         {
@@ -56,6 +72,10 @@ namespace AltVStrefaRPServer.Models.Fractions
         {
             return new Position(X,Y,Z);
         }
+
+        public string MoneyTransactionDisplayName() => Name;
+
+        public void OnMoneyChange() {}
 
         public FractionRankPermissions GetEmployeePermissions(Character employee)
         {

@@ -111,25 +111,25 @@ namespace AltVStrefaRPServer.Modules.Admin
             {
                 if (!int.TryParse (args[0].ToString (), out int characterId))
                 {
-                    _notificationService.ShowErrorNotfication (player, "Błąd", $"Podano zły numer postaci.", 5000);
+                    _notificationService.ShowErrorNotification (player, "Błąd", $"Podano zły numer postaci.", 5000);
                     return;
                 }
                 var character = CharacterManager.Instance.GetCharacter (characterId);
                 if (character == null)
                 {
-                    _notificationService.ShowErrorNotfication (player, "Błąd", $"Nie znaleziono postaci z takim id.", 5000);
+                    _notificationService.ShowErrorNotification (player, "Błąd", $"Nie znaleziono postaci z takim id.", 5000);
                     return;
                 }
 
                 if (!int.TryParse (args[1].ToString (), out int businessId))
                 {
-                    _notificationService.ShowErrorNotfication (player, "Błąd", $"Podano złe id biznesu.", 5000);
+                    _notificationService.ShowErrorNotification (player, "Błąd", $"Podano złe id biznesu.", 5000);
                     return;
                 }
                 var business = _businessManager.GetBusiness (businessId);
                 if (business == null)
                 {
-                    _notificationService.ShowErrorNotfication (player, "Błąd", $"Nie znaleziono biznesu z takim id.", 5000);
+                    _notificationService.ShowErrorNotification (player, "Błąd", $"Nie znaleziono biznesu z takim id.", 5000);
                     return;
                 }
 
@@ -141,7 +141,7 @@ namespace AltVStrefaRPServer.Modules.Admin
                 }
                 else
                 {
-                    _notificationService.ShowErrorNotfication (player, "Błąd", "Nie udało się zaktualizować właściciela biznesu.");
+                    _notificationService.ShowErrorNotification (player, "Błąd", "Nie udało się zaktualizować właściciela biznesu.");
                 }
             }
             catch (Exception e)
@@ -175,7 +175,7 @@ namespace AltVStrefaRPServer.Modules.Admin
                 // Second one is business name
                 if (!Enum.TryParse (args[0], out BusinessType businessType))
                 {
-                    _notificationService.ShowErrorNotfication (player, "Błąd", "Podano zły typ biznesu");
+                    _notificationService.ShowErrorNotification (player, "Błąd", "Podano zły typ biznesu");
                     return;
                 }
 
@@ -186,7 +186,7 @@ namespace AltVStrefaRPServer.Modules.Admin
                 }
                 else
                 {
-                    _notificationService.ShowErrorNotfication (player, "Błąd", $"Nie udało się stworzyć biznesu: {businessType} z nazwą {args[1]}.", 6000);
+                    _notificationService.ShowErrorNotification (player, "Błąd", $"Nie udało się stworzyć biznesu: {businessType} z nazwą {args[1]}.", 6000);
                 }
             }
             catch (Exception e)
@@ -203,7 +203,7 @@ namespace AltVStrefaRPServer.Modules.Admin
 
         private async void OpenBankMenu (IPlayer player, string[] arg2)
         {
-            await _bankHandler.TryToOpenBankMenu (player);
+            _bankHandler.TryToOpenBankMenu(player);
         }
 
         private void TeleportToWaypointCommand (IPlayer player, string[] args)
@@ -238,7 +238,7 @@ namespace AltVStrefaRPServer.Modules.Admin
             var playerToBring = Alt.GetAllPlayers ().FirstOrDefault (p => p.Id == playerId);
             if (playerToBring == null)
             {
-                _notificationService.ShowErrorNotfication (player, "Błąd", "Nie znaleziono gracza z podanym ID.", 4000);
+                _notificationService.ShowErrorNotification (player, "Błąd", "Nie znaleziono gracza z podanym ID.", 4000);
                 return;
             }
 
@@ -253,7 +253,7 @@ namespace AltVStrefaRPServer.Modules.Admin
             var playerToTeleportTo = Alt.GetAllPlayers ().FirstOrDefault (p => p.Id == playerId);
             if (playerToTeleportTo == null)
             {
-                _notificationService.ShowErrorNotfication (player, "Błąd", "Nie znaleziono gracza z podanym ID.", 4000);
+                _notificationService.ShowErrorNotification (player, "Błąd", "Nie znaleziono gracza z podanym ID.", 4000);
                 return;
             }
 

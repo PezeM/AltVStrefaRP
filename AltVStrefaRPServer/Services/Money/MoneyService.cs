@@ -202,12 +202,6 @@ namespace AltVStrefaRPServer.Services.Money
             await _serverContext.SaveChangesAsync();
         }
 
-        private async Task SaveBankAccountAsync(BankAccount bankAccount)
-        {
-            _serverContext.Update(bankAccount);
-            await _serverContext.SaveChangesAsync();
-        }
-
         private async Task SaveBankAccountsAsync(BankAccount[] bankAccounts)
         {
             _serverContext.UpdateRange(bankAccounts);
@@ -218,6 +212,24 @@ namespace AltVStrefaRPServer.Services.Money
         {
             _serverContext.UpdateRange(bankAccounts);
             _serverContext.SaveChanges();
+        }
+
+        public async Task<bool> TransferMoneyFromBankAccountToEntity(Character source, IMoney receiver, float amount, TransactionType transactionType)
+        {
+            if (source.BankAccount == null) return false;
+            else if (!source.BankAccount.TransferMoney(receiver, amount)) return false;
+
+            await TransferMoney(source, receiver, amount, transactionType);
+            return true;
+        }
+
+        private async Task TransferMoney(Character source, IMoney receiver, float amount, TransactionType transactionType)
+        {
+            await _serverContext.MoneyTransactions.AddAsync(new MoneyTransaction(source.MoneyTransactionDisplayName(),
+            receiver.MoneyTransactionDisplayName(), transactionType, amount));
+            _serverContext.Characters.Update(source);
+            _serverContext.Update(receiver);
+            await _serverContext.SaveChangesAsync();
         }
     }
 }

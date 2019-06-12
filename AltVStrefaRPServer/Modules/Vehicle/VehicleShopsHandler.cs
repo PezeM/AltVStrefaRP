@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Extensions;
@@ -26,18 +27,16 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             _moneyService = moneyService;
             _vehicleManager = vehicleManager;
 
-            AltAsync.On<IPlayer, int>("OpenVehicleShop", async (player, shopId) => await OpenVehicleShopEvent(player, shopId));
+            Alt.On<IPlayer, int>("OpenVehicleShop", OpenVehicleShopEvent);
             AltAsync.On<IPlayer, int, long>("BuyVehicle", async (player, shopId, vehicleModel) => await BuyVehicleEvent(player, shopId, vehicleModel));
         }
 
-        private async Task OpenVehicleShopEvent(IPlayer player, int shopId)
+        private void OpenVehicleShopEvent(IPlayer player, int shopId)
         {
-            if (!player.TryGetCharacter(out Character character)) return;
-
             var shop = _vehicleShopsManager.GetVehicleShop(shopId);
             if (shop == null)
             {
-                await _notificationService.ShowErrorNotificationAsync(player, "Błąd!", "Nie znaleziono takiego sklepu samochodowego.");
+                _notificationService.ShowErrorNotification(player, "Błąd!", "Nie znaleziono takiego sklepu samochodowego.");
                 return;
             }
 
@@ -55,15 +54,14 @@ namespace AltVStrefaRPServer.Modules.Vehicle
                 return;
             }
 
-            var vehicleToBuy = shop.AvailableVehicles.FirstOrDefault(v => (long)v.VehicleModel == vehicleModel);
+            var vehicleToBuy = shop.FindVehicleByModel(vehicleModel);
             if (vehicleToBuy == null)
             {
                 await _notificationService.ShowErrorNotificationAsync(player, "Błąd!", "Nie znaleziono takiego pojazdu w tym sklepie samochodowym.");
                 return;
             }
 
-            if (!await _moneyService.RemoveMoneyFromBankAccountAsync(character, vehicleToBuy.Price, $"VehicleShop {shop.VehicleShopId}",
-                TransactionType.VehicleBuy))
+            if (!await _moneyService.TransferMoneyFromBankAccountToEntity(character, shop, vehicleToBuy.Price, TransactionType.VehicleBuy))
             {
                 await _notificationService.ShowErrorNotificationAsync(player, 
                     "Błąd!", $"Nie posiadasz {vehicleToBuy.Price}$ aby zakupić ten pojazd.", 6000);

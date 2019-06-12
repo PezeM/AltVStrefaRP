@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
@@ -9,13 +10,25 @@ namespace AltVStrefaRPServer.Models.Businesses
 {
     public class Business : IMoney, IPosition
     {
+        private float _money;
+
         public int Id { get; set; }
         public int OwnerId { get; set; }
         public string BusinessName { get; set; }
         public float X { get; set; }
         public float Y { get; set; }
         public float Z { get; set; }
-        public float Money { get; set; }
+
+        public float Money
+        {
+            get { return _money; }
+            set
+            {
+                _money = value;
+                if(UpdateOnMoneyChange) OnMoneyChange();
+            }
+        }
+
         public virtual int MaxMembersCount { get; set; } = 20;
         public virtual int MaxRanksCount { get; set; } = 5;
         public virtual int Transactions { get; set; }
@@ -30,6 +43,9 @@ namespace AltVStrefaRPServer.Models.Businesses
         public virtual byte BlipColor { get; protected set; }
 
         public virtual IBlip Blip { get; set; }
+
+        [NotMapped]
+        public bool UpdateOnMoneyChange => false;
 
         public Position GetPosition()
         {
@@ -149,6 +165,13 @@ namespace AltVStrefaRPServer.Models.Businesses
         {
             if (!GetBusinessRank(rankId, out BusinessRank rank) || !CanRemoveRank(rank)) return false;
             return BusinessRanks.Remove(rank);
+        }
+
+        public string MoneyTransactionDisplayName() => $"Business {Id}";
+
+        public void OnMoneyChange()
+        {
+            // Later, maybe send notification to leader if he is online about the transaction.
         }
     }
 }

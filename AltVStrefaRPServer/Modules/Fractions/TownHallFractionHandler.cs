@@ -27,7 +27,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
 
             if (!((townHallFraction.GetEmployeeRank(character)?.IsHighestRank).Value))
             {
-                _notificationService.ShowErrorNotfication(player, "Brak uprawnień",
+                _notificationService.ShowErrorNotification(player, "Brak uprawnień",
                     "Nie posiadasz odpowiednich uprawnień do wykonania tej akcji.", 6500);
                 return;
             }
@@ -38,7 +38,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
             }
             else
             {
-                _notificationService.ShowErrorNotfication(player, "Błąd", $"Nie udało się ustawić nowego podatku.");
+                _notificationService.ShowErrorNotification(player, "Błąd", $"Nie udało się ustawić nowego podatku.");
             }
         }
 

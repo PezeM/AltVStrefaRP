@@ -23,5 +23,7 @@ namespace AltVStrefaRPServer.Services.Money
         Task<bool> DepositMoneyToBankAccountAsync(Character source, BankAccount bankAccount, float amount);
         bool TransferMoneyFromBankAccountToBankAccount(BankAccount sender, BankAccount receiver, float amount);
         Task<bool> TransferMoneyFromBankAccountToBankAccountAsync(BankAccount sender, BankAccount receiver, float amount);
+
+        Task<bool> TransferMoneyFromBankAccountToEntity(Character source, IMoney receiver, float amount, TransactionType transactionType);
     }
 }

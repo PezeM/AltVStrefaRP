@@ -63,15 +63,19 @@ namespace AltVStrefaRPServer.Database
                 .HasForeignKey<BankAccount>(b => b.CharacterId);
 
             modelBuilder.Entity<Character>()
+                .Property(p => p.Money)
+                .HasField("_money");
+
+            modelBuilder.Entity<Character>()
                 .HasOne<Business>(c => c.Business)
                 .WithMany(b => b.Employees)
                 .HasForeignKey(c => c.CurrentBusinessId);
                 //.OnDelete(DeleteBehavior.SetNull);
 
-                modelBuilder.Entity<Character>()
-                    .HasOne<Fraction>(c => c.Fraction)
-                    .WithMany(f => f.Employees)
-                    .HasForeignKey(c => c.CurrentFractionId);
+            modelBuilder.Entity<Character>()
+                .HasOne<Fraction>(c => c.Fraction)
+                .WithMany(f => f.Employees)
+                .HasForeignKey(c => c.CurrentFractionId);
                 //.OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<VehicleModel>()
@@ -82,11 +86,19 @@ namespace AltVStrefaRPServer.Database
                 .Property(m => m.Type)
                 .HasConversion<int>();
 
+            modelBuilder.Entity<BankAccount>()
+                .Property(p => p.Money)
+                .HasField("_money");
+
             // Businesses
             modelBuilder.Entity<Business>()
                 .Ignore(b => b.Blip)
                 .Property(b => b.Type)
                 .HasConversion<int>();
+
+            modelBuilder.Entity<Business>()
+                .Property(p => p.Money)
+                .HasField("_money");
 
             modelBuilder.Entity<Business>()
                 .HasMany(b => b.BusinessRanks)
@@ -101,6 +113,10 @@ namespace AltVStrefaRPServer.Database
             // Fractions
             modelBuilder.Entity<Fraction>()
                 .Ignore(f => f.Blip);
+
+            modelBuilder.Entity<Fraction>()
+                .Property(p => p.Money)
+                .HasField("_money");
 
             modelBuilder.Entity<Fraction>()
                 .HasMany<Character>(f => f.Employees)

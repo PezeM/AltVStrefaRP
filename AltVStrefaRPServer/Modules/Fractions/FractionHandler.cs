@@ -45,7 +45,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
         {
             if (!_fractionManager.TryToGetFraction (character, out Fraction fraction))
             {
-                _notificationService.ShowErrorNotfication (character.Player, "Brak frakcji", "Nie jesteś zatrudniony w żadnej frakcji.");
+                _notificationService.ShowErrorNotification (character.Player, "Brak frakcji", "Nie jesteś zatrudniony w żadnej frakcji.");
                 return;
             }
 

@@ -109,7 +109,7 @@ namespace AltVStrefaRPServer.Handlers
             }
             else
             {
-                _notificationService.ShowErrorNotfication(player, "Brak kluczyków", "Nie posiadasz kluczyków do tego pojazdu.", 5500);
+                _notificationService.ShowErrorNotification(player, "Brak kluczyków", "Nie posiadasz kluczyków do tego pojazdu.", 5500);
             }
         }
 
@@ -122,7 +122,7 @@ namespace AltVStrefaRPServer.Handlers
 
             if (!_vehicleManager.HasVehiclePermission(character, vehicleModel))
             {
-                _notificationService.ShowErrorNotfication(player, "Brak kluczyków", "Nie posiadasz kluczyków do tego pojazdu.");
+                _notificationService.ShowErrorNotification(player, "Brak kluczyków", "Nie posiadasz kluczyków do tego pojazdu.");
                 return;
             }
 
@@ -142,7 +142,7 @@ namespace AltVStrefaRPServer.Handlers
 
             if(!_vehicleManager.HasVehiclePermission(character, vehicle))
             {
-                _notificationService.ShowErrorNotfication(player, "Brak kluczyków", "Nie posiadasz kluczyków do tego pojazdu.");
+                _notificationService.ShowErrorNotification(player, "Brak kluczyków", "Nie posiadasz kluczyków do tego pojazdu.");
             }
 
             await _vehicleSpawnService.DespawnVehicleAsync(vehicle);
