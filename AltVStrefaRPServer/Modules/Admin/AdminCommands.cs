@@ -73,6 +73,7 @@ namespace AltVStrefaRPServer.Modules.Admin
             _chatHandler.RegisterCommand ("openVehicleShop", OpenVehicleShop);
             _chatHandler.RegisterCommand ("openFractionMenu", OpenFractionMenu);
             _chatHandler.RegisterCommand("getAllVehicles", GetAllVehicles);
+            _chatHandler.RegisterCommand("setAdminLevel", SetAdminLevel);
         }
 
         private void OpenVehicleShop (IPlayer player, string[] arg2)
@@ -238,7 +239,7 @@ namespace AltVStrefaRPServer.Modules.Admin
 
         private void AddMoneyToPlayer(IPlayer player, string[] args)
         {
-            if (args == null || args.Length < 2 || player.TryGetCharacter(out Character character)) return;
+            if (args == null || args.Length < 2 || !player.TryGetCharacter(out Character character)) return;
             if(character.Account.AdminLevel < AdminLevel.SuperModerator) return;
             if (!float.TryParse(args[0].ToString(), out float money)) return;
             if (!int.TryParse(args[1].ToString(), out int playerId)) return;
@@ -317,7 +318,14 @@ namespace AltVStrefaRPServer.Modules.Admin
                 return;
             }
 
-            player.Emit("testVehicleList", JsonConvert.SerializeObject(characterVehicles));
+            // Need to make some dto with vehicle info instead of converting whole object
+            // player.Emit("testVehicleList", JsonConvert.SerializeObject(characterVehicles));
+        }
+
+        private void SetAdminLevel(IPlayer player, string[] args)
+        {
+            if (!player.TryGetCharacter(out Character character)) return;
+            character.Account.AdminLevel = AdminLevel.Admin;
         }
     }
 }

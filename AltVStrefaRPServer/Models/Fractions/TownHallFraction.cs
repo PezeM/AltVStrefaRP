@@ -10,6 +10,8 @@ namespace AltVStrefaRPServer.Models.Fractions
         public float GunTax { get; private set; }
         public float GlobalTax { get; private set; }
 
+        public override string BlipName { get; protected set; } = "Urząd miasta";
+
         private TownHallFraction()
         {
             ServerEconomySettings.UpdateTaxes(VehicleTax, PropertyTax, GunTax, GlobalTax);

@@ -65,6 +65,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             {
                 await _notificationService.ShowErrorNotificationAsync(player, 
                     "Błąd!", $"Nie posiadasz {vehicleToBuy.Price}$ aby zakupić ten pojazd.", 6000);
+                return;
             }
 
             // Player bought the vehicle, create vehicleModel and save it to database.

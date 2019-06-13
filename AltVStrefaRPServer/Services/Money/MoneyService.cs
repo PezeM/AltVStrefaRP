@@ -61,6 +61,7 @@ namespace AltVStrefaRPServer.Services.Money
 
         public async Task<bool> TransferMoneyFromBankAccountToEntity(Character source, IMoney receiver, float amount, TransactionType transactionType)
         {
+            amount = _taxService.CalculatePriceAfterTax(amount, transactionType);
             if (source.BankAccount == null) return false;
             else if (!source.BankAccount.TransferMoney(receiver, amount)) return false;
 
