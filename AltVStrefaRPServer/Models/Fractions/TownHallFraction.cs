@@ -1,4 +1,5 @@
-﻿using AltVStrefaRPServer.Modules.Money;
+﻿using System;
+using AltVStrefaRPServer.Modules.Money;
 
 namespace AltVStrefaRPServer.Models.Fractions
 {
@@ -8,6 +9,11 @@ namespace AltVStrefaRPServer.Models.Fractions
         public float PropertyTax { get; private set; }
         public float GunTax { get; private set; }
         public float GlobalTax { get; private set; }
+
+        private TownHallFraction()
+        {
+            ServerEconomySettings.UpdateTaxes(VehicleTax, PropertyTax, GunTax, GlobalTax);
+        }
 
         public bool SetVehicleTax(float newTax)
         {
@@ -39,6 +45,13 @@ namespace AltVStrefaRPServer.Models.Fractions
 
             GlobalTax = newTax;
             return true;
+        }
+
+        public float PriceAfterTax(float amount, float taxPercentage)
+        {
+            var tax = (float)Math.Round(amount * taxPercentage);
+            Money += tax;
+            return amount + tax;
         }
     }
 }

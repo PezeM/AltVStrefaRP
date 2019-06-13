@@ -10,6 +10,8 @@
         BankTransfer,
         BuyingClothes,
         BuyingFurnitures,
+        BuyingProperties,
+        BuyingGuns,
         Uncategorized = 1000
     }
 }

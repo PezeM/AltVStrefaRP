@@ -15,6 +15,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
 
         public VehicleShopsManager(ServerContext serverContext)
         {
+            VehicleShops = new List<VehicleShop>();
             _serverContext = serverContext;
 
             LoadVehicleShops();

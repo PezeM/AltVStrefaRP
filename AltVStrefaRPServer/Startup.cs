@@ -69,6 +69,7 @@ namespace AltVStrefaRPServer
             services.AddTransient<ICharacterCreatorService, CharacterCreatorService>();
             services.AddTransient<ICharacterDatabaseService, CharacterDatabaseService>();
             services.AddTransient<IMoneyService, MoneyService>();
+            services.AddTransient<ITaxService, TaxService>();
             services.AddTransient<IBusinessService, BusinessService>();
             services.AddTransient<IVehicleSpawnService, VehicleSpawnService>();
             services.AddTransient<IVehicleCreatorService, VehicleCreatorService>();

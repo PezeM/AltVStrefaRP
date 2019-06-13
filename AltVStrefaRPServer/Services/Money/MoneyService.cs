@@ -2,16 +2,19 @@
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Enums;
+using AltVStrefaRPServer.Services.Fractions;
 
 namespace AltVStrefaRPServer.Services.Money
 {
     public class MoneyService : IMoneyService
     {
         private readonly ServerContext _serverContext;
+        private readonly ITaxService _taxService;
 
-        public MoneyService(ServerContext serverContext)
+        public MoneyService(ServerContext serverContext, ITaxService taxService)
         {
             _serverContext = serverContext;
+            _taxService = taxService;
         }
 
         /// <summary>
@@ -47,11 +50,12 @@ namespace AltVStrefaRPServer.Services.Money
         /// <returns></returns>
         public async Task<bool> TransferMoneyFromEntityToEntity(IMoney source, IMoney receiver, float amount, TransactionType transactionType)
         {
+            amount = _taxService.CalculatePriceAfterTax(amount, transactionType);
             if (source.Money < amount) return false;
             source.Money -= amount;
             receiver.Money += amount;
 
-            await TransferMoney(source, receiver, amount, transactionType);
+            await SaveTransfer(source, receiver, amount, transactionType);
             return true;
         }
 
@@ -60,11 +64,11 @@ namespace AltVStrefaRPServer.Services.Money
             if (source.BankAccount == null) return false;
             else if (!source.BankAccount.TransferMoney(receiver, amount)) return false;
 
-            await TransferMoney(source, receiver, amount, transactionType);
+            await SaveTransfer(source, receiver, amount, transactionType);
             return true;
         }
 
-        private async Task TransferMoney(IMoney source, IMoney receiver, float amount, TransactionType transactionType)
+        private async Task SaveTransfer(IMoney source, IMoney receiver, float amount, TransactionType transactionType)
         {
             await AddTransaction(source.MoneyTransactionDisplayName(), receiver.MoneyTransactionDisplayName(), amount, transactionType);
             //await _serverContext.MoneyTransactions.AddAsync(new MoneyTransaction(source.MoneyTransactionDisplayName(),
@@ -73,7 +77,7 @@ namespace AltVStrefaRPServer.Services.Money
             await _serverContext.SaveChangesAsync();
         }
 
-        private async Task TransferMoney(Character source, IMoney receiver, float amount, TransactionType transactionType)
+        private async Task SaveTransfer(Character source, IMoney receiver, float amount, TransactionType transactionType)
         {
             await AddTransaction(source.MoneyTransactionDisplayName(), receiver.MoneyTransactionDisplayName(), amount, transactionType);
             _serverContext.Characters.Update(source);
