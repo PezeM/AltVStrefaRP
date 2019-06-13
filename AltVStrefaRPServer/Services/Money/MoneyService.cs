@@ -50,9 +50,9 @@ namespace AltVStrefaRPServer.Services.Money
         /// <returns></returns>
         public async Task<bool> TransferMoneyFromEntityToEntity(IMoney source, IMoney receiver, float amount, TransactionType transactionType)
         {
-            amount = _taxService.CalculatePriceAfterTax(amount, transactionType);
-            if (source.Money < amount) return false;
-            source.Money -= amount;
+            var afterTax = _taxService.CalculatePriceAfterTax(amount, transactionType);
+            if (source.Money < afterTax) return false;
+            source.Money -= afterTax;
             receiver.Money += amount;
 
             await SaveTransfer(source, receiver, amount, transactionType);
@@ -61,9 +61,9 @@ namespace AltVStrefaRPServer.Services.Money
 
         public async Task<bool> TransferMoneyFromBankAccountToEntity(Character source, IMoney receiver, float amount, TransactionType transactionType)
         {
-            amount = _taxService.CalculatePriceAfterTax(amount, transactionType);
+            var afterTax = _taxService.CalculatePriceAfterTax(amount, transactionType);
             if (source.BankAccount == null) return false;
-            else if (!source.BankAccount.TransferMoney(receiver, amount)) return false;
+            else if (!source.BankAccount.TransferMoney(receiver, amount, afterTax)) return false;
 
             await SaveTransfer(source, receiver, amount, transactionType);
             return true;

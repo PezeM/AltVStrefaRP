@@ -37,6 +37,14 @@ namespace AltVStrefaRPServer.Models
             return true;
         }
 
+        public bool TransferMoney(IMoney receiver, float amount, float amountAfterTax)
+        {
+            if (Money < amountAfterTax) return false;
+            Money -= amountAfterTax;
+            receiver.Money += amount;
+            return true;
+        }
+
         public bool TransferMoney(IMoney receiver, float amount)
         {
             if (Money < amount) return false;
