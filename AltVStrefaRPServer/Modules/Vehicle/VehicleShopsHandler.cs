@@ -68,8 +68,8 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             }
 
             // Player bought the vehicle, create vehicleModel and save it to database.
-            await _vehicleManager.CreateVehicleAsync(vehicleToBuy.VehicleModel.ToString(), shop.PositionOfBoughtVehicles, shop.RotationOfBoughtVehicles, 
-                0, character.Id, OwnerType.Character);
+            await _vehicleManager.CreateVehicleAsync(vehicleToBuy.VehicleModel.ToString(), shop.GetPositionOfBoughtVehicles(), 
+                shop.GetRotationOfBoughtVehicles(), 0, character.Id, OwnerType.Character);
             await _notificationService.ShowSuccessNotificationAsync(player, "Zakupiono pojazd!", 
                 $"Pomyślnie zakupiono pojazd {vehicleToBuy.VehicleModel.ToString()} za {vehicleToBuy.Price}$.");
         }

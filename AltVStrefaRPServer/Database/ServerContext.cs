@@ -2,6 +2,7 @@
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Businesses;
 using AltVStrefaRPServer.Models.Fractions;
+using AltVStrefaRPServer.Modules.Vehicle;
 using Microsoft.EntityFrameworkCore;
 
 namespace AltVStrefaRPServer.Database
@@ -29,6 +30,10 @@ namespace AltVStrefaRPServer.Database
         public DbSet<PoliceFraction> PoliceFractions { get; set; }
         public DbSet<SamsFraction> SamsFractions { get; set; }
         public DbSet<TownHallFraction> TownHallFractions { get; set; }
+
+        // Vehicle shop
+        public DbSet<VehicleShop> VehicleShops { get; set; }
+        public DbSet<VehiclePrice> VehiclePrices { get; set; }
 
         public ServerContext(DbContextOptions options) : base(options)
         {
@@ -141,6 +146,18 @@ namespace AltVStrefaRPServer.Database
                 .HasOne(fr => fr.Permissions)
                 .WithOne(fp => fp.FractionRank)
                 .HasForeignKey<FractionRankPermissions>(fp => fp.FractionRankFK);
+
+            // Vehicle shop
+            modelBuilder.Entity<VehicleShop>()
+                .Ignore(p => p.ShopBlip);
+
+            modelBuilder.Entity<VehicleShop>()
+                .HasMany(v => v.AvailableVehicles)
+                .WithOne();
+
+            modelBuilder.Entity<VehiclePrice>()
+                .Property(p => p.VehicleModel)
+                .HasConversion<uint>();
         }
     }
 }

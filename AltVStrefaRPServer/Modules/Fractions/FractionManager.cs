@@ -17,9 +17,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
 
         public FractionManager(IFractionDatabaseService fractionDatabaseService)
         {
-            // Load all fractions from database
             _fractionDatabaseService = fractionDatabaseService;
-
             _fractions = new Dictionary<int, Fraction>();
 
             //CreateTestFraction();

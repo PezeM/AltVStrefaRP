@@ -201,7 +201,7 @@ namespace AltVStrefaRPServer.Modules.Admin
             await _bankHandler.CreateBankAccountAsync (player);
         }
 
-        private async void OpenBankMenu (IPlayer player, string[] arg2)
+        private void OpenBankMenu (IPlayer player, string[] arg2)
         {
             _bankHandler.TryToOpenBankMenu(player);
         }
