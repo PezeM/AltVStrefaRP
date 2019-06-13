@@ -10,7 +10,7 @@ using AltVStrefaRPServer.Models;
 
 namespace AltVStrefaRPServer.Modules.Vehicle
 {
-    public class VehicleShop : IMoney, IPosition
+    public class VehicleShop : IMoney, IPosition, IHaveBlip
     {
         private float _money;
 

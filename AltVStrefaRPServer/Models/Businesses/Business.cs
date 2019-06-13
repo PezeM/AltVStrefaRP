@@ -8,7 +8,7 @@ using AltVStrefaRPServer.Models.Enums;
 
 namespace AltVStrefaRPServer.Models.Businesses
 {
-    public class Business : IMoney, IPosition
+    public class Business : IMoney, IPosition, IHaveBlip
     {
         private float _money;
 
@@ -38,10 +38,9 @@ namespace AltVStrefaRPServer.Models.Businesses
         public ICollection<Character> Employees { get; set; }
         public ICollection<BusinessRank> BusinessRanks { get; set; }
 
-        public virtual byte BlipModel { get; protected set; }
         public virtual string BlipName { get; protected set; }
-        public virtual byte BlipColor { get; protected set; }
-
+        public virtual int BlipSprite { get; protected set; }
+        public virtual int BlipColor { get; protected set; }
         public virtual IBlip Blip { get; set; }
 
         [NotMapped]

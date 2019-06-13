@@ -10,7 +10,7 @@ using AltVStrefaRPServer.Services.Fractions;
 
 namespace AltVStrefaRPServer.Models.Fractions
 {
-    public class Fraction : IMoney, IPosition
+    public class Fraction : IMoney, IPosition, IHaveBlip
     {
         private float _money;
 
@@ -40,10 +40,9 @@ namespace AltVStrefaRPServer.Models.Fractions
         private List<FractionRank> _fractionRanks;
         public IReadOnlyCollection<FractionRank> FractionRanks => _fractionRanks;
 
-        public virtual byte BlipModel { get; protected set; }
         public virtual string BlipName { get; protected set; }
-        public virtual byte BlipColor { get; protected set; }
-        public virtual ushort BlipSprite { get; protected set; }
+        public virtual int BlipColor { get; protected set; }
+        public virtual int BlipSprite { get; protected set; }
         public virtual IBlip Blip { get; set; }
 
         [NotMapped] 

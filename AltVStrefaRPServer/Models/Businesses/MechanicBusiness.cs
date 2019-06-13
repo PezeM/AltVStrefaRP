@@ -4,8 +4,8 @@ namespace AltVStrefaRPServer.Models.Businesses
 {
     public class MechanicBusiness : Business
     {
-        public override byte BlipModel { get; protected set; } = 78;
+        public override int BlipSprite { get; protected set; } = 78;
         public override string BlipName { get; protected set; } = "Mechanik";
-        public override byte BlipColor { get; protected set; } = 64;
+        public override int BlipColor { get; protected set; } = 64;
     }
 }
