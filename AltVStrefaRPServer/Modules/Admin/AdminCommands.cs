@@ -15,6 +15,7 @@ using AltVStrefaRPServer.Modules.Fractions;
 using AltVStrefaRPServer.Modules.Money;
 using AltVStrefaRPServer.Modules.Vehicle;
 using AltVStrefaRPServer.Services;
+using AltVStrefaRPServer.Services.Money;
 using AltVStrefaRPServer.Services.Vehicles;
 using Newtonsoft.Json;
 
@@ -31,10 +32,12 @@ namespace AltVStrefaRPServer.Modules.Admin
         private VehicleShopsManager _vehicleShopsManager;
         private IVehicleSpawnService _vehicleSpawnService;
         private readonly FractionHandler _fractionHandler;
+        private readonly IMoneyService _moneyService;
 
         public AdminCommands (TemporaryChatHandler chatHandler, VehicleManager vehicleManager, BankHandler bankHandler,
             BusinessManager businessManager, BusinessHandler businessHandler, INotificationService notificationService,
-            VehicleShopsManager vehicleShopsManager, IVehicleSpawnService vehicleSpawnService, FractionHandler fractionHandler)
+            VehicleShopsManager vehicleShopsManager, IVehicleSpawnService vehicleSpawnService, FractionHandler fractionHandler, 
+            IMoneyService moneyService)
         {
             _chatHandler = chatHandler;
             _vehicleManager = vehicleManager;
@@ -45,6 +48,7 @@ namespace AltVStrefaRPServer.Modules.Admin
             _vehicleShopsManager = vehicleShopsManager;
             _vehicleSpawnService = vehicleSpawnService;
             _fractionHandler = fractionHandler;
+            _moneyService = moneyService;
 
             Alt.Log ($"Admin commands initialized");
             AddCommands ();
@@ -65,8 +69,10 @@ namespace AltVStrefaRPServer.Modules.Admin
             _chatHandler.RegisterCommand ("exitCinema", ExitCinema);
             _chatHandler.RegisterCommand ("bring", BringPlayer);
             _chatHandler.RegisterCommand ("tpToPlayer", TeleportToPlayer);
+            _chatHandler.RegisterCommand("addMoney", AddMoneyToPlayer);
             _chatHandler.RegisterCommand ("openVehicleShop", OpenVehicleShop);
             _chatHandler.RegisterCommand ("openFractionMenu", OpenFractionMenu);
+            _chatHandler.RegisterCommand("getAllVehicles", GetAllVehicles);
         }
 
         private void OpenVehicleShop (IPlayer player, string[] arg2)
@@ -230,6 +236,24 @@ namespace AltVStrefaRPServer.Modules.Admin
             }
         }
 
+        private void AddMoneyToPlayer(IPlayer player, string[] args)
+        {
+            if (args == null || args.Length < 2 || player.TryGetCharacter(out Character character)) return;
+            if(character.Account.AdminLevel < AdminLevel.SuperModerator) return;
+            if (!float.TryParse(args[0].ToString(), out float money)) return;
+            if (!int.TryParse(args[1].ToString(), out int playerId)) return;
+            var characterToGiveMoneyTo = CharacterManager.Instance.GetCharacter(playerId);
+            if (characterToGiveMoneyTo == null)
+            {
+                _notificationService.ShowErrorNotification(player, "Błędne ID", $"Nie znaleziono żadnej postaci z ID {playerId}.", 6000);
+                return;
+            }
+
+            _moneyService.GiveMoney(characterToGiveMoneyTo, money);
+            Alt.Log($"[ADD MONEY TO PLAYER] ({character.Id}) gave ID({characterToGiveMoneyTo.Id}) {characterToGiveMoneyTo.GetFullName()} {money}$.");
+        }
+
+
         private void BringPlayer (IPlayer player, string[] args)
         {
             if (args == null || args.Length < 1 || !player.TryGetCharacter (out Character character)) return;
@@ -272,6 +296,28 @@ namespace AltVStrefaRPServer.Modules.Admin
             _vehicleSpawnService.SpawnVehicle (vehicle);
 
             player.Emit ("putIntoVehicle");
+        }
+
+        private void GetAllVehicles(IPlayer player, string[] args)
+        {
+            if (args == null || args.Length < 1 || !player.TryGetCharacter(out Character character)) return;
+            if (character.Account.AdminLevel < AdminLevel.Moderator) return;
+            if(!int.TryParse(args[0].ToString(), out int playerId)) return;
+            var characterToLook = CharacterManager.Instance.GetCharacter(playerId);
+            if (characterToLook == null)
+            {
+                _notificationService.ShowErrorNotification (player, "Błąd", "Nie znaleziono gracza z podanym ID.", 4000);
+                return;
+            }
+
+            var characterVehicles = _vehicleManager.GetAllPlayerVehicles(character);
+            if (characterVehicles == null)
+            {
+                _notificationService.ShowErrorNotification (player, "Błąd", "Gracz nie posiada żadnych pojazdów.");
+                return;
+            }
+
+            player.Emit("testVehicleList", JsonConvert.SerializeObject(characterVehicles));
         }
     }
 }

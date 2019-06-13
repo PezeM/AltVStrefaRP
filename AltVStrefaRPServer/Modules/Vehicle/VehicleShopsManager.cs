@@ -4,6 +4,7 @@ using AltV.Net;
 using AltV.Net.Data;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Helpers;
+using Microsoft.EntityFrameworkCore;
 
 namespace AltVStrefaRPServer.Modules.Vehicle
 {
@@ -24,7 +25,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
         private void LoadVehicleShops()
         {
             var startTime = Time.GetTimestampMs();
-            foreach (var vehicleShop in _serverContext.VehicleShops.ToList())
+            foreach (var vehicleShop in _serverContext.VehicleShops.Include(q => q.AvailableVehicles).ToList())
             {
                 VehicleShops.Add(vehicleShop);
             }

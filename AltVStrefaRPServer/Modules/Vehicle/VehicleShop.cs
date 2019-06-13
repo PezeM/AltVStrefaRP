@@ -47,7 +47,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
         [NotMapped]
         public bool UpdateOnMoneyChange { get; } = false;
 
-        private VehicleShop(){}
+        private VehicleShop() { }
 
         public VehicleShop(int vehicleShopId, Position position, List<VehiclePrice> avaibleVehicles, Position positionOfBoughtVehicles, 
             Rotation rotationOfBoughtVehicles, int blipSprite = 67, int blipColor = 1)
@@ -65,6 +65,8 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             AvailableVehicles = avaibleVehicles;
             BlipColor = blipColor;
             BlipSprite = blipSprite;
+
+            AvailableVehicles = new List<VehiclePrice>();
 
             CreateShopBlip();
         }
