@@ -241,8 +241,8 @@ namespace AltVStrefaRPServer.Modules.Admin
         {
             if (args == null || args.Length < 2 || !player.TryGetCharacter(out Character character)) return;
             if(character.Account.AdminLevel < AdminLevel.SuperModerator) return;
-            if (!float.TryParse(args[0].ToString(), out float money)) return;
-            if (!int.TryParse(args[1].ToString(), out int playerId)) return;
+            if (!int.TryParse(args[0].ToString(), out int playerId)) return;
+            if (!float.TryParse(args[1].ToString(), out float money)) return;
             var characterToGiveMoneyTo = CharacterManager.Instance.GetCharacter(playerId);
             if (characterToGiveMoneyTo == null)
             {
@@ -251,6 +251,7 @@ namespace AltVStrefaRPServer.Modules.Admin
             }
 
             _moneyService.GiveMoney(characterToGiveMoneyTo, money);
+            _notificationService.ShowSuccessNotification(characterToGiveMoneyTo.Player, "Otrzymano pieniądze", $"Otrzymałeś {money} pieniędzy.");
             Alt.Log($"[ADD MONEY TO PLAYER] ({character.Id}) gave ID({characterToGiveMoneyTo.Id}) {characterToGiveMoneyTo.GetFullName()} {money}$.");
         }
 
