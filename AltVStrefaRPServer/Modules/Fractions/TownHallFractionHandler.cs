@@ -1,9 +1,18 @@
-﻿using AltV.Net;
+﻿using System;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
+using AltV.Net;
+using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Models;
+using AltVStrefaRPServer.Models.Dto.Fractions;
 using AltVStrefaRPServer.Models.Fractions;
+using AltVStrefaRPServer.Modules.CharacterModule;
+using AltVStrefaRPServer.Modules.Vehicle;
 using AltVStrefaRPServer.Services;
+using AltVStrefaRPServer.Services.Characters;
 
 namespace AltVStrefaRPServer.Modules.Fractions
 {
@@ -11,13 +20,55 @@ namespace AltVStrefaRPServer.Modules.Fractions
     {
         private FractionManager _fractionManager;
         private readonly INotificationService _notificationService;
+        private readonly ICharacterDatabaseService _characterDatabaseService;
+        private readonly VehicleManager _vehicleManager;
 
-        public TownHallFractionHandler(FractionManager fractionManager, INotificationService notificationService)
+        public TownHallFractionHandler(FractionManager fractionManager, ICharacterDatabaseService characterDatabaseService,
+            INotificationService notificationService, VehicleManager vehicleManager)
         {
             _fractionManager = fractionManager;
             _notificationService = notificationService;
+            _characterDatabaseService = characterDatabaseService;
+            _vehicleManager = vehicleManager;
 
-            Alt.On<IPlayer, int, float>("TryToUpdateTax", TryToUpdateTax);    
+            Alt.On<IPlayer, int, float>("TryToUpdateTax", TryToUpdateTax);  
+            AltAsync.On<IPlayer, string, string>("TryToGetResidentData", async (player, firstName, lastName) 
+                => await TryToGetResidentDataEvent(player, firstName, lastName));
+        }
+
+        private async Task TryToGetResidentDataEvent(IPlayer player, string firstName, string lastName)
+        {
+            if (firstName.IsNullOrEmpty() || lastName.IsNullOrEmpty()) return;
+            var character = CharacterManager.Instance.GetCharacter(firstName, lastName);
+            if (character == null)
+            {
+                character = await _characterDatabaseService.FindCharacterAsync(firstName, lastName);
+            }
+            if (character == null)
+            {
+                await _notificationService.ShowErrorNotificationAsync(player, "Nie znaleziono",
+                    "Nie znaleziono żadnego mieszkańca z podanym imieniem i nazwiskiem.", 6500);
+                return;
+            }
+
+            var fractionResidentDto = new FractionResidentDto
+            {
+                Id = character.Id,
+                Age = character.Age,
+                Name = character.FirstName,
+                LastName = character.LastName,
+                BankAccount = character.BankAccount != null ? character.BankAccount.AccountNumber : 0,
+                BankMoney = character.BankAccount != null ? character.BankAccount.Money : 0,
+                BusinessName = character.Business != null ? character.Business.BusinessName : "Brak",
+                FractionName = character.Fraction != null ? character.Fraction.Name : "Brak",
+                //Vehicles = _vehicleManager.GetAllPlayerVehicles(character).Select(q => new VehicleDataDto
+                //{
+                //    Model = q.Model,
+                //    PlateText = q.PlateText
+                //}).ToList(),
+            };
+
+            await player.EmitAsync("populateResidentData", fractionResidentDto);
         }
 
         private void TryToUpdateTax(IPlayer player, int taxId, float newTax)
@@ -25,7 +76,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
             if (!player.TryGetCharacter(out Character character)) return;
             if(!_fractionManager.TryToGetTownHallFraction(out TownHallFraction townHallFraction)) return;
 
-            if (!((townHallFraction.GetEmployeeRank(character)?.IsHighestRank).Value))
+            if (!(townHallFraction.GetEmployeeRank(character)?.IsHighestRank) ?? false)
             {
                 _notificationService.ShowErrorNotification(player, "Brak uprawnień",
                     "Nie posiadasz odpowiednich uprawnień do wykonania tej akcji.", 6500);

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using AltVStrefaRPServer.Database;
+using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Fractions;
 using Microsoft.EntityFrameworkCore;
 

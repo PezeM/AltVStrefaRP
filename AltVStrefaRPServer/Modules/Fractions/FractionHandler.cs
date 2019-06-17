@@ -5,6 +5,7 @@ using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Dto;
+using AltVStrefaRPServer.Models.Dto.Fractions;
 using AltVStrefaRPServer.Models.Fractions;
 using AltVStrefaRPServer.Modules.CharacterModule;
 using AltVStrefaRPServer.Services;
@@ -59,12 +60,23 @@ namespace AltVStrefaRPServer.Modules.Fractions
             {
                 fractionType = 2;
             }
-            else if (fraction is TownHallFraction)
+            else if (fraction is TownHallFraction townHallFraction)
             {
                 fractionType = 3;
+                fractionDto = new TownHallFractionDto
+                {
+                    id = townHallFraction.Id,
+                    money = townHallFraction.Money,
+                    employeesCount = townHallFraction.EmployeesCount,
+                    rolesCount = townHallFraction.FractionRanks.Count,
+                    creationDate = townHallFraction.CreationDate.ToShortDateString(),
+                    globalTax = townHallFraction.GlobalTax,
+                    propertyTax = townHallFraction.PropertyTax,
+                    vehicleTax = townHallFraction.VehicleTax,
+                    gunTax = townHallFraction.GunTax
+                };
             }
 
-            fractionDto = fraction;
             character.Player.Emit ("openFractionMenu", fractionType, JsonConvert.SerializeObject (fractionDto));
         }
 
