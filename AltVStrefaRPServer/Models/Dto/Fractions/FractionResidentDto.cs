@@ -66,7 +66,7 @@ namespace AltVStrefaRPServer.Models.Dto.Fractions
         private readonly IMValueAdapter<List<VehicleDataDto>> _vehicleListAdapter;
         public FractionResidentDtoAdapter() 
         { 
-            _vehicleListAdapter = DefaultMValueAdapters.GetArrayAdapter(new VehicleDataDto.VehicleDataAdapter());
+            _vehicleListAdapter = DefaultMValueAdapters.GetArrayAdapter(new VehicleDataAdapter());
         }
 
         public FractionResidentDto FromMValue(IMValueReader reader)
@@ -142,7 +142,7 @@ namespace AltVStrefaRPServer.Models.Dto.Fractions
             writer.Name("businessName");
             writer.Value(value.BusinessName);
             writer.Name("vehicles");
-            _vehicleListAdapter.ToMValue(value, writer);
+            _vehicleListAdapter.ToMValue(value.Vehicles, writer);
             writer.EndObject();
         }
 
@@ -163,57 +163,6 @@ namespace AltVStrefaRPServer.Models.Dto.Fractions
 
     public class VehicleDataDto : IMValueConvertible
     {
-        public class VehicleDataAdapter : IMValueAdapter<VehicleDataDto>
-        {
-            public VehicleDataDto FromMValue(IMValueReader reader)
-            {
-                reader.BeginObject();
-                string model = null;
-                string plateText = null;
-                while (reader.HasNext())
-                {
-                    switch (reader.NextName())
-                    {
-                        case "model":
-                            model = reader.NextString();
-                            break;
-                        case "plateText":
-                            plateText = reader.NextString();
-                            break;
-                        default:
-                            reader.SkipValue();
-                            break;
-                    }
-                }
-
-                reader.EndObject();
-                return model == null ? null : new VehicleDataDto(model, plateText);
-            }
-
-            public void ToMValue(VehicleDataDto value, IMValueWriter writer)
-            {
-                writer.BeginObject();
-                writer.Name("model");
-                writer.Value(value.Model);
-                writer.Name("plateText");
-                writer.Value(value.PlateText);
-                writer.EndObject();
-            }
-
-            public void ToMValue(object obj, IMValueWriter writer)
-            {
-                if (obj is VehicleDataDto value)
-                {
-                    ToMValue(value, writer);
-                }
-            }
-
-            object IMValueBaseAdapter.FromMValue(IMValueReader reader)
-            {
-                return FromMValue(reader);
-            }
-        }
-
         private static readonly IMValueBaseAdapter _myAdapter = new VehicleDataAdapter();
         public string Model { get; set; }
         public string PlateText { get; set; }
@@ -238,6 +187,57 @@ namespace AltVStrefaRPServer.Models.Dto.Fractions
         //    writer.Value(PlateText);
         //    writer.EndObject();
         //}
+    }
+
+    public class VehicleDataAdapter : IMValueAdapter<VehicleDataDto>
+    {
+        public VehicleDataDto FromMValue(IMValueReader reader)
+        {
+            reader.BeginObject();
+            string model = null;
+            string plateText = null;
+            while (reader.HasNext())
+            {
+                switch (reader.NextName())
+                {
+                    case "model":
+                        model = reader.NextString();
+                        break;
+                    case "plateText":
+                        plateText = reader.NextString();
+                        break;
+                    default:
+                        reader.SkipValue();
+                        break;
+                }
+            }
+
+            reader.EndObject();
+            return model == null ? null : new VehicleDataDto(model, plateText);
+        }
+
+        public void ToMValue(VehicleDataDto value, IMValueWriter writer)
+        {
+            writer.BeginObject();
+            writer.Name("model");
+            writer.Value(value.Model);
+            writer.Name("plateText");
+            writer.Value(value.PlateText);
+            writer.EndObject();
+        }
+
+        public void ToMValue(object obj, IMValueWriter writer)
+        {
+            if (obj is VehicleDataDto value)
+            {
+                ToMValue(value, writer);
+            }
+        }
+
+        object IMValueBaseAdapter.FromMValue(IMValueReader reader)
+        {
+            return FromMValue(reader);
+        }
     }
 
     public class ConvertibleObject : IMValueConvertible
