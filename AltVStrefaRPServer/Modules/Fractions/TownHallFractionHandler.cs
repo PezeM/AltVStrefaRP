@@ -71,11 +71,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
                 BankMoney = character.BankAccount != null ? character.BankAccount.Money : 0,
                 BusinessName = character.Business != null ? character.Business.BusinessName : "Brak",
                 FractionName = character.Fraction != null ? character.Fraction.Name : "Brak",
-                //Vehicles = _vehicleManager.GetAllPlayerVehicles(character).Select(q => new VehicleDataDto
-                //{
-                //    Model = q.Model,
-                //    PlateText = q.PlateText
-                //}).ToList(),
+                Vehicles = _vehicleManager.GetAllPlayerVehicles(character).Select(q => new VehicleDataDto(q.Model, q.PlateText)).ToList(),
             };
 
             await player.EmitAsync("populateResidentData", fractionResidentDto);
