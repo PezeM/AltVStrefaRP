@@ -13,6 +13,7 @@ using AltVStrefaRPServer.Modules.CharacterModule;
 using AltVStrefaRPServer.Modules.Vehicle;
 using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Characters;
+using Newtonsoft.Json;
 
 namespace AltVStrefaRPServer.Modules.Fractions
 {
@@ -34,6 +35,15 @@ namespace AltVStrefaRPServer.Modules.Fractions
             Alt.On<IPlayer, int, float>("TryToUpdateTax", TryToUpdateTax);  
             AltAsync.On<IPlayer, string, string>("TryToGetResidentData", async (player, firstName, lastName) 
                 => await TryToGetResidentDataEvent(player, firstName, lastName));
+            Alt.On<IPlayer, int>("TryToOpenFractionResidentsPage", TryToOpenFractionResidentsPage);
+        }
+
+
+        private void TryToOpenFractionResidentsPage(IPlayer player, int fractionId)
+        {
+            var allOnlinePlayers = CharacterManager.Instance.GetAllCharacters().Select(q => q.GetFullName());
+
+            player.Emit("openFractionsResidentsPage", JsonConvert.SerializeObject(allOnlinePlayers));
         }
 
         private async Task TryToGetResidentDataEvent(IPlayer player, string firstName, string lastName)
@@ -91,6 +101,8 @@ namespace AltVStrefaRPServer.Modules.Fractions
             {
                 _notificationService.ShowErrorNotification(player, "Błąd", $"Nie udało się ustawić nowego podatku.");
             }
+
+            AltAsync.Log($"[TAX UPDATE] ({character.Id}) updated tax ({taxId}) to {newTax*100}%.");
         }
 
         private static bool UpdateTax(int taxId, float newTax, TownHallFraction townHallFraction)

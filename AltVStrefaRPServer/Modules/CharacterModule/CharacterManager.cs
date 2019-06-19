@@ -33,6 +33,8 @@ namespace AltVStrefaRPServer.Modules.CharacterModule
         public Character GetCharacter(string name, string lastName)
             => _characterList.Values.FirstOrDefault(c => c.FirstName == name && c.LastName == lastName);
 
+        public IEnumerable<Character> GetAllCharacters() => _characterList.Values;
+
         /// <summary>
         /// Returns online character by bank account Id
         /// </summary>

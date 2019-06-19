@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using AltV.Net;
+using AltV.Net.Async;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Extensions;
@@ -63,7 +64,7 @@ namespace AltVStrefaRPServer.Modules.Admin
             _chatHandler.RegisterCommand ("openbank", OpenBankMenu);
             _chatHandler.RegisterCommand ("createBankAccount", async (player, args) => await CreateBankAccount (player, args));
             _chatHandler.RegisterCommand ("createbusiness", CreateNewBusiness);
-            _chatHandler.RegisterCommand ("setBusinessOwner", SetBusinessOwner);
+            _chatHandler.RegisterCommand ("setBusinessOwner", async (player, args) => await SetBusinessOwner(player, args));
             _chatHandler.RegisterCommand ("openBusinessMenu", OpenBusinessMenu);
             _chatHandler.RegisterCommand ("enterCinema", EnterCinema);
             _chatHandler.RegisterCommand ("exitCinema", ExitCinema);
@@ -72,6 +73,8 @@ namespace AltVStrefaRPServer.Modules.Admin
             _chatHandler.RegisterCommand("addMoney", AddMoneyToPlayer);
             _chatHandler.RegisterCommand ("openVehicleShop", OpenVehicleShop);
             _chatHandler.RegisterCommand ("openFractionMenu", OpenFractionMenu);
+            _chatHandler.RegisterCommand("setFractionRank", async (player, args) => await SetFractionOwner(player,args));
+            _chatHandler.RegisterCommand("addEmployeeToFraction", async (player, args) => await AddEmployeeToFraction(player,args));
             _chatHandler.RegisterCommand("getAllVehicles", GetAllVehicles);
             _chatHandler.RegisterCommand("setAdminLevel", SetAdminLevel);
         }
@@ -109,7 +112,7 @@ namespace AltVStrefaRPServer.Modules.Admin
             Alt.EmitAllClients ("enterCinema");
         }
 
-        private void SetBusinessOwner (IPlayer player, string[] args)
+        private async Task SetBusinessOwner (IPlayer player, string[] args)
         {
             if (args == null || args.Length < 2 || !player.TryGetCharacter (out Character sender)) return;
             if (sender.Account.AdminLevel < AdminLevel.Admin) return;
@@ -140,7 +143,7 @@ namespace AltVStrefaRPServer.Modules.Admin
                     return;
                 }
 
-                if (_businessManager.UpdateBusinessOwner (business, character).Result)
+                if (await _businessManager.UpdateBusinessOwner (business, character))
                 {
                     _notificationService.ShowSuccessNotification (player, "Aktualizacja właściciela", $"Pomyślnie zaktualizowano właściciela biznesu ID({business.Id}) na {character.GetFullName()}", 6000);
                     Alt.Log ($"Updated owner of business ID({business.Id}) Name({business.BusinessName}) " +
@@ -169,6 +172,58 @@ namespace AltVStrefaRPServer.Modules.Admin
         {
             if (!player.TryGetCharacter (out var character)) return;
             _fractionHandler.OpenFractionMenu (character);
+        }
+
+        private async Task AddEmployeeToFraction(IPlayer player, string[] args)
+        {
+            if(args == null || args.Length < 1) return;
+            if(!int.TryParse(args[0].ToString(), out int fractionId)) return;
+
+            await _fractionHandler.AcceptFractionInviteEvent(player, fractionId);
+        }
+
+        private async Task SetFractionOwner(IPlayer player, string[] args)
+        {
+            if (args == null || args.Length < 2 || !player.TryGetCharacter (out Character sender)) return;
+            if (sender.Account.AdminLevel < AdminLevel.Admin) return;
+
+            try
+            {
+                if (!int.TryParse (args[0].ToString (), out int characterId))
+                {
+                    _notificationService.ShowErrorNotification (player, "Błąd", $"Podano zły numer postaci.", 5000);
+                    return;
+                }
+                var character = CharacterManager.Instance.GetCharacter (characterId);
+                if (character == null)
+                {
+                    _notificationService.ShowErrorNotification (player, "Błąd", $"Nie znaleziono postaci z takim id.", 5000);
+                    return;
+                }
+
+                if (!int.TryParse (args[1].ToString (), out int fractionId))
+                {
+                    _notificationService.ShowErrorNotification (player, "Błąd", $"Podano złe id biznesu.", 5000);
+                    return;
+                }
+
+                if (await _fractionHandler.SetFractionOwner(fractionId, character))
+                {
+                    _notificationService.ShowSuccessNotification (player, "Aktualizacja właściciela", $"Pomyślnie zaktualizowano właściciela frakcji ID({fractionId}) " +
+                                                                                                      $"na ID({character.Id}) {character.GetFullName()}");
+                }
+                else
+                {
+                    _notificationService.ShowErrorNotification (player, "Błąd", "Nie udało się zaktualizować właściciela biznesu.");
+                }
+
+                AltAsync.Log($"[UPDATED FRACTION OWNER] ({sender.Id}) {sender.GetFullName()} updated fraction owner ID({fractionId}) to ID({character.Id}) {character.GetFullName()}");
+            }
+            catch (Exception e)
+            {
+                Alt.Log ($"Error setting business owner. Ex: {e}");
+                throw;
+            }
         }
 
         private void CreateNewBusiness (IPlayer player, string[] args)

@@ -33,7 +33,7 @@ namespace AltVStrefaRPServer.Models.Dto.Fractions
             writer.Value(BankMoney);
             writer.Name("fractionName");
             writer.Value(FractionName);
-            writer.Name("businessname");
+            writer.Name("businessName");
             writer.Value(BusinessName);
             writer.EndObject();
         }

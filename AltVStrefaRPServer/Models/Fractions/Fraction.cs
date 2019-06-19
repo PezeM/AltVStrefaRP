@@ -86,6 +86,11 @@ namespace AltVStrefaRPServer.Models.Fractions
             return _fractionRanks.FirstOrDefault(q => q.IsDefaultRank);
         }
 
+        public FractionRank GetHighestRank()
+        {
+            return _fractionRanks.FirstOrDefault(r => r.IsHighestRank);
+        }
+
         public FractionRank GetEmployeeRank(Character employee)
         {
             return _fractionRanks.FirstOrDefault(q => q.Id == employee.FractionRank);
@@ -109,17 +114,12 @@ namespace AltVStrefaRPServer.Models.Fractions
         public virtual async Task<bool> RemoveEmployeeAsync(int employeeId, IFractionDatabaseService fractionDatabaseService)
         {
             if (!IsCharacterEmployee(employeeId, out Character employee)) return false;
-            if (!CanRemoveEmployee(employee)) return false;
+            else if (!CanRemoveEmployee(employee)) return false;
+            else if (!_employees.Remove(employee)) return false;
 
-            if (_employees.Remove(employee))
-            {
-                await fractionDatabaseService.UpdateFractionAsync(this);
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            employee.CurrentFractionId = null;
+            await fractionDatabaseService.UpdateFractionAsync(this);
+            return true;
         }
 
         public virtual async Task<bool> AddNewEmployeeAsync(Character newEmployee, IFractionDatabaseService fractionDatabaseService)
@@ -129,7 +129,7 @@ namespace AltVStrefaRPServer.Models.Fractions
 
             var defaultRank = GetDefaultRank();
             if (defaultRank == null) return false;
-            newEmployee.FractionRank = defaultRank.Id;
+            SetEmployeeRank(newEmployee, defaultRank);
 
             // Save fraction, need to check if its neede to save employee
             await fractionDatabaseService.UpdateFractionAsync(this);
@@ -217,6 +217,16 @@ namespace AltVStrefaRPServer.Models.Fractions
             return true;
         }
 
+        public async Task SetFractionOwner(Character newOwner, IFractionDatabaseService fractionDatabaseService)
+        {
+            if ((newOwner.CurrentFractionId ?? 0) == Id) return;
+            var highestRank = GetHighestRank();
+            if (highestRank == null) return;
+
+            SetEmployeeRank(newOwner, highestRank);
+            await fractionDatabaseService.UpdateFractionAsync(this);
+        }
+
         protected virtual bool IsCharacterEmployee(int characterId, out Character character)
         {
             character = _employees.FirstOrDefault(q => q.Id == characterId);
@@ -234,7 +244,7 @@ namespace AltVStrefaRPServer.Models.Fractions
         {
             if (_employees != null)
             {
-                if (newEmployee.Fraction != null || newEmployee.Fraction == this) return false;
+                if ((newEmployee.CurrentFractionId ?? 0) == Id) return false;
                 else return true;
             }
             else

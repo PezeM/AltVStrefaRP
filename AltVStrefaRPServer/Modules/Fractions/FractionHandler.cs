@@ -49,6 +49,11 @@ namespace AltVStrefaRPServer.Modules.Fractions
                 _notificationService.ShowErrorNotification (character.Player, "Brak frakcji", "Nie jesteś zatrudniony w żadnej frakcji.");
                 return;
             }
+            if (!(fraction.GetEmployeePermissions(character)?.CanOpenFractionMenu) ?? false)
+            {
+                _notificationService.ShowErrorNotification(character.Player, "Brak uprawnień", "Nie posiadasz odpowiednich uprawnień");
+                return;
+            }
 
             int fractionType = 0;
             object fractionDto = null;
@@ -86,7 +91,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
             if (!player.TryGetCharacter (out Character character)) return;
             if (!_fractionManager.TryToGetFraction (fractionId, out Fraction fraction)) return;
 
-            if (!(fraction.GetEmployeePermissions(character)?.CanManageEmployees).Value)
+            if (!(fraction.GetEmployeePermissions(character)?.CanManageEmployees) ?? false)
             {
                 await _notificationService.ShowErrorNotificationAsync(player, "Brak uprawnień",
                     "Nie posiadasz uprawnień do zapraszania nowych pracowników.", 6000);
@@ -106,7 +111,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
             newEmployee.Player.EmitLocked ("showFractionInvite", fraction.Name, fractionId);
         }
 
-        private async Task AcceptFractionInviteEvent(IPlayer player, int fractionId)
+        public async Task AcceptFractionInviteEvent(IPlayer player, int fractionId)
         {
             if(!player.TryGetCharacter(out Character character)) return;
             if (!_fractionManager.TryToGetFraction(fractionId, out Fraction fraction)) return;
@@ -127,8 +132,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
         {
             if (!player.TryGetCharacter(out Character character)) return;
             if(!_fractionManager.TryToGetFraction(fractionId, out Fraction fraction)) return;
-
-            if (!(fraction.GetEmployeePermissions(character)?.CanManageEmployees).Value)
+            if (!(fraction.GetEmployeePermissions(character)?.CanManageEmployees) ?? false )
             {
                 await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie posiadasz odpowiednich uprawnień.");
                 return;
@@ -151,7 +155,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
         {
             if (!player.TryGetCharacter (out Character character)) return;
             if (!_fractionManager.TryToGetFraction (fractionId, out Fraction fraction)) return;
-            if(!((fraction.GetEmployeePermissions(character)?.CanManageRanks).Value))
+            if(!(fraction.GetEmployeePermissions(character)?.CanManageRanks) ?? false )
             {
                 await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie posiadasz odpowiednich uprawnień.");
                 return;
@@ -169,11 +173,11 @@ namespace AltVStrefaRPServer.Modules.Fractions
             AltAsync.Log($"[REMOVE FRACTION RANK] ({character.Id}) deleted rank ID({rankId}) from fraction ID({fractionId}) {fraction.Name}");
         }
 
-        private async Task UpdateFractionEmployeeRankEvent(IPlayer player, int fractionId, int employeeId, int newRankId)
+        public async Task UpdateFractionEmployeeRankEvent(IPlayer player, int fractionId, int employeeId, int newRankId)
         {
             if (!player.TryGetCharacter (out Character character)) return;
             if (!_fractionManager.TryToGetFraction (fractionId, out Fraction fraction)) return;
-            if (!((fraction.GetEmployeePermissions(character)?.CanManageEmployees).Value))
+            if (!(fraction.GetEmployeePermissions(character)?.CanManageEmployees) ?? false)
             {
                 await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie posiadasz odpowiednich uprawnień.");
             }
@@ -194,7 +198,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
         {
             if (!player.TryGetCharacter (out Character character)) return;
             if (!_fractionManager.TryToGetFraction (fractionId, out Fraction fraction)) return;
-            if (!((fraction.GetEmployeePermissions(character)?.CanManageRanks).Value))
+            if (!(fraction.GetEmployeePermissions(character)?.CanManageRanks) ?? false)
             {
                 await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie posiadasz odpowiednich uprawnień.");
             }
@@ -228,7 +232,8 @@ namespace AltVStrefaRPServer.Modules.Fractions
         {
             if (!player.TryGetCharacter (out Character character)) return;
             if (!_fractionManager.TryToGetFraction (fractionId, out Fraction fraction)) return;
-            if (!((fraction.GetEmployeePermissions(character)?.CanManageRanks).Value))
+
+            if (!(fraction.GetEmployeePermissions(character)?.CanManageRanks) ?? false)
             {
                 await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie posiadasz odpowiednich uprawnień.");
             }
@@ -256,6 +261,16 @@ namespace AltVStrefaRPServer.Modules.Fractions
             }
 
             AltAsync.Log($"[UPADTE FRACTION RANK] ({character.Id}) updated fraction rank {updatedPermissions.RankName} in fraction ID({fraction.Id}) {fraction.Name}");
+        }
+
+        public async Task<bool> SetFractionOwner(int fractionId, Character newOwner)
+        {
+            if (!_fractionManager.TryToGetFraction(fractionId, out Fraction fraction)) return false;
+            if (newOwner == null) return false;
+
+            await fraction.SetFractionOwner(newOwner, _fractionDatabaseService);
+
+            return true;
         }
     }
 }
