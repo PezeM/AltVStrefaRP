@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Runtime.InteropServices;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using AltV.Net;
 using AltV.Net.Async;
@@ -14,7 +12,6 @@ using AltVStrefaRPServer.Modules.Vehicle;
 using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Characters;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 
 namespace AltVStrefaRPServer.Modules.Fractions
 {
@@ -73,11 +70,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
                 Vehicles = _vehicleManager.GetAllPlayerVehicles(character).Select(q => new VehicleDataDto(q.Model, q.PlateText)).ToList(),
             };
 
-            await player.EmitAsync("populateResidentData", JsonConvert.SerializeObject(fractionResidentDto, new JsonSerializerSettings
-            {
-                ContractResolver = new CamelCasePropertyNamesContractResolver(), 
-                Formatting = Formatting.Indented
-            }));
+            await player.EmitAsync("populateResidentData", fractionResidentDto);
         }
 
         private void TryToUpdateTax(IPlayer player, int taxId, float newTax)
