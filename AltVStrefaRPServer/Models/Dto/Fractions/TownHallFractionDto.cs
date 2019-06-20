@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using AltV.Net;
 using AltV.Net.Elements.Args;
 
@@ -6,7 +7,7 @@ namespace AltVStrefaRPServer.Models.Dto.Fractions
 {
     public class TownHallFractionDto : IMValueConvertible
     {
-        private static readonly IMValueBaseAdapter _myAdapter = new FractionResidentDtoAdapter();
+        private static readonly IMValueBaseAdapter _myAdapter = new TownHallFractionAdapter();
         public int Id {get;set;}
         public float Money {get;set;}
         public int EmployeesCount {get; set;}
@@ -45,6 +46,7 @@ namespace AltVStrefaRPServer.Models.Dto.Fractions
                         id = reader.NextInt();
                         break;
                     case "money":
+                        //money = (float)Math.Round(reader.NextDouble(), MidpointRounding.AwayFromZero);
                         money = (float)reader.NextDouble();
                         break;
                     case "employeesCount":

@@ -1,5 +1,6 @@
 ﻿using System;
 using AltVStrefaRPServer.Models;
+using AltVStrefaRPServer.Models.Server;
 
 namespace AltVStrefaRPServer.Modules.Money
 {

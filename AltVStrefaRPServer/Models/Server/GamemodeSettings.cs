@@ -1,4 +1,4 @@
-﻿namespace AltVStrefaRPServer.Models
+﻿namespace AltVStrefaRPServer.Models.Server
 {
     public static class GamemodeSettings
     {

@@ -7,6 +7,7 @@ using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Dto;
 using AltVStrefaRPServer.Models.Dto.Fractions;
+using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Fractions;
 using AltVStrefaRPServer.Modules.CharacterModule;
 using AltVStrefaRPServer.Services;
@@ -56,20 +57,17 @@ namespace AltVStrefaRPServer.Modules.Fractions
                 return;
             }
 
-            int fractionType = 0;
-            object fractionDto = null;
             if (fraction is PoliceFraction)
             {
-                fractionType = 1;
+                character.Player.Emit ("openFractionMenu", (int)FractionsEnum.Police, null);
             }
             else if (fraction is SamsFraction)
             {
-                fractionType = 2;
+                character.Player.Emit ("openFractionMenu", (int)FractionsEnum.Sams, null);
             }
             else if (fraction is TownHallFraction townHallFraction)
             {
-                fractionType = 3;
-                fractionDto = new TownHallFractionDto
+                var fractionDto = new TownHallFractionDto
                 {
                     Id = townHallFraction.Id,
                     Money = townHallFraction.Money,
@@ -84,9 +82,9 @@ namespace AltVStrefaRPServer.Modules.Fractions
                         new TaxDto(4, "Podatek globalny", townHallFraction.GlobalTax)
                     }
                 };
-            }
 
-            character.Player.Emit ("openFractionMenu", fractionType, fractionDto);
+                character.Player.Emit ("openFractionMenu", (int)FractionsEnum.Townhall, fractionDto);
+            }
         }
 
         public async Task InviteEmployeeToFractionEvent (IPlayer player, int fractionId, string firstName, string lastName)

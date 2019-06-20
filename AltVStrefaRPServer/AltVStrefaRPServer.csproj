@@ -47,6 +47,7 @@
 
   <ItemGroup>
     <Folder Include="Database\Migrations\" />
+    <Folder Include="Models\Client\" />
     <Folder Include="Models\Jobs\" />
   </ItemGroup>
 

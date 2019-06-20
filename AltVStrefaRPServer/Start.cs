@@ -80,11 +80,10 @@ namespace AltVStrefaRPServer
         {
             try
             {
-                var myVehicle = vehicle as IMyVehicle;
-                if (myVehicle == null) Alt.Log ("Pojazd nie jest customowym typem IMyVehicle.");
-
-                Alt.Log ($"Pojazd jest customowym typem IMyVehicle. Paliwo {myVehicle.Fuel} Olej {myVehicle.Oil}");
-
+                if (vehicle is MyVehicle myVehicle)
+                {
+                    Alt.Log ($"Pojazd jest customowym typem IMyVehicle. Paliwo {myVehicle.Fuel} Olej {myVehicle.Oil} Data {myVehicle.CustomData}");
+                }
             }
             catch (Exception ex)
             {

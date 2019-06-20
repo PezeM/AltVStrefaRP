@@ -3,6 +3,7 @@ using System.Timers;
 using AltVStrefaRPServer.Models.Enums;
 using System;
 using AltVStrefaRPServer.Models;
+using AltVStrefaRPServer.Models.Server;
 
 namespace AltVStrefaRPServer.Modules.Environment
 {

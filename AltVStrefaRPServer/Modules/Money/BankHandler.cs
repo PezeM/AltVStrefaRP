@@ -7,7 +7,7 @@ using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
-using AltVStrefaRPServer.Models.Client;
+using AltVStrefaRPServer.Models.Dto;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Modules.CharacterModule;
 using AltVStrefaRPServer.Services;

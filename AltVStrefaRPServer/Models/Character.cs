@@ -15,6 +15,9 @@ namespace AltVStrefaRPServer.Models
         public int AccountId { get; set; }
         public Account Account { get; set; }
         public BankAccount BankAccount { get; set; }
+        public bool IsBanned {get; set; }
+        public bool IsMuted { get; set; }
+        public bool CanDriveVehicles { get; set; }
 
         public string BackgroundImage { get; set; }
         public string ProfileImage { get; set; }

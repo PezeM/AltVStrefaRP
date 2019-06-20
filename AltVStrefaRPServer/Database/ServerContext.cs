@@ -147,6 +147,9 @@ namespace AltVStrefaRPServer.Database
                 .WithOne(fp => fp.FractionRank)
                 .HasForeignKey<FractionRankPermissions>(fp => fp.FractionRankFK);
 
+            modelBuilder.Entity<TownHallFraction>()
+                .Ignore(q => q.Taxes);
+
             // Vehicle shop
             modelBuilder.Entity<VehicleShop>()
                 .Ignore(p => p.ShopBlip);

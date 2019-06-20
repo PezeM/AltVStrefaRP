@@ -194,6 +194,7 @@ namespace AltVStrefaRPServer.Models.Fractions
                     HaveFractionKeys = newRank.Permissions.HaveFractionKeys,
                     CanOpenFractionMenu = newRank.Permissions.CanOpenFractionMenu,
                     HaveVehicleKeys = newRank.Permissions.HaveVehicleKeys,
+                    CanMakeAdvancedActions = newRank.Permissions.CanMakeAdvancedActions
                 }
             });
 
@@ -212,6 +213,7 @@ namespace AltVStrefaRPServer.Models.Fractions
             rank.Permissions.CanOpenFractionMenu = updatedPermissions.Permissions.CanOpenFractionMenu;
             rank.Permissions.HaveFractionKeys = updatedPermissions.Permissions.HaveFractionKeys;
             rank.Permissions.HaveVehicleKeys = updatedPermissions.Permissions.HaveVehicleKeys;
+            rank.Permissions.CanMakeAdvancedActions = updatedPermissions.Permissions.CanMakeAdvancedActions;
 
             await fractionDatabaseService.UpdateFractionAsync(this);
             return true;

@@ -1,4 +1,4 @@
-﻿namespace AltVStrefaRPServer.Models.Client
+﻿namespace AltVStrefaRPServer.Models.Dto
 {
     public class BankAccountInformationModel
     {

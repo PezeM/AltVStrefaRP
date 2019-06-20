@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models;
+using AltVStrefaRPServer.Models.Server;
 using Microsoft.EntityFrameworkCore;
 
 namespace AltVStrefaRPServer.Services.Characters.Customization

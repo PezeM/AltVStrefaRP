@@ -2,7 +2,7 @@
 using System.IO;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Handlers;
-using AltVStrefaRPServer.Models;
+using AltVStrefaRPServer.Models.Server;
 using AltVStrefaRPServer.Modules.Admin;
 using AltVStrefaRPServer.Modules.Businesses;
 using AltVStrefaRPServer.Modules.CharacterModule.Customization;

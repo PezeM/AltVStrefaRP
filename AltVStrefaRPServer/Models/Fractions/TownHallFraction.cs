@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using AltVStrefaRPServer.Modules.Money;
 
 namespace AltVStrefaRPServer.Models.Fractions
@@ -9,7 +10,7 @@ namespace AltVStrefaRPServer.Models.Fractions
         public float PropertyTax { get; private set; }
         public float GunTax { get; private set; }
         public float GlobalTax { get; private set; }
-
+        public List<float> Taxes { get; private set; } = new List<float>(); 
         public override string BlipName { get; protected set; } = "Urząd miasta";
 
         private TownHallFraction()
@@ -53,6 +54,7 @@ namespace AltVStrefaRPServer.Models.Fractions
         {
             var tax = (float)Math.Round(amount * taxPercentage);
             Money += tax;
+            Taxes.Add(tax);
             return amount + tax;
         }
     }

@@ -33,10 +33,11 @@ namespace AltVStrefaRPServer.Modules.Fractions
             Alt.On<IPlayer, int, float>("TryToUpdateTax", TryToUpdateTax);  
             AltAsync.On<IPlayer, string, string>("TryToGetResidentData", async (player, firstName, lastName) 
                 => await TryToGetResidentDataEvent(player, firstName, lastName));
-            Alt.On<IPlayer, int>("TryToOpenFractionResidentsPage", TryToOpenFractionResidentsPage);
+            Alt.On<IPlayer>("TryToOpenFractionResidentsPage", TryToOpenFractionResidentsPage);
+            Alt.On<IPlayer>("TryToOpenFractionTaxesPage", TryToOpenFractionTaxesPage);
         }
 
-        private void TryToOpenFractionResidentsPage(IPlayer player, int fractionId)
+        private void TryToOpenFractionResidentsPage(IPlayer player)
         {
             var allOnlinePlayers = CharacterManager.Instance.GetAllCharacters().Select(q => q.GetFullName());
             player.Emit("openFractionsResidentsPage", JsonConvert.SerializeObject(allOnlinePlayers));
@@ -71,6 +72,20 @@ namespace AltVStrefaRPServer.Modules.Fractions
             };
 
             await player.EmitAsync("populateResidentData", fractionResidentDto);
+        }
+
+        private void TryToOpenFractionTaxesPage(IPlayer player)
+        {
+            if (!player.TryGetCharacter(out Character character)) return;
+            if (!_fractionManager.TryToGetTownHallFraction(out TownHallFraction townHallFraction)) return;
+            if (!(townHallFraction.GetEmployeeRank(character)?.Permissions.CanMakeAdvancedActions) ?? false)
+            {
+                _notificationService.ShowErrorNotification(player, "Brak uprawnień",
+                    "Nie posiadasz odpowiednich uprawnień do wykonania tej akcji.", 6500);
+                return;
+            }
+
+            player.Emit("openFractionTaxesPage", JsonConvert.SerializeObject(townHallFraction.Taxes));
         }
 
         private void TryToUpdateTax(IPlayer player, int taxId, float newTax)
