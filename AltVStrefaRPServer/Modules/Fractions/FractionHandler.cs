@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
@@ -70,19 +71,22 @@ namespace AltVStrefaRPServer.Modules.Fractions
                 fractionType = 3;
                 fractionDto = new TownHallFractionDto
                 {
-                    id = townHallFraction.Id,
-                    money = townHallFraction.Money,
-                    employeesCount = townHallFraction.EmployeesCount,
-                    rolesCount = townHallFraction.FractionRanks.Count,
-                    creationDate = townHallFraction.CreationDate.ToShortDateString(),
-                    globalTax = townHallFraction.GlobalTax,
-                    propertyTax = townHallFraction.PropertyTax,
-                    vehicleTax = townHallFraction.VehicleTax,
-                    gunTax = townHallFraction.GunTax
+                    Id = townHallFraction.Id,
+                    Money = townHallFraction.Money,
+                    EmployeesCount = townHallFraction.EmployeesCount,
+                    RolesCount = townHallFraction.FractionRanks.Count,
+                    CreationDate = townHallFraction.CreationDate.ToShortDateString(),
+                    Taxes = new List<TaxDto>
+                    {
+                        new TaxDto(1, "Podatek od pojazdów", townHallFraction.VehicleTax),
+                        new TaxDto(2, "Podatek od nieruchomości", townHallFraction.PropertyTax),
+                        new TaxDto(3, "Podatek od broni", townHallFraction.GunTax),
+                        new TaxDto(4, "Podatek globalny", townHallFraction.GlobalTax)
+                    }
                 };
             }
 
-            character.Player.Emit ("openFractionMenu", fractionType, JsonConvert.SerializeObject (fractionDto));
+            character.Player.Emit ("openFractionMenu", fractionType, fractionDto);
         }
 
         public async Task InviteEmployeeToFractionEvent (IPlayer player, int fractionId, string firstName, string lastName)

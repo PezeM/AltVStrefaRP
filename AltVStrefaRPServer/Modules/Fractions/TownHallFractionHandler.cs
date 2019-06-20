@@ -109,7 +109,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
                     result = townHallFraction.SetPropertyTax(newTax);
                     break;
                 case 3:
-                    result = townHallFraction.SetGunTaxk(newTax);
+                    result = townHallFraction.SetGunTax(newTax);
                     break;
                 case 4:
                     result = townHallFraction.SetGlobalTax(newTax);

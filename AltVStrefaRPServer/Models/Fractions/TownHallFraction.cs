@@ -33,7 +33,7 @@ namespace AltVStrefaRPServer.Models.Fractions
             return true;
         }
 
-        public bool SetGunTaxk(float newTax)
+        public bool SetGunTax(float newTax)
         {
             if(!ServerEconomySettings.SetGunTax(newTax)) return false;
 
