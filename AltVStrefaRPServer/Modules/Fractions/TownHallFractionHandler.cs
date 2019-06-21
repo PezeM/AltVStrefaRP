@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using AltV.Net;
 using AltV.Net.Async;
@@ -30,7 +31,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
             _characterDatabaseService = characterDatabaseService;
             _vehicleManager = vehicleManager;
 
-            Alt.On<IPlayer, int, float>("TryToUpdateTax", TryToUpdateTax);  
+            Alt.On<IPlayer, int, float>("TryToUpdateTaxValue", TryToUpdateTaxValue);  
             AltAsync.On<IPlayer, string, string>("TryToGetResidentData", async (player, firstName, lastName) 
                 => await TryToGetResidentDataEvent(player, firstName, lastName));
             Alt.On<IPlayer>("TryToOpenFractionResidentsPage", TryToOpenFractionResidentsPage);
@@ -75,7 +76,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
             player.Emit("openFractionTaxesPage", JsonConvert.SerializeObject(townHallFraction.Taxes.Take(150)));
         }
 
-        private void TryToUpdateTax(IPlayer player, int taxId, float newTax)
+        private void TryToUpdateTaxValue(IPlayer player, int taxId, float newTax)
         {
             if (!player.TryGetCharacter(out Character character)) return;
             if(!_fractionManager.TryToGetTownHallFraction(out TownHallFraction townHallFraction)) return;
@@ -86,9 +87,11 @@ namespace AltVStrefaRPServer.Modules.Fractions
                     "Nie posiadasz odpowiednich uprawnień do wykonania tej akcji.", 6500);
                 return;
             }
+            newTax = (float)Math.Round(newTax, MidpointRounding.AwayFromZero);
 
             if (UpdateTax(taxId, newTax, townHallFraction))
             {
+                player.Emit("updateTaxValue", taxId, newTax);
                 _notificationService.ShowSuccessNotification(player, "Sukces", $"Pomyślnie ustawiono nowy podatek na {newTax * 100}%.", 6500);
             }
             else
