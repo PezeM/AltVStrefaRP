@@ -28,7 +28,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             _vehicleManager = vehicleManager;
 
             Alt.On<IPlayer, int>("OpenVehicleShop", OpenVehicleShopEvent);
-            AltAsync.On<IPlayer, int, long>("BuyVehicle", async (player, shopId, vehicleModel) => await BuyVehicleEvent(player, shopId, vehicleModel));
+            AltAsync.On<IPlayer, int, ulong>("BuyVehicle", async (player, shopId, vehicleModel) => await BuyVehicleEvent(player, shopId, vehicleModel));
         }
 
         private void OpenVehicleShopEvent(IPlayer player, int shopId)
@@ -43,7 +43,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             player.Emit("openVehicleShop", shop.VehicleShopId, JsonConvert.SerializeObject(shop.AvailableVehicles));
         }
 
-        private async Task BuyVehicleEvent(IPlayer player, int shopId, long vehicleModel)
+        private async Task BuyVehicleEvent(IPlayer player, int shopId, ulong vehicleModel)
         {
             if (!player.TryGetCharacter(out Character character)) return;
 

@@ -164,7 +164,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
         /// </summary>
         /// <param name="character"></param>
         /// <returns></returns>
-        public List<VehicleModel> GetAllPlayerVehicles(Character character) 
+        public List<VehicleModel> GetAllPlayerVehicles(Character character)
             => _vehicles.Values.Where(v => v.Owner == character.Id && v.OwnerType == OwnerType.Character).ToList();
 
         public async Task<VehicleModel> CreateVehicleAsync(string vehicleModel, Position position, Rotation rotation, short dimension, int ownerId, 

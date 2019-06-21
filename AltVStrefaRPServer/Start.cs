@@ -69,6 +69,15 @@ namespace AltVStrefaRPServer
             //{
             //    Alt.Log($"{player.Id} triggered command test");
             //});
+            Alt.On<IPlayer, ulong>("bigNumber", (player, number) =>
+            {
+                Alt.Log($"ULONG BIGNUMBER VALUE: {number}");
+            });
+
+            Alt.On<IPlayer, long>("bigNumber", (player, number) =>
+            {
+                Alt.Log($"LONG BIGNUMBER VALUE: {number}");
+            });
         }
 
         private void OnOnPlayerEvent (IPlayer player, string eventName, object[] args)

@@ -58,20 +58,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
                 return;
             }
 
-            var fractionResidentDto = new FractionResidentDto
-            {
-                Id = character.Id,
-                Age = character.Age,
-                Name = character.FirstName,
-                LastName = character.LastName,
-                BankAccount = character.BankAccount != null ? character.BankAccount.AccountNumber : 0,
-                BankMoney = character.BankAccount != null ? character.BankAccount.Money : 0,
-                BusinessName = character.Business != null ? character.Business.BusinessName : "Brak",
-                FractionName = character.Fraction != null ? character.Fraction.Name : "Brak",
-                Vehicles = _vehicleManager.GetAllPlayerVehicles(character).Select(q => new VehicleDataDto(q.Model, q.PlateText)).ToList(),
-            };
-
-            await player.EmitAsync("populateResidentData", fractionResidentDto);
+            await player.EmitAsync("populateResidentData", CreateFractionResidentDto(character));
         }
 
         private void TryToOpenFractionTaxesPage(IPlayer player)
@@ -85,7 +72,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
                 return;
             }
 
-            player.Emit("openFractionTaxesPage", JsonConvert.SerializeObject(townHallFraction.Taxes));
+            player.Emit("openFractionTaxesPage", JsonConvert.SerializeObject(townHallFraction.Taxes.Take(150)));
         }
 
         private void TryToUpdateTax(IPlayer player, int taxId, float newTax)
@@ -132,6 +119,22 @@ namespace AltVStrefaRPServer.Modules.Fractions
             }
 
             return result;
+        }
+
+        private FractionResidentDto CreateFractionResidentDto(Character character)
+        {
+            return new FractionResidentDto
+            {
+                Id = character.Id,
+                Age = character.Age,
+                Name = character.FirstName,
+                LastName = character.LastName,
+                BankAccount = character.BankAccount != null ? character.BankAccount.AccountNumber : 0,
+                BankMoney = character.BankAccount != null ? character.BankAccount.Money : 0,
+                BusinessName = character.Business != null ? character.Business.BusinessName : "Brak",
+                FractionName = character.Fraction != null ? character.Fraction.Name : "Brak",
+                Vehicles = _vehicleManager.GetAllPlayerVehicles(character).Select(q => new VehicleDataDto(q.Model, q.PlateText)).ToList(),
+            };
         }
     }
 }

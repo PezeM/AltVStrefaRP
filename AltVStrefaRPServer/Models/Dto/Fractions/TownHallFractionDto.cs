@@ -46,8 +46,7 @@ namespace AltVStrefaRPServer.Models.Dto.Fractions
                         id = reader.NextInt();
                         break;
                     case "money":
-                        //money = (float)Math.Round(reader.NextDouble(), MidpointRounding.AwayFromZero);
-                        money = (float)reader.NextDouble();
+                        money = (float)Math.Floor(reader.NextDouble());
                         break;
                     case "employeesCount":
                         employeesCount = reader.NextInt();
