@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using AltV.Net.Data;
@@ -78,44 +79,30 @@ namespace AltVStrefaRPServer.Models.Fractions
 
         public void OnMoneyChange() {}
 
-        public bool HasPermission<TPermission>(Character character) where TPermission : FractionPermission
-        {
-            return GetEmployeeRank(character)?.HasPermission<TPermission>() ?? false;
-        }
+        public bool HasPermission<TPermission>(Character character) where TPermission : FractionPermission 
+            => GetEmployeeRank(character)?.HasPermission<TPermission>() ?? false;
 
-        public FractionPermission GetPermission<TPermission>(Character character) where TPermission : FractionPermission
-        {
-            return GetEmployeeRank(character)?.GetPermission<TPermission>();
-        }
+        public FractionPermission GetPermission<TPermission>(Character character) where TPermission : FractionPermission 
+            => GetEmployeeRank(character)?.GetPermission<TPermission>();
 
-        public ICollection<FractionPermission> GetEmployeePermissions(Character employee)
-        {
-            return _fractionRanks.FirstOrDefault(q => q.Id == employee.FractionRank)?.Permissions;
-        }
+        public ICollection<FractionPermission> GetEmployeePermissions(Character employee) 
+            => _fractionRanks.FirstOrDefault(q => q.Id == employee.FractionRank)?.Permissions;
 
-        public FractionRank GetDefaultRank()
-        {
-            return _fractionRanks.FirstOrDefault(r => r.RankType == RankType.Default);
-        }
+        public FractionRank GetDefaultRank() => _fractionRanks.FirstOrDefault(r => r.RankType == RankType.Default);
 
-        public FractionRank GetHighestRank()
-        {
-            return _fractionRanks.FirstOrDefault(r => r.RankType == RankType.Highest);
-        }
+        public FractionRank GetHighestRank() => _fractionRanks.FirstOrDefault(r => r.RankType == RankType.Highest);
 
-        public FractionRank GetEmployeeRank(Character employee)
-        {
-            return _fractionRanks.FirstOrDefault(q => q.Id == employee.FractionRank);
-        }
+        public FractionRank GetEmployeeRank(Character employee) => _fractionRanks.FirstOrDefault(q => q.Id == employee.FractionRank);
 
-        public FractionRank GetRankById(int rankId)
-        {
-            return _fractionRanks.FirstOrDefault(r => r.Id == rankId);
-        }
+        public FractionRank GetRankById(int rankId) => _fractionRanks.FirstOrDefault(r => r.Id == rankId);
 
-        public IEnumerable<Character> GetEmployeesWithRank(FractionRank rank)
+        public IEnumerable<Character> GetEmployeesWithRank(FractionRank rank) => _employees.Where(e => e.FractionRank == rank.Id);
+
+        public Character GetOwner()
         {
-            return _employees.Where(e => e.FractionRank == rank.Id);
+            var highestRank = GetHighestRank();
+            if (highestRank == null) return null;
+            return Employees.FirstOrDefault(e => e.FractionRank == highestRank.Id);
         }
 
         public void SetEmployeeRank(Character employee, FractionRank defaultRank)
@@ -231,6 +218,13 @@ namespace AltVStrefaRPServer.Models.Fractions
             if ((newOwner.CurrentFractionId ?? 0) != Id) return false;
             var highestRank = GetHighestRank();
             if (highestRank == null) return false;
+            var defaultRank = GetDefaultRank();
+            if (defaultRank == null) return false;
+            var oldOwner = GetOwner();
+            if (oldOwner != null)
+            {
+                SetEmployeeRank(oldOwner, defaultRank);
+            }
 
             SetEmployeeRank(newOwner, highestRank);
             await fractionDatabaseService.UpdateFractionAsync(this);
@@ -280,7 +274,17 @@ namespace AltVStrefaRPServer.Models.Fractions
 
         private bool CanAddRank(NewFractionRankDto newRank)
         {
-            return !_fractionRanks.Any(r => r.RankName == newRank.RankName);
+            // Cant be the same name,
+            // cant be default or highest,
+            // cant have the same priorty
+            if (!_fractionRanks.Any(r => r.RankName == newRank.RankName))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
