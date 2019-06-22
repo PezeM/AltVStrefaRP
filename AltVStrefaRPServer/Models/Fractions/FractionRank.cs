@@ -16,7 +16,7 @@ namespace AltVStrefaRPServer.Models.Fractions
 
         public bool AddNewPermission(FractionPermission permission)
         {
-            if (!Permissions.Contains(permission))
+            if (!Permissions.Any(p => p.Name == permission.Name))
             {
                 Permissions.Add(permission);
                 return true;

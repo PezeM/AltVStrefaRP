@@ -93,13 +93,12 @@ namespace AltVStrefaRPServer.Modules.Fractions
             if (UpdateTax(taxId, newTax, townHallFraction))
             {
                 player.Emit("updateTaxValue", taxId, newTax);
+                Alt.Log($"[TAX UPDATE] ({character.Id}) updated tax ({taxId}) to {newTax*100}%.");
             }
             else
             {
                 _notificationService.ShowErrorNotification(player, "Błąd", $"Nie udało się ustawić nowego podatku.");
             }
-
-            Alt.Log($"[TAX UPDATE] ({character.Id}) updated tax ({taxId}) to {newTax*100}%.");
         }
 
         private static bool UpdateTax(int taxId, float newTax, TownHallFraction townHallFraction)
