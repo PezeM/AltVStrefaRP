@@ -7,7 +7,9 @@ using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Dto.Fractions;
+using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Fractions;
+using AltVStrefaRPServer.Models.Fractions.Permissions;
 using AltVStrefaRPServer.Modules.CharacterModule;
 using AltVStrefaRPServer.Modules.Vehicle;
 using AltVStrefaRPServer.Services;
@@ -66,7 +68,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
         {
             if (!player.TryGetCharacter(out Character character)) return;
             if (!_fractionManager.TryToGetTownHallFraction(out TownHallFraction townHallFraction)) return;
-            if (!(townHallFraction.GetEmployeeRank(character)?.Permissions.CanMakeAdvancedActions) ?? false)
+            if (!townHallFraction.HasPermission<OpenTaxesPagePermission>(character))
             {
                 _notificationService.ShowErrorNotification(player, "Brak uprawnień",
                     "Nie posiadasz odpowiednich uprawnień do wykonania tej akcji.", 6500);
@@ -80,7 +82,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
         {
             if (!player.TryGetCharacter(out Character character)) return;
             if(!_fractionManager.TryToGetTownHallFraction(out TownHallFraction townHallFraction)) return;
-            if (!(townHallFraction.GetEmployeeRank(character)?.IsHighestRank) ?? false)
+            if (!(townHallFraction.GetEmployeeRank(character)?.RankType == RankType.Highest))
             {
                 _notificationService.ShowErrorNotification(player, "Brak uprawnień",
                     "Nie posiadasz odpowiednich uprawnień do wykonania tej akcji.", 6500);

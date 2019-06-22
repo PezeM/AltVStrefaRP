@@ -1,7 +1,7 @@
-﻿using System.Linq;
-using AltVStrefaRPServer.Models;
+﻿using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Businesses;
 using AltVStrefaRPServer.Models.Fractions;
+using AltVStrefaRPServer.Models.Fractions.Permissions;
 using AltVStrefaRPServer.Modules.Vehicle;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,11 +25,18 @@ namespace AltVStrefaRPServer.Database
         // Fractions
         public DbSet<Fraction> Fractions { get; set; }
         public DbSet<FractionRank> FractionRanks { get; set; }
-        public DbSet<FractionRankPermissions> FractionRankPermissions { get; set; }
 
         public DbSet<PoliceFraction> PoliceFractions { get; set; }
         public DbSet<SamsFraction> SamsFractions { get; set; }
         public DbSet<TownHallFraction> TownHallFractions { get; set; }
+
+        // Permissions
+        public DbSet<FractionPermission> FractionPermissions { get; set; }
+        public DbSet<ManageRanksPermission> ManageRanksPermissions { get; set; }
+        public DbSet<ManageEmployeesPermission> ManageEmployeesPermissions { get; set; }
+        public DbSet<OpenMenuPermission> OpenMenuPermissions { get; set; }
+        public DbSet<OpenTaxesPagePermission> OpenTaxesPagePermissions { get; set; }
+        public DbSet<VehiclePermission> VehiclePermissions { get; set; }
 
         // Vehicle shop
         public DbSet<VehicleShop> VehicleShops { get; set; }
@@ -143,9 +150,8 @@ namespace AltVStrefaRPServer.Database
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<FractionRank>()
-                .HasOne(fr => fr.Permissions)
-                .WithOne(fp => fp.FractionRank)
-                .HasForeignKey<FractionRankPermissions>(fp => fp.FractionRankFK);
+                .HasMany(p => p.Permissions)
+                .WithOne();
 
             modelBuilder.Entity<TownHallFraction>()
                 .Ignore(q => q.Taxes);

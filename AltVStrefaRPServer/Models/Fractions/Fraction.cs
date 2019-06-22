@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Models.Dto;
+using AltVStrefaRPServer.Models.Enums;
+using AltVStrefaRPServer.Models.Fractions.Permissions;
 using AltVStrefaRPServer.Services.Fractions;
 
 namespace AltVStrefaRPServer.Models.Fractions
@@ -76,19 +78,29 @@ namespace AltVStrefaRPServer.Models.Fractions
 
         public void OnMoneyChange() {}
 
-        public FractionRankPermissions GetEmployeePermissions(Character employee)
+        public bool HasPermission<TPermission>(Character character) where TPermission : FractionPermission
+        {
+            return GetEmployeeRank(character)?.HasPermission<TPermission>() ?? false;
+        }
+
+        public FractionPermission GetPermission<TPermission>(Character character) where TPermission : FractionPermission
+        {
+            return GetEmployeeRank(character)?.GetPermission<TPermission>();
+        }
+
+        public ICollection<FractionPermission> GetEmployeePermissions(Character employee)
         {
             return _fractionRanks.FirstOrDefault(q => q.Id == employee.FractionRank)?.Permissions;
         }
 
         public FractionRank GetDefaultRank()
         {
-            return _fractionRanks.FirstOrDefault(q => q.IsDefaultRank);
+            return _fractionRanks.FirstOrDefault(r => r.RankType == RankType.Default);
         }
 
         public FractionRank GetHighestRank()
         {
-            return _fractionRanks.FirstOrDefault(r => r.IsHighestRank);
+            return _fractionRanks.FirstOrDefault(r => r.RankType == RankType.Highest);
         }
 
         public FractionRank GetEmployeeRank(Character employee)
@@ -140,7 +152,7 @@ namespace AltVStrefaRPServer.Models.Fractions
         {
             var rank = GetRankById(rankId);
             if (rank == null) return false;
-            if (!CanRemoveRank(rank)) return false;
+            //if (!CanRemoveRank(rank)) return false;
 
             if (_fractionRanks.Remove(rank))
             {
@@ -185,16 +197,11 @@ namespace AltVStrefaRPServer.Models.Fractions
             _fractionRanks.Add(new FractionRank
             {
                 RankName = newRank.RankName,
-                IsDefaultRank = false,
-                IsHighestRank = false,
-                Permissions = new FractionRankPermissions
+                RankType = RankType.Normal,
+                Permissions = new List<FractionPermission>
                 {
-                    CanManageEmployees = newRank.Permissions.CanManageEmployees,
-                    CanManageRanks = newRank.Permissions.CanManageRanks,
-                    HaveFractionKeys = newRank.Permissions.HaveFractionKeys,
-                    CanOpenFractionMenu = newRank.Permissions.CanOpenFractionMenu,
-                    HaveVehicleKeys = newRank.Permissions.HaveVehicleKeys,
-                    CanMakeAdvancedActions = newRank.Permissions.CanMakeAdvancedActions
+                    new OpenMenuPermission(),
+                    new VehiclePermission(),
                 }
             });
 
@@ -207,13 +214,13 @@ namespace AltVStrefaRPServer.Models.Fractions
             var rank = GetRankById(rankId);
             if (rank == null) return false;
 
-            rank.RankName = updatedPermissions.RankName;
-            rank.Permissions.CanManageEmployees = updatedPermissions.Permissions.CanManageEmployees;
-            rank.Permissions.CanManageRanks = updatedPermissions.Permissions.CanManageRanks;
-            rank.Permissions.CanOpenFractionMenu = updatedPermissions.Permissions.CanOpenFractionMenu;
-            rank.Permissions.HaveFractionKeys = updatedPermissions.Permissions.HaveFractionKeys;
-            rank.Permissions.HaveVehicleKeys = updatedPermissions.Permissions.HaveVehicleKeys;
-            rank.Permissions.CanMakeAdvancedActions = updatedPermissions.Permissions.CanMakeAdvancedActions;
+            //rank.RankName = updatedPermissions.RankName;
+            //rank.Permissions.CanManageEmployees = updatedPermissions.Permissions.CanManageEmployees;
+            //rank.Permissions.CanManageRanks = updatedPermissions.Permissions.CanManageRanks;
+            //rank.Permissions.CanOpenFractionMenu = updatedPermissions.Permissions.CanOpenFractionMenu;
+            //rank.Permissions.HaveFractionKeys = updatedPermissions.Permissions.HaveFractionKeys;
+            //rank.Permissions.HaveVehicleKeys = updatedPermissions.Permissions.HaveVehicleKeys;
+            //rank.Permissions.CanMakeAdvancedActions = updatedPermissions.Permissions.CanMakeAdvancedActions;
 
             await fractionDatabaseService.UpdateFractionAsync(this);
             return true;
@@ -240,7 +247,7 @@ namespace AltVStrefaRPServer.Models.Fractions
         {
             var employeeRank = GetEmployeeRank(employee);
             if (employeeRank == null) return false;
-            else return !employeeRank.IsHighestRank;
+            else return !(employeeRank.RankType == RankType.Highest);
         }
 
         protected virtual bool CanAddNewEmployee(Character newEmployee)
@@ -260,13 +267,14 @@ namespace AltVStrefaRPServer.Models.Fractions
         {
             var employeeRank = GetEmployeeRank(employee);
             if (employeeRank == null) return false;
-            else if (employeeRank.IsHighestRank) return false;
+            else if (employeeRank.RankType == RankType.Highest) return false;
             else return true;
         }
 
-        private bool CanRemoveRank(FractionRank rank)
+        private bool CanRemoveRank(FractionRank removerRank, FractionRank rankToRemove)
         {
-            if (rank.IsHighestRank || rank.IsDefaultRank) return false;
+            if (rankToRemove.RankType == RankType.Default || rankToRemove.RankType == RankType.Highest) return false;
+            else if (removerRank.Priority <= rankToRemove.Priority) return false;
             else return true;
         }
 

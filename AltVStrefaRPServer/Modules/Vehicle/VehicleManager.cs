@@ -10,6 +10,7 @@ using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Businesses;
 using AltVStrefaRPServer.Models.Enums;
+using AltVStrefaRPServer.Models.Fractions.Permissions;
 using AltVStrefaRPServer.Modules.Businesses;
 using AltVStrefaRPServer.Services.Vehicles;
 using VehicleModel = AltVStrefaRPServer.Models.VehicleModel;
@@ -142,7 +143,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
                 }
                 else if (character.CurrentFractionId > 0)
                 {
-                    return (character.Fraction?.GetEmployeePermissions(character)?.HaveVehicleKeys).Value;
+                    return character.Fraction?.HasPermission<VehiclePermission>(character) ?? false;
                 }
                 else
                 {

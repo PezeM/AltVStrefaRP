@@ -7,7 +7,7 @@ namespace AltVStrefaRPServer.Models.Dto.Fractions
         private static readonly FractionRankAdapter _mAdapter = new FractionRankAdapter();
         public int Id { get; set; }
         public bool IsDefaultRank { get; set; }
-        public bool IsOwnerRank { get; set; }
+        public bool IsHighestRank { get; set; }
         public string RankName { get; set; }
 
         public IMValueBaseAdapter GetAdapter() => _mAdapter;
@@ -21,7 +21,7 @@ namespace AltVStrefaRPServer.Models.Dto.Fractions
             int id = 0;
             string rankName = null;
             bool isDefaultRank = false;
-            bool isOwnerRank = false;
+            bool isHighestRank = false;
             while (reader.HasNext())
             {
                 switch (reader.NextName())
@@ -35,8 +35,8 @@ namespace AltVStrefaRPServer.Models.Dto.Fractions
                     case "isDefaultRank":
                         isDefaultRank = reader.NextBool();
                         break;
-                    case "isOwnerRank":
-                        isOwnerRank = reader.NextBool();
+                    case "isHighestRank":
+                        isHighestRank = reader.NextBool();
                         break;
                     default:
                         reader.SkipValue();
@@ -52,7 +52,7 @@ namespace AltVStrefaRPServer.Models.Dto.Fractions
                     Id = id,
                     RankName = rankName,
                     IsDefaultRank = isDefaultRank,
-                    IsOwnerRank = isOwnerRank
+                    IsHighestRank = isHighestRank
                 };
         }
 
@@ -65,8 +65,8 @@ namespace AltVStrefaRPServer.Models.Dto.Fractions
             writer.Value(value.RankName);
             writer.Name("isDefaultRank");
             writer.Value(value.IsDefaultRank);
-            writer.Name("isOwnerRank");
-            writer.Value(value.IsOwnerRank);
+            writer.Name("isHighestRank");
+            writer.Value(value.IsHighestRank);
             writer.EndObject();
         }
 
