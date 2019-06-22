@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using AltV.Net;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
+using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Fractions;
+using AltVStrefaRPServer.Models.Fractions.Permissions;
 using AltVStrefaRPServer.Services.Fractions;
 
 namespace AltVStrefaRPServer.Modules.Fractions
@@ -21,6 +24,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
             _fractions = new Dictionary<int, Fraction>();
 
             Initialize();
+            //AddNewPermissions(); Was already added
         }
 
         public void Initialize()
@@ -29,20 +33,50 @@ namespace AltVStrefaRPServer.Modules.Fractions
             foreach (var fraction in _fractionDatabaseService.GetAllFractionsList())
             {
                 _fractions.Add(fraction.Id, fraction);
-                if (fraction.GetType() == typeof(TownHallFraction))
+                if (fraction is TownHallFraction townHallFraction)
                 {
-                    _townHallFraction = (TownHallFraction)fraction;
+                    _townHallFraction = townHallFraction;
                 } 
-                else if (fraction.GetType() == typeof(PoliceFraction))
+                else if (fraction is PoliceFraction policeFraction)
                 {
-                    _policeFraction = (PoliceFraction)fraction;
+                    _policeFraction = policeFraction;
                 }
-                else if (fraction.GetType() == typeof(SamsFraction))
+                else if (fraction is SamsFraction samsFraction)
                 {
-                    _samsFraction = (SamsFraction)fraction;
+                    _samsFraction = samsFraction;
                 }
             }
-            Alt.Log($"Added {_fractions.Count} fractions in {Time.GetTimestampMs() - startTime}ms.");
+            Alt.Log($"Loaded {_fractions.Count} fractions in {Time.GetTimestampMs() - startTime}ms.");
+        }
+
+        private void AddNewPermissions()
+        {
+            foreach (var fraction in _fractions.Values)
+            {
+                foreach (var fractionRank in fraction.FractionRanks)
+                {
+                    fractionRank.AddNewPermission(new ManageEmployeesPermission(true));
+                    fractionRank.AddNewPermission(new OpenMenuPermission(true));
+                    fractionRank.AddNewPermission(new InventoryPermission(true));
+                    fractionRank.AddNewPermission(new ManageRanksPermission(true));
+                    fractionRank.AddNewPermission(new VehiclePermission(true));
+
+                    if (fraction is TownHallFraction)
+                    {
+                        fractionRank.AddNewPermission(new TownHallActionsPermission(true));
+                        if (fractionRank.RankType == RankType.Highest)
+                        {
+                            fractionRank.AddNewPermission(new TownHallActionsPermission(true));
+                        }
+                        else
+                        {
+                            fractionRank.AddNewPermission(new TownHallActionsPermission(false));
+                        }
+                    }
+                }
+
+                _fractionDatabaseService.UpdateFraction(fraction);
+            }
         }
 
         public bool TryToGetFraction(int fractionId, out Fraction fraction)
@@ -53,6 +87,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
 
         public Fraction GetFraction<T>() where T : Fraction
         {
+            // TODO: Refactor this
             if (_townHallFraction.GetType() == typeof(T)) 
                 return _townHallFraction;
             else if (_policeFraction.GetType() == typeof(T)) 

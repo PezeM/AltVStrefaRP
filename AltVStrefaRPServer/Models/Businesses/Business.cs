@@ -10,8 +10,6 @@ namespace AltVStrefaRPServer.Models.Businesses
 {
     public class Business : IMoney, IPosition, IHaveBlip
     {
-        private float _money;
-
         public int Id { get; set; }
         public int OwnerId { get; set; }
         public string BusinessName { get; set; }
@@ -19,15 +17,7 @@ namespace AltVStrefaRPServer.Models.Businesses
         public float Y { get; set; }
         public float Z { get; set; }
 
-        public float Money
-        {
-            get { return _money; }
-            set
-            {
-                _money = value;
-                if(UpdateOnMoneyChange) OnMoneyChange();
-            }
-        }
+        public float Money { get; set; }
 
         public virtual int MaxMembersCount { get; set; } = 20;
         public virtual int MaxRanksCount { get; set; } = 5;
@@ -167,10 +157,5 @@ namespace AltVStrefaRPServer.Models.Businesses
         }
 
         public string MoneyTransactionDisplayName() => $"Business {Id}";
-
-        public void OnMoneyChange()
-        {
-            // Later, maybe send notification to leader if he is online about the transaction.
-        }
     }
 }

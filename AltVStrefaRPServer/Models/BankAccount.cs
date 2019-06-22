@@ -4,18 +4,8 @@ namespace AltVStrefaRPServer.Models
 {
     public class BankAccount : IMoney
     {
-        private float _money;
-
         public int Id { get; set; }
-        public float Money
-        {
-            get { return _money; }
-            set
-            {
-                _money = value;
-                if(UpdateOnMoneyChange) OnMoneyChange();
-            }
-        }
+        public float Money { get; set; }
 
         public int AccountNumber { get; set; }
         public Character Character { get; set; }
@@ -59,7 +49,5 @@ namespace AltVStrefaRPServer.Models
         {
             return $"BankAccount {AccountNumber}";
         }
-
-        public void OnMoneyChange() { }
     }
 }

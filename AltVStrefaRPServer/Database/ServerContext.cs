@@ -1,5 +1,6 @@
 ﻿using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Businesses;
+using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Fractions;
 using AltVStrefaRPServer.Models.Fractions.Permissions;
 using AltVStrefaRPServer.Modules.Vehicle;
@@ -32,10 +33,12 @@ namespace AltVStrefaRPServer.Database
 
         // Permissions
         public DbSet<FractionPermission> FractionPermissions { get; set; }
-        public DbSet<ManageRanksPermission> ManageRanksPermissions { get; set; }
+        public DbSet<InventoryPermission> InventoryPermissions { get; set; }
         public DbSet<ManageEmployeesPermission> ManageEmployeesPermissions { get; set; }
+        public DbSet<ManageRanksPermission> ManageRanksPermissions { get; set; }
         public DbSet<OpenMenuPermission> OpenMenuPermissions { get; set; }
         public DbSet<OpenTaxesPagePermission> OpenTaxesPagePermissions { get; set; }
+        public DbSet<TownHallActionsPermission> TownHallActionsPermissions { get; set; }
         public DbSet<VehiclePermission> VehiclePermissions { get; set; }
 
         // Vehicle shop
@@ -98,19 +101,11 @@ namespace AltVStrefaRPServer.Database
                 .Property(m => m.Type)
                 .HasConversion<int>();
 
-            modelBuilder.Entity<BankAccount>()
-                .Property(p => p.Money)
-                .HasField("_money");
-
             // Businesses
             modelBuilder.Entity<Business>()
                 .Ignore(b => b.Blip)
                 .Property(b => b.Type)
                 .HasConversion<int>();
-
-            modelBuilder.Entity<Business>()
-                .Property(p => p.Money)
-                .HasField("_money");
 
             modelBuilder.Entity<Business>()
                 .HasMany(b => b.BusinessRanks)
@@ -126,9 +121,9 @@ namespace AltVStrefaRPServer.Database
             modelBuilder.Entity<Fraction>()
                 .Ignore(f => f.Blip);
 
-            modelBuilder.Entity<Fraction>()
-                .Property(p => p.Money)
-                .HasField("_money");
+            //modelBuilder.Entity<Fraction>()
+            //    .Property(p => p.Money)
+            //    .HasField("_money");
 
             modelBuilder.Entity<Fraction>()
                 .HasMany<Character>(f => f.Employees)
@@ -152,6 +147,11 @@ namespace AltVStrefaRPServer.Database
             modelBuilder.Entity<FractionRank>()
                 .HasMany(p => p.Permissions)
                 .WithOne();
+
+            modelBuilder.Entity<FractionRank>()
+                .Property(r => r.RankType)
+                .HasDefaultValue(RankType.Normal)
+                .HasConversion<int>();
 
             modelBuilder.Entity<TownHallFraction>()
                 .Ignore(q => q.Taxes);

@@ -12,8 +12,6 @@ namespace AltVStrefaRPServer.Modules.Vehicle
 {
     public class VehicleShop : IMoney, IPosition, IHaveBlip
     {
-        private float _money;
-
         public int VehicleShopId { get; set; }
         public float X { get; set; }
         public float Y { get; set; }
@@ -29,15 +27,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
 
         public ICollection<VehiclePrice> AvailableVehicles { get; set; }
 
-        public float Money
-        {
-            get { return _money; }
-            set
-            {
-                _money = value;
-                if(UpdateOnMoneyChange) OnMoneyChange();
-            }
-        }
+        public float Money { get; set; }
 
         public IBlip ShopBlip { get; set; }
         public int BlipSprite { get; set; }
@@ -92,9 +82,6 @@ namespace AltVStrefaRPServer.Modules.Vehicle
         }
 
         public string MoneyTransactionDisplayName() => $"VehicleShop {VehicleShopId}";
-
-        public void OnMoneyChange()
-        { }
 
         public async Task<bool> AddVehicle(VehiclePrice vehiclePrice, ServerContext serverContext)
         {

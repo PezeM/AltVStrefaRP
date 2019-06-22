@@ -7,7 +7,7 @@ using AltVStrefaRPServer.Models.Fractions;
 
 namespace AltVStrefaRPServer.Models
 {
-    public class Character : IMoney, IPosition
+    public class Character : IMoney, IOnMoneyChange, IPosition
     {
         private float _money;
 
@@ -60,7 +60,7 @@ namespace AltVStrefaRPServer.Models
         public int FractionRank { get; set; }
 
         [NotMapped]
-        public bool UpdateOnMoneyChange => false;
+        public bool UpdateOnMoneyChange { get; set; } = false;
 
         public string GetFullName()
         {

@@ -14,10 +14,17 @@ namespace AltVStrefaRPServer.Models.Fractions
         public ICollection<FractionPermission> Permissions { get; set; } = new List<FractionPermission>();
         public Fraction Fraction { get; set; }
 
-        public void AddNewPermission(FractionPermission permission)
+        public bool AddNewPermission(FractionPermission permission)
         {
-            if(!Permissions.Contains(permission))
+            if (!Permissions.Contains(permission))
+            {
                 Permissions.Add(permission);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public bool RemovePermission(FractionPermission permission)

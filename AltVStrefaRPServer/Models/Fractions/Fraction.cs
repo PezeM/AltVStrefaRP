@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using AltV.Net.Data;
@@ -15,21 +13,11 @@ namespace AltVStrefaRPServer.Models.Fractions
 {
     public class Fraction : IMoney, IPosition, IHaveBlip
     {
-        private float _money;
-
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
 
-        public float Money
-        {
-            get { return _money; }
-            set
-            {
-                _money = value;
-                if(UpdateOnMoneyChange) OnMoneyChange();
-            }
-        }
+        public float Money { get; set; }
 
         public DateTime CreationDate { get; set; }
         public virtual float X { get; set; }
@@ -47,9 +35,6 @@ namespace AltVStrefaRPServer.Models.Fractions
         public virtual int BlipColor { get; protected set; }
         public virtual int BlipSprite { get; protected set; }
         public virtual IBlip Blip { get; set; }
-
-        [NotMapped] 
-        public bool UpdateOnMoneyChange => false;
 
         protected Fraction()
         {
@@ -76,8 +61,6 @@ namespace AltVStrefaRPServer.Models.Fractions
         }
 
         public string MoneyTransactionDisplayName() => Name;
-
-        public void OnMoneyChange() {}
 
         public bool HasPermission<TPermission>(Character character) where TPermission : FractionPermission 
             => GetEmployeeRank(character)?.HasPermission<TPermission>() ?? false;
@@ -187,8 +170,8 @@ namespace AltVStrefaRPServer.Models.Fractions
                 RankType = RankType.Normal,
                 Permissions = new List<FractionPermission>
                 {
-                    new OpenMenuPermission(),
-                    new VehiclePermission(),
+                    new OpenMenuPermission(false),
+                    new VehiclePermission(false),
                 }
             });
 
@@ -201,13 +184,6 @@ namespace AltVStrefaRPServer.Models.Fractions
             var rank = GetRankById(rankId);
             if (rank == null) return false;
 
-            //rank.RankName = updatedPermissions.RankName;
-            //rank.Permissions.CanManageEmployees = updatedPermissions.Permissions.CanManageEmployees;
-            //rank.Permissions.CanManageRanks = updatedPermissions.Permissions.CanManageRanks;
-            //rank.Permissions.CanOpenFractionMenu = updatedPermissions.Permissions.CanOpenFractionMenu;
-            //rank.Permissions.HaveFractionKeys = updatedPermissions.Permissions.HaveFractionKeys;
-            //rank.Permissions.HaveVehicleKeys = updatedPermissions.Permissions.HaveVehicleKeys;
-            //rank.Permissions.CanMakeAdvancedActions = updatedPermissions.Permissions.CanMakeAdvancedActions;
 
             await fractionDatabaseService.UpdateFractionAsync(this);
             return true;
