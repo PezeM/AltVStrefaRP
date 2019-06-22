@@ -219,14 +219,15 @@ namespace AltVStrefaRPServer.Models.Fractions
             return true;
         }
 
-        public async Task SetFractionOwner(Character newOwner, IFractionDatabaseService fractionDatabaseService)
+        public async Task<bool> SetFractionOwner(Character newOwner, IFractionDatabaseService fractionDatabaseService)
         {
-            if ((newOwner.CurrentFractionId ?? 0) == Id) return;
+            if ((newOwner.CurrentFractionId ?? 0) != Id) return false;
             var highestRank = GetHighestRank();
-            if (highestRank == null) return;
+            if (highestRank == null) return false;
 
             SetEmployeeRank(newOwner, highestRank);
             await fractionDatabaseService.UpdateFractionAsync(this);
+            return true;
         }
 
         protected virtual bool IsCharacterEmployee(int characterId, out Character character)

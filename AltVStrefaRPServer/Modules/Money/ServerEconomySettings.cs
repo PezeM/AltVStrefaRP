@@ -19,57 +19,57 @@ namespace AltVStrefaRPServer.Modules.Money
 
         public static bool SetVehicleTax(float newTax)
         {
-            if (newTax > AppSettings.Current.ServerConfig.EconomySettings.VehicleTaxSettings.Max ||
-                newTax < AppSettings.Current.ServerConfig.EconomySettings.VehicleTaxSettings.Min)
+            if (newTax <= AppSettings.Current.ServerConfig.EconomySettings.VehicleTaxSettings.Max &&
+                newTax >= AppSettings.Current.ServerConfig.EconomySettings.VehicleTaxSettings.Min)
             {
                 VehicleTax = newTax;
-                return false;
+                return true;
             }
             else
             {
-                return true;
+                return false;
             }
         }
 
         public static bool SetPropertyTax(float newTax)
         {
-            if (newTax > AppSettings.Current.ServerConfig.EconomySettings.PropertyTax.Max ||
-                newTax < AppSettings.Current.ServerConfig.EconomySettings.PropertyTax.Min)
+            if (newTax <= AppSettings.Current.ServerConfig.EconomySettings.PropertyTax.Max &&
+                newTax >= AppSettings.Current.ServerConfig.EconomySettings.PropertyTax.Min)
             {
                 PropertyTax = newTax;
-                return false;
+                return true;
             }
             else
             {
-                return true;
+                return false;
             }
         }
 
         public static bool SetGunTax(float newTax)
         {
-            if (newTax > AppSettings.Current.ServerConfig.EconomySettings.GunTax.Max ||
-                newTax < AppSettings.Current.ServerConfig.EconomySettings.GunTax.Min)
+            if (newTax <= AppSettings.Current.ServerConfig.EconomySettings.GunTax.Max &&
+                newTax >= AppSettings.Current.ServerConfig.EconomySettings.GunTax.Min)
             {
                 GunTax = newTax;
-                return false;
+                return true;
             }
             else
             {
-                return true;
+                return false;
             }
         }
 
         public static bool SetGlobalTax(float newTax)
         {
-            if (newTax > AppSettings.Current.ServerConfig.EconomySettings.GlobalTax.Max ||
-                newTax < AppSettings.Current.ServerConfig.EconomySettings.GlobalTax.Min)
+            if (newTax <= AppSettings.Current.ServerConfig.EconomySettings.GlobalTax.Max &&
+                newTax >= AppSettings.Current.ServerConfig.EconomySettings.GlobalTax.Min)
             {
                 GlobalTax = newTax;
-                return false;
+                return true;
             }
             else
             {
-                return true;
+                return false;
             }
         }
     }

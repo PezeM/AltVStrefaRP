@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Extensions;
@@ -29,6 +30,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
             _notificationService = notificationService;
             _fractionDatabaseService = fractionDatabaseService;
 
+            Alt.On<IPlayer, int>("TryToOpenFractionEmployeesPage", TryToOpenFractionEmployeesPage);
             AltAsync.On<IPlayer, int, string, string> ("InviteEmployeeToFraction", async (player, fractionId, firstName, lastName) 
                 => await InviteEmployeeToFractionEvent (player, fractionId, firstName, lastName));
             AltAsync.On<IPlayer, int>("AcceptFractionInvite", async (player, fractionId) => await AcceptFractionInviteEvent(player, fractionId));
@@ -85,6 +87,19 @@ namespace AltVStrefaRPServer.Modules.Fractions
 
                 character.Player.Emit ("openFractionMenu", (int)FractionsEnum.Townhall, fractionDto);
             }
+        }
+
+        private void TryToOpenFractionEmployeesPage(IPlayer player, int fractionId)
+        {
+            if (!player.TryGetCharacter (out Character character)) return;
+            if (!_fractionManager.TryToGetFraction (fractionId, out Fraction fraction)) return;
+            if (!(fraction.GetEmployeePermissions(character)?.CanManageEmployees) ?? false)
+            {
+                _notificationService.ShowErrorNotification(player, "Brak uprawnień", "Nie posiadasz odpowiednich uprawnień.", 6000);
+                return;
+            }
+
+
         }
 
         public async Task InviteEmployeeToFractionEvent (IPlayer player, int fractionId, string firstName, string lastName)
@@ -265,14 +280,12 @@ namespace AltVStrefaRPServer.Modules.Fractions
             AltAsync.Log($"[UPADTE FRACTION RANK] ({character.Id}) updated fraction rank {updatedPermissions.RankName} in fraction ID({fraction.Id}) {fraction.Name}");
         }
 
-        public async Task<bool> SetFractionOwner(int fractionId, Character newOwner)
+        public Task<bool> SetFractionOwner(int fractionId, Character newOwner)
         {
-            if (!_fractionManager.TryToGetFraction(fractionId, out Fraction fraction)) return false;
-            if (newOwner == null) return false;
+            if (!_fractionManager.TryToGetFraction(fractionId, out Fraction fraction)) return Task.FromResult(false);
+            if (newOwner == null) return Task.FromResult(false);
 
-            await fraction.SetFractionOwner(newOwner, _fractionDatabaseService);
-
-            return true;
+            return fraction.SetFractionOwner(newOwner, _fractionDatabaseService);
         }
     }
 }

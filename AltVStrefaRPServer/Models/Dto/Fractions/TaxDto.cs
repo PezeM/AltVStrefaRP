@@ -1,4 +1,5 @@
 ﻿using AltV.Net;
+using System;
 
 namespace AltVStrefaRPServer.Models.Dto.Fractions
 {
@@ -39,6 +40,7 @@ namespace AltVStrefaRPServer.Models.Dto.Fractions
                         break;
                     case "value":
                         value = (float)reader.NextDouble();
+                        Alt.Log($"TaxValue = {value}");
                         break;
                     default:
                         reader.SkipValue();
@@ -56,7 +58,7 @@ namespace AltVStrefaRPServer.Models.Dto.Fractions
             writer.Name("id");
             writer.Value(value.Id);
             writer.Name("value");
-            writer.Value(value.Value);
+            writer.Value((float)Math.Round(value.Value * 100f) / 100f);
             writer.Name("name");
             writer.Value(value.Name);
             writer.EndObject();

@@ -80,26 +80,24 @@ namespace AltVStrefaRPServer.Modules.Fractions
         {
             if (!player.TryGetCharacter(out Character character)) return;
             if(!_fractionManager.TryToGetTownHallFraction(out TownHallFraction townHallFraction)) return;
-
             if (!(townHallFraction.GetEmployeeRank(character)?.IsHighestRank) ?? false)
             {
                 _notificationService.ShowErrorNotification(player, "Brak uprawnień",
                     "Nie posiadasz odpowiednich uprawnień do wykonania tej akcji.", 6500);
                 return;
             }
-            newTax = (float)Math.Round(newTax, MidpointRounding.AwayFromZero);
+            newTax = (float)Math.Round(newTax * 100f) / 100f;
 
             if (UpdateTax(taxId, newTax, townHallFraction))
             {
                 player.Emit("updateTaxValue", taxId, newTax);
-                _notificationService.ShowSuccessNotification(player, "Sukces", $"Pomyślnie ustawiono nowy podatek na {newTax * 100}%.", 6500);
             }
             else
             {
                 _notificationService.ShowErrorNotification(player, "Błąd", $"Nie udało się ustawić nowego podatku.");
             }
 
-            AltAsync.Log($"[TAX UPDATE] ({character.Id}) updated tax ({taxId}) to {newTax*100}%.");
+            Alt.Log($"[TAX UPDATE] ({character.Id}) updated tax ({taxId}) to {newTax*100}%.");
         }
 
         private static bool UpdateTax(int taxId, float newTax, TownHallFraction townHallFraction)
