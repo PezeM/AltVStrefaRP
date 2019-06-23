@@ -43,9 +43,13 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             player.Emit("openVehicleShop", shop.VehicleShopId, JsonConvert.SerializeObject(shop.AvailableVehicles));
         }
 
-        private async Task BuyVehicleEvent(IPlayer player, int shopId, string vehicleModel)
+        private async Task BuyVehicleEvent(IPlayer player, int shopId, string vehicleHash)
         {
             if (!player.TryGetCharacter(out Character character)) return;
+            if (!long.TryParse(vehicleHash, out var vehicleModel))
+            {
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd z modelem", $"Wystąpił błąd z modelem pojazdu.");
+            }
 
             var shop = _vehicleShopsManager.GetVehicleShop(shopId);
             if (shop == null)

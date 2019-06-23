@@ -61,9 +61,9 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             CreateShopBlip();
         }
 
-        public VehiclePrice FindVehicleByModel(string vehicleModel)
+        public VehiclePrice FindVehicleByModel(long vehicleModel)
         {
-            return AvailableVehicles.FirstOrDefault(v => v.VehicleModel.ToString() == vehicleModel);
+            return AvailableVehicles.FirstOrDefault(v => (long)v.VehicleModel == vehicleModel);
         }
 
         public Position GetPosition() => new Position(X, Y, Z);

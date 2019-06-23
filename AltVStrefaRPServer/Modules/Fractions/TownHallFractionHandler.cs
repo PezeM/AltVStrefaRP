@@ -53,13 +53,14 @@ namespace AltVStrefaRPServer.Modules.Fractions
             if (character == null)
             {
                 character = await _characterDatabaseService.FindCharacterAsync(firstName, lastName);
+                if (character == null)
+                {
+                    await _notificationService.ShowErrorNotificationAsync(player, "Nie znaleziono",
+                        "Nie znaleziono żadnego mieszkańca z podanym imieniem i nazwiskiem.", 6500);
+                    return;
+                }
             }
-            if (character == null)
-            {
-                await _notificationService.ShowErrorNotificationAsync(player, "Nie znaleziono",
-                    "Nie znaleziono żadnego mieszkańca z podanym imieniem i nazwiskiem.", 6500);
-                return;
-            }
+
 
             await player.EmitAsync("populateResidentData", CreateFractionResidentDto(character));
         }

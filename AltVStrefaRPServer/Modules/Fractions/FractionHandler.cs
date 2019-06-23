@@ -36,8 +36,8 @@ namespace AltVStrefaRPServer.Modules.Fractions
             AltAsync.On<IPlayer, int, string, string> ("InviteEmployeeToFraction", async (player, fractionId, firstName, lastName) 
                 => await InviteEmployeeToFractionEvent (player, fractionId, firstName, lastName));
             AltAsync.On<IPlayer, int>("AcceptFractionInvite", async (player, fractionId) => await AcceptFractionInviteEvent(player, fractionId));
-            AltAsync.On<IPlayer, int, int>("RemoveEmployeeFromFraction", async (player, employeeId, fractionId)
-                => await RemoveEmployeeFromFractionEvent(player, employeeId, fractionId));
+            AltAsync.On<IPlayer, int, int>("TryToRemoveEmployeeFromFraction", async (player, fractionId, employeeId)
+                => await RemoveEmployeeFromFractionEvent(player, fractionId, employeeId));
             AltAsync.On<IPlayer, int, int>("DeleteFractionRank", async (player, fractionId, rankId) 
                 => await DeleteFractionRankEvent(player, fractionId, rankId));
             AltAsync.On<IPlayer, int, int, int>("UpdateFractionEmployeeRank", async (player, fractionId, employeeId, newRankId)
@@ -142,9 +142,10 @@ namespace AltVStrefaRPServer.Modules.Fractions
                 return;
             }
 
-            if (await fraction.RemoveEmployeeAsync(employeeId, _fractionDatabaseService))
+            if (await fraction.RemoveEmployeeAsync(character, employeeId, _fractionDatabaseService))
             {
-                await _notificationService.ShowSuccessNotificationAsync(player, "Sukces", "Pomyślnie usunięto pracownika z frakcji.");
+                // Maybe send some notification to user that he has been removed
+                await player.EmitAsync("succesfullyRemovedEmployeeFromFraction", employeeId);
             }
             else
             {
@@ -188,16 +189,16 @@ namespace AltVStrefaRPServer.Modules.Fractions
                 return;
             }
 
-            if (await fraction.UpdateEmployeeRank(employeeId, newRankId, _fractionDatabaseService))
+            if (await fraction.UpdateEmployeeRank(character, employeeId, newRankId, _fractionDatabaseService))
             {
-                await _notificationService.ShowSuccessNotificationAsync(player, "Sukces", "Pomyślnie zmieniono rolę.");
+                await player.EmitAsync("succesfullyUpdatedEmployeeRank", employeeId, newRankId);
             }
             else
             {
                 await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie udało się zmienić roli.");
             }
 
-            AltAsync.Log($"[UPDATE EMPLOYEE RANK] ({character.Id}) changed employee rank to ID({newRankId}) in fraction ID({fractionId}) {fraction.Name}");
+            AltAsync.Log($"[UPDATE EMPLOYEE RANK] ({character.Id}) changed employee({employeeId}) rank to ID({newRankId}) in fraction ID({fractionId}) {fraction.Name}");
         }
 
         private async Task AddNewFractionRankEvent(IPlayer player, int fractionId, string newRankString)

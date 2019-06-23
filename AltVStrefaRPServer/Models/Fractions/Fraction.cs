@@ -55,10 +55,7 @@ namespace AltVStrefaRPServer.Models.Fractions
             _employees = new List<Character>();
         }
 
-        public Position GetPosition()
-        {
-            return new Position(X,Y,Z);
-        }
+        public Position GetPosition() => new Position(X, Y, Z);
 
         public string MoneyTransactionDisplayName() => Name;
 
@@ -93,11 +90,11 @@ namespace AltVStrefaRPServer.Models.Fractions
             employee.FractionRank = defaultRank.Id;
         }
 
-        public virtual async Task<bool> RemoveEmployeeAsync(int employeeId, IFractionDatabaseService fractionDatabaseService)
+        public virtual async Task<bool> RemoveEmployeeAsync(Character characterRemoving, int employeeId, IFractionDatabaseService fractionDatabaseService)
         {
             if (!IsCharacterEmployee(employeeId, out Character employee)) return false;
-            else if (!CanRemoveEmployee(employee)) return false;
-            else if (!_employees.Remove(employee)) return false;
+            if (!CanRemoveEmployee(characterRemoving, employee)) return false;
+            if (!_employees.Remove(employee)) return false;
 
             employee.CurrentFractionId = null;
             await fractionDatabaseService.UpdateFractionAsync(this);
@@ -145,19 +142,23 @@ namespace AltVStrefaRPServer.Models.Fractions
             }
         }
 
-        public async Task<bool> UpdateEmployeeRank(int employeeId, int newRankId, IFractionDatabaseService fractionDatabaseService)
+        public async Task<bool> UpdateEmployeeRank(Character employeeChangingRank, int employeeId, int newRankId, IFractionDatabaseService fractionDatabaseService)
         {
             if (!IsCharacterEmployee(employeeId, out Character employee)) return false;
-            if (!CanChangeEmployeeRank(employee)) return false;
-
             var newRank = GetRankById(newRankId);
             if (newRank == null) return false;
+            if (!CanChangeEmployeeRank(employeeChangingRank, employee, newRank)) return false;
 
-            SetEmployeeRank(employee, newRank);
-
-            await fractionDatabaseService.UpdateFractionAsync(this);
-
-            return true;
+            if (newRank.RankType == RankType.Highest)
+            {
+                return await SetFractionOwner(employee, fractionDatabaseService);
+            }
+            else
+            {
+                SetEmployeeRank(employee, newRank);
+                await fractionDatabaseService.UpdateFractionAsync(this);
+                return true;
+            }
         }
 
         public async Task<bool> AddNewRank(NewFractionRankDto newRank, IFractionDatabaseService fractionDatabaseService)
@@ -213,10 +214,13 @@ namespace AltVStrefaRPServer.Models.Fractions
             return character != null;
         }
 
-        protected bool CanRemoveEmployee(Character employee)
+        protected bool CanRemoveEmployee(Character characterRemoving, Character employee)
         {
             var employeeRank = GetEmployeeRank(employee);
             if (employeeRank == null) return false;
+            var characterRemovingRank = GetEmployeeRank(characterRemoving);
+            if (characterRemovingRank == null) return false;
+            else if (!characterRemovingRank.HasHigherPriority(employeeRank)) return false;
             else return !(employeeRank.RankType == RankType.Highest);
         }
 
@@ -233,12 +237,15 @@ namespace AltVStrefaRPServer.Models.Fractions
             }
         }
 
-        private bool CanChangeEmployeeRank(Character employee)
+        private bool CanChangeEmployeeRank(Character employeeModifying, Character employee, FractionRank newRank)
         {
             var employeeRank = GetEmployeeRank(employee);
             if (employeeRank == null) return false;
-            else if (employeeRank.RankType == RankType.Highest) return false;
-            else return true;
+            if (newRank.Id == employeeRank.Id) return false;
+            var employeeModifyingRank = GetEmployeeRank(employeeModifying);
+            if (employeeModifyingRank == null) return false;
+
+            return employeeModifyingRank.HasHigherPriority(newRank) && employeeModifyingRank.HasHigherPriority(employeeRank);
         }
 
         private bool CanRemoveRank(FractionRank removerRank, FractionRank rankToRemove)

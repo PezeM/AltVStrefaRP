@@ -30,7 +30,11 @@ namespace AltVStrefaRPServer.Services.Characters
         /// <param name="lastName"></param>
         /// <returns></returns>
         public Task<Character> FindCharacterAsync(string firstName, string lastName) 
-            => _serverContext.Characters.AsNoTracking().FirstOrDefaultAsync(c => c.FirstName == firstName && c.LastName == lastName);
+            => _serverContext.Characters.AsNoTracking()
+                .Include(q => q.BankAccount)
+                .Include(q => q.Fraction)
+                .Include(q => q.Business)
+                .FirstOrDefaultAsync(c => c.FirstName == firstName && c.LastName == lastName);
 
         public Task UpdateCharacterAsync(Character character)
         {
