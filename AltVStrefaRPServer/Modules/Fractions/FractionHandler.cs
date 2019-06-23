@@ -72,57 +72,21 @@ namespace AltVStrefaRPServer.Modules.Fractions
             }
             else if (fraction is TownHallFraction townHallFraction)
             {
-                var fractionDto = new TownHallFractionDto
-                {
-                    Id = townHallFraction.Id,
-                    Money = townHallFraction.Money,
-                    EmployeesCount = townHallFraction.EmployeesCount,
-                    RolesCount = townHallFraction.FractionRanks.Count,
-                    CreationDate = townHallFraction.CreationDate.ToShortDateString(),
-                    Taxes = new List<TaxDto>
-                    {
-                        new TaxDto(1, "Podatek od pojazdów", townHallFraction.VehicleTax),
-                        new TaxDto(2, "Podatek od nieruchomości", townHallFraction.PropertyTax),
-                        new TaxDto(3, "Podatek od broni", townHallFraction.GunTax),
-                        new TaxDto(4, "Podatek globalny", townHallFraction.GlobalTax)
-                    }
-                };
-
-                character.Player.Emit ("openFractionMenu", (int)FractionsEnum.Townhall, fractionDto);
+                character.Player.Emit("openFractionMenu", (int)FractionsEnum.Townhall, GetTownHallFractionDto(townHallFraction));
             }
         }
 
         private void TryToOpenFractionEmployeesPage(IPlayer player, int fractionId)
         {
-            if (!player.TryGetCharacter (out Character character)) return;
-            if (!_fractionManager.TryToGetFraction (fractionId, out Fraction fraction)) return;
+            if (!player.TryGetCharacter(out Character character)) return;
+            if (!_fractionManager.TryToGetFraction(fractionId, out Fraction fraction)) return;
             if (!fraction.HasPermission<ManageEmployeesPermission>(character))
             {
                 _notificationService.ShowErrorNotification(player, "Brak uprawnień", "Nie posiadasz odpowiednich uprawnień.", 6000);
                 return;
             }
 
-            //var fractionEmployees = new FractionEmployeesDto
-            //{
-            //    Employees = fraction.Employees.Select(e => new FractionEmployeeDto
-            //    {
-            //        Id = e.Id,
-            //        Name = e.FirstName,
-            //        LastName = e.LastName,
-            //        Age = e.Age,
-            //        RankId = e.FractionRank,
-            //        RankName = fraction.GetEmployeeRank(e).RankName
-            //    }).ToList(),
-            //    Ranks = fraction.FractionRanks.Select(r => new FractionRankDto
-            //    {
-            //        Id = r.Id,
-            //        RankName = r.RankName,
-            //        IsDefaultRank = r.IsDefaultRank,
-            //        IsHighestRank = r.IsHighestRank
-            //    }).ToList()
-            //};
-
-            //player.Emit("openFractionEmployeesPage", fractionEmployees);
+            player.Emit("openFractionEmployeesPage", GetFractionEmloyeesDto(fraction));
         }
 
         public async Task InviteEmployeeToFractionEvent (IPlayer player, int fractionId, string firstName, string lastName)
@@ -312,6 +276,48 @@ namespace AltVStrefaRPServer.Modules.Fractions
             if (newOwner == null) return Task.FromResult(false);
 
             return fraction.SetFractionOwner(newOwner, _fractionDatabaseService);
+        }
+
+        private FractionEmployeesDto GetFractionEmloyeesDto(Fraction fraction)
+        {
+            return new FractionEmployeesDto
+            {
+                Employees = fraction.Employees.Select(e => new FractionEmployeeDto
+                {
+                    Id = e.Id,
+                    Name = e.FirstName,
+                    LastName = e.LastName,
+                    Age = e.Age,
+                    RankId = e.FractionRank,
+                    RankName = fraction.GetEmployeeRank(e).RankName
+                }).ToList(),
+                Ranks = fraction.FractionRanks.Select(r => new FractionRankDto
+                {
+                    Id = r.Id,
+                    RankName = r.RankName,
+                    Priorty = r.Priority,
+                    RankType = (int)r.RankType
+                }).ToList()
+            };
+        }
+
+        private static TownHallFractionDto GetTownHallFractionDto(TownHallFraction townHallFraction)
+        {
+            return new TownHallFractionDto
+            {
+                Id = townHallFraction.Id,
+                Money = townHallFraction.Money,
+                EmployeesCount = townHallFraction.EmployeesCount,
+                RolesCount = townHallFraction.FractionRanks.Count,
+                CreationDate = townHallFraction.CreationDate.ToShortDateString(),
+                Taxes = new List<TaxDto>
+                {
+                    new TaxDto(1, "Podatek od pojazdów", townHallFraction.VehicleTax),
+                    new TaxDto(2, "Podatek od nieruchomości", townHallFraction.PropertyTax),
+                    new TaxDto(3, "Podatek od broni", townHallFraction.GunTax),
+                    new TaxDto(4, "Podatek globalny", townHallFraction.GlobalTax)
+                }
+            };
         }
     }
 }

@@ -6,9 +6,9 @@ namespace AltVStrefaRPServer.Models.Dto.Fractions
     {
         private static readonly FractionRankAdapter _mAdapter = new FractionRankAdapter();
         public int Id { get; set; }
-        public bool IsDefaultRank { get; set; }
-        public bool IsHighestRank { get; set; }
         public string RankName { get; set; }
+        public int Priorty { get; set; }
+        public int RankType { get; set; }
 
         public IMValueBaseAdapter GetAdapter() => _mAdapter;
     }
@@ -20,8 +20,8 @@ namespace AltVStrefaRPServer.Models.Dto.Fractions
             reader.BeginObject();
             int id = 0;
             string rankName = null;
-            bool isDefaultRank = false;
-            bool isHighestRank = false;
+            int priority = 0;
+            int rankType = 0;
             while (reader.HasNext())
             {
                 switch (reader.NextName())
@@ -32,11 +32,11 @@ namespace AltVStrefaRPServer.Models.Dto.Fractions
                     case "rankName":
                         rankName = reader.NextString();
                         break;
-                    case "isDefaultRank":
-                        isDefaultRank = reader.NextBool();
+                    case "priority":
+                        priority = reader.NextInt();
                         break;
-                    case "isHighestRank":
-                        isHighestRank = reader.NextBool();
+                    case "rankType":
+                        rankType = reader.NextInt();
                         break;
                     default:
                         reader.SkipValue();
@@ -51,8 +51,8 @@ namespace AltVStrefaRPServer.Models.Dto.Fractions
                 {
                     Id = id,
                     RankName = rankName,
-                    IsDefaultRank = isDefaultRank,
-                    IsHighestRank = isHighestRank
+                    RankType = rankType,
+                    Priorty = priority
                 };
         }
 
@@ -63,10 +63,10 @@ namespace AltVStrefaRPServer.Models.Dto.Fractions
             writer.Value(value.Id);
             writer.Name("rankName");
             writer.Value(value.RankName);
-            writer.Name("isDefaultRank");
-            writer.Value(value.IsDefaultRank);
-            writer.Name("isHighestRank");
-            writer.Value(value.IsHighestRank);
+            writer.Name("priority");
+            writer.Value(value.Priorty);
+            writer.Name("rankType");
+            writer.Value(value.RankType);
             writer.EndObject();
         }
 
