@@ -7,7 +7,7 @@ namespace AltVStrefaRPServer.Models.Dto.Fractions
         private static readonly FractionRankAdapter _mAdapter = new FractionRankAdapter();
         public int Id { get; set; }
         public string RankName { get; set; }
-        public int Priorty { get; set; }
+        public int Priority { get; set; }
         public int RankType { get; set; }
 
         public IMValueBaseAdapter GetAdapter() => _mAdapter;
@@ -52,7 +52,7 @@ namespace AltVStrefaRPServer.Models.Dto.Fractions
                     Id = id,
                     RankName = rankName,
                     RankType = rankType,
-                    Priorty = priority
+                    Priority = priority
                 };
         }
 
@@ -64,7 +64,7 @@ namespace AltVStrefaRPServer.Models.Dto.Fractions
             writer.Name("rankName");
             writer.Value(value.RankName);
             writer.Name("priority");
-            writer.Value(value.Priorty);
+            writer.Value(value.Priority);
             writer.Name("rankType");
             writer.Value(value.RankType);
             writer.EndObject();

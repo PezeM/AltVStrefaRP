@@ -295,7 +295,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
                 {
                     Id = r.Id,
                     RankName = r.RankName,
-                    Priorty = r.Priority,
+                    Priority = r.Priority,
                     RankType = (int)r.RankType
                 }).ToList()
             };

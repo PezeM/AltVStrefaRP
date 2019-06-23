@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using AltV.Net;
 using AltV.Net.Elements.Args;
 
@@ -8,19 +6,19 @@ namespace AltVStrefaRPServer.Models.Dto.Fractions
 {
     public class FractionEmployeesDto : IMValueConvertible
     {
-        private static readonly IMValueBaseAdapter _myAdapter = new FractionResidentDtoAdapter();
+        private static readonly IMValueBaseAdapter _myAdapter = new FractionEmployeesDtoAdapter();
         public List<FractionEmployeeDto> Employees { get; set; }
         public List<FractionRankDto> Ranks { get; set; }
 
         public IMValueBaseAdapter GetAdapter() => _myAdapter;
     }
 
-    public class FractionEmployeesAdapter : IMValueAdapter<FractionEmployeesDto>
+    public class FractionEmployeesDtoAdapter : IMValueAdapter<FractionEmployeesDto>
     {
         private readonly IMValueAdapter<List<FractionEmployeeDto>> _fractionEmployeeAdapter;
         private readonly IMValueAdapter<List<FractionRankDto>> _fractionRankAdapter;
 
-        public FractionEmployeesAdapter()
+        public FractionEmployeesDtoAdapter()
         {
             _fractionEmployeeAdapter = DefaultMValueAdapters.GetArrayAdapter(new FractionEmployeeAdapter());
             _fractionRankAdapter = DefaultMValueAdapters.GetArrayAdapter(new FractionRankAdapter());
