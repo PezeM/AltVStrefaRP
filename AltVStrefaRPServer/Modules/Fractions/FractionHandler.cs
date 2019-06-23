@@ -104,14 +104,19 @@ namespace AltVStrefaRPServer.Modules.Fractions
             var newEmployee = CharacterManager.Instance.GetCharacter (firstName, lastName);
             if (newEmployee == null)
             {
-                await _notificationService.ShowErrorNotificationAsync (player, "Błąd!", $"Nie znaleziono gracza z takim imieniem i nazwiskiem", 6000);
+                await _notificationService.ShowErrorNotificationAsync (player, "Błąd!", $"Nie znaleziono nikogo z takim imieniem i nazwiskiem", 6000);
                 return;
             }
 
-            // Send inv to newEmployee
-            await _notificationService.ShowSuccessNotificationAsync (player, "Wysłano zaprosznie",
-                $"Pomyślnie wysłano zaproszenie do frakcji do {newEmployee.GetFullName()}", 6000);
-            newEmployee.Player.EmitLocked ("showFractionInvite", fraction.Name, fractionId);
+            if (fraction.SendInviteToFraction(newEmployee))
+            {
+                await _notificationService.ShowSuccessNotificationAsync (player, "Wysłano zaprosznie",
+                    $"Pomyślnie wysłano zaproszenie do frakcji do {newEmployee.GetFullName()}", 6000);
+            }
+            else
+            {
+                await _notificationService.ShowErrorNotificationAsync (player, "Błąd!", $"Nie udało się zaprosić {newEmployee.GetFullName()} do frakcji.", 6000);
+            }
         }
 
         public async Task AcceptFractionInviteEvent(IPlayer player, int fractionId)
@@ -122,23 +127,22 @@ namespace AltVStrefaRPServer.Modules.Fractions
             if (await fraction.AddNewEmployeeAsync(character, _fractionDatabaseService))
             {
                 await _notificationService.ShowSuccessNotificationAsync(player, "Sukces", $"Pomyślnie dołączono do frakcji {fraction.Name}.");
+                AltAsync.Log($"[JOIN FRACTION] ({character.Id}) {character.GetFullName()} joined fraction ID({fraction.Id}) {fraction.Name}");
             }
             else
             {
                 await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Wystąpił błąd w dołączaniu do frakcji.");
             }
-
-            AltAsync.Log($"[JOIN FRACTION] ({character.Id}) {character.GetFullName()} joined fraction ID({fraction.Id}) {fraction.Name}");
         }
 
-        private async Task RemoveEmployeeFromFractionEvent(IPlayer player, int employeeId, int fractionId)
+        private async Task RemoveEmployeeFromFractionEvent(IPlayer player, int fractionId, int employeeId)
         {
             if (!player.TryGetCharacter(out Character character)) return;
             if(!_fractionManager.TryToGetFraction(fractionId, out Fraction fraction)) return;
             if (!fraction.HasPermission<ManageEmployeesPermission>(character))
             {
                 await _notificationService.ShowErrorNotificationAsync(player, "Brak uprawnień",
-                    "Nie posiadasz uprawnień do wrzucania pracowników.", 6000);
+                    "Nie posiadasz uprawnień do wyrzucania pracowników.", 6000);
                 return;
             }
 
@@ -146,14 +150,13 @@ namespace AltVStrefaRPServer.Modules.Fractions
             {
                 // Maybe send some notification to user that he has been removed
                 await player.EmitAsync("succesfullyRemovedEmployeeFromFraction", employeeId);
+                AltAsync.Log($"[REMOVE EMPLOYEE FROM FRACTION] ({character.Id}) removed employee ID({employeeId}) " +
+                             $"from fraction ID({fraction.Id}) {fraction.Name}");
             }
             else
             {
                 await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie udało się usunąć pracownika.");
             }
-
-            AltAsync.Log($"[REMOVE EMPLOYEE FROM FRACTION] ({character.Id}) removed employee ID({employeeId}) " +
-                         $"from fraction ID({fraction.Id}) {fraction.Name}");
         }
 
         private async Task DeleteFractionRankEvent(IPlayer player, int fractionId, int rankId)

@@ -119,7 +119,8 @@ namespace AltVStrefaRPServer.Database
 
             // Fractions
             modelBuilder.Entity<Fraction>()
-                .Ignore(f => f.Blip);
+                .Ignore(f => f.Blip)
+                .Ignore(f => f.Invites);
 
             //modelBuilder.Entity<Fraction>()
             //    .Property(p => p.Money)

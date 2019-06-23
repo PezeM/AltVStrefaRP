@@ -48,7 +48,11 @@ namespace AltVStrefaRPServer.Models.Fractions
             return (Permissions.FirstOrDefault(q => q is TPermission)?.HasPermission) ?? false;
         }
 
-        public bool HasHigherPriority(FractionRank secondRank) => Priority > secondRank.Priority;
+        public bool HasHigherPriority(FractionRank secondRank)
+        {
+            if (RankType ==  RankType.Highest) return true;
+            else return Priority > secondRank.Priority;
+        }
 
         public bool SetPriority(int priority)
         {

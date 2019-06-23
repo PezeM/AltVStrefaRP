@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AltV.Net.Async;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Models.Dto;
@@ -35,6 +36,7 @@ namespace AltVStrefaRPServer.Models.Fractions
         public virtual int BlipColor { get; protected set; }
         public virtual int BlipSprite { get; protected set; }
         public virtual IBlip Blip { get; set; }
+        public List<int> Invites { get; private set; } = new List<int>(); 
 
         protected Fraction()
         {
@@ -97,8 +99,22 @@ namespace AltVStrefaRPServer.Models.Fractions
             if (!_employees.Remove(employee)) return false;
 
             employee.CurrentFractionId = null;
+            employee.FractionRank = 0;
             await fractionDatabaseService.UpdateFractionAsync(this);
             return true;
+        }
+
+        public bool SendInviteToFraction(Character newEmployee)
+        {
+            if ((newEmployee.CurrentFractionId ?? 0) > 0 || newEmployee.FractionRank > 0) return false;
+
+            lock (Invites)
+            {
+                if (Invites.Contains(newEmployee.Id)) return false;
+                Invites.Add(newEmployee.Id);
+                newEmployee.Player.EmitLocked("showFractionInvite", Name, Id);
+                return true;
+            }
         }
 
         public virtual async Task<bool> AddNewEmployeeAsync(Character newEmployee, IFractionDatabaseService fractionDatabaseService)
@@ -109,7 +125,10 @@ namespace AltVStrefaRPServer.Models.Fractions
             var defaultRank = GetDefaultRank();
             if (defaultRank == null) return false;
             SetEmployeeRank(newEmployee, defaultRank);
-
+            lock (Invites)
+            {
+                Invites.Remove(newEmployee.Id);
+            }
             // Save fraction, need to check if its neede to save employee
             await fractionDatabaseService.UpdateFractionAsync(this);
             return true;
@@ -229,7 +248,10 @@ namespace AltVStrefaRPServer.Models.Fractions
             if (_employees != null)
             {
                 if ((newEmployee.CurrentFractionId ?? 0) == Id) return false;
-                else return true;
+                lock (Invites)
+                {
+                    return Invites.Contains(newEmployee.Id);
+                }
             }
             else
             {
