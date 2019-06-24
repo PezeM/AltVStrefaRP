@@ -177,7 +177,8 @@ namespace AltVStrefaRPServer.Modules.Admin
 
         private async Task AddEmployeeToFraction(IPlayer player, string[] args)
         {
-            if(args == null || args.Length < 1) return;
+            if(args == null || args.Length < 1 || !player.TryGetCharacter (out Character sender)) return;
+            if (sender.Account.AdminLevel < AdminLevel.Admin) return;
             if(!int.TryParse(args[0].ToString(), out int fractionId)) return;
 
             await _fractionHandler.AcceptFractionInviteEvent(player, fractionId);

@@ -112,7 +112,8 @@ namespace AltVStrefaRPServer.Models.Fractions
             {
                 if (Invites.Contains(newEmployee.Id)) return false;
                 Invites.Add(newEmployee.Id);
-                newEmployee.Player.EmitLocked("showFractionInvite", Name, Id);
+                newEmployee.Player.EmitLocked("showConfirmModal", "Oferta pracy", $"Otrzymałeś zaproszenie do frakcji {Name}. " +
+                                                                            $"Czy chcesz je przyjąć?", (int)ConfirmModalType.FractionInvite, Id);
                 return true;
             }
         }
@@ -120,18 +121,31 @@ namespace AltVStrefaRPServer.Models.Fractions
         public virtual async Task<bool> AddNewEmployeeAsync(Character newEmployee, IFractionDatabaseService fractionDatabaseService)
         {
             if (!CanAddNewEmployee(newEmployee)) return false;
-            _employees.Add(newEmployee);
-
             var defaultRank = GetDefaultRank();
             if (defaultRank == null) return false;
+            _employees.Add(newEmployee);
             SetEmployeeRank(newEmployee, defaultRank);
             lock (Invites)
             {
                 Invites.Remove(newEmployee.Id);
             }
-            // Save fraction, need to check if its neede to save employee
             await fractionDatabaseService.UpdateFractionAsync(this);
             return true;
+        }
+
+        public bool CancelFractionInvite(Character employee)
+        {
+            lock (Invites)
+            {
+                if (Invites.Contains(employee.Id))
+                {
+                    return Invites.Remove(employee.Id);
+                }
+                else
+                {
+                    return false;
+                }
+            }
         }
 
         public async Task<bool> RemoveRankAsync(int rankId, IFractionDatabaseService fractionDatabaseService)

@@ -33,9 +33,9 @@ namespace AltVStrefaRPServer.Modules.Fractions
             _fractionDatabaseService = fractionDatabaseService;
 
             Alt.On<IPlayer, int>("TryToOpenFractionEmployeesPage", TryToOpenFractionEmployeesPage);
-            AltAsync.On<IPlayer, int, string, string> ("InviteEmployeeToFraction", async (player, fractionId, firstName, lastName) 
-                => await InviteEmployeeToFractionEvent (player, fractionId, firstName, lastName));
+            Alt.On<IPlayer, int, string, string> ("InviteEmployeeToFraction", InviteEmployeeToFractionEvent);
             AltAsync.On<IPlayer, int>("AcceptFractionInvite", async (player, fractionId) => await AcceptFractionInviteEvent(player, fractionId));
+            Alt.On<IPlayer, int>("CancelFractionInvite", CancelFractionInvite);
             AltAsync.On<IPlayer, int, int>("TryToRemoveEmployeeFromFraction", async (player, fractionId, employeeId)
                 => await RemoveEmployeeFromFractionEvent(player, fractionId, employeeId));
             AltAsync.On<IPlayer, int, int>("DeleteFractionRank", async (player, fractionId, rankId) 
@@ -55,7 +55,6 @@ namespace AltVStrefaRPServer.Modules.Fractions
                 _notificationService.ShowErrorNotification (character.Player, "Brak frakcji", "Nie jesteś zatrudniony w żadnej frakcji.");
                 return;
             }
-
             if (!fraction.HasPermission<OpenMenuPermission>(character))
             {
                 _notificationService.ShowErrorNotification(character.Player, "Brak uprawnień", "Nie posiadasz odpowiednich uprawnień");
@@ -89,14 +88,14 @@ namespace AltVStrefaRPServer.Modules.Fractions
             player.Emit("openFractionEmployeesPage", GetFractionEmloyeesDto(fraction));
         }
 
-        public async Task InviteEmployeeToFractionEvent (IPlayer player, int fractionId, string firstName, string lastName)
+        public void InviteEmployeeToFractionEvent (IPlayer player, int fractionId, string firstName, string lastName)
         {
             if ((firstName == null || firstName.Length < 3) || (lastName == null || lastName.Length < 3)) return;
             if (!player.TryGetCharacter (out Character character)) return;
             if (!_fractionManager.TryToGetFraction (fractionId, out Fraction fraction)) return;
             if (!fraction.HasPermission<ManageEmployeesPermission>(character))
             {
-                await _notificationService.ShowErrorNotificationAsync(player, "Brak uprawnień",
+                _notificationService.ShowErrorNotification(player, "Brak uprawnień",
                     "Nie posiadasz uprawnień do zapraszania nowych pracowników.", 6000);
                 return;
             }
@@ -104,18 +103,31 @@ namespace AltVStrefaRPServer.Modules.Fractions
             var newEmployee = CharacterManager.Instance.GetCharacter (firstName, lastName);
             if (newEmployee == null)
             {
-                await _notificationService.ShowErrorNotificationAsync (player, "Błąd!", $"Nie znaleziono nikogo z takim imieniem i nazwiskiem", 6000);
+                _notificationService.ShowErrorNotification (player, "Błąd!", $"Nie znaleziono nikogo z takim imieniem i nazwiskiem", 6000);
                 return;
             }
 
             if (fraction.SendInviteToFraction(newEmployee))
             {
-                await _notificationService.ShowSuccessNotificationAsync (player, "Wysłano zaprosznie",
+                _notificationService.ShowSuccessNotification(player, "Wysłano zaprosznie",
                     $"Pomyślnie wysłano zaproszenie do frakcji do {newEmployee.GetFullName()}", 6000);
+                Alt.Log($"[FRACTION INVITE] ({character.Id}) {character.GetFullName()} invited ({newEmployee.Id}) {newEmployee.GetFullName()} " +
+                             $"to fraction ({fraction.Id}) {fraction.Name}");
             }
             else
             {
-                await _notificationService.ShowErrorNotificationAsync (player, "Błąd!", $"Nie udało się zaprosić {newEmployee.GetFullName()} do frakcji.", 6000);
+                _notificationService.ShowErrorNotification (player, "Błąd!", $"Nie udało się zaprosić {newEmployee.GetFullName()} do frakcji.", 6000);
+            }
+        }
+
+        private void CancelFractionInvite(IPlayer player, int fractionId)
+        {
+            if(!player.TryGetCharacter(out Character character)) return;
+            if (!_fractionManager.TryToGetFraction(fractionId, out Fraction fraction)) return;
+
+            if (fraction.CancelFractionInvite(character))
+            {
+                _notificationService.ShowSuccessNotification(player, "Sukces", "Pomyślnie odrzucono zaproszenie do frakcji");
             }
         }
 
@@ -195,13 +207,12 @@ namespace AltVStrefaRPServer.Modules.Fractions
             if (await fraction.UpdateEmployeeRank(character, employeeId, newRankId, _fractionDatabaseService))
             {
                 await player.EmitAsync("succesfullyUpdatedEmployeeRank", employeeId, newRankId);
+                AltAsync.Log($"[UPDATE EMPLOYEE RANK] ({character.Id}) changed employee({employeeId}) rank to ID({newRankId}) in fraction ID({fractionId}) {fraction.Name}");
             }
             else
             {
                 await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie udało się zmienić roli.");
             }
-
-            AltAsync.Log($"[UPDATE EMPLOYEE RANK] ({character.Id}) changed employee({employeeId}) rank to ID({newRankId}) in fraction ID({fractionId}) {fraction.Name}");
         }
 
         private async Task AddNewFractionRankEvent(IPlayer player, int fractionId, string newRankString)
@@ -229,13 +240,12 @@ namespace AltVStrefaRPServer.Modules.Fractions
             if (await fraction.AddNewRank(newRank, _fractionDatabaseService))
             {
                 await _notificationService.ShowSuccessNotificationAsync(player, "Sukces", $"Pomyślnie dodano nową rolę o nazwie {newRank.RankName}.");
+                AltAsync.Log($"[ADD NEW FRACTION RANK] ({character.Id}) added new role ({newRank.RankName}) to fraction ID({fraction.Id}) {fraction.Name}");
             }
             else
             {
                 await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie udało się dodać nowej roli.");
             }
-
-            AltAsync.Log($"[ADD NEW FRACTION RANK] ({character.Id}) added new role ({newRank.RankName}) to fraction ID({fraction.Id}) {fraction.Name}");
         }
 
         
