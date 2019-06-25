@@ -4,7 +4,7 @@
     {
         public override string Name { get; set; } = "Otwieranie inwentarza";
         public override string Description { get; set; } = "Możliwość otwierania wspólnego inwentarza.";
-        public override bool HasPermission { get; protected set; } = true;
+        public override bool HasPermission { get; set; } = true;
 
         public InventoryPermission(bool hasPermission) : base(hasPermission){}
     }

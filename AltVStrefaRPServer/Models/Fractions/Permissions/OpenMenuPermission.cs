@@ -2,9 +2,9 @@
 {
     public class OpenMenuPermission : FractionPermission
     {
-        public override string Name { get; set; } = "Korzystanie za pojazdów";
-        public override string Description { get; set; } = "Czy posiada możliwość korzystania z pojazdów";
-        public override bool HasPermission { get; protected set; } = true;
+        public override string Name { get; set; } = "Otwieranie menu";
+        public override string Description { get; set; } = "Czy ma możliwość otworzenia menu frakcji";
+        public override bool HasPermission { get; set; } = true;
 
         public OpenMenuPermission(bool hasPermission) : base(hasPermission){}
     }

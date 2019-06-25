@@ -16,6 +16,7 @@ using AltVStrefaRPServer.Modules.CharacterModule;
 using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Fractions;
 using Newtonsoft.Json;
+using FractionRankDto = AltVStrefaRPServer.Models.Dto.Fractions.FractionRankDto;
 
 namespace AltVStrefaRPServer.Modules.Fractions
 {
@@ -38,13 +39,14 @@ namespace AltVStrefaRPServer.Modules.Fractions
             Alt.On<IPlayer, int>("CancelFractionInvite", CancelFractionInvite);
             AltAsync.On<IPlayer, int, int>("TryToRemoveEmployeeFromFraction", async (player, fractionId, employeeId)
                 => await RemoveEmployeeFromFractionEvent(player, fractionId, employeeId));
-            AltAsync.On<IPlayer, int, int>("DeleteFractionRank", async (player, fractionId, rankId) 
+            Alt.On<IPlayer, int>("TryToOpenFractionRanksPage", TryToOpenFractionRanksPage);
+            AltAsync.On<IPlayer, int, int>("TryToDeleteFractionRank", async (player, fractionId, rankId) 
                 => await DeleteFractionRankEvent(player, fractionId, rankId));
             AltAsync.On<IPlayer, int, int, int>("UpdateFractionEmployeeRank", async (player, fractionId, employeeId, newRankId)
                 => await UpdateFractionEmployeeRankEvent(player, fractionId, employeeId, newRankId));
-            AltAsync.On<IPlayer, int, string>("AddNewFractionRank", async (player, fractionId, newRank) 
+            AltAsync.On<IPlayer, int, string>("TryToAddNewFractionRank", async (player, fractionId, newRank) 
                 => await AddNewFractionRankEvent(player, fractionId, newRank));
-            AltAsync.On<IPlayer, int, int, string>("UpdateFractionRank", async(player, fractionId, rankId, updatedRank) 
+            AltAsync.On<IPlayer, int, int, string>("TryToUpdateFractionRank", async(player, fractionId, rankId, updatedRank) 
                 => await UpdateFractionRankEvent(player, fractionId, rankId, updatedRank));
         }
 
@@ -171,6 +173,19 @@ namespace AltVStrefaRPServer.Modules.Fractions
             }
         }
 
+        private void TryToOpenFractionRanksPage(IPlayer player, int fractionId)
+        {
+            if (!player.TryGetCharacter(out Character character)) return;
+            if (!_fractionManager.TryToGetFraction(fractionId, out Fraction fraction)) return;
+            if (!fraction.HasPermission<ManageRanksPermission>(character))
+            {
+                _notificationService.ShowErrorNotification(player, "Błąd", "Nie posiadasz odpowiednich uprawnień.");
+                return;
+            }
+
+            player.Emit("openFractionRanksPage", JsonConvert.SerializeObject(GetAllFractionRanks(fraction)));
+        }
+
         private async Task DeleteFractionRankEvent(IPlayer player, int fractionId, int rankId)
         {
             if (!player.TryGetCharacter (out Character character)) return;
@@ -181,16 +196,15 @@ namespace AltVStrefaRPServer.Modules.Fractions
                 return;
             }
 
-            if (await fraction.RemoveRankAsync(rankId, _fractionDatabaseService))
+            if (await fraction.RemoveRankAsync(character, rankId, _fractionDatabaseService))
             {
                 await _notificationService.ShowSuccessNotificationAsync(player, "Sukces", "Pomyślnie usunięto rolę.");
+                AltAsync.Log($"[REMOVE FRACTION RANK] ({character.Id}) deleted rank ID({rankId}) from fraction ID({fractionId}) {fraction.Name}");
             }
             else
             {
                 await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie udało się usunąć roli.");
             }
-
-            AltAsync.Log($"[REMOVE FRACTION RANK] ({character.Id}) deleted rank ID({rankId}) from fraction ID({fractionId}) {fraction.Name}");
         }
 
         public async Task UpdateFractionEmployeeRankEvent(IPlayer player, int fractionId, int employeeId, int newRankId)
@@ -224,6 +238,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
                 await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie posiadasz odpowiednich uprawnień.");
                 return;
             }
+            // Needs to somehow convert it to correct class
 
             NewFractionRankDto newRank;
             try
@@ -239,7 +254,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
 
             if (await fraction.AddNewRank(newRank, _fractionDatabaseService))
             {
-                await _notificationService.ShowSuccessNotificationAsync(player, "Sukces", $"Pomyślnie dodano nową rolę o nazwie {newRank.RankName}.");
+                player.EmitLocked("succesfullyAddedNewFractionRank", newRank.RankName, JsonConvert.SerializeObject(GetAllFractionRanks(fraction)));
                 AltAsync.Log($"[ADD NEW FRACTION RANK] ({character.Id}) added new role ({newRank.RankName}) to fraction ID({fraction.Id}) {fraction.Name}");
             }
             else
@@ -259,10 +274,10 @@ namespace AltVStrefaRPServer.Modules.Fractions
                 return;
             }
 
-            NewFractionRankDto updatedPermissions;
+            UpdatedFractionRankDto updatedPermissions;
             try
             {
-                updatedPermissions = JsonConvert.DeserializeObject<NewFractionRankDto>(updatedRank);
+                updatedPermissions = JsonConvert.DeserializeObject<UpdatedFractionRankDto>(updatedRank);
             }
             catch (Exception e)
             {
@@ -271,17 +286,16 @@ namespace AltVStrefaRPServer.Modules.Fractions
             }
             if(updatedPermissions == null) return;
 
-            if (await fraction.UpdateRank(rankId, updatedPermissions, _fractionDatabaseService))
+            if (await fraction.UpdateRank(character, rankId, updatedPermissions, _fractionDatabaseService))
             {
                 await _notificationService.ShowSuccessNotificationAsync(player, "Sukces", 
                     $"Pomyślnie zaktualizowano rolę o nazwie {updatedPermissions.RankName}");
+                AltAsync.Log($"[UPADTE FRACTION RANK] ({character.Id}) updated fraction rank {updatedPermissions.RankName} in fraction ID({fraction.Id}) {fraction.Name}");
             }
             else
             {
                 await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie udało się zaktualizować roli.");
             }
-
-            AltAsync.Log($"[UPADTE FRACTION RANK] ({character.Id}) updated fraction rank {updatedPermissions.RankName} in fraction ID({fraction.Id}) {fraction.Name}");
         }
 
         public Task<bool> SetFractionOwner(int fractionId, Character newOwner)
@@ -332,6 +346,18 @@ namespace AltVStrefaRPServer.Modules.Fractions
                     new TaxDto(4, "Podatek globalny", townHallFraction.GlobalTax)
                 }
             };
+        }
+
+        private static List<FullFractionRankDto> GetAllFractionRanks(Fraction fraction)
+        {
+            return fraction.FractionRanks.Select(q => new FullFractionRankDto
+            {
+                Id = q.Id,
+                Priority = q.Priority,
+                RankName = q.RankName,
+                RankType = (int)q.RankType,
+                Permissions = q.Permissions.ToList()
+            }).ToList();
         }
     }
 }

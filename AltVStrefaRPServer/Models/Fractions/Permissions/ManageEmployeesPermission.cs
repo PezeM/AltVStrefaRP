@@ -4,7 +4,7 @@
     {
         public override string Name { get; set; } = "Zarządzanie pracownikami";
         public override string Description { get; set; } = "Możliwość zarządzania pracownikami(zapraszanie, zmiana rangi)";
-        public override bool HasPermission { get; protected set; } = true;
+        public override bool HasPermission { get; set; } = true;
 
         public ManageEmployeesPermission(bool hasPermission) : base(hasPermission){}
     }

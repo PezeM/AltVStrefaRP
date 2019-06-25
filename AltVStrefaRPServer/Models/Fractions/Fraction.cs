@@ -6,6 +6,7 @@ using AltV.Net.Async;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Models.Dto;
+using AltVStrefaRPServer.Models.Dto.Fractions;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Fractions.Permissions;
 using AltVStrefaRPServer.Services.Fractions;
@@ -148,18 +149,20 @@ namespace AltVStrefaRPServer.Models.Fractions
             }
         }
 
-        public async Task<bool> RemoveRankAsync(int rankId, IFractionDatabaseService fractionDatabaseService)
+        public async Task<bool> RemoveRankAsync(Character remover, int rankId, IFractionDatabaseService fractionDatabaseService)
         {
             var rank = GetRankById(rankId);
             if (rank == null) return false;
-            //if (!CanRemoveRank(rank)) return false;
+            var removerRank = GetEmployeeRank(remover);
+            if (removerRank == null) return false;
+            if (!CanRemoveRank(removerRank, rank)) return false;
 
             if (_fractionRanks.Remove(rank))
             {
                 var employeesWithRank = GetEmployeesWithRank(rank);
-                var defaultRank = GetDefaultRank();
                 if (employeesWithRank.Count() > 0)
                 {
+                    var defaultRank = GetDefaultRank();
                     foreach (var employee in employeesWithRank)
                     {
                         SetEmployeeRank(employee, defaultRank);
@@ -198,26 +201,29 @@ namespace AltVStrefaRPServer.Models.Fractions
         {
             if (!CanAddRank(newRank)) return false;
 
-            _fractionRanks.Add(new FractionRank
+            var newFractionRank = new FractionRank
             {
                 RankName = newRank.RankName,
-                RankType = RankType.Normal,
-                Permissions = new List<FractionPermission>
-                {
-                    new OpenMenuPermission(false),
-                    new VehiclePermission(false),
-                }
-            });
+                RankType = (RankType)newRank.RankType,
+                Permissions = GenerateNewPermissions()
+            };
 
+            if (!newFractionRank.SetPriority(newRank.Priority)) return false;
+            _fractionRanks.Add(newFractionRank);
             await fractionDatabaseService.UpdateFractionAsync(this);
             return true;
         }
-        
-        public async Task<bool> UpdateRank(int rankId, NewFractionRankDto updatedPermissions, IFractionDatabaseService fractionDatabaseService)
+
+        public async Task<bool> UpdateRank(Character updatingEmployee, int rankId, UpdatedFractionRankDto updatedRank, IFractionDatabaseService fractionDatabaseService)
         {
             var rank = GetRankById(rankId);
-            if (rank == null) return false;
+            if (rank == null || updatedRank.Permissions == null) return false;
+            var updatingEmployeeRank = GetEmployeeRank(updatingEmployee);
+            if (updatingEmployeeRank == null || !updatingEmployeeRank.HasHigherPriority(rank)) return false;
 
+            if (!rank.SetPriority(updatedRank.Priority)) return false;
+            rank.RankName = updatedRank.RankName;
+            rank.Permissions = updatedRank.Permissions;
 
             await fractionDatabaseService.UpdateFractionAsync(this);
             return true;
@@ -287,23 +293,36 @@ namespace AltVStrefaRPServer.Models.Fractions
         private bool CanRemoveRank(FractionRank removerRank, FractionRank rankToRemove)
         {
             if (rankToRemove.RankType == RankType.Default || rankToRemove.RankType == RankType.Highest) return false;
-            else if (removerRank.Priority <= rankToRemove.Priority) return false;
+            else if (!removerRank.HasHigherPriority(rankToRemove)) return false;
             else return true;
         }
 
         private bool CanAddRank(NewFractionRankDto newRank)
         {
-            // Cant be the same name,
-            // cant be default or highest,
-            // cant have the same priorty
             if (!_fractionRanks.Any(r => r.RankName == newRank.RankName))
             {
+                if (newRank.RankType != 1) return false;
+                else if (_fractionRanks.Any(r => r.Priority == newRank.Priority)) return false;
                 return true;
             }
             else
             {
                 return false;
             }
+        }
+
+        private static List<FractionPermission> GenerateNewPermissions()
+        {
+            return new List<FractionPermission>
+            {
+                new InventoryPermission(false),
+                new ManageEmployeesPermission(false),
+                new ManageRanksPermission(false),
+                new OpenMenuPermission(false),
+                new OpenTaxesPagePermission(false),
+                new TownHallActionsPermission(false),
+                new VehiclePermission(false)
+            };
         }
     }
 }
