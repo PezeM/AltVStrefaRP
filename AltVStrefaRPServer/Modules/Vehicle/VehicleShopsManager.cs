@@ -25,7 +25,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
         private void LoadVehicleShops()
         {
             var startTime = Time.GetTimestampMs();
-            foreach (var vehicleShop in _serverContext.VehicleShops.Include(q => q.AvailableVehicles).ToList())
+            foreach (var vehicleShop in _serverContext.VehicleShops.Include(q => q.AvailableVehicles))
             {
                 VehicleShops.Add(vehicleShop);
             }

@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace AltVStrefaRPServer.Services.Vehicles
 {
@@ -16,15 +14,8 @@ namespace AltVStrefaRPServer.Services.Vehicles
             _serverContext = serverContext;
         }
 
-        /// <summary>
-        /// Gets all vehicles from database
-        /// </summary>
-        /// <returns></returns>
-        public Task<List<VehicleModel>> LoadVehiclesFromDatabaseAsync()
-            => _serverContext.Vehicles.ToListAsync();
-
-        public List<VehicleModel> LoadVehiclesFromDatabase()
-            => _serverContext.Vehicles.ToList();
+        public IEnumerable<VehicleModel> LoadVehiclesFromDatabase()
+            => _serverContext.Vehicles;
 
         public Task RemoveVehicleAsync(VehicleModel vehicle)
         {
@@ -52,7 +43,7 @@ namespace AltVStrefaRPServer.Services.Vehicles
 
         public Task AddVehicleToDatabaseAsync(VehicleModel vehicle)
         {
-            _serverContext.Vehicles.Update(vehicle);
+            _serverContext.Vehicles.AddAsync(vehicle);
             return _serverContext.SaveChangesAsync();
         }
     }

@@ -25,7 +25,7 @@ namespace AltVStrefaRPServer.Modules.Money
         private void LoadBankAccountsFromDatabase()
         {
             var startTime = Time.GetTimestampMs();
-            foreach (var bankAccount in _serverContext.BankAccounts.ToList())
+            foreach (var bankAccount in _serverContext.BankAccounts)
             {
                 _bankAccounts.Add(bankAccount.AccountNumber, bankAccount);
             }

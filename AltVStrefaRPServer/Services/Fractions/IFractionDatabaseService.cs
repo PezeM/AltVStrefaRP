@@ -6,8 +6,7 @@ namespace AltVStrefaRPServer.Services.Fractions
 {
     public interface IFractionDatabaseService
     {
-        Task<List<Fraction>> GetAllFractionsListAsync();
-        List<Fraction> GetAllFractionsList();
+        IEnumerable<Fraction> GetAllFractionsList();
         Task<Fraction> GetFractionByIdAsync(int fractionId);
         Fraction GetFractionById(int fractionId);
         Task UpdateFractionAsync(Fraction fraction);

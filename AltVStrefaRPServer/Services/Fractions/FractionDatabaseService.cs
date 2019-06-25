@@ -16,22 +16,12 @@ namespace AltVStrefaRPServer.Services.Fractions
             _serverContext = serverContext;
         }
 
-        public List<Fraction> GetAllFractionsList()
+        public IEnumerable<Fraction> GetAllFractionsList()
         {
             return _serverContext.Fractions
                 .Include(f => f.Employees)
                 .Include(f => f.FractionRanks)
-                .ThenInclude(f => f.Permissions)
-                .ToList();
-        }
-
-        public Task<List<Fraction>> GetAllFractionsListAsync()
-        {
-            return _serverContext.Fractions
-                .Include(f => f.Employees)
-                .Include(f => f.FractionRanks)
-                .ThenInclude(f => f.Permissions)
-                .ToListAsync();
+                .ThenInclude(f => f.Permissions);
         }
 
         public Fraction GetFractionById(int fractionId)
