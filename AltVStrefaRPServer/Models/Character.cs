@@ -19,7 +19,6 @@ namespace AltVStrefaRPServer.Models
         public bool IsMuted { get; set; }
         public bool CanDriveVehicles { get; set; }
 
-        public string BackgroundImage { get; set; }
         public string ProfileImage { get; set; }
 
         public float X { get; set; }

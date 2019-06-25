@@ -61,7 +61,6 @@ namespace AltVStrefaRPServer.Services.Characters
                 FirstName = c.FirstName,
                 LastName = c.LastName,
                 Money = c.Money,
-                BackgroundImage = c.BackgroundImage,
                 ProfileImage = c.ProfileImage,
                 TimePlayed = c.TimePlayed
             }).ToListAsync();
