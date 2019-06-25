@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using AltVStrefaRPServer.Database;
-using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Fractions;
 using Microsoft.EntityFrameworkCore;
 
@@ -67,6 +66,12 @@ namespace AltVStrefaRPServer.Services.Fractions
         {
             _serverContext.Fractions.Add(fraction);
             return _serverContext.SaveChanges();
+        }
+
+        public async Task RemoveFractionRankAsync(FractionRank fractionRank)
+        {
+            _serverContext.FractionRanks.Remove(fractionRank);
+            await _serverContext.SaveChangesAsync();
         }
     }
 }

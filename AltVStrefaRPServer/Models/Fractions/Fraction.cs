@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using AltV.Net.Async;
 using AltV.Net.Data;
@@ -77,7 +78,7 @@ namespace AltVStrefaRPServer.Models.Fractions
 
         public FractionRank GetEmployeeRank(Character employee) => _fractionRanks.FirstOrDefault(q => q.Id == employee.FractionRank);
 
-        public FractionRank GetRankById(int rankId) => _fractionRanks.FirstOrDefault(r => r.Id == rankId);
+        public FractionRank GetRankById(int rankId) => _fractionRanks.Find(r => r.Id == rankId);
 
         public IEnumerable<Character> GetEmployeesWithRank(FractionRank rank) => _employees.Where(e => e.FractionRank == rank.Id);
 
@@ -169,7 +170,7 @@ namespace AltVStrefaRPServer.Models.Fractions
                     }
                 }
 
-                await fractionDatabaseService.UpdateFractionAsync(this);
+                await fractionDatabaseService.RemoveFractionRankAsync(rank);
                 return true;
             }
             else

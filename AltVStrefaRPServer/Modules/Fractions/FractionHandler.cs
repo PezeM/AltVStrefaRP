@@ -198,7 +198,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
 
             if (await fraction.RemoveRankAsync(character, rankId, _fractionDatabaseService))
             {
-                await _notificationService.ShowSuccessNotificationAsync(player, "Sukces", "Pomyślnie usunięto rolę.");
+                player.EmitLocked("succesfullyDeletedFractionRank", rankId);
                 AltAsync.Log($"[REMOVE FRACTION RANK] ({character.Id}) deleted rank ID({rankId}) from fraction ID({fractionId}) {fraction.Name}");
             }
             else

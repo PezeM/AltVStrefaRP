@@ -122,10 +122,6 @@ namespace AltVStrefaRPServer.Database
                 .Ignore(f => f.Blip)
                 .Ignore(f => f.Invites);
 
-            //modelBuilder.Entity<Fraction>()
-            //    .Property(p => p.Money)
-            //    .HasField("_money");
-
             modelBuilder.Entity<Fraction>()
                 .HasMany<Character>(f => f.Employees)
                 .WithOne(c => c.Fraction)
@@ -147,7 +143,8 @@ namespace AltVStrefaRPServer.Database
 
             modelBuilder.Entity<FractionRank>()
                 .HasMany(p => p.Permissions)
-                .WithOne();
+                .WithOne()
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<FractionRank>()
                 .Property(r => r.RankType)

@@ -14,5 +14,6 @@ namespace AltVStrefaRPServer.Services.Fractions
         void UpdateFraction(Fraction fraction);
         Task<int> AddNewFractionAsync(Fraction fraction);
         int AddNewFraction(Fraction fraction);
+        Task RemoveFractionRankAsync(FractionRank fractionRank);
     }
 }
