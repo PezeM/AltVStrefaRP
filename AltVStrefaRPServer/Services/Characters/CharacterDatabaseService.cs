@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models;
@@ -8,11 +9,11 @@ namespace AltVStrefaRPServer.Services.Characters
 {
     public class CharacterDatabaseService : ICharacterDatabaseService
     {
-        private ServerContext _serverContext;
+        private readonly Func<ServerContext> _factory;
 
-        public CharacterDatabaseService(ServerContext serverContext)
+        public CharacterDatabaseService(Func<ServerContext> factory)
         {
-            _serverContext = serverContext;
+            _factory = factory;
         }
 
         /// <summary>
@@ -21,7 +22,12 @@ namespace AltVStrefaRPServer.Services.Characters
         /// <param name="characterId">find</param>
         /// <returns></returns>
         public Task<Character> FindCharacterByIdAsync(int characterId)
-            => _serverContext.Characters.FindAsync(characterId);
+        {
+            using (var context = _factory.Invoke())
+            {
+                return context.Characters.FindAsync(characterId);
+            }
+        }
 
         /// <summary>
         /// Searches for character in database by first name and last name. Null is returned if no entity was found
@@ -29,24 +35,35 @@ namespace AltVStrefaRPServer.Services.Characters
         /// <param name="firstName"></param>
         /// <param name="lastName"></param>
         /// <returns></returns>
-        public Task<Character> FindCharacterAsync(string firstName, string lastName) 
-            => _serverContext.Characters.AsNoTracking()
-                .Include(q => q.BankAccount)
-                .Include(q => q.Fraction)
-                .Include(q => q.Business)
-                .FirstOrDefaultAsync(c => c.FirstName == firstName && c.LastName == lastName);
+        public Task<Character> FindCharacterAsync(string firstName, string lastName)
+        {
+            using (var context = _factory.Invoke())
+            {
+                return context.Characters.AsNoTracking()
+                    .Include(q => q.BankAccount)
+                    .Include(q => q.Fraction)
+                    .Include(q => q.Business)
+                    .FirstOrDefaultAsync(c => c.FirstName == firstName && c.LastName == lastName);
+            }
+        }
 
         public Task UpdateCharacterAsync(Character character)
         {
-            _serverContext.Characters.Update(character);
-            //_serverContext.Entry(character).State = EntityState.Detached;
-            return _serverContext.SaveChangesAsync();
+            using (var context = _factory.Invoke())
+            {
+                context.Characters.Update(character);
+                //_serverContext.Entry(character).State = EntityState.Detached;
+                return context.SaveChangesAsync();
+            }
         }
 
         public Task UpdateCharactersAsync(IEnumerable<Character> characters)
         {
-            _serverContext.Characters.UpdateRange(characters);
-            return _serverContext.SaveChangesAsync();
+            using (var context = _factory.Invoke())
+            {
+                context.Characters.UpdateRange(characters);
+                return context.SaveChangesAsync();
+            }
         }
     }
 }
