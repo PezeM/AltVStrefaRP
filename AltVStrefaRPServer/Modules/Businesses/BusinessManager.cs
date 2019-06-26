@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AltV.Net;
@@ -21,12 +20,14 @@ namespace AltVStrefaRPServer.Modules.Businesses
         private Dictionary<int, Business> _businesses;
 
         private IBusinessService _businessService;
+        private IBusinessDatabaseService _businessDatabaseService;
         private ICharacterDatabaseService _characterDatabaseService;
         private BusinessFactory _businessFactory;
 
-        public BusinessManager(IBusinessService businessService, ICharacterDatabaseService characterDatabaseService)
+        public BusinessManager(IBusinessService businessService, IBusinessDatabaseService businessDatabaseService, ICharacterDatabaseService characterDatabaseService)
         {
             _characterDatabaseService = characterDatabaseService;
+            _businessDatabaseService = businessDatabaseService;
             _businessService = businessService;
             _businessFactory = new BusinessFactory();
 
@@ -37,7 +38,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
         private void LoadBusinesses()
         {
             var startTime = Time.GetTimestampMs();
-            foreach (var business in _businessService.GetAllBusinesses())
+            foreach (var business in _businessDatabaseService.GetAllBusinesses())
             {
                 //_businesses.TryAdd(business.Id, _businessFactory.CreateNewBusiness(business));
                 _businesses.TryAdd(business.Id, business);
@@ -119,7 +120,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
             if (CheckIfBusinessExists(name)) return false;
 
             var business = _businessFactory.CreateNewBusiness(ownerId, businessType, position, name);
-            await _businessService.AddNewBusinessAsync(business).ConfigureAwait(false);
+            await _businessDatabaseService.AddNewBusinessAsync(business).ConfigureAwait(false);
             _businesses.Add(business.Id, business);
             Alt.Log($"Created new business ID({business.Id}) Name({business.BusinessName}) in {Time.GetTimestampMs() - startTime}ms.");
             return true;
@@ -131,13 +132,13 @@ namespace AltVStrefaRPServer.Modules.Businesses
             {
                 if (!_businessService.AddEmployee(business, newOwner)) return false;
                 newOwner.BusinessRank = business.BusinessRanks.FirstOrDefault(r => r.IsOwnerRank).Id;
-                await _businessService.UpdateOwnerAsync(business, newOwner).ConfigureAwait(false);
+                await _businessDatabaseService.UpdateOwnerAsync(business, newOwner).ConfigureAwait(false);
                 return true;
             }
             else if (newOwner.CurrentBusinessId == business.Id)
             {
                 newOwner.BusinessRank = business.BusinessRanks.FirstOrDefault(r => r.IsOwnerRank).Id;
-                await _businessService.UpdateOwnerAsync(business, newOwner).ConfigureAwait(false);
+                await _businessDatabaseService.UpdateOwnerAsync(business, newOwner).ConfigureAwait(false);
                 return true;
             }
             else
@@ -149,7 +150,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
         public async Task<bool> AddNewEmployee(Business business, Character newEmployee)
         {
             if (!_businessService.AddEmployee(business, newEmployee)) return false;
-            await _businessService.UpdateBusinessAsync(business).ConfigureAwait(false);
+            await _businessDatabaseService.UpdateBusinessAsync(business).ConfigureAwait(false);
             await _characterDatabaseService.UpdateCharacterAsync(newEmployee).ConfigureAwait(false);
             return true;
         }
@@ -157,7 +158,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
         public async Task UpdateEmployeeRank(Business business, Character employee, int newRankId)
         {
             employee.BusinessRank = newRankId;
-            await _businessService.UpdateBusinessAsync(business).ConfigureAwait(false);
+            await _businessDatabaseService.UpdateBusinessAsync(business).ConfigureAwait(false);
             await _characterDatabaseService.UpdateCharacterAsync(employee).ConfigureAwait(false);
         }
 
@@ -171,7 +172,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
             businessRankToUpdate.Permissions.HaveBusinessKeys = newPermissions.HaveBusinessKeys;
             businessRankToUpdate.Permissions.HaveVehicleKeys = newPermissions.HaveVehicleKeys;
 
-            await _businessService.UpdateBusinessRankAsync(businessRankToUpdate);
+            await _businessDatabaseService.UpdateBusinessRankAsync(businessRankToUpdate);
         }
 
         public async Task<bool> AddNewBusinessRank(Business business, BusinessNewRankDto newRank)
@@ -193,7 +194,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
                     HaveBusinessKeys = newRank.Permissions.HaveBusinessKeys,
                 }
             });
-            await _businessService.UpdateBusinessAsync(business).ConfigureAwait(false);
+            await _businessDatabaseService.UpdateBusinessAsync(business).ConfigureAwait(false);
             return true;
         }
 
@@ -202,7 +203,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
             if (!business.RemoveEmployee(employee)) return false;
             employee.BusinessRank = -1;
 
-            await Task.WhenAll(_businessService.UpdateBusinessAsync(business), _characterDatabaseService.UpdateCharacterAsync(employee));
+            await Task.WhenAll(_businessDatabaseService.UpdateBusinessAsync(business), _characterDatabaseService.UpdateCharacterAsync(employee));
             return true;
         }
 
@@ -224,11 +225,11 @@ namespace AltVStrefaRPServer.Modules.Businesses
                     business.SetDefaultRank(character);
                 }
 
-                await Task.WhenAll(_businessService.UpdateBusinessAsync(business), _characterDatabaseService.UpdateCharactersAsync(employeesToChange));
+                await Task.WhenAll(_businessDatabaseService.UpdateBusinessAsync(business), _characterDatabaseService.UpdateCharactersAsync(employeesToChange));
             }
             else
             {
-                await _businessService.UpdateBusinessAsync(business);
+                await _businessDatabaseService.UpdateBusinessAsync(business);
             }
 
             return true;
@@ -244,7 +245,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
             business.Employees.Clear();
             business.BusinessRanks.Clear();
             _businesses.Remove(business.Id);
-            await _businessService.RemoveBusinessAsync(business).ConfigureAwait(false);
+            await _businessDatabaseService.RemoveBusinessAsync(business).ConfigureAwait(false);
             return true;
         }
     }

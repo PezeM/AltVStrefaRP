@@ -18,6 +18,7 @@ using AltVStrefaRPServer.Services.Characters.Customization;
 using AltVStrefaRPServer.Services.Fractions;
 using AltVStrefaRPServer.Services.Money;
 using AltVStrefaRPServer.Services.Vehicles;
+using EFCore.DbContextFactory.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -55,13 +56,19 @@ namespace AltVStrefaRPServer
             services.AddSingleton(appSettings);
             appSettings.Initialize();
 
-            // Add database
-            services.AddDbContext<ServerContext>(options =>
-                options.UseMySql(appSettings.ConnectionString,
-                    mysqlOptions =>
-                    {
-                        mysqlOptions.ServerVersion(new Version(10, 1, 37), ServerType.MariaDb);
-                    }), ServiceLifetime.Scoped);
+            //// Add database
+            //services.AddDbContext<ServerContext>(options =>
+            //    options.UseMySql(appSettings.ConnectionString,
+            //        mysqlOptions =>
+            //        {
+            //            mysqlOptions.ServerVersion(new Version(10, 1, 37), ServerType.MariaDb);
+            //        }));
+
+            services.AddDbContextFactory<ServerContext>(options => 
+                options.UseMySql(appSettings.ConnectionString, mysqlOptions =>
+                {
+                    mysqlOptions.ServerVersion(new Version(10, 1, 37), ServerType.MariaDb);
+                }));
 
             // Add services
             services.AddTransient<INotificationService, NotificationService>();
@@ -71,6 +78,7 @@ namespace AltVStrefaRPServer
             services.AddTransient<IMoneyService, MoneyService>();
             services.AddTransient<ITaxService, TaxService>();
             services.AddTransient<IBusinessService, BusinessService>();
+            services.AddTransient<IBusinessDatabaseService, BusinessDatabaseService>();
             services.AddTransient<IVehicleSpawnService, VehicleSpawnService>();
             services.AddTransient<IVehicleCreatorService, VehicleCreatorService>();
             services.AddTransient<IVehicleDatabaseService, VehicleDatabaseService>();
