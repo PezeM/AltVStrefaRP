@@ -59,13 +59,13 @@ namespace AltVStrefaRPServer
             appSettings.Initialize();
 
             //// Add database
-            //services.AddDbContext<ServerContext>(options =>
-            //    options.UseMySql(appSettings.ConnectionString,
-            //        mysqlOptions =>
-            //        {
-            //            mysqlOptions.ServerVersion(new Version(10, 1, 37), ServerType.MariaDb);
-            //        }));
-
+            services.AddDbContext<ServerContext>(options =>
+                options.UseMySql(appSettings.ConnectionString,
+                    mysqlOptions =>
+                    {
+                        mysqlOptions.ServerVersion(new Version(10, 1, 37), ServerType.MariaDb);
+                    }));
+            
             services.AddDbContextFactory<ServerContext>(options => 
                 options.UseMySql(appSettings.ConnectionString, mysqlOptions =>
                 {

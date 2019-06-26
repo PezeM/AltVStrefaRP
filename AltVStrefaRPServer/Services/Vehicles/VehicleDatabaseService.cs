@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models;
@@ -17,18 +18,18 @@ namespace AltVStrefaRPServer.Services.Vehicles
 
         public IEnumerable<VehicleModel> LoadVehiclesFromDatabase()
         {
-            using (var context = _factory.Invoke())
+            using (var context = _factory())
             {
-                return context.Vehicles;
+                return context.Vehicles.ToList();
             }
         }
 
-        public Task RemoveVehicleAsync(VehicleModel vehicle)
+        public async Task RemoveVehicleAsync(VehicleModel vehicle)
         {
             using (var context = _factory.Invoke())
             {
                 context.Vehicles.Remove(vehicle);
-                return context.SaveChangesAsync();
+                await context.SaveChangesAsync();
             }
         }
 
@@ -41,12 +42,12 @@ namespace AltVStrefaRPServer.Services.Vehicles
             }
         }
 
-        public Task SaveVehicleAsync(VehicleModel vehicle)
+        public async Task SaveVehicleAsync(VehicleModel vehicle)
         {
             using (var context = _factory.Invoke())
             {
                 context.Vehicles.Update(vehicle);
-                return context.SaveChangesAsync();
+                await context.SaveChangesAsync();
             }
         }
 
@@ -59,12 +60,12 @@ namespace AltVStrefaRPServer.Services.Vehicles
             }
         }
 
-        public Task AddVehicleToDatabaseAsync(VehicleModel vehicle)
+        public async Task AddVehicleToDatabaseAsync(VehicleModel vehicle)
         {
             using (var context = _factory.Invoke())
             {
                 context.Vehicles.AddAsync(vehicle);
-                return context.SaveChangesAsync();
+                await context.SaveChangesAsync();
             }
         }
     }

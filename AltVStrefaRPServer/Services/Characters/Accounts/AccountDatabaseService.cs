@@ -21,11 +21,11 @@ namespace AltVStrefaRPServer.Services.Characters.Accounts
         /// </summary>
         /// <param name="username"></param>
         /// <returns>Account if found,null if account is not found</returns>
-        public Task<Account> GetAccountAsync(string username)
+        public async Task<Account> GetAccountAsync(string username)
         {
             using (var context = _factory.Invoke())
             {
-                return context.Accounts.AsNoTracking().FirstOrDefaultAsync(a => a.Username == username);
+                return await context.Accounts.AsNoTracking().FirstOrDefaultAsync(a => a.Username == username);
             }
         }
 
@@ -34,11 +34,11 @@ namespace AltVStrefaRPServer.Services.Characters.Accounts
         /// </summary>
         /// <param name="username"></param>
         /// <returns>Returns true if there is already account with given username</returns>
-        public Task<int> CheckIfAccountExistsAsync(string username)
+        public async Task<int> CheckIfAccountExistsAsync(string username)
         {
             using (var context = _factory.Invoke())
             {
-                return context.Accounts.Where(a => a.Username == username).CountAsync();
+                return await context.Accounts.Where(a => a.Username == username).CountAsync();
             }
         }
 

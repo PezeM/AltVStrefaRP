@@ -23,11 +23,11 @@ namespace AltVStrefaRPServer.Services.Characters
         /// </summary>
         /// <param name="characterId">find</param>
         /// <returns></returns>
-        public Task<Character> FindCharacterByIdAsync(int characterId)
+        public async Task<Character> FindCharacterByIdAsync(int characterId)
         {
             using (var context = _factory.Invoke())
             {
-                return context.Characters.FindAsync(characterId);
+                return await context.Characters.FindAsync(characterId);
             }
         }
 
@@ -37,11 +37,11 @@ namespace AltVStrefaRPServer.Services.Characters
         /// <param name="firstName"></param>
         /// <param name="lastName"></param>
         /// <returns></returns>
-        public Task<Character> FindCharacterAsync(string firstName, string lastName)
+        public async Task<Character> FindCharacterAsync(string firstName, string lastName)
         {
             using (var context = _factory.Invoke())
             {
-                return context.Characters.AsNoTracking()
+                return await context.Characters.AsNoTracking()
                     .Include(q => q.BankAccount)
                     .Include(q => q.Fraction)
                     .Include(q => q.Business)
@@ -49,11 +49,11 @@ namespace AltVStrefaRPServer.Services.Characters
             }
         }
 
-        public Task<List<CharacterSelectDto>> GetCharacterList(int accountId)
+        public async Task<List<CharacterSelectDto>> GetCharacterList(int accountId)
         {
             using (var context = _factory.Invoke())
             {
-                return context.Characters.AsNoTracking().Where(c => c.AccountId == accountId).Select(c => new CharacterSelectDto
+                return await context.Characters.AsNoTracking().Where(c => c.AccountId == accountId).Select(c => new CharacterSelectDto
                 {
                     Id = c.Id,
                     FirstName = c.FirstName,
@@ -65,33 +65,33 @@ namespace AltVStrefaRPServer.Services.Characters
             }
         }
 
-        public Task<Character> GetCharacterById(int characterId)
+        public async Task<Character> GetCharacterById(int characterId)
         {
             using (var context = _factory.Invoke())
             {
-                return context.Characters
+                return await context.Characters
                     .Include(c => c.BankAccount)
                     .Include(c => c.Account)
                     .FirstOrDefaultAsync(c => c.Id == characterId);
             }
         }
 
-        public Task UpdateCharacterAsync(Character character)
+        public async Task UpdateCharacterAsync(Character character)
         {
             using (var context = _factory.Invoke())
             {
                 context.Characters.Update(character);
                 //_serverContext.Entry(character).State = EntityState.Detached;
-                return context.SaveChangesAsync();
+                await context.SaveChangesAsync();
             }
         }
 
-        public Task UpdateCharactersAsync(IEnumerable<Character> characters)
+        public async Task UpdateCharactersAsync(IEnumerable<Character> characters)
         {
             using (var context = _factory.Invoke())
             {
                 context.Characters.UpdateRange(characters);
-                return context.SaveChangesAsync();
+                await context.SaveChangesAsync();
             }
         }
     }

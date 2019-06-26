@@ -22,14 +22,12 @@ namespace AltVStrefaRPServer.Modules.Vehicle
         private Dictionary<int, VehicleModel> _vehicles = new Dictionary<int, VehicleModel>();
         private IVehicleDatabaseService _vehicleDatabaseService;
         private IVehicleCreatorService _vehicleCreator;
-        private BusinessManager _businessManager;
 
         public VehicleManager(IVehicleDatabaseService vehicleDatabaseService, IVehicleCreatorService vehicleCreatorService, 
             BusinessManager businessManager)
         {
             _vehicleDatabaseService = vehicleDatabaseService;
             _vehicleCreator = vehicleCreatorService;
-            _businessManager = businessManager;
 
             LoadVehiclesFromDatabaseAsync();
         }

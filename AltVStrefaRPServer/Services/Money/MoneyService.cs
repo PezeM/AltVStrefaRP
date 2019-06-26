@@ -92,9 +92,9 @@ namespace AltVStrefaRPServer.Services.Money
             }
         }
 
-        private Task AddTransaction(ServerContext context, MoneyTransaction moneyTransaction)
+        private async Task AddTransaction(ServerContext context, MoneyTransaction moneyTransaction)
         {
-            return context.MoneyTransactions.AddAsync(moneyTransaction);
+            await context.MoneyTransactions.AddAsync(moneyTransaction);
         }
     }
 }

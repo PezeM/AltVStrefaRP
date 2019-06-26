@@ -21,7 +21,7 @@ namespace AltVStrefaRPServer.Services.Money.Bank
         {
             using (var context = _factory.Invoke())
             {
-                return context.BankAccounts;
+                return context.BankAccounts.ToList();
             }
         }
 

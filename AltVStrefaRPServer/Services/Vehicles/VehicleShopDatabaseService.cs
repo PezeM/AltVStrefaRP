@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Modules.Vehicle;
@@ -18,10 +19,10 @@ namespace AltVStrefaRPServer.Services.Vehicles
 
         public IEnumerable<VehicleShop> GetAllVehicleShops()
         {
-            using (var context = _factory.Invoke())
+            using (var context = _factory())
             {
                 return context.VehicleShops
-                    .Include(q => q.AvailableVehicles);
+                    .Include(q => q.AvailableVehicles).ToList();
             }
         }
 

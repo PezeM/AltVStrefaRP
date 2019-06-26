@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models;
@@ -23,12 +24,13 @@ namespace AltVStrefaRPServer.Services.Businesses
         /// <returns></returns>
         public IEnumerable<Business> GetAllBusinesses()
         {
-            using (var context = _factory.Invoke())
+            using (var context = _factory())
             {
                 return context.Businesses
                     .Include(b => b.Employees)
                     .Include(b => b.BusinessRanks)
-                    .ThenInclude(r => r.Permissions);
+                    .ThenInclude(r => r.Permissions)
+                    .ToList();
             }
         }
 
@@ -52,12 +54,12 @@ namespace AltVStrefaRPServer.Services.Businesses
         /// </summary>
         /// <param name="business">The business to save to database</param>
         /// <returns></returns>
-        public Task UpdateBusinessAsync(Business business)
+        public async Task UpdateBusinessAsync(Business business)
         {
             using (var context = _factory.Invoke())
             {
                 context.Businesses.Update(business);
-                return context.SaveChangesAsync();
+                await context.SaveChangesAsync();
             }
         }
 
@@ -79,21 +81,21 @@ namespace AltVStrefaRPServer.Services.Businesses
             }
         }
 
-        public Task UpdateBusinessRankAsync(BusinessRank newBusinessPermissions)
+        public async Task UpdateBusinessRankAsync(BusinessRank newBusinessPermissions)
         {
             using (var context = _factory.Invoke())
             {
                 context.BusinessesRanks.Update(newBusinessPermissions);
-                return context.SaveChangesAsync();
+                await context.SaveChangesAsync();
             }
         }
 
-        public Task RemoveBusinessAsync(Business business)
+        public async Task RemoveBusinessAsync(Business business)
         {
             using (var context = _factory.Invoke())
             {
                 context.Businesses.Remove(business);
-                return context.SaveChangesAsync();
+                await context.SaveChangesAsync();
             }
         }
     }

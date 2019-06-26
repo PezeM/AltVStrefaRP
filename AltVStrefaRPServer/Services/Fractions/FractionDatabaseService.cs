@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models.Fractions;
@@ -23,7 +24,8 @@ namespace AltVStrefaRPServer.Services.Fractions
                 return context.Fractions
                     .Include(f => f.Employees)
                     .Include(f => f.FractionRanks)
-                    .ThenInclude(f => f.Permissions);
+                    .ThenInclude(f => f.Permissions)
+                    .ToList();
             }
         }
 
@@ -35,11 +37,11 @@ namespace AltVStrefaRPServer.Services.Fractions
             }
         }
 
-        public Task<Fraction> GetFractionByIdAsync(int fractionId)
+        public async Task<Fraction> GetFractionByIdAsync(int fractionId)
         {
             using (var context = _factory.Invoke())
             {
-                return context.Fractions.FindAsync(fractionId);
+                return await context.Fractions.FindAsync(fractionId);
             }
         }
 
@@ -52,12 +54,12 @@ namespace AltVStrefaRPServer.Services.Fractions
             }
         }
 
-        public Task UpdateFractionAsync(Fraction fraction)
+        public async Task UpdateFractionAsync(Fraction fraction)
         {
             using (var context = _factory.Invoke())
             {
                 context.Fractions.Update(fraction);
-                return context.SaveChangesAsync();
+                await context.SaveChangesAsync();
             }
         }
 
