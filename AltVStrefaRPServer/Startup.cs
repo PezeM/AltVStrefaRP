@@ -18,6 +18,7 @@ using AltVStrefaRPServer.Services.Characters.Accounts;
 using AltVStrefaRPServer.Services.Characters.Customization;
 using AltVStrefaRPServer.Services.Fractions;
 using AltVStrefaRPServer.Services.Money;
+using AltVStrefaRPServer.Services.Money.Bank;
 using AltVStrefaRPServer.Services.Vehicles;
 using EFCore.DbContextFactory.Extensions;
 using Microsoft.EntityFrameworkCore;
@@ -78,6 +79,7 @@ namespace AltVStrefaRPServer
             services.AddTransient<ICharacterCreatorService, CharacterCreatorService>();
             services.AddTransient<ICharacterDatabaseService, CharacterDatabaseService>();
             services.AddTransient<IMoneyService, MoneyService>();
+            services.AddTransient<IBankAccountDatabaseService, BankAccountDatabaseService>();
             services.AddTransient<ITaxService, TaxService>();
             services.AddTransient<IBusinessService, BusinessService>();
             services.AddTransient<IBusinessDatabaseService, BusinessDatabaseService>();
