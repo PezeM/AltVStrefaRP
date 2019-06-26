@@ -205,7 +205,7 @@ namespace AltVStrefaRPServer.Models.Fractions
             var newFractionRank = new FractionRank
             {
                 RankName = newRank.RankName,
-                RankType = (RankType)newRank.RankType,
+                RankType = RankType.Normal,
                 Permissions = GenerateNewPermissions()
             };
 
@@ -215,16 +215,28 @@ namespace AltVStrefaRPServer.Models.Fractions
             return true;
         }
 
-        public async Task<bool> UpdateRank(Character updatingEmployee, int rankId, UpdatedFractionRankDto updatedRank, IFractionDatabaseService fractionDatabaseService)
+        public async Task<bool> UpdateRank(Character updatingEmployee, UpdatedFractionRankDto updatedRank, IFractionDatabaseService fractionDatabaseService)
         {
-            var rank = GetRankById(rankId);
+            var rank = GetRankById(updatedRank.Id);
             if (rank == null || updatedRank.Permissions == null) return false;
             var updatingEmployeeRank = GetEmployeeRank(updatingEmployee);
             if (updatingEmployeeRank == null || !updatingEmployeeRank.HasHigherPriority(rank)) return false;
 
             if (!rank.SetPriority(updatedRank.Priority)) return false;
             rank.RankName = updatedRank.RankName;
-            rank.Permissions = updatedRank.Permissions;
+            foreach (var permission in rank.Permissions)
+            {
+                foreach (var updatedPermission in updatedRank.Permissions)
+                {
+                    if (updatedPermission.Id == permission.Id)
+                    {
+                        if (updatedPermission.HasPermission != permission.HasPermission)
+                        {
+                            permission.HasPermission = updatedPermission.HasPermission;
+                        }
+                    }
+                }
+            }
 
             await fractionDatabaseService.UpdateFractionAsync(this);
             return true;
@@ -302,8 +314,7 @@ namespace AltVStrefaRPServer.Models.Fractions
         {
             if (!_fractionRanks.Any(r => r.RankName == newRank.RankName))
             {
-                if (newRank.RankType != 1) return false;
-                else if (_fractionRanks.Any(r => r.Priority == newRank.Priority)) return false;
+                if (_fractionRanks.Any(r => r.Priority == newRank.Priority)) return false;
                 return true;
             }
             else
@@ -316,10 +327,10 @@ namespace AltVStrefaRPServer.Models.Fractions
         {
             return new List<FractionPermission>
             {
+                new OpenMenuPermission(false),
                 new InventoryPermission(false),
                 new ManageEmployeesPermission(false),
                 new ManageRanksPermission(false),
-                new OpenMenuPermission(false),
                 new OpenTaxesPagePermission(false),
                 new TownHallActionsPermission(false),
                 new VehiclePermission(false)

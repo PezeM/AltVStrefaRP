@@ -38,6 +38,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
                 => await TryToGetResidentDataEvent(player, firstName, lastName));
             Alt.On<IPlayer>("TryToOpenFractionResidentsPage", TryToOpenFractionResidentsPage);
             Alt.On<IPlayer>("TryToOpenFractionTaxesPage", TryToOpenFractionTaxesPage);
+            Alt.On<IPlayer>("TryToOpenFractionRegistrationPage", TryToOpenFractionRegistrationPage);
         }
 
         private void TryToOpenFractionResidentsPage(IPlayer player)
@@ -100,6 +101,20 @@ namespace AltVStrefaRPServer.Modules.Fractions
             {
                 _notificationService.ShowErrorNotification(player, "Błąd", $"Nie udało się ustawić nowego podatku.");
             }
+        }
+        
+        private void TryToOpenFractionRegistrationPage(IPlayer player)
+        {
+            if (!player.TryGetCharacter(out Character character)) return;
+            if(!_fractionManager.TryToGetTownHallFraction(out TownHallFraction townHallFraction)) return;
+            if (!townHallFraction.HasPermission<TownHallActionsPermission>(character))
+            {
+                _notificationService.ShowErrorNotification(player, "Brak uprawnień",
+                    "Nie posiadasz odpowiednich uprawnień do wykonania tej akcji.", 6500);
+                return;
+            }
+
+            player.Emit("openFractionRegistrationPage");
         }
 
         private static bool UpdateTax(int taxId, float newTax, TownHallFraction townHallFraction)
