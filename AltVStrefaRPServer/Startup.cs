@@ -14,6 +14,7 @@ using AltVStrefaRPServer.Modules.Vehicle;
 using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Businesses;
 using AltVStrefaRPServer.Services.Characters;
+using AltVStrefaRPServer.Services.Characters.Accounts;
 using AltVStrefaRPServer.Services.Characters.Customization;
 using AltVStrefaRPServer.Services.Fractions;
 using AltVStrefaRPServer.Services.Money;
@@ -73,6 +74,7 @@ namespace AltVStrefaRPServer
             // Add services
             services.AddTransient<INotificationService, NotificationService>();
             services.AddTransient<ILogin, Login>();
+            services.AddTransient<IAccountDatabaseService, AccountDatabaseService>();
             services.AddTransient<ICharacterCreatorService, CharacterCreatorService>();
             services.AddTransient<ICharacterDatabaseService, CharacterDatabaseService>();
             services.AddTransient<IMoneyService, MoneyService>();

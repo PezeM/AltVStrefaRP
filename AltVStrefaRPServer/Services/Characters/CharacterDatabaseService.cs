@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models;
+using AltVStrefaRPServer.Models.Dto;
 using Microsoft.EntityFrameworkCore;
 
 namespace AltVStrefaRPServer.Services.Characters
@@ -44,6 +46,33 @@ namespace AltVStrefaRPServer.Services.Characters
                     .Include(q => q.Fraction)
                     .Include(q => q.Business)
                     .FirstOrDefaultAsync(c => c.FirstName == firstName && c.LastName == lastName);
+            }
+        }
+
+        public Task<List<CharacterSelectDto>> GetCharacterList(int accountId)
+        {
+            using (var context = _factory.Invoke())
+            {
+                return context.Characters.AsNoTracking().Where(c => c.AccountId == accountId).Select(c => new CharacterSelectDto
+                {
+                    Id = c.Id,
+                    FirstName = c.FirstName,
+                    LastName = c.LastName,
+                    Money = c.Money,
+                    ProfileImage = c.ProfileImage,
+                    TimePlayed = c.TimePlayed
+                }).ToListAsync();
+            }
+        }
+
+        public Task<Character> GetCharacterById(int characterId)
+        {
+            using (var context = _factory.Invoke())
+            {
+                return context.Characters
+                    .Include(c => c.BankAccount)
+                    .Include(c => c.Account)
+                    .FirstOrDefaultAsync(c => c.Id == characterId);
             }
         }
 
