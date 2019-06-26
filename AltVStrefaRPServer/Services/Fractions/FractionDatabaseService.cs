@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models.Fractions;
@@ -9,59 +9,83 @@ namespace AltVStrefaRPServer.Services.Fractions
 {
     public class FractionDatabaseService : IFractionDatabaseService
     {
-        private readonly ServerContext _serverContext;
+        private readonly Func<ServerContext> _factory;
 
-        public FractionDatabaseService(ServerContext serverContext)
+        public FractionDatabaseService(Func<ServerContext> factory)
         {
-            _serverContext = serverContext;
+            _factory = factory;
         }
 
         public IEnumerable<Fraction> GetAllFractionsList()
         {
-            return _serverContext.Fractions
-                .Include(f => f.Employees)
-                .Include(f => f.FractionRanks)
-                .ThenInclude(f => f.Permissions);
+            using (var context = _factory.Invoke())
+            {
+                return context.Fractions
+                    .Include(f => f.Employees)
+                    .Include(f => f.FractionRanks)
+                    .ThenInclude(f => f.Permissions);
+            }
         }
 
         public Fraction GetFractionById(int fractionId)
         {
-            return _serverContext.Fractions.Find(fractionId);
+            using (var context = _factory.Invoke())
+            {
+                return context.Fractions.Find(fractionId);
+            }
         }
 
         public Task<Fraction> GetFractionByIdAsync(int fractionId)
         {
-            return _serverContext.Fractions.FindAsync(fractionId);
+            using (var context = _factory.Invoke())
+            {
+                return context.Fractions.FindAsync(fractionId);
+            }
         }
 
         public void UpdateFraction(Fraction fraction)
         {
-            _serverContext.Fractions.Update(fraction);
-            _serverContext.SaveChanges();
+            using (var context = _factory.Invoke())
+            {
+                context.Fractions.Update(fraction);
+                context.SaveChanges();
+            }
         }
 
         public Task UpdateFractionAsync(Fraction fraction)
         {
-            _serverContext.Fractions.Update(fraction);
-            return _serverContext.SaveChangesAsync();
+            using (var context = _factory.Invoke())
+            {
+                context.Fractions.Update(fraction);
+                return context.SaveChangesAsync();
+            }
         }
 
         public async Task<int> AddNewFractionAsync(Fraction fraction)
         {
-            await _serverContext.Fractions.AddAsync(fraction).ConfigureAwait(false);
-            return await _serverContext.SaveChangesAsync();
+            using (var context = _factory.Invoke())
+            {
+                await context.Fractions.AddAsync(fraction).ConfigureAwait(false);
+                return await context.SaveChangesAsync();
+            }
         }
 
         public int AddNewFraction(Fraction fraction)
         {
-            _serverContext.Fractions.Add(fraction);
-            return _serverContext.SaveChanges();
+            using (var context = _factory.Invoke())
+            {
+                context.Fractions.Add(fraction);
+                return context.SaveChanges();
+            }
         }
 
         public async Task RemoveFractionRankAsync(FractionRank fractionRank)
         {
-            _serverContext.FractionRanks.Remove(fractionRank);
-            await _serverContext.SaveChangesAsync();
+            using (var context = _factory.Invoke())
+            {
+                context.FractionRanks.Remove(fractionRank);
+                await context.SaveChangesAsync();
+            }
         }
     }
 }
