@@ -21,12 +21,11 @@ namespace AltVStrefaRPServer.Services.Businesses
         /// Gets all business from database and load everything with eager loading
         /// </summary>
         /// <returns></returns>
-        public List<Business> GetAllBusinesses() 
+        public IEnumerable<Business> GetAllBusinesses()
             => _serverContext.Businesses
                 .Include(b => b.Employees)
                 .Include(b => b.BusinessRanks)
-                .ThenInclude(r => r.Permissions)
-                .ToList();
+                .ThenInclude(r => r.Permissions);
 
         /// <summary>
         /// Updates business owner and saves changes to database

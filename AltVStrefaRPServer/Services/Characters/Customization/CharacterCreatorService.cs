@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models;
+using AltVStrefaRPServer.Models.Server;
 using Microsoft.EntityFrameworkCore;
 
 namespace AltVStrefaRPServer.Services.Characters.Customization
@@ -39,7 +40,6 @@ namespace AltVStrefaRPServer.Services.Characters.Customization
                 X = AppSettings.Current.ServerConfig.SpawnPosition.X,
                 Y = AppSettings.Current.ServerConfig.SpawnPosition.Y,
                 Z = AppSettings.Current.ServerConfig.SpawnPosition.Z,
-                BackgroundImage = "profile-card-background.jpg",
                 ProfileImage = "default-profile-image.jpg",
                 CreationDate = DateTime.Now,
                 LastPlayed = DateTime.Now,

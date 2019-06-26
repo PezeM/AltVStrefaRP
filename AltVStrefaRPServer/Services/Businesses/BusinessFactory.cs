@@ -177,8 +177,8 @@ namespace AltVStrefaRPServer.Services.Businesses
         private IBlip CreateBlip(Business business)
         {
             var blip = Alt.CreateBlip(BlipType.Object, business.GetPosition());
-            blip.Color = business.BlipColor;
-            blip.Sprite = business.BlipModel;
+            blip.Color = (byte)business.BlipColor;
+            blip.Sprite = (byte)business.BlipSprite;
             return blip;
         }
     }

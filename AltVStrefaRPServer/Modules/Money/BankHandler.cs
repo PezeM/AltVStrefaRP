@@ -7,7 +7,8 @@ using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
-using AltVStrefaRPServer.Models.Client;
+using AltVStrefaRPServer.Models.Dto;
+using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Modules.CharacterModule;
 using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Money;
@@ -31,7 +32,7 @@ namespace AltVStrefaRPServer.Modules.Money
             _notificationService = notificationService;
             _bankAccountManager = bankAccountManager;
 
-            AltAsync.On<IPlayer>("TryToOpenBankMenu", async (player) => await TryToOpenBankMenu(player));
+            Alt.On<IPlayer>("TryToOpenBankMenu", TryToOpenBankMenu);
             AltAsync.On<IPlayer>("CreateBankAccount", async (player) => await CreateBankAccountAsync(player));
             AltAsync.On<IPlayer, int>("DepositMoneyToBank", async (player, money) => await DepositMoneyToBankAsync(player, money));
             AltAsync.On<IPlayer, int>("WithdrawMoneyFromBank", async (player, money) => await WithdrawMoneyFromBankAsync(player, money));
@@ -56,8 +57,7 @@ namespace AltVStrefaRPServer.Modules.Money
         public async Task CreateBankAccountAsync(IPlayer player)
         {
             var startTime = Time.GetTimestampMs();
-            var character = player.GetCharacter();
-            if (character == null) return;
+            if (!player.TryGetCharacter(out Character character)) return;
             if (character.BankAccount != null)
             {
                 await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Masz już konto w banku.", 4000);
@@ -82,18 +82,17 @@ namespace AltVStrefaRPServer.Modules.Money
             await _serverContext.SaveChangesAsync().ConfigureAwait(false);
 
             await _notificationService.ShowSuccessNotificationAsync(player, "Nowe konto bankowe",
-                $"Otworzyłeś nowe konto w banku. Twój numer konta to: {character.BankAccount.AccountNumber}.", 7000).ConfigureAwait(false);
+                $"Otworzyłeś nowe konto w banku. Twój numer konta to: {character.BankAccount.AccountNumber}.", 7000);
             AltAsync.Log($"{character.Id} created new bank account ({character.BankAccount.AccountNumber}) in {Time.GetTimestampMs() - startTime}ms.");
         }
 
-        public async Task TryToOpenBankMenu(IPlayer player)
+        public void TryToOpenBankMenu(IPlayer player)
         {
-            var character = player.GetCharacter();
-            if (character == null) return;
+            if (!player.TryGetCharacter(out Character character)) return;
 
             if (character.BankAccount == null)
             {
-                await _notificationService.ShowErrorNotificationAsync(player, "Brak konta", "Nie posiadsz konta w banku.", 4000).ConfigureAwait(false);
+                _notificationService.ShowErrorNotification(player, "Brak konta", "Nie posiadsz konta w banku.", 4000);
                 return;
             }
 
@@ -103,10 +102,10 @@ namespace AltVStrefaRPServer.Modules.Money
 
         private async Task WithdrawMoneyFromBankAsync(IPlayer player, int money)
         {
-            var character = player.GetCharacter();
-            if (character == null || character.BankAccount == null) return;
+            if (!player.TryGetCharacter(out Character character)) return;
+            if (character.BankAccount == null) return;
 
-            if (await _moneyService.WithdrawMoneyFromBankAccountAsync(character, character.BankAccount, money).ConfigureAwait(false))
+            if(await _moneyService.TransferMoneyFromEntityToEntity(character.BankAccount, character, money, TransactionType.BankWithdraw))
             {
                 AltAsync.Log($"{character.Id} withdraw {money}$ from his bank account.");
                 await player.EmitAsync("updateBankMoneyWithNotification",
@@ -117,15 +116,14 @@ namespace AltVStrefaRPServer.Modules.Money
             {
                 await _notificationService.ShowErrorNotificationAsync(player, "Błąd!", "Nie udało się wypłacić pieniędzy z konta.").ConfigureAwait(false);
             }
-
         }
 
         private async Task DepositMoneyToBankAsync(IPlayer player, int money)
         {
-            var character = player.GetCharacter();
-            if (character == null || character.BankAccount == null) return;
+            if (!player.TryGetCharacter(out Character character)) return;
+            if (character.BankAccount == null) return;
 
-            if (await _moneyService.DepositMoneyToBankAccountAsync(character, character.BankAccount, money).ConfigureAwait(false))
+            if (await _moneyService.TransferMoneyFromEntityToEntity(character, character.BankAccount, money, TransactionType.BankDeposit))
             {
                 AltAsync.Log($"{character.Id} deposited {money}$ to his bank account.");
                 await player.EmitAsync("updateBankMoneyWithNotification",
@@ -140,17 +138,15 @@ namespace AltVStrefaRPServer.Modules.Money
 
         private async Task TransferMoneyFromBankToBankAsync(IPlayer player, int money, int receiver)
         {
-            var character = player.GetCharacter();
-            if (character == null || character.BankAccount == null) return;
-            var receiverBankAccount = _bankAccountManager.GetBankAccountByNumber(receiver);
-
-            if (receiverBankAccount == null)
+            if (!player.TryGetCharacter(out Character character)) return;
+            if (character.BankAccount == null) return;
+            if (!_bankAccountManager.TryToGetBankAccountByNumber(receiver, out BankAccount receiverBankAccount))
             {
                 await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Podano błędy numer konta bankowego.").ConfigureAwait(false);
                 return;
             }
 
-            if (await _moneyService.TransferMoneyFromBankAccountToBankAccountAsync(character.BankAccount, receiverBankAccount, money))
+            if (await _moneyService.TransferMoneyFromEntityToEntity(character.BankAccount, receiverBankAccount, money, TransactionType.BankTransfer))
             {
                 var receiverCharacter = CharacterManager.Instance.GetCharacterByBankAccount(receiverBankAccount.Id);
 
@@ -183,11 +179,11 @@ namespace AltVStrefaRPServer.Modules.Money
 
         private async Task GetTransferHistoryInfoAsync(IPlayer player)
         {
-            var character = player.GetCharacter();
-            if(character == null) return;
+            if (!player.TryGetCharacter(out Character character)) return;
 
             var bankTransactionHistory = await _serverContext.MoneyTransactions.AsNoTracking()
-                .Where(t => t.Receiver == character.GetFullName() || t.Source == character.GetFullName()).Take(50)
+                .Where(t => t.Receiver == character.GetFullName() || t.Source == character.GetFullName())
+                .Take(50)
                 .ToListAsync().ConfigureAwait(false);
 
             if (bankTransactionHistory.Count <= 0)

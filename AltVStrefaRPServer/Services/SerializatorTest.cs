@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
+using AltV.Net;
 using MessagePack;
 using Newtonsoft.Json;
 
@@ -119,7 +120,7 @@ namespace AltVStrefaRPServer.Services
 
     //[MessagePackObject(keyAsPropertyName: true)]
     [MessagePackObject]
-    public class TestObject
+    public class TestObject : IWritable
     {
         [Key(0)]
         public int Id { get; set; }
@@ -129,6 +130,27 @@ namespace AltVStrefaRPServer.Services
         public List<int> SomeCollection { get; set; }
         [Key(3)]
         public Dictionary<int, string> SomeDictionary { get; set; }
+
+        public void OnWrite(IMValueWriter writer)
+        {
+            writer.BeginObject();
+
+            writer.Name("id");
+            writer.Value(Id);
+
+            writer.Name("name");
+            writer.Value(Name);
+
+            writer.Name("someCollection");
+            writer.BeginArray();
+            foreach (var i in SomeCollection)
+            {
+                writer.Value(i);
+            }
+            writer.EndArray();
+
+            writer.EndObject();
+        }
     }
 
     public class JsonTestClass

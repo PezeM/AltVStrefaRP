@@ -1,9 +1,10 @@
-﻿using AltV.Net.Elements.Entities;
+﻿using AltV.Net.Data;
+using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Models.Enums;
 
 namespace AltVStrefaRPServer.Models
 {
-    public class VehicleModel
+    public class VehicleModel : IPosition
     {
         public int Id { get; set; }
         public int Owner { get; set; }
@@ -32,5 +33,10 @@ namespace AltVStrefaRPServer.Models
 
         public IVehicle VehicleHandle { get; set; }
         public bool IsJobVehicle { get; set; }
+
+        public Position GetPosition()
+        {
+            return new Position(X,Y,Z);
+        }
     }
 }

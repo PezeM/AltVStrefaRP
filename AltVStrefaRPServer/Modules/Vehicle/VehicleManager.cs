@@ -10,6 +10,7 @@ using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Businesses;
 using AltVStrefaRPServer.Models.Enums;
+using AltVStrefaRPServer.Models.Fractions.Permissions;
 using AltVStrefaRPServer.Modules.Businesses;
 using AltVStrefaRPServer.Services.Vehicles;
 using VehicleModel = AltVStrefaRPServer.Models.VehicleModel;
@@ -52,7 +53,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
         /// </summary>
         /// <param name="vehicleId"></param>
         /// <returns>Returns <see cref="VehicleModel"/></returns>
-        public bool GetVehicleModel(int vehicleId, out VehicleModel vehicleModel) => _vehicles.TryGetValue(vehicleId, out vehicleModel);
+        public bool TryGetVehicleModel(int vehicleId, out VehicleModel vehicleModel) => _vehicles.TryGetValue(vehicleId, out vehicleModel);
 
         /// <summary>
         /// Gets VehicleModel by vehicleHandle id
@@ -61,7 +62,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
         /// <returns></returns>
         public VehicleModel GetVehicleModel(ushort vehicleID) => _vehicles.Values.FirstOrDefault(v => v.VehicleHandle?.Id == vehicleID);
 
-        public bool GetVehicleModel(IMyVehicle vehicle, out VehicleModel vehicleModel) 
+        public bool TryGetVehicleModel(IMyVehicle vehicle, out VehicleModel vehicleModel) 
             => _vehicles.TryGetValue(vehicle.DatabaseId, out vehicleModel);
 
         /// <summary>
@@ -69,7 +70,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
         /// </summary>
         /// <param name="vehicle"><see cref="IVehicle"/></param>
         /// <returns></returns>
-        public bool GetVehicleModel(IVehicle vehicle, out VehicleModel vehicleModel)
+        public bool TryGetVehicleModel(IVehicle vehicle, out VehicleModel vehicleModel)
         {
             vehicleModel = null;
             if (!vehicle.GetData("vehicleId", out int vehicleId)) return false;
@@ -131,12 +132,23 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             }
             else if (vehicle.OwnerType == OwnerType.Group)
             {
-                // TODO Group management
-                if (character.BusinessId <= 0) return false;
-                if (character.Business == null) character.Business = _businessManager.GetBusiness(character);
-                if (character.Business == null) return false;
-                if (!character.Business.GetBusinessRank(character.BusinessRank, out BusinessRank businessRank)) return false;
-                return businessRank.Permissions.HaveVehicleKeys;
+                if (character.CurrentBusinessId > 0)
+                {
+                    if (character.Business == null) return false;
+                    else
+                    {
+                        if (!character.Business.GetBusinessRankForEmployee(character, out BusinessRank rank)) return false;
+                        return rank.Permissions.HaveVehicleKeys;
+                    }
+                }
+                else if (character.CurrentFractionId > 0)
+                {
+                    return character.Fraction?.HasPermission<VehiclePermission>(character) ?? false;
+                }
+                else
+                {
+                    return false;
+                }
             }
             else if (vehicle.OwnerType == OwnerType.Job)
             {
@@ -153,7 +165,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
         /// </summary>
         /// <param name="character"></param>
         /// <returns></returns>
-        public List<VehicleModel> GetAllPlayerVehicles(Character character) 
+        public List<VehicleModel> GetAllPlayerVehicles(Character character)
             => _vehicles.Values.Where(v => v.Owner == character.Id && v.OwnerType == OwnerType.Character).ToList();
 
         public async Task<VehicleModel> CreateVehicleAsync(string vehicleModel, Position position, Rotation rotation, short dimension, int ownerId, 

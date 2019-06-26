@@ -18,9 +18,10 @@ namespace AltVStrefaRPServer.Modules.Businesses
 {
     public class BusinessManager
     {
+        private Dictionary<int, Business> _businesses;
+
         private IBusinessService _businessService;
         private ICharacterDatabaseService _characterDatabaseService;
-        private Dictionary<int, Business> Businesses = new Dictionary<int, Business>();
         private BusinessFactory _businessFactory;
 
         public BusinessManager(IBusinessService businessService, ICharacterDatabaseService characterDatabaseService)
@@ -29,6 +30,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
             _businessService = businessService;
             _businessFactory = new BusinessFactory();
 
+            _businesses = new Dictionary<int, Business>();
             LoadBusinesses();
         }
 
@@ -37,11 +39,11 @@ namespace AltVStrefaRPServer.Modules.Businesses
             var startTime = Time.GetTimestampMs();
             foreach (var business in _businessService.GetAllBusinesses())
             {
-                //Businesses.TryAdd(business.Id, _businessFactory.CreateNewBusiness(business));
-                Businesses.TryAdd(business.Id, business);
+                //_businesses.TryAdd(business.Id, _businessFactory.CreateNewBusiness(business));
+                _businesses.TryAdd(business.Id, business);
                 //_businessFactory.CreateBusiness(business);
             }
-            Alt.Log($"Loaded {Businesses.Count} businesses from database in {Time.GetTimestampMs() - startTime}ms.");
+            Alt.Log($"Loaded {_businesses.Count} businesses from database in {Time.GetTimestampMs() - startTime}ms.");
         }
 
         /// <summary>
@@ -49,16 +51,23 @@ namespace AltVStrefaRPServer.Modules.Businesses
         /// </summary>
         /// <param name="businessId"></param>
         /// <returns></returns>
-        public Business GetBusiness(int businessId) => Businesses.ContainsKey(businessId) ? Businesses[businessId] : null;
+        public Business GetBusiness(int businessId)
+        {
+            return _businesses.ContainsKey(businessId) ? _businesses[businessId] : null;
+        }
 
         /// <summary>
         /// Gets all owned businesses for given character id
         /// </summary>
         /// <param name="ownerId"></param>
         /// <returns></returns>
-        public List<Business> GetCharacterBusinesses(int ownerId) => Businesses.Values.Where(b => b.OwnerId == ownerId).ToList();
+        public List<Business> GetCharacterBusinesses(int ownerId) => _businesses.Values.Where(b => b.OwnerId == ownerId).ToList();
 
-        public Business GetBusiness(Character employee) => GetBusiness(employee.BusinessId);
+        public Business GetBusiness(Character employee) 
+            => employee.CurrentBusinessId.HasValue ? GetBusiness(employee.CurrentBusinessId.Value) : null;
+
+        public bool TryGetBusiness(Character employee, out Business business) 
+            => _businesses.TryGetValue(employee.CurrentBusinessId.GetValueOrDefault(), out business);
 
         /// <summary>
         /// Get nearest business to player
@@ -68,7 +77,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
         public Business GetNearestBusiness(IPlayer player)
         {
             Business nearestBusiness = null;
-            foreach (var business in Businesses.Values)
+            foreach (var business in _businesses.Values)
             {
                 if (nearestBusiness == null)
                 {
@@ -93,7 +102,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
         /// <returns></returns>
         public bool CheckIfBusinessExists(string businessName)
         {
-            return Businesses.Values.Any(b => b.BusinessName == businessName);
+            return _businesses.Values.Any(b => b.BusinessName == businessName);
         }
 
         /// <summary>
@@ -111,21 +120,21 @@ namespace AltVStrefaRPServer.Modules.Businesses
 
             var business = _businessFactory.CreateNewBusiness(ownerId, businessType, position, name);
             await _businessService.AddNewBusinessAsync(business).ConfigureAwait(false);
-            Businesses.Add(business.Id, business);
+            _businesses.Add(business.Id, business);
             Alt.Log($"Created new business ID({business.Id}) Name({business.BusinessName}) in {Time.GetTimestampMs() - startTime}ms.");
             return true;
         }
 
         public async Task<bool> UpdateBusinessOwner(Business business, Character newOwner)
         {
-            if (newOwner.BusinessId != business.Id)
+            if (newOwner.CurrentBusinessId != business.Id)
             {
                 if (!_businessService.AddEmployee(business, newOwner)) return false;
                 newOwner.BusinessRank = business.BusinessRanks.FirstOrDefault(r => r.IsOwnerRank).Id;
                 await _businessService.UpdateOwnerAsync(business, newOwner).ConfigureAwait(false);
                 return true;
             }
-            else if (newOwner.BusinessId == business.Id)
+            else if (newOwner.CurrentBusinessId == business.Id)
             {
                 newOwner.BusinessRank = business.BusinessRanks.FirstOrDefault(r => r.IsOwnerRank).Id;
                 await _businessService.UpdateOwnerAsync(business, newOwner).ConfigureAwait(false);
@@ -234,7 +243,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
 
             business.Employees.Clear();
             business.BusinessRanks.Clear();
-            Businesses.Remove(business.Id);
+            _businesses.Remove(business.Id);
             await _businessService.RemoveBusinessAsync(business).ConfigureAwait(false);
             return true;
         }

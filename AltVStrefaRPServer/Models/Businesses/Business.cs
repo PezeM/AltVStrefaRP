@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
@@ -7,7 +8,7 @@ using AltVStrefaRPServer.Models.Enums;
 
 namespace AltVStrefaRPServer.Models.Businesses
 {
-    public class Business : IMoney
+    public class Business : IMoney, IPosition, IHaveBlip
     {
         public int Id { get; set; }
         public int OwnerId { get; set; }
@@ -15,7 +16,9 @@ namespace AltVStrefaRPServer.Models.Businesses
         public float X { get; set; }
         public float Y { get; set; }
         public float Z { get; set; }
+
         public float Money { get; set; }
+
         public virtual int MaxMembersCount { get; set; } = 20;
         public virtual int MaxRanksCount { get; set; } = 5;
         public virtual int Transactions { get; set; }
@@ -25,11 +28,13 @@ namespace AltVStrefaRPServer.Models.Businesses
         public ICollection<Character> Employees { get; set; }
         public ICollection<BusinessRank> BusinessRanks { get; set; }
 
-        public virtual byte BlipModel { get; protected set; }
         public virtual string BlipName { get; protected set; }
-        public virtual byte BlipColor { get; protected set; }
-
+        public virtual int BlipSprite { get; protected set; }
+        public virtual int BlipColor { get; protected set; }
         public virtual IBlip Blip { get; set; }
+
+        [NotMapped]
+        public bool UpdateOnMoneyChange => false;
 
         public Position GetPosition()
         {
@@ -50,7 +55,7 @@ namespace AltVStrefaRPServer.Models.Businesses
         /// <returns></returns>
         public bool CanAddNewMember(Character newEmployee)
         {
-            if (EmployeesCount >= MaxMembersCount || newEmployee.BusinessId > 0) return false;
+            if (EmployeesCount >= MaxMembersCount || newEmployee.CurrentBusinessId > 0) return false;
             if (newEmployee.Business != null && newEmployee.Business == this) return false;
             return true;
         }
@@ -74,7 +79,7 @@ namespace AltVStrefaRPServer.Models.Businesses
         /// </summary>
         /// <param name="character"></param>
         /// <returns></returns>
-        public bool IsWorkingHere(Character character) => character.BusinessId == Id;
+        public bool IsWorkingHere(Character character) => character.CurrentBusinessId == Id;
 
         /// <summary>
         /// Checks if business can have more ranks
@@ -150,5 +155,7 @@ namespace AltVStrefaRPServer.Models.Businesses
             if (!GetBusinessRank(rankId, out BusinessRank rank) || !CanRemoveRank(rank)) return false;
             return BusinessRanks.Remove(rank);
         }
+
+        public string MoneyTransactionDisplayName() => $"Business {Id}";
     }
 }

@@ -3,6 +3,7 @@
     public enum ConfirmModalType
     {
         None,
-        BusinessInvite
+        BusinessInvite,
+        FractionInvite
     }
 }

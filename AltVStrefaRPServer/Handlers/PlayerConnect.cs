@@ -6,7 +6,7 @@ using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Helpers;
-using AltVStrefaRPServer.Models;
+using AltVStrefaRPServer.Models.Server;
 using AltVStrefaRPServer.Modules.CharacterModule;
 using AltVStrefaRPServer.Modules.Environment;
 using AltVStrefaRPServer.Services.Characters;
@@ -46,9 +46,11 @@ namespace AltVStrefaRPServer.Handlers
                     return;
                 }
 
-                // Trigger client-side event
-                CharacterManager.Instance.IntializeCharacter(player, character);
-                player.Emit("loadedCharacter");
+                await AltAsync.Do(() =>
+                {
+                    CharacterManager.Instance.IntializeCharacter(player, character);
+                    player.Emit("loadedCharacter");
+                });
             }
             catch (Exception e)
             {

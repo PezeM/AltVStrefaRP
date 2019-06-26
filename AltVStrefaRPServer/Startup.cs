@@ -2,18 +2,20 @@
 using System.IO;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Handlers;
-using AltVStrefaRPServer.Models;
+using AltVStrefaRPServer.Models.Server;
 using AltVStrefaRPServer.Modules.Admin;
 using AltVStrefaRPServer.Modules.Businesses;
 using AltVStrefaRPServer.Modules.CharacterModule.Customization;
 using AltVStrefaRPServer.Modules.Chat;
 using AltVStrefaRPServer.Modules.Environment;
+using AltVStrefaRPServer.Modules.Fractions;
 using AltVStrefaRPServer.Modules.Money;
 using AltVStrefaRPServer.Modules.Vehicle;
 using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Businesses;
 using AltVStrefaRPServer.Services.Characters;
 using AltVStrefaRPServer.Services.Characters.Customization;
+using AltVStrefaRPServer.Services.Fractions;
 using AltVStrefaRPServer.Services.Money;
 using AltVStrefaRPServer.Services.Vehicles;
 using Microsoft.EntityFrameworkCore;
@@ -67,10 +69,12 @@ namespace AltVStrefaRPServer
             services.AddTransient<ICharacterCreatorService, CharacterCreatorService>();
             services.AddTransient<ICharacterDatabaseService, CharacterDatabaseService>();
             services.AddTransient<IMoneyService, MoneyService>();
+            services.AddTransient<ITaxService, TaxService>();
             services.AddTransient<IBusinessService, BusinessService>();
             services.AddTransient<IVehicleSpawnService, VehicleSpawnService>();
             services.AddTransient<IVehicleCreatorService, VehicleCreatorService>();
             services.AddTransient<IVehicleDatabaseService, VehicleDatabaseService>();
+            services.AddTransient<IFractionDatabaseService, FractionDatabaseService>();
 
             services.AddTransient<PlayerConnect>();
             services.AddTransient<PlayerDisconnect>();
@@ -86,12 +90,15 @@ namespace AltVStrefaRPServer
             services.AddSingleton<TemporaryChatHandler>();
             services.AddSingleton<TimeManager>();
             services.AddSingleton<VehicleShopsManager>();
-
+            services.AddSingleton<FractionManager>();
+            services.AddSingleton<FractionHandler>();
+                
             services.AddTransient<AdminCommands>();
             services.AddTransient<CharacterCreator>();
             services.AddTransient<SittingHandler>();
             services.AddTransient<TrashBinsHandler>();
             services.AddTransient<VehicleShopsHandler>();
+            services.AddTransient<TownHallFractionHandler>();
 
             services.AddSingleton<SerializatorTest>();
 

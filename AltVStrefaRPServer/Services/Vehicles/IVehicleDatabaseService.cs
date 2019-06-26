@@ -6,8 +6,7 @@ namespace AltVStrefaRPServer.Services.Vehicles
 {
     public interface IVehicleDatabaseService
     {
-        Task<List<VehicleModel>> LoadVehiclesFromDatabaseAsync();
-        List<VehicleModel> LoadVehiclesFromDatabase();
+        IEnumerable<VehicleModel> LoadVehiclesFromDatabase();
         Task RemoveVehicleAsync(VehicleModel vehicle);
         void SaveVehicle(VehicleModel vehicle);
         Task SaveVehicleAsync(VehicleModel vehicle);

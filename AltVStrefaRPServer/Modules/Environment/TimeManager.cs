@@ -3,16 +3,17 @@ using System.Timers;
 using AltVStrefaRPServer.Models.Enums;
 using System;
 using AltVStrefaRPServer.Models;
+using AltVStrefaRPServer.Models.Server;
 
 namespace AltVStrefaRPServer.Modules.Environment
 {
     public class TimeManager
     {
         private Timer _gameTimeTimer;
-        private int _timerInterval = 60000;
+        private readonly int _timerInterval = 60000;
         private int _elapsedMinutes = AppSettings.Current.ServerConfig.ChangeWeatherInterval == 0 
             ? 30 : AppSettings.Current.ServerConfig.ChangeWeatherInterval;
-        private Random _rng;
+        private readonly Random _rng;
 
         public uint CurrentWeather { get; set; } = (uint)Weathers.ExtraSunny;
         public GameTime GameTime { get; set; }

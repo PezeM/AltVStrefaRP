@@ -2,6 +2,7 @@
 using AltV.Net;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Extensions;
+using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Money;
 
@@ -9,9 +10,9 @@ namespace AltVStrefaRPServer.Modules.Environment
 {
     public class TrashBinsHandler
     {
-        private Random _rng;
-        private INotificationService _notificationService;
-        private IMoneyService _moneyService;
+        private readonly Random _rng;
+        private readonly INotificationService _notificationService;
+        private readonly IMoneyService _moneyService;
 
         public TrashBinsHandler(INotificationService notificationService, IMoneyService moneyService)
         {
@@ -23,8 +24,7 @@ namespace AltVStrefaRPServer.Modules.Environment
 
         private void SearchedInBin(IPlayer player, bool bigBin)
         {
-            var character = player.GetCharacter();
-            if (character == null) return;
+            if (!player.TryGetCharacter(out Character character)) return;
             int reward;
             // Temporary till items 
             if (bigBin)
@@ -38,7 +38,7 @@ namespace AltVStrefaRPServer.Modules.Environment
                 _moneyService.GiveMoney(character, reward);
             }
 
-            _notificationService.ShowInfoNotification(player, "Sukces!", $"Właśnie znalazłeś {reward}$ w śmietniku.", 4000);
+            _notificationService.ShowSuccessNotification(player, "Sukces!", $"Właśnie znalazłeś {reward}$ w śmietniku.", 4000);
         }
     }
 }

@@ -61,13 +61,15 @@ namespace AltVStrefaRPServer.Services.Characters
                 FirstName = c.FirstName,
                 LastName = c.LastName,
                 Money = c.Money,
-                BackgroundImage = c.BackgroundImage,
                 ProfileImage = c.ProfileImage,
                 TimePlayed = c.TimePlayed
             }).ToListAsync();
 
         public Task<Character> GetCharacterById(int characterId)
-            => _serverContext.Characters.Include(c => c.BankAccount).FirstOrDefaultAsync(c => c.Id == characterId);
+            => _serverContext.Characters
+                .Include(c => c.BankAccount)
+                .Include(c => c.Account)
+                .FirstOrDefaultAsync(c => c.Id == characterId);
 
         public string GeneratePassword(string password) => _hashingService.Hash(password, 1000);
 

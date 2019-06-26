@@ -6,7 +6,7 @@ namespace AltVStrefaRPServer.Services
 {
     public class NotificationService : INotificationService
     {
-        public void ShowErrorNotfication(IPlayer player, string title, string message, int time = 5000, string icon = null)
+        public void ShowErrorNotification(IPlayer player, string title, string message, int time = 5000, string icon = null)
         {
             player.Emit("showNotification", 3, title, message, time, icon);
         }
