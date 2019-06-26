@@ -7,6 +7,7 @@ using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models;
+using AltVStrefaRPServer.Services.Vehicles;
 
 namespace AltVStrefaRPServer.Modules.Vehicle
 {
@@ -83,14 +84,12 @@ namespace AltVStrefaRPServer.Modules.Vehicle
 
         public string MoneyTransactionDisplayName() => $"VehicleShop {VehicleShopId}";
 
-        public async Task<bool> AddVehicle(VehiclePrice vehiclePrice, ServerContext serverContext)
+        public async Task<bool> AddVehicle(VehiclePrice vehiclePrice, IVehicleShopDatabaseService vehicleShopDatabaseService)
         {
             if (vehiclePrice == null) return false;
 
             AvailableVehicles.Add(vehiclePrice);
-            serverContext.VehicleShops.Update(this);
-            await serverContext.SaveChangesAsync();
-
+            await vehicleShopDatabaseService.SaveVehicleShop(this);
             return true;
         }
     }
