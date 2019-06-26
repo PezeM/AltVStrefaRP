@@ -8,11 +8,12 @@ namespace AltVStrefaRPServer.Modules.Environment
     public class SittingHandler
     {
         private INotificationService _notificationService;
-        private Dictionary<int, ushort> _seatsTaken = new Dictionary<int, ushort>();
+        private Dictionary<int, int> _seatsTaken;
 
         public SittingHandler(INotificationService notificationService)
         {
             _notificationService = notificationService;
+            _seatsTaken = new Dictionary<int, int>();
 
             Alt.On<IPlayer, int>("takeSeat", TakeSeat);
             Alt.On<IPlayer, int>("leaveSeat", LeaveSeat);

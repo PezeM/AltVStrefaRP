@@ -1,19 +1,19 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Enums;
-using AltVStrefaRPServer.Services.Fractions;
 
 namespace AltVStrefaRPServer.Services.Money
 {
     public class MoneyService : IMoneyService
     {
-        private readonly ServerContext _serverContext;
+        private readonly Func<ServerContext> _factory;
         private readonly ITaxService _taxService;
 
-        public MoneyService(ServerContext serverContext, ITaxService taxService)
+        public MoneyService(Func<ServerContext> factory, ITaxService taxService)
         {
-            _serverContext = serverContext;
+            _factory = factory;
             _taxService = taxService;
         }
 
@@ -71,24 +71,30 @@ namespace AltVStrefaRPServer.Services.Money
 
         private async Task SaveTransfer(IMoney source, IMoney receiver, float amount, TransactionType transactionType)
         {
-            await AddTransaction(source.MoneyTransactionDisplayName(), receiver.MoneyTransactionDisplayName(), amount, transactionType);
-            //await _serverContext.MoneyTransactions.AddAsync(new MoneyTransaction(source.MoneyTransactionDisplayName(),
-            //    receiver.MoneyTransactionDisplayName(), transactionType, amount));
-            _serverContext.UpdateRange(source, receiver);
-            await _serverContext.SaveChangesAsync();
+            using (var context = _factory.Invoke())
+            {
+                await AddTransaction(context,
+                    new MoneyTransaction(source.MoneyTransactionDisplayName(), receiver.MoneyTransactionDisplayName(), transactionType, amount));
+                context.UpdateRange(source, receiver);
+                await context.SaveChangesAsync();
+            }
         }
 
         private async Task SaveTransfer(Character source, IMoney receiver, float amount, TransactionType transactionType)
         {
-            await AddTransaction(source.MoneyTransactionDisplayName(), receiver.MoneyTransactionDisplayName(), amount, transactionType);
-            _serverContext.Characters.Update(source);
-            _serverContext.Update(receiver);
-            await _serverContext.SaveChangesAsync();
+            using (var context = _factory.Invoke())
+            {
+                await AddTransaction(context,
+                    new MoneyTransaction(source.MoneyTransactionDisplayName(), receiver.MoneyTransactionDisplayName(), transactionType, amount));
+                context.Characters.Update(source);
+                context.Update(receiver);
+                await context.SaveChangesAsync();
+            }
         }
 
-        private Task AddTransaction(string source, string receiver, float amount, TransactionType transactionType)
+        private async Task AddTransaction(ServerContext context, MoneyTransaction moneyTransaction)
         {
-            return _serverContext.MoneyTransactions.AddAsync(new MoneyTransaction(source, receiver, transactionType, amount));
+            await context.MoneyTransactions.AddAsync(moneyTransaction);
         }
     }
 }

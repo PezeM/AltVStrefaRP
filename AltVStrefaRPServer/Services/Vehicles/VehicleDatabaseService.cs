@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models;
@@ -7,44 +9,64 @@ namespace AltVStrefaRPServer.Services.Vehicles
 {
     public class VehicleDatabaseService : IVehicleDatabaseService
     {
-        private readonly ServerContext _serverContext;
+        private readonly Func<ServerContext> _factory;
 
-        public VehicleDatabaseService(ServerContext serverContext)
+        public VehicleDatabaseService(Func<ServerContext> factory)
         {
-            _serverContext = serverContext;
+            _factory = factory;
         }
 
         public IEnumerable<VehicleModel> LoadVehiclesFromDatabase()
-            => _serverContext.Vehicles;
-
-        public Task RemoveVehicleAsync(VehicleModel vehicle)
         {
-            _serverContext.Vehicles.Remove(vehicle);
-            return _serverContext.SaveChangesAsync();
+            using (var context = _factory())
+            {
+                return context.Vehicles.ToList();
+            }
+        }
+
+        public async Task RemoveVehicleAsync(VehicleModel vehicle)
+        {
+            using (var context = _factory.Invoke())
+            {
+                context.Vehicles.Remove(vehicle);
+                await context.SaveChangesAsync();
+            }
         }
 
         public void SaveVehicle(VehicleModel vehicle)
         {
-            _serverContext.Vehicles.Update(vehicle);
-            _serverContext.SaveChanges();
+            using (var context = _factory.Invoke())
+            {
+                context.Vehicles.Update(vehicle);
+                context.SaveChanges();
+            }
         }
 
-        public Task SaveVehicleAsync(VehicleModel vehicle)
+        public async Task SaveVehicleAsync(VehicleModel vehicle)
         {
-            _serverContext.Vehicles.Update(vehicle);
-            return _serverContext.SaveChangesAsync();
+            using (var context = _factory.Invoke())
+            {
+                context.Vehicles.Update(vehicle);
+                await context.SaveChangesAsync();
+            }
         }
 
         public void AddVehicleToDatabase(VehicleModel vehicle)
         {
-            _serverContext.Vehicles.Add(vehicle);
-            _serverContext.SaveChanges();
+            using (var context = _factory.Invoke())
+            {
+                context.Vehicles.Add(vehicle);
+                context.SaveChanges();
+            }
         }
 
-        public Task AddVehicleToDatabaseAsync(VehicleModel vehicle)
+        public async Task AddVehicleToDatabaseAsync(VehicleModel vehicle)
         {
-            _serverContext.Vehicles.AddAsync(vehicle);
-            return _serverContext.SaveChangesAsync();
+            using (var context = _factory.Invoke())
+            {
+                context.Vehicles.AddAsync(vehicle);
+                await context.SaveChangesAsync();
+            }
         }
     }
 }

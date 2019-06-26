@@ -2,22 +2,21 @@
 using System.Linq;
 using AltV.Net;
 using AltV.Net.Data;
-using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Helpers;
-using Microsoft.EntityFrameworkCore;
+using AltVStrefaRPServer.Services.Vehicles;
 
 namespace AltVStrefaRPServer.Modules.Vehicle
 {
     public class VehicleShopsManager
     {
-        private readonly ServerContext _serverContext;
+        private readonly IVehicleShopDatabaseService _vehicleShopDatabaseService;
 
         public List<VehicleShop> VehicleShops { get; private set; }
 
-        public VehicleShopsManager(ServerContext serverContext)
+        public VehicleShopsManager(IVehicleShopDatabaseService vehicleShopDatabaseService)
         {
             VehicleShops = new List<VehicleShop>();
-            _serverContext = serverContext;
+            _vehicleShopDatabaseService = vehicleShopDatabaseService;
 
             LoadVehicleShops();
         }
@@ -25,7 +24,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
         private void LoadVehicleShops()
         {
             var startTime = Time.GetTimestampMs();
-            foreach (var vehicleShop in _serverContext.VehicleShops.Include(q => q.AvailableVehicles))
+            foreach (var vehicleShop in _vehicleShopDatabaseService.GetAllVehicleShops())
             {
                 VehicleShops.Add(vehicleShop);
             }

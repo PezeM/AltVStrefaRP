@@ -10,6 +10,7 @@ using AltVStrefaRPServer.Models.Server;
 using AltVStrefaRPServer.Modules.CharacterModule;
 using AltVStrefaRPServer.Modules.Environment;
 using AltVStrefaRPServer.Services.Characters;
+using AltVStrefaRPServer.Services.Characters.Accounts;
 using Newtonsoft.Json;
 
 namespace AltVStrefaRPServer.Handlers
@@ -18,15 +19,20 @@ namespace AltVStrefaRPServer.Handlers
     {
         private readonly AppSettings _appSettings;
         private readonly ILogin _loginService;
+        private readonly ICharacterDatabaseService _characterDatabaseService;
+        private readonly IAccountDatabaseService _accountDatabaseService;
         private readonly TimeManager _timeManager;
 
-        public PlayerConnect(AppSettings appSettings, ILogin loginService, TimeManager timeManager)
+        public PlayerConnect(AppSettings appSettings, ILogin loginService, ICharacterDatabaseService characterDatabaseService, 
+            IAccountDatabaseService accountDatabaseService, TimeManager timeManager)
         {
             _appSettings = appSettings;
             _loginService = loginService;
             _timeManager = timeManager;
+            _characterDatabaseService = characterDatabaseService;
+            _accountDatabaseService = accountDatabaseService;
 
-            AltAsync.OnPlayerConnect += OnPlayerConnectAsync;
+            Alt.OnPlayerConnect += OnPlayerConnect;
             AltAsync.On<IPlayer, string, string>("loginAccount", async (player, login, password) 
                 => await LoginAccountAsync(player, login, password));
             AltAsync.On<IPlayer, string, string>("registerAccount", async (player, login, password) 
@@ -39,7 +45,7 @@ namespace AltVStrefaRPServer.Handlers
         {
             try
             {
-                var character = await _loginService.GetCharacterById(characterId);
+                var character = await _characterDatabaseService.GetCharacterById(characterId);
                 if (character == null)
                 {
                     Alt.Log($"Not found any character with id: {characterId}");
@@ -75,7 +81,7 @@ namespace AltVStrefaRPServer.Handlers
                     return;
                 }
 
-                if (await _loginService.CheckIfAccountExistsAsync(login) > 0)
+                if (await _accountDatabaseService.CheckIfAccountExistsAsync(login) > 0)
                 {
                     await player.EmitAsync("showLoginError", "Istnieje już konto z taką nazwą użytkownika.");
                     return;
@@ -83,7 +89,8 @@ namespace AltVStrefaRPServer.Handlers
 
                 //await _loginService.CreateNewAccountAndSaveAsync(login, password).ConfigureAwait(false);
                 //await player.EmitAsync("successfullyRegistered");
-                await Task.WhenAll(_loginService.CreateNewAccountAndSaveAsync(login, password), player.EmitAsync("successfullyRegistered"));
+                await Task.WhenAll(_accountDatabaseService.CreateNewAccountAndSaveAsync(login, _loginService.GeneratePassword(password)), 
+                    player.EmitAsync("successfullyRegistered"));
                 AltAsync.Log($"Registered account in {Time.GetTimestampMs() - startTime}ms");
             }
             catch (Exception e)
@@ -106,7 +113,7 @@ namespace AltVStrefaRPServer.Handlers
                     return;
                 }
 
-                var account = await _loginService.GetAccountAsync(login);
+                var account = await _accountDatabaseService.GetAccountAsync(login);
                 if (account == null)
                 {
                     await player.EmitAsync("showLoginError", "Podano błędne dane.");
@@ -120,8 +127,7 @@ namespace AltVStrefaRPServer.Handlers
                 }
 
                 player.SetData("accountId", account.AccountId);
-                var characterList = await _loginService.GetCharacterList(account.AccountId);
-                await player.EmitAsync("loginSuccesfully", JsonConvert.SerializeObject(characterList));
+                await player.EmitAsync("loginSuccesfully", JsonConvert.SerializeObject(await _characterDatabaseService.GetCharacterList(account.AccountId)));
                 Alt.Log($"LoginAccount completed in {Time.GetTimestampMs() - startTime}ms.");
             }
             catch (Exception e)
@@ -130,22 +136,17 @@ namespace AltVStrefaRPServer.Handlers
             }
         }
 
-        private async Task OnPlayerConnectAsync(IPlayer player, string reason)
+        private void OnPlayerConnect(IPlayer player, string reason)
         {
-            AltAsync.Log($"Player connected to the server: ID: {player.Id} Name: {player.Name} " +
+            Alt.Log($"Player connected to the server: ID: {player.Id} Name: {player.Name} " +
                          $"Ping: {player.Ping}");
-            try
-            {
-                await Task.WhenAll(player.SpawnAsync(new Position(_appSettings.ServerConfig.LoginPosition.X, _appSettings.ServerConfig.LoginPosition.Y,
-                    _appSettings.ServerConfig.LoginPosition.Z)),
-                    player.SetDateTimeAsync(_timeManager.GameTime.Days, 0, 0, _timeManager.GameTime.Hours, _timeManager.GameTime.Minutes, 0),
-                    player.SetWeatherAsync(_timeManager.CurrentWeather));
-                await player.EmitAsync("showAuthenticateWindow");
-            }
-            catch (Exception e)
-            {
-                AltAsync.Log($"[OnPlayerConnect] {e}");
-            }
+
+            player.Spawn(new Position(_appSettings.ServerConfig.LoginPosition.X, _appSettings.ServerConfig.LoginPosition.Y,
+                _appSettings.ServerConfig.LoginPosition.Z));
+
+            player.SetDateTime(_timeManager.GameTime.Days, 0, 0, _timeManager.GameTime.Hours, _timeManager.GameTime.Minutes, 0);
+            player.SetWeather(_timeManager.CurrentWeather);
+            player.Emit("showAuthenticateWindow");
         }
     }
 }

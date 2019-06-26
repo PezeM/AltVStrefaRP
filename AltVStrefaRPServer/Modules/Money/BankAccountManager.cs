@@ -2,22 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using AltV.Net;
-using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
+using AltVStrefaRPServer.Services.Money.Bank;
 
 namespace AltVStrefaRPServer.Modules.Money
 {
     public class BankAccountManager
     {
         private Dictionary<int, BankAccount> _bankAccounts = new Dictionary<int, BankAccount>();
-        private readonly ServerContext _serverContext;
-    
+        private readonly IBankAccountDatabaseService _bankAccountDatabaseService;
         private static Random _rng = new Random();
 
-        public BankAccountManager(ServerContext serverContext)
+        public BankAccountManager(IBankAccountDatabaseService bankAccountDatabaseService)
         {
-            _serverContext = serverContext;
+            _bankAccountDatabaseService = bankAccountDatabaseService;
 
             LoadBankAccountsFromDatabase();
         }
@@ -25,7 +24,7 @@ namespace AltVStrefaRPServer.Modules.Money
         private void LoadBankAccountsFromDatabase()
         {
             var startTime = Time.GetTimestampMs();
-            foreach (var bankAccount in _serverContext.BankAccounts)
+            foreach (var bankAccount in _bankAccountDatabaseService.GetAllBankAccounts())
             {
                 _bankAccounts.Add(bankAccount.AccountNumber, bankAccount);
             }

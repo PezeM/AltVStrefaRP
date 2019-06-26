@@ -14,10 +14,13 @@ using AltVStrefaRPServer.Modules.Vehicle;
 using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Businesses;
 using AltVStrefaRPServer.Services.Characters;
+using AltVStrefaRPServer.Services.Characters.Accounts;
 using AltVStrefaRPServer.Services.Characters.Customization;
 using AltVStrefaRPServer.Services.Fractions;
 using AltVStrefaRPServer.Services.Money;
+using AltVStrefaRPServer.Services.Money.Bank;
 using AltVStrefaRPServer.Services.Vehicles;
+using EFCore.DbContextFactory.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -55,25 +58,35 @@ namespace AltVStrefaRPServer
             services.AddSingleton(appSettings);
             appSettings.Initialize();
 
-            // Add database
+            //// Add database
             services.AddDbContext<ServerContext>(options =>
                 options.UseMySql(appSettings.ConnectionString,
                     mysqlOptions =>
                     {
                         mysqlOptions.ServerVersion(new Version(10, 1, 37), ServerType.MariaDb);
-                    }), ServiceLifetime.Scoped);
+                    }));
+            
+            services.AddDbContextFactory<ServerContext>(options => 
+                options.UseMySql(appSettings.ConnectionString, mysqlOptions =>
+                {
+                    mysqlOptions.ServerVersion(new Version(10, 1, 37), ServerType.MariaDb);
+                }));
 
             // Add services
             services.AddTransient<INotificationService, NotificationService>();
             services.AddTransient<ILogin, Login>();
+            services.AddTransient<IAccountDatabaseService, AccountDatabaseService>();
             services.AddTransient<ICharacterCreatorService, CharacterCreatorService>();
             services.AddTransient<ICharacterDatabaseService, CharacterDatabaseService>();
             services.AddTransient<IMoneyService, MoneyService>();
+            services.AddTransient<IBankAccountDatabaseService, BankAccountDatabaseService>();
             services.AddTransient<ITaxService, TaxService>();
             services.AddTransient<IBusinessService, BusinessService>();
+            services.AddTransient<IBusinessDatabaseService, BusinessDatabaseService>();
             services.AddTransient<IVehicleSpawnService, VehicleSpawnService>();
             services.AddTransient<IVehicleCreatorService, VehicleCreatorService>();
             services.AddTransient<IVehicleDatabaseService, VehicleDatabaseService>();
+            services.AddTransient<IVehicleShopDatabaseService, VehicleShopDatabaseService>();
             services.AddTransient<IFractionDatabaseService, FractionDatabaseService>();
 
             services.AddTransient<PlayerConnect>();

@@ -1,9 +1,7 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
-using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
@@ -12,7 +10,7 @@ using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Modules.CharacterModule;
 using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Money;
-using Microsoft.EntityFrameworkCore;
+using AltVStrefaRPServer.Services.Money.Bank;
 using Newtonsoft.Json;
 
 namespace AltVStrefaRPServer.Modules.Money
@@ -20,15 +18,15 @@ namespace AltVStrefaRPServer.Modules.Money
     public class BankHandler
     {
         private IMoneyService _moneyService;
-        private readonly ServerContext _serverContext;
+        private readonly IBankAccountDatabaseService _bankAccountDatabaseService;
         private INotificationService _notificationService;
         private BankAccountManager _bankAccountManager;
 
-        public BankHandler(IMoneyService moneyService, INotificationService notificationService, ServerContext serverContext, 
+        public BankHandler(IMoneyService moneyService, INotificationService notificationService, IBankAccountDatabaseService banklAccountDatabaseService, 
             BankAccountManager bankAccountManager)
         {
             _moneyService = moneyService;
-            _serverContext = serverContext;
+            _bankAccountDatabaseService = banklAccountDatabaseService;
             _notificationService = notificationService;
             _bankAccountManager = bankAccountManager;
 
@@ -77,10 +75,7 @@ namespace AltVStrefaRPServer.Modules.Money
                 return;
             }
 
-            await _serverContext.BankAccounts.AddAsync(character.BankAccount).ConfigureAwait(false);
-            _serverContext.Characters.Update(character);
-            await _serverContext.SaveChangesAsync().ConfigureAwait(false);
-
+            await _bankAccountDatabaseService.AddNewBankAccount(character);
             await _notificationService.ShowSuccessNotificationAsync(player, "Nowe konto bankowe",
                 $"Otworzyłeś nowe konto w banku. Twój numer konta to: {character.BankAccount.AccountNumber}.", 7000);
             AltAsync.Log($"{character.Id} created new bank account ({character.BankAccount.AccountNumber}) in {Time.GetTimestampMs() - startTime}ms.");
@@ -181,18 +176,13 @@ namespace AltVStrefaRPServer.Modules.Money
         {
             if (!player.TryGetCharacter(out Character character)) return;
 
-            var bankTransactionHistory = await _serverContext.MoneyTransactions.AsNoTracking()
-                .Where(t => t.Receiver == character.GetFullName() || t.Source == character.GetFullName())
-                .Take(50)
-                .ToListAsync().ConfigureAwait(false);
-
+            var bankTransactionHistory = await _bankAccountDatabaseService.GetTransferHistory(character);
             if (bankTransactionHistory.Count <= 0)
             {
                 await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie posiadasz jeszcze żadnych transakcji");
             }
             else
             {
-                AltAsync.Log($"Bank transaction history for {character.Id} = {JsonConvert.SerializeObject(bankTransactionHistory)}");
                 await player.EmitAsync("openTransactionHistory", JsonConvert.SerializeObject(bankTransactionHistory));
             }
         }

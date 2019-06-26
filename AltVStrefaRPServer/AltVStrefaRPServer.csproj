@@ -25,8 +25,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\Client\**" />
+    <EmbeddedResource Remove="Models\Client\**" />
+    <None Remove="Models\Client\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AltV.Net" Version="1.8.1" />
     <PackageReference Include="AltV.Net.Async" Version="1.8.1" />
+    <PackageReference Include="EFCore.DbContextFactory" Version="1.0.2" />
     <PackageReference Include="MessagePack" Version="1.7.3.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.2.4" />
@@ -47,7 +54,6 @@
 
   <ItemGroup>
     <Folder Include="Database\Migrations\" />
-    <Folder Include="Models\Client\" />
     <Folder Include="Models\Jobs\" />
   </ItemGroup>
 

@@ -9,20 +9,29 @@ namespace AltVStrefaRPServer.Services.Characters.Customization
 {
     public class CharacterCreatorService : ICharacterCreatorService
     {
-        private readonly ServerContext _serverContext;
+        private readonly Func<ServerContext> _factory;
 
-        public CharacterCreatorService(ServerContext serverContext)
+        public CharacterCreatorService(Func<ServerContext> factory)
         {
-            _serverContext = serverContext;
+            _factory = factory;
         }
 
         public async Task<bool> CheckIfCharacterExistsAsync(string firstName, string lastName)
-            => await _serverContext.Characters.AsNoTracking().AnyAsync(c => c.FirstName == firstName && c.LastName == lastName);
+        {
+            using (var context = _factory.Invoke())
+            {
+                return await context.Characters.AsNoTracking()
+                    .AnyAsync(c => c.FirstName == firstName && c.LastName == lastName);
+            }
+        }
 
         public async Task SaveNewCharacter(Character character)
         {
-            await _serverContext.AddAsync(character).ConfigureAwait(false);
-            await _serverContext.SaveChangesAsync().ConfigureAwait(false);
+            using (var context = _factory.Invoke())
+            {
+                await context.AddAsync(character).ConfigureAwait(false);
+                await context.SaveChangesAsync().ConfigureAwait(false);
+            }
         }
 
         public Character CreateNewCharacter(int accountId, string firstName, string lastName, int age, int gender)

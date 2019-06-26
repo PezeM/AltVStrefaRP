@@ -1,75 +1,17 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using AltVStrefaRPServer.Database;
-using AltVStrefaRPServer.Models;
-using AltVStrefaRPServer.Models.Dto;
-using Microsoft.EntityFrameworkCore;
+﻿using System.Text.RegularExpressions;
 
 namespace AltVStrefaRPServer.Services.Characters
 {
     public class Login : ILogin
     {
-        private readonly ServerContext _serverContext;
         private readonly HashingService _hashingService;
         private Regex _regex;
 
-        public Login(ServerContext serverContext, HashingService hashingService)
+        public Login(HashingService hashingService)
         {
-            _serverContext = serverContext;
             _hashingService = hashingService;
             _regex = new Regex("^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,18}$");
         }
-
-        /// <summary>
-        /// Gets account from database by username
-        /// </summary>
-        /// <param name="username"></param>
-        /// <returns>Account if found,null if account is not found</returns>
-        public Task<Account> GetAccountAsync(string username)
-            => _serverContext.Accounts.AsNoTracking().FirstOrDefaultAsync(a => a.Username == username);
-
-        /// <summary>
-        /// Checks if account with given username is already in database
-        /// </summary>
-        /// <param name="username"></param>
-        /// <returns>Returns true if there is already account with given username</returns>
-        public Task<int> CheckIfAccountExistsAsync(string username) 
-            => _serverContext.Accounts.Where(a => a.Username == username).CountAsync();
-
-        /// <summary>
-        /// Generates new hashed password and creates new account in the database
-        /// </summary>
-        /// <param name="username"></param>
-        /// <param name="password"></param>
-        /// <returns></returns>
-        public async Task CreateNewAccountAndSaveAsync(string username, string password)
-        {
-            await _serverContext.Accounts.AddAsync(new Account
-            {
-                Username = username,
-                Password = GeneratePassword(password),
-            }).ConfigureAwait(false);
-            await _serverContext.SaveChangesAsync();
-        }
-
-        public Task<List<CharacterSelectDto>> GetCharacterList(int accountId)
-            => _serverContext.Characters.AsNoTracking().Where(c => c.AccountId == accountId).Select(c => new CharacterSelectDto
-            {
-                Id = c.Id,
-                FirstName = c.FirstName,
-                LastName = c.LastName,
-                Money = c.Money,
-                ProfileImage = c.ProfileImage,
-                TimePlayed = c.TimePlayed
-            }).ToListAsync();
-
-        public Task<Character> GetCharacterById(int characterId)
-            => _serverContext.Characters
-                .Include(c => c.BankAccount)
-                .Include(c => c.Account)
-                .FirstOrDefaultAsync(c => c.Id == characterId);
 
         public string GeneratePassword(string password) => _hashingService.Hash(password, 1000);
 

@@ -32,6 +32,7 @@ namespace AltVStrefaRPServer
         protected Startup Startup;
         public override void OnStart ()
         {
+            Alt.Server.LogWarning("Testing color");
             Alt.Server.LogInfo ("Starting AltVTestResource...");
 
             AltAsync.OnConsoleCommand += OnConsoleCommand;
@@ -41,7 +42,7 @@ namespace AltVStrefaRPServer
             Startup = new Startup ();
             var playerConnectEvent = Startup.ServiceProvider.GetService<PlayerConnect> ();
             var playerDiconnectEvent = Startup.ServiceProvider.GetService<PlayerDisconnect> ();
-            var vehicleHandler = Startup.ServiceProvider.GetService<VehicleHandler> ();
+            var vehicleHandler = Startup.ServiceProvider.GetService<VehicleHandler>();
             var vehicleShopsHandler = Startup.ServiceProvider.GetService<VehicleShopsHandler> ();
             var bankHandler = Startup.ServiceProvider.GetServices<BankHandler> ();
             var sittingHandler = Startup.ServiceProvider.GetService<SittingHandler> ();
