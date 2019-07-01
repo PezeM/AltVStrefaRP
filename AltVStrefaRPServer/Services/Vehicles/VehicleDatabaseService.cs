@@ -64,7 +64,7 @@ namespace AltVStrefaRPServer.Services.Vehicles
         {
             using (var context = _factory.Invoke())
             {
-                context.Vehicles.AddAsync(vehicle);
+                await context.Vehicles.AddAsync(vehicle);
                 await context.SaveChangesAsync();
             }
         }

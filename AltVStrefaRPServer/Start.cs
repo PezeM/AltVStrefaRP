@@ -32,7 +32,6 @@ namespace AltVStrefaRPServer
         protected Startup Startup;
         public override void OnStart ()
         {
-            Alt.Server.LogWarning("Testing color");
             Alt.Server.LogInfo ("Starting AltVTestResource...");
 
             AltAsync.OnConsoleCommand += OnConsoleCommand;

@@ -11,7 +11,6 @@ using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Businesses;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Fractions.Permissions;
-using AltVStrefaRPServer.Modules.Businesses;
 using AltVStrefaRPServer.Services.Vehicles;
 using VehicleModel = AltVStrefaRPServer.Models.VehicleModel;
 
@@ -23,8 +22,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
         private IVehicleDatabaseService _vehicleDatabaseService;
         private IVehicleCreatorService _vehicleCreator;
 
-        public VehicleManager(IVehicleDatabaseService vehicleDatabaseService, IVehicleCreatorService vehicleCreatorService, 
-            BusinessManager businessManager)
+        public VehicleManager(IVehicleDatabaseService vehicleDatabaseService, IVehicleCreatorService vehicleCreatorService)
         {
             _vehicleDatabaseService = vehicleDatabaseService;
             _vehicleCreator = vehicleCreatorService;
