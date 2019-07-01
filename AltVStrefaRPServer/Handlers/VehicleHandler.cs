@@ -42,13 +42,13 @@ namespace AltVStrefaRPServer.Handlers
 
         private void ToggleLockStateEvent(IPlayer player, IVehicle closestVehicle)
         {
-            if (player.TryGetCharacter(out Character character)) return;
+            if (!player.TryGetCharacter(out Character character)) return;
             if (!_vehicleManager.TryGetVehicleModel(closestVehicle, out VehicleModel vehicle)) return;
             if (!_vehicleManager.HasVehiclePermission(character, vehicle)) return;
 
             vehicle.IsLocked = !vehicle.IsLocked;
             vehicle.VehicleHandle.LockState = vehicle.IsLocked ? VehicleLockState.Locked : VehicleLockState.Unlocked;
-            player.Emit("toggleLockState", vehicle.IsLocked);
+            player.Emit("toggleLockState", closestVehicle);
         }
 
         private void ToggleHoodState(IPlayer player, IMyVehicle vehicle)
@@ -57,12 +57,12 @@ namespace AltVStrefaRPServer.Handlers
             if (vehicle.GetDoorState(VehicleDoor.Hood) == VehicleDoorState.Closed)
             {
                 vehicle.SetDoorState(VehicleDoor.Hood, VehicleDoorState.OpenedLevel7);
-                player.Emit("toggleHoodState", 1);
+                player.Emit("toggleHoodState", 1, vehicle);
             }
             else if(vehicle.GetDoorState(VehicleDoor.Hood) == VehicleDoorState.OpenedLevel7)
             {
                 vehicle.SetDoorState(VehicleDoor.Hood, VehicleDoorState.Closed);
-                player.Emit("toggleHoodState", 0);
+                player.Emit("toggleHoodState", 0, vehicle);
             }
         }
 
@@ -72,18 +72,18 @@ namespace AltVStrefaRPServer.Handlers
             if (vehicle.GetDoorState(VehicleDoor.Trunk) == VehicleDoorState.Closed)
             {
                 vehicle.SetDoorState(VehicleDoor.Trunk, VehicleDoorState.OpenedLevel7);
-                player.Emit("toggleTrunkState", 1);
+                player.Emit("toggleTrunkState", 1, vehicle);
             }
             else if(vehicle.GetDoorState(VehicleDoor.Trunk) == VehicleDoorState.OpenedLevel7)
             {
                 vehicle.SetDoorState(VehicleDoor.Trunk, VehicleDoorState.Closed);
-                player.Emit("toggleTrunkState", 0);
+                player.Emit("toggleTrunkState", 0, vehicle);
             }
         }
 
         private void ToggleVehicleEngineEvent(IPlayer player, IMyVehicle vehicle)
         {
-            if (player.TryGetCharacter(out Character character)) return;
+            if (!player.TryGetCharacter(out Character character)) return;
             if (player.Seat != 1) return;
 
             if (!_vehicleManager.TryGetVehicleModel(vehicle, out VehicleModel vehicleModel)) return;
@@ -100,7 +100,7 @@ namespace AltVStrefaRPServer.Handlers
 
         private void TryToOpenVehicleEvent(IPlayer player, IMyVehicle myVehicle)
         {
-            if (player.TryGetCharacter(out Character character)) return;
+            if (!player.TryGetCharacter(out Character character)) return;
 
             if (!_vehicleManager.TryGetVehicleModel(myVehicle, out VehicleModel vehicleModel)) return;
             if (!_vehicleManager.HasVehiclePermission(character, vehicleModel))
