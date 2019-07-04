@@ -2,9 +2,9 @@
 {
     public abstract class BaseItem
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public int StackSize { get; set; }
+        public int Id { get; protected set; }
+        public string Name { get; protected set; }
+        public int StackSize { get; protected set; }
 
         protected BaseItem(){}
 

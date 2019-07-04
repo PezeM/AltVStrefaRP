@@ -19,6 +19,7 @@ using AltVStrefaRPServer.Services.Characters;
 using AltVStrefaRPServer.Services.Characters.Accounts;
 using AltVStrefaRPServer.Services.Characters.Customization;
 using AltVStrefaRPServer.Services.Fractions;
+using AltVStrefaRPServer.Services.Inventory;
 using AltVStrefaRPServer.Services.Money;
 using AltVStrefaRPServer.Services.Money.Bank;
 using AltVStrefaRPServer.Services.Vehicles;
@@ -90,6 +91,7 @@ namespace AltVStrefaRPServer
             services.AddTransient<IVehicleDatabaseService, VehicleDatabaseService>();
             services.AddTransient<IVehicleShopDatabaseService, VehicleShopDatabaseService>();
             services.AddTransient<IFractionDatabaseService, FractionDatabaseService>();
+            services.AddTransient<IInventoryDatabaseService, InventoryDatabaseService>();
 
             services.AddTransient<PlayerConnect>();
             services.AddTransient<PlayerDisconnect>();
@@ -118,6 +120,7 @@ namespace AltVStrefaRPServer
             services.AddTransient<TownHallFractionHandler>();
 
             services.AddSingleton<SerializatorTest>();
+            services.AddSingleton<TestNetworking>();
 
             // Build provider
             ServiceProvider = services.BuildServiceProvider();

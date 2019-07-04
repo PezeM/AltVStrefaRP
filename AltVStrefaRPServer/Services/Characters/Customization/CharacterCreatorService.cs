@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models;
+using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Models.Server;
 using Microsoft.EntityFrameworkCore;
 
@@ -44,6 +45,7 @@ namespace AltVStrefaRPServer.Services.Characters.Customization
                 BankAccount = null,
                 Age = age,
                 Money = AppSettings.Current.ServerConfig.StartingMoney,
+                Inventory = new InventoryController(50),
                 Gender = gender,
                 Dimension = 0,
                 X = AppSettings.Current.ServerConfig.SpawnPosition.X,
@@ -53,7 +55,11 @@ namespace AltVStrefaRPServer.Services.Characters.Customization
                 CreationDate = DateTime.Now,
                 LastPlayed = DateTime.Now,
                 TimePlayed = 0,
-                BusinessRank = -1,
+                BusinessRank = 0,
+                FractionRank = 0,
+                CanDriveVehicles = true,
+                IsBanned = false,
+                IsMuted = true,
             };
         }
     }

@@ -11,15 +11,15 @@ namespace AltVStrefaRPServer.Modules.CharacterModule
     public class CharacterManager
     {
         private static readonly Lazy<CharacterManager> lazy = new Lazy<CharacterManager>(() => new CharacterManager());
-
         public static CharacterManager Instance { get { return lazy.Value; } }
+
+        private Dictionary<int, Character> _characterList;
 
         private CharacterManager()
         {
             _characterList = new Dictionary<int, Character>();
         }
 
-        private Dictionary<int, Character> _characterList;
 
         public Character GetCharacter(IPlayer player)
             => _characterList.ContainsKey(player.Id) ? _characterList[player.Id] : null;

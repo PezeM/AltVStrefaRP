@@ -8,15 +8,7 @@ namespace AltVStrefaRPServer.Models.Inventory
     {
         public static Dictionary<ItemType, BaseItem> Items { get; set; } = new Dictionary<ItemType, BaseItem>
         {
-            { ItemType.Weapon_CombatPistol, new WeaponItem
-            {
-                Name = "Combat pistol",
-                Model = "w_pi_combatpistol",
-                StackSize = 1,
-                Ammo = 20,
-                Slot = EquipmentSlot.LeftHand,
-                WeaponModel = WeaponModel.CombatPistol
-            }},
+            { ItemType.Weapon_CombatPistol, new WeaponItem("Combat pistol", 1, "w_pi_combatpistol", WeaponModel.CombatPistol, 20, EquipmentSlot.LeftHand) },
             { ItemType.FoodItem_Burger, new FoodItem("Burger", 20, "prop_bodyarmour_04", 20) }
         };
     }

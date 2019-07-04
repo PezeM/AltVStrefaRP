@@ -11,15 +11,15 @@ namespace TestNetworkingEntities
     {
         private static Dictionary<ulong, INetworkingEntity> _entities;
         private static Random _rng;
+
         public static void Main(string[] args)
         {
             _entities = new Dictionary<ulong, INetworkingEntity>();
             _rng = new Random();
-            AltNetworking.Init(new NetworkingModule());
-            //AltNetworking.Configure(options =>
-            //{
-            //    options.Port = 46429;
-            //});
+            AltNetworking.Configure(options =>
+            {
+                options.Port = 46429;
+            });
 
             var data = new Dictionary<string, object>();
             var data2 = new Dictionary<string, object>();
@@ -38,6 +38,8 @@ namespace TestNetworkingEntities
                 Console.WriteLine("streamed out " + entity.Id + " in client " + client.Token);
             };
             SomethingElse();
+
+            Console.ReadKey();
         }
 
         private static void SomethingElse()

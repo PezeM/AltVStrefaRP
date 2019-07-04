@@ -19,7 +19,7 @@ namespace AltVStrefaRPServer.Models
         public bool IsBanned {get; set; }
         public bool IsMuted { get; set; }
         public bool CanDriveVehicles { get; set; }
-        //public InventoryController Inventory { get;set; }
+        public InventoryController Inventory { get; set; }
         public string ProfileImage { get; set; }
 
         public float X { get; set; }
@@ -60,7 +60,7 @@ namespace AltVStrefaRPServer.Models
         public int FractionRank { get; set; }
 
         [NotMapped]
-        public bool UpdateOnMoneyChange { get; set; } = false;
+        public bool UpdateOnMoneyChange { get; set; } = true;
 
         public string GetFullName()
         {

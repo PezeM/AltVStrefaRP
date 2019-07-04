@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using AltV.Net;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models.Inventory;
 
@@ -7,21 +8,21 @@ namespace AltVStrefaRPServer.Modules.Inventory
 {
     public class InventoryManager
     {
-        public ConcurrentDictionary<int, DroppedItem> DroppedItems { get; set; }
-        public ConcurrentDictionary<int, InventoryItem> Items { get; set; }
+        private ConcurrentDictionary<int, DroppedItem> _droppedItems;
+        private ConcurrentDictionary<int, InventoryItem> _items;
 
         private Func<ServerContext> _factory;
 
         public InventoryManager(Func<ServerContext> factory)
         {
-            DroppedItems = new ConcurrentDictionary<int, DroppedItem>();
-            Items = new ConcurrentDictionary<int, InventoryItem>();
+            _droppedItems = new ConcurrentDictionary<int, DroppedItem>();
+            _items = new ConcurrentDictionary<int, InventoryItem>();
             _factory = factory;
 
-            InitializeInventory();
+            LoadItems();
         }
 
-        private void InitializeInventory()
+        private void LoadItems()
         {
             using (var context = _factory.Invoke())
             {
@@ -32,6 +33,13 @@ namespace AltVStrefaRPServer.Modules.Inventory
                 //    context.SaveChanges();
                 //}
             }
+        }
+
+        public bool AddDroppedItem(DroppedItem droppedItem)
+        {
+            if (!_droppedItems.TryAdd(droppedItem.Id, droppedItem)) return false;
+            Alt.EmitAllClients("streamInDroppedItem", droppedItem);
+            return true;
         }
     }
 }
