@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 using AltV.Net;
 using AltVStrefaRPServer.Helpers;
@@ -10,13 +10,14 @@ namespace AltVStrefaRPServer.Modules.Money
 {
     public class BankAccountManager
     {
-        private Dictionary<int, BankAccount> _bankAccounts = new Dictionary<int, BankAccount>();
+        private ConcurrentDictionary<int, BankAccount> _bankAccounts;
         private readonly IBankAccountDatabaseService _bankAccountDatabaseService;
         private static Random _rng = new Random();
 
         public BankAccountManager(IBankAccountDatabaseService bankAccountDatabaseService)
         {
             _bankAccountDatabaseService = bankAccountDatabaseService;
+            _bankAccounts = new ConcurrentDictionary<int, BankAccount>();
 
             LoadBankAccountsFromDatabase();
         }
@@ -26,7 +27,7 @@ namespace AltVStrefaRPServer.Modules.Money
             var startTime = Time.GetTimestampMs();
             foreach (var bankAccount in _bankAccountDatabaseService.GetAllBankAccounts())
             {
-                _bankAccounts.Add(bankAccount.AccountNumber, bankAccount);
+                _bankAccounts.TryAdd(bankAccount.AccountNumber, bankAccount);
             }
             Alt.Log($"Loaded {_bankAccounts.Count} bank accounts from databse in {Time.GetTimestampMs() - startTime}ms.");
         }

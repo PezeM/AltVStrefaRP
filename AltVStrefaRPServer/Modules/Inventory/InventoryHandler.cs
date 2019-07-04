@@ -20,13 +20,13 @@ namespace AltVStrefaRPServer.Modules.Inventory
         private void DropItem(IPlayer player, int id, int amount, Position position, Rotation rotation)
         {
             if (!player.TryGetCharacter(out var charactr)) return;
-            if (!charactr.Inventory.HasItem(id, out var item)) return;
-            if (item is IDroppable droppable)
-            {
-                if(!charactr.Inventory.RemoveItem(item.Id, amount)) return;
-                // Add new method that will override adding to dictionary, send event to all player that item dropped on the ground etc
-                _inventoryManager.DroppedItems.TryAdd(item.Id, new DroppedItem(item.Id, item.Item, position, rotation, DateTime.Today.AddHours(2)));
-            }
+            //if (!charactr.Inventory.HasItem(id, out var item)) return;
+            //if (item is IDroppable droppable)
+            //{
+            //    if (!charactr.Inventory.RemoveItem(item.Id, amount)) return;
+            //    // Add new method that will override adding to dictionary, send event to all player that item dropped on the ground etc
+            //    _inventoryManager.DroppedItems.TryAdd(item.Id, new DroppedItem(item.Id, item.Item, position, rotation, DateTime.Today.AddHours(2)));
+            //}
         }
     }
 }

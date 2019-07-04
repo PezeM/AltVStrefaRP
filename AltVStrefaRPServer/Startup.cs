@@ -118,7 +118,6 @@ namespace AltVStrefaRPServer
             services.AddTransient<TownHallFractionHandler>();
 
             services.AddSingleton<SerializatorTest>();
-            services.AddSingleton<TestNetworking>();
 
             // Build provider
             ServiceProvider = services.BuildServiceProvider();

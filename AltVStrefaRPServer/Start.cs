@@ -41,7 +41,6 @@ namespace AltVStrefaRPServer
             Alt.OnPlayerEvent += OnOnPlayerEvent;
 
             Startup = new Startup ();
-            var testNetworking = Startup.ServiceProvider.GetService<TestNetworking>();
             var playerConnectEvent = Startup.ServiceProvider.GetService<PlayerConnect> ();
             var playerDiconnectEvent = Startup.ServiceProvider.GetService<PlayerDisconnect> ();
             var vehicleHandler = Startup.ServiceProvider.GetService<VehicleHandler>();

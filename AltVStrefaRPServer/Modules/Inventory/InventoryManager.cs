@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Linq;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models.Inventory;
 
@@ -17,6 +16,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
         {
             DroppedItems = new ConcurrentDictionary<int, DroppedItem>();
             Items = new ConcurrentDictionary<int, InventoryItem>();
+            _factory = factory;
 
             InitializeInventory();
         }
@@ -25,12 +25,12 @@ namespace AltVStrefaRPServer.Modules.Inventory
         {
             using (var context = _factory.Invoke())
             {
-                var itemsToRemove = context.BankAccounts.Where(q => q.AccountNumber > 1000);
-                if (itemsToRemove.Count() > 0)
-                {
-                    context.RemoveRange(itemsToRemove);
-                    context.SaveChanges();
-                }
+                //var itemsToRemove = context.BankAccounts.Where(q => q.AccountNumber > 1000);
+                //if (itemsToRemove.Count() > 0)
+                //{
+                //    context.RemoveRange(itemsToRemove);
+                //    context.SaveChanges();
+                //}
             }
         }
     }
