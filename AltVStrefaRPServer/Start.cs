@@ -15,7 +15,9 @@ using AltVStrefaRPServer.Modules.CharacterModule.Customization;
 using AltVStrefaRPServer.Modules.Chat;
 using AltVStrefaRPServer.Modules.Environment;
 using AltVStrefaRPServer.Modules.Fractions;
+using AltVStrefaRPServer.Modules.Inventory;
 using AltVStrefaRPServer.Modules.Money;
+using AltVStrefaRPServer.Modules.Networking;
 using AltVStrefaRPServer.Modules.Vehicle;
 using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Vehicles;
@@ -39,6 +41,7 @@ namespace AltVStrefaRPServer
             Alt.OnPlayerEvent += OnOnPlayerEvent;
 
             Startup = new Startup ();
+            var testNetworking = Startup.ServiceProvider.GetService<TestNetworking>();
             var playerConnectEvent = Startup.ServiceProvider.GetService<PlayerConnect> ();
             var playerDiconnectEvent = Startup.ServiceProvider.GetService<PlayerDisconnect> ();
             var vehicleHandler = Startup.ServiceProvider.GetService<VehicleHandler>();
@@ -58,6 +61,8 @@ namespace AltVStrefaRPServer
             var characterCreator = Startup.ServiceProvider.GetService<CharacterCreator> ();
             var adminCommands = Startup.ServiceProvider.GetService<AdminCommands> ();
             var bankAccountsManager = Startup.ServiceProvider.GetServices<BankAccountManager> ();
+            var inventoryManager = Startup.ServiceProvider.GetService<InventoryManager>();
+            var inventoryHandler = Startup.ServiceProvider.GetService<InventoryHandler>();
             // Fractions
             var fractionManager = Startup.ServiceProvider.GetService<FractionManager> ();
             var fractionHandler = Startup.ServiceProvider.GetService<FractionHandler> ();

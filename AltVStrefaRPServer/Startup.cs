@@ -9,7 +9,9 @@ using AltVStrefaRPServer.Modules.CharacterModule.Customization;
 using AltVStrefaRPServer.Modules.Chat;
 using AltVStrefaRPServer.Modules.Environment;
 using AltVStrefaRPServer.Modules.Fractions;
+using AltVStrefaRPServer.Modules.Inventory;
 using AltVStrefaRPServer.Modules.Money;
+using AltVStrefaRPServer.Modules.Networking;
 using AltVStrefaRPServer.Modules.Vehicle;
 using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Businesses;
@@ -105,7 +107,9 @@ namespace AltVStrefaRPServer
             services.AddSingleton<VehicleShopsManager>();
             services.AddSingleton<FractionManager>();
             services.AddSingleton<FractionHandler>();
-                
+            services.AddSingleton<InventoryManager>();
+            services.AddSingleton<InventoryHandler>();
+
             services.AddTransient<AdminCommands>();
             services.AddTransient<CharacterCreator>();
             services.AddTransient<SittingHandler>();
@@ -114,6 +118,7 @@ namespace AltVStrefaRPServer
             services.AddTransient<TownHallFractionHandler>();
 
             services.AddSingleton<SerializatorTest>();
+            services.AddSingleton<TestNetworking>();
 
             // Build provider
             ServiceProvider = services.BuildServiceProvider();

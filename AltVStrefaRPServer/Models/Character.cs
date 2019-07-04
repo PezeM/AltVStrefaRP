@@ -4,6 +4,7 @@ using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using AltVStrefaRPServer.Models.Businesses;
 using AltVStrefaRPServer.Models.Fractions;
+using AltVStrefaRPServer.Models.Inventory;
 
 namespace AltVStrefaRPServer.Models
 {
@@ -18,7 +19,7 @@ namespace AltVStrefaRPServer.Models
         public bool IsBanned {get; set; }
         public bool IsMuted { get; set; }
         public bool CanDriveVehicles { get; set; }
-
+        public InventoryController Inventory { get;set; }
         public string ProfileImage { get; set; }
 
         public float X { get; set; }
