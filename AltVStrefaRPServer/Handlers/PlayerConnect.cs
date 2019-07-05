@@ -90,8 +90,8 @@ namespace AltVStrefaRPServer.Handlers
 
                 //await _loginService.CreateNewAccountAndSaveAsync(login, password).ConfigureAwait(false);
                 //await player.EmitAsync("successfullyRegistered");
-                await Task.WhenAll(_accountDatabaseService.CreateNewAccountAndSaveAsync(login, _loginService.GeneratePassword(password)), 
-                    player.EmitAsync("successfullyRegistered"));
+                await Task.WhenAll(_accountDatabaseService.CreateNewAccountAndSaveAsync(login, _loginService.GeneratePassword(password)));
+                await player.EmitAsync("successfullyRegistered");
                 AltAsync.Log($"Registered account in {Time.GetTimestampMs() - startTime}ms");
             }
             catch (Exception e)

@@ -30,20 +30,19 @@ namespace AltVStrefaRPServer.Modules.Networking
                 //options.AuthenticationProviderFactory = new NonePlayerAuthenticationProviderFactory();
             });
             Alt.Log("Initialized TestNetworking");
-            var someEntity = AltNetworking.CreateEntity(new Position { X = -82, Y = -109, Z = 62 }, 0, 50, new Dictionary<string, object>
+            var someEntity = AltNetworking.CreateEntity(new Position { X = -82, Y = -109, Z = 62 }, 1, 500, new Dictionary<string, object>
             {
                 { "someData", 2331 },
             });
             Entities.TryAdd(someEntity.Id, someEntity);
             AltNetworking.OnEntityStreamIn = OnEntityStreamIn;
             AltNetworking.OnEntityStreamOut = OnEntityStreamOut;
-
             SetupTimer();
         }
 
         public void SetupTimer()
         {
-            _testTimer = new Timer(20000);
+            _testTimer = new Timer(1000);
             _testTimer.Elapsed += OnTimer;
             _testTimer.AutoReset = true;
             _testTimer.Start();
@@ -54,16 +53,12 @@ namespace AltVStrefaRPServer.Modules.Networking
             try
             {
                 var player = Alt.GetAllPlayers().FirstOrDefault();
-                if (player != null) 
-                {
-                    _testTimer.Stop();
-                    return;
-                }
-                var randomPosition = GenerateRandomPosition();
-                var newEntity = AltNetworking.CreateEntity(new Position { X = randomPosition.X, Y = randomPosition.Y, Z = randomPosition.Z }
-                    , 0, _rng.Next(10, 150), GenerateRandomData());
+                if (player == null) return;
+                var randomPosition = GenerateRandomPosition(player.Position);
+                var newEntity = AltNetworking.CreateEntity(new Position { X = player.Position.X, Y = player.Position.Y, Z = player.Position.Z }
+                    , _rng.Next(0, 2), _rng.Next(100, 150), GenerateRandomData());
                 Entities.TryAdd(newEntity.Id, newEntity);
-                Alt.Log($"Created entity {newEntity.Id} on thread {Thread.CurrentThread.ManagedThreadId}");
+                Alt.Log($"Created entity {newEntity.Id} dim {newEntity.Dimension} on thread {Thread.CurrentThread.ManagedThreadId}");
             }
             catch (NullReferenceException exception)
             {
@@ -99,13 +94,13 @@ namespace AltVStrefaRPServer.Modules.Networking
             Alt.Log(stringBuilder.ToString());
         }
 
-        private AltV.Net.Data.Position GenerateRandomPosition()
+        private AltV.Net.Data.Position GenerateRandomPosition(AltV.Net.Data.Position position)
         {
             var newPosition = new AltV.Net.Data.Position
             {
-                X = _rng.Next(10, 1000),
-                Y = _rng.Next(10, 1000),
-                Z = _rng.Next(10, 1000)
+                X = position.X + _rng.Next(1, 10),
+                Y = position.Y + _rng.Next(1, 10),
+                Z = position.Z + _rng.Next(1, 10)
             };
             return newPosition;
         }

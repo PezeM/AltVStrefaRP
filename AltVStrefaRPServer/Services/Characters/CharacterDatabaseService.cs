@@ -73,6 +73,8 @@ namespace AltVStrefaRPServer.Services.Characters
                     .Include(c => c.BankAccount)
                     .Include(c => c.Account)
                     .Include(c => c.Inventory)
+                    .ThenInclude(i => i.Items)
+                    .ThenInclude(i => i.Item)
                     .FirstOrDefaultAsync(c => c.Id == characterId);
             }
         }

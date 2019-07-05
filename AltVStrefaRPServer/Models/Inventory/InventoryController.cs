@@ -18,7 +18,11 @@ namespace AltVStrefaRPServer.Models.Inventory
         public IReadOnlyCollection<InventoryItem> Items => _items;
         private List<InventoryItem> _items;
 
-        protected InventoryController(){}
+        protected InventoryController()
+        {
+            _items = new List<InventoryItem>();
+        }
+
         public InventoryController(int maxSlots)
         {
             _items = new List<InventoryItem>();
@@ -48,7 +52,7 @@ namespace AltVStrefaRPServer.Models.Inventory
 
         public async Task<InventoryDropResponse> DropItem(InventoryItem item, int amount, Position position, InventoryManager inventoryManager)
         {
-            if (!(item is IDroppable droppable)) return InventoryDropResponse.ItemNotDroppable;
+            if (!(item.Item is IDroppable droppable)) return InventoryDropResponse.ItemNotDroppable;
             if (RemoveItem(item, amount) == InventoryRemoveResponse.NotEnoughItems) return InventoryDropResponse.NotEnoughItems;
             if (!await inventoryManager.AddDroppedItem(new DroppedItem(item.Id, amount, droppable.Model, item.Item, position)))
                 return InventoryDropResponse.ItemAlreadyDropped;
@@ -145,12 +149,12 @@ namespace AltVStrefaRPServer.Models.Inventory
 
         public bool HasItem<TItem>() where TItem : BaseItem
         {
-            return (_items.FirstOrDefault(i => i is TItem)) != null;
+            return (_items.FirstOrDefault(i => i.Item is TItem)) != null;
         }
 
         public bool TryToGetItem<TItem>(out InventoryItem item) where TItem : BaseItem
         {
-            item = _items.FirstOrDefault(i => i is TItem);
+            item = _items.FirstOrDefault(i => i.Item is TItem);
             return item != null;
         }
     }
