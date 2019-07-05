@@ -11,6 +11,7 @@ using AltV.Net.NetworkingEntity;
 using AltV.Net.NetworkingEntity.Elements.Entities;
 using Timer = System.Timers.Timer;
 using Entity;
+using AltVStrefaRPServer.Models.Enums;
 
 namespace AltVStrefaRPServer.Modules.Networking
 {
@@ -38,7 +39,26 @@ namespace AltVStrefaRPServer.Modules.Networking
             //Entities.TryAdd(someEntity.Id, someEntity);
             AltNetworking.OnEntityStreamIn = OnEntityStreamIn;
             AltNetworking.OnEntityStreamOut = OnEntityStreamOut;
-            SetupTimer();
+            //SetupTimer();
+
+            CreateRandomItems();
+            CreateRandomPeds();
+        }
+
+        private void CreateRandomItems()
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                AltNetworking.CreateEntity(new Position {X = -82 + (i * 15), Y = -109 + (i * 15), Z = 62}, 0, 100, GetRandomItemData());
+            }
+        }
+
+        private void CreateRandomPeds()
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                AltNetworking.CreateEntity(new Position {X = -82 + (i * 15), Y = -109 + (i * 15), Z = 62}, 0, 100, GetPedRandomData());
+            }
         }
 
         public void SetupTimer()
@@ -76,13 +96,13 @@ namespace AltVStrefaRPServer.Modules.Networking
         private void OnEntityStreamOut(INetworkingEntity entity, INetworkingClient client)
         {
             Alt.Log($"Entity streamed out {entity.Id}");
-            DisplayInfo(entity, client);
+            //DisplayInfo(entity, client);
         }
 
         private void OnEntityStreamIn(INetworkingEntity entity, INetworkingClient client)
         {
             Alt.Log($"Entity streamed in {entity.Id}");
-            DisplayInfo(entity, client);
+            //DisplayInfo(entity, client);
         }
 
         private void DisplayInfo(INetworkingEntity entity, INetworkingClient client)
@@ -98,7 +118,6 @@ namespace AltVStrefaRPServer.Modules.Networking
                                          $"LocalEndPoint: {entityStreamedInClient.WebSocket.LocalEndPoint} RemoteEndPoint: {entityStreamedInClient.WebSocket.RemoteEndPoint}");
             }
             stringBuilder.AppendLine($"Entity data: Range {entity.Range} PositionSize {entity.Position.CalculateSize()}");
-            stringBuilder.AppendLine();
             Alt.Log(stringBuilder.ToString());
         }
 
@@ -123,6 +142,28 @@ namespace AltVStrefaRPServer.Modules.Networking
                 { "canPickup", true}
             };
             return testData;
+        }
+
+        private Dictionary<string, object> GetPedRandomData()
+        {
+            var testData = new Dictionary<string, object>
+            {
+                { "entityType", (long)NetworkingEntityTypes.Ped },
+                { "pedType",  (long)PedTypes.BankPed }
+            };
+            return testData;
+        }
+
+        private Dictionary<string, object> GetRandomItemData()
+        {
+            return new Dictionary<string, object>
+            {
+                { "entityType", (long)NetworkingEntityTypes.Item },
+                { "id", 2 },
+                { "name", "Jakiś itemek" },
+                { "count", 15 },
+                { "model", "prop_bodyarmour_04" }
+            };
         }
     }
 }
