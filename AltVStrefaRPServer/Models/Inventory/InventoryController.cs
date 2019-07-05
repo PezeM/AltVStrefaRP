@@ -11,9 +11,13 @@ namespace AltVStrefaRPServer.Models.Inventory
 {
     public class InventoryController
     {
+        public int Id { get; set; }
         public int MaxSlots { get; set; } = 50;
         public IReadOnlyCollection<InventoryItem> Items => _items;
         private List<InventoryItem> _items;
+
+        public int CharacterId { get; set; }
+        public Character Character { get; set; }
 
         protected InventoryController(){}
         public InventoryController(int maxSlots)
@@ -46,7 +50,7 @@ namespace AltVStrefaRPServer.Models.Inventory
         public InventoryDropResponse DropItem(InventoryItem item, int amount, Position position, InventoryManager inventoryManager)
         {
             if (!(item is IDroppable droppable)) return InventoryDropResponse.ItemNotDroppable;
-            if (RemoveItem(item.Id, amount) == InventoryRemoveResponse.NotEnoughItems) return InventoryDropResponse.NotEnoughItems;
+            if (RemoveItem(item, amount) == InventoryRemoveResponse.NotEnoughItems) return InventoryDropResponse.NotEnoughItems;
             if (!inventoryManager.AddDroppedItem(new DroppedItem(item.Id, amount, droppable.Model, item.Item, position)))
                 return InventoryDropResponse.ItemAlreadyDropped;
             return InventoryDropResponse.DroppedItem;
@@ -121,7 +125,7 @@ namespace AltVStrefaRPServer.Models.Inventory
         {
             //item = _items.FirstOrDefault(i => i.Id == id);
             //return item != null;
-            item = default;
+            item = null;
             for (int i = 0; i < _items.Count; i++)
             {
                 if (_items[i].Id == id)

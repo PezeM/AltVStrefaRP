@@ -5,7 +5,7 @@ namespace AltVStrefaRPServer.Models.Inventory.Items
     public class FoodItem : BaseItem, IWorldItem, IDroppable
     {
         public ushort Value { get; set; }
-        public string Model { get; }
+        public string Model { get; private set; }
 
         public FoodItem(string name, int stackSize, string model, ushort value) : base(name, stackSize)
         {

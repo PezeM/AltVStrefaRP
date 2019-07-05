@@ -6,6 +6,9 @@
         public string Name { get; protected set; }
         public int StackSize { get; protected set; }
 
+        public int InventoryItemId { get; set; }
+        public InventoryItem InventoryItem { get; set; }
+
         protected BaseItem(){}
 
         public BaseItem(string name, int stackSize)
