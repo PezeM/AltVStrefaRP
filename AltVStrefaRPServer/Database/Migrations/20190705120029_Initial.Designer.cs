@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AltVStrefaRPServer.Database.Migrations
 {
     [DbContext(typeof(ServerContext))]
-    [Migration("20190622205620_NewPermissions")]
-    partial class NewPermissions
+    [Migration("20190705120029_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -157,8 +157,6 @@ namespace AltVStrefaRPServer.Database.Migrations
 
                     b.Property<int>("Age");
 
-                    b.Property<string>("BackgroundImage");
-
                     b.Property<int>("BusinessRank");
 
                     b.Property<bool>("CanDriveVehicles");
@@ -176,6 +174,8 @@ namespace AltVStrefaRPServer.Database.Migrations
                     b.Property<int>("FractionRank");
 
                     b.Property<int>("Gender");
+
+                    b.Property<int>("InventoryId");
 
                     b.Property<bool>("IsBanned");
 
@@ -204,6 +204,9 @@ namespace AltVStrefaRPServer.Database.Migrations
                     b.HasIndex("CurrentBusinessId");
 
                     b.HasIndex("CurrentFractionId");
+
+                    b.HasIndex("InventoryId")
+                        .IsUnique();
 
                     b.ToTable("Characters");
                 });
@@ -288,6 +291,58 @@ namespace AltVStrefaRPServer.Database.Migrations
                     b.ToTable("FractionPermissions");
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("FractionPermission");
+                });
+
+            modelBuilder.Entity("AltVStrefaRPServer.Models.Inventory.InventoryController", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("MaxSlots");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Inventories");
+                });
+
+            modelBuilder.Entity("AltVStrefaRPServer.Models.Inventory.InventoryItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("BaseItemId");
+
+                    b.Property<int?>("InventoryControllerId");
+
+                    b.Property<int>("Quantity");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BaseItemId")
+                        .IsUnique();
+
+                    b.HasIndex("InventoryControllerId");
+
+                    b.ToTable("InventoryItems");
+                });
+
+            modelBuilder.Entity("AltVStrefaRPServer.Models.Inventory.Items.BaseItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired();
+
+                    b.Property<string>("Name");
+
+                    b.Property<int>("StackSize");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Items");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("BaseItem");
                 });
 
             modelBuilder.Entity("AltVStrefaRPServer.Models.MoneyTransaction", b =>
@@ -504,6 +559,33 @@ namespace AltVStrefaRPServer.Database.Migrations
                     b.HasDiscriminator().HasValue("VehiclePermission");
                 });
 
+            modelBuilder.Entity("AltVStrefaRPServer.Models.Inventory.Items.FoodItem", b =>
+                {
+                    b.HasBaseType("AltVStrefaRPServer.Models.Inventory.Items.BaseItem");
+
+                    b.Property<string>("Model");
+
+                    b.Property<ushort>("Value");
+
+                    b.HasDiscriminator().HasValue("FoodItem");
+                });
+
+            modelBuilder.Entity("AltVStrefaRPServer.Models.Inventory.Items.WeaponItem", b =>
+                {
+                    b.HasBaseType("AltVStrefaRPServer.Models.Inventory.Items.BaseItem");
+
+                    b.Property<int>("Ammo");
+
+                    b.Property<string>("Model")
+                        .HasColumnName("WeaponItem_Model");
+
+                    b.Property<int>("Slot");
+
+                    b.Property<uint>("WeaponModel");
+
+                    b.HasDiscriminator().HasValue("WeaponItem");
+                });
+
             modelBuilder.Entity("AltVStrefaRPServer.Models.BankAccount", b =>
                 {
                     b.HasOne("AltVStrefaRPServer.Models.Character", "Character")
@@ -542,6 +624,11 @@ namespace AltVStrefaRPServer.Database.Migrations
                     b.HasOne("AltVStrefaRPServer.Models.Fractions.Fraction", "Fraction")
                         .WithMany("Employees")
                         .HasForeignKey("CurrentFractionId");
+
+                    b.HasOne("AltVStrefaRPServer.Models.Inventory.InventoryController", "Inventory")
+                        .WithOne()
+                        .HasForeignKey("AltVStrefaRPServer.Models.Character", "InventoryId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("AltVStrefaRPServer.Models.Fractions.FractionRank", b =>
@@ -556,7 +643,20 @@ namespace AltVStrefaRPServer.Database.Migrations
                 {
                     b.HasOne("AltVStrefaRPServer.Models.Fractions.FractionRank")
                         .WithMany("Permissions")
-                        .HasForeignKey("FractionRankId");
+                        .HasForeignKey("FractionRankId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("AltVStrefaRPServer.Models.Inventory.InventoryItem", b =>
+                {
+                    b.HasOne("AltVStrefaRPServer.Models.Inventory.Items.BaseItem", "Item")
+                        .WithOne()
+                        .HasForeignKey("AltVStrefaRPServer.Models.Inventory.InventoryItem", "BaseItemId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("AltVStrefaRPServer.Models.Inventory.InventoryController")
+                        .WithMany("Items")
+                        .HasForeignKey("InventoryControllerId");
                 });
 
             modelBuilder.Entity("AltVStrefaRPServer.Models.VehiclePrice", b =>

@@ -22,7 +22,7 @@ namespace AltVStrefaRPServer.Services.Characters.Customization
             using (var context = _factory.Invoke())
             {
                 return await context.Characters.AsNoTracking()
-                    .AnyAsync(c => c.FirstName == firstName && c.LastName == lastName);
+                    .AnyAsync(c => c.FirstName.ToLower() == firstName&& c.LastName.ToLower() == lastName);
             }
         }
 
@@ -45,7 +45,7 @@ namespace AltVStrefaRPServer.Services.Characters.Customization
                 BankAccount = null,
                 Age = age,
                 Money = AppSettings.Current.ServerConfig.StartingMoney,
-                //Inventory = new InventoryController(50),
+                Inventory = new InventoryController(50),
                 Gender = gender,
                 Dimension = 0,
                 X = AppSettings.Current.ServerConfig.SpawnPosition.X,

@@ -19,7 +19,8 @@ namespace AltVStrefaRPServer.Models
         public bool IsBanned {get; set; }
         public bool IsMuted { get; set; }
         public bool CanDriveVehicles { get; set; }
-        public InventoryController Inventory { get; set; } = new InventoryController(50);
+        public InventoryController Inventory { get; set; }
+        public int InventoryId { get; set; }
         public string ProfileImage { get; set; }
 
         public float X { get; set; }

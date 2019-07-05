@@ -7,5 +7,6 @@ namespace AltVStrefaRPServer.Models.Inventory
         public int Id { get; set; }
         public int Quantity { get; set; }
         public BaseItem Item { get; set; }
+        public int BaseItemId { get; set; }
     }
 }

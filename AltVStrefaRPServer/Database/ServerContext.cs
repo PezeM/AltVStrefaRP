@@ -104,8 +104,7 @@ namespace AltVStrefaRPServer.Database
 
             modelBuilder.Entity<Character>()
                 .HasOne(c => c.Inventory)
-                .WithOne(i => i.Character)
-                .HasForeignKey<InventoryController>(i => i.CharacterId);
+                .WithOne();
 
             modelBuilder.Entity<VehicleModel>()
                 .Ignore(v => v.VehicleHandle)
@@ -191,8 +190,8 @@ namespace AltVStrefaRPServer.Database
 
             modelBuilder.Entity<InventoryItem>()
                 .HasOne(i => i.Item)
-                .WithOne(i => i.InventoryItem)
-                .HasForeignKey<BaseItem>(b => b.InventoryItemId);
+                .WithOne()
+                .HasForeignKey<InventoryItem>(i => i.BaseItemId);
 
             modelBuilder.Entity<InventoryController>()
                 .HasMany(i => i.Items)

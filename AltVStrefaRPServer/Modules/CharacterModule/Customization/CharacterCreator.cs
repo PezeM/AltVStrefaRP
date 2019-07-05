@@ -31,7 +31,7 @@ namespace AltVStrefaRPServer.Modules.CharacterModule.Customization
             }
 
             // Check if users exists
-            if (await _characterCreatorService.CheckIfCharacterExistsAsync(accountId.ToString(), accountId.ToString()))
+            if (await _characterCreatorService.CheckIfCharacterExistsAsync(accountId.ToString().ToLower(), accountId.ToString().ToLower()))
             {
                 // Error to user 
                 Alt.Log($"User already exists");

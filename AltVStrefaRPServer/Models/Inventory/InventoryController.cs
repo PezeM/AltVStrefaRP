@@ -16,9 +16,6 @@ namespace AltVStrefaRPServer.Models.Inventory
         public IReadOnlyCollection<InventoryItem> Items => _items;
         private List<InventoryItem> _items;
 
-        public int CharacterId { get; set; }
-        public Character Character { get; set; }
-
         protected InventoryController(){}
         public InventoryController(int maxSlots)
         {

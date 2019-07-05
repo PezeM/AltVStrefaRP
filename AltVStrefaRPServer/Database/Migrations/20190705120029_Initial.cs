@@ -40,9 +40,9 @@ namespace AltVStrefaRPServer.Database.Migrations
                     Transactions = table.Column<int>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     Type = table.Column<int>(nullable: false),
-                    BlipModel = table.Column<byte>(nullable: false),
                     BlipName = table.Column<string>(nullable: true),
-                    BlipColor = table.Column<byte>(nullable: false),
+                    BlipSprite = table.Column<int>(nullable: false),
+                    BlipColor = table.Column<int>(nullable: false),
                     Discriminator = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
@@ -63,19 +63,52 @@ namespace AltVStrefaRPServer.Database.Migrations
                     X = table.Column<float>(nullable: false),
                     Y = table.Column<float>(nullable: false),
                     Z = table.Column<float>(nullable: false),
-                    BlipModel = table.Column<byte>(nullable: false),
                     BlipName = table.Column<string>(nullable: true),
-                    BlipColor = table.Column<byte>(nullable: false),
-                    BlipSprite = table.Column<ushort>(nullable: false),
+                    BlipColor = table.Column<int>(nullable: false),
+                    BlipSprite = table.Column<int>(nullable: false),
                     Discriminator = table.Column<string>(nullable: false),
                     VehicleTax = table.Column<float>(nullable: true),
-                    ProperyTax = table.Column<float>(nullable: true),
+                    PropertyTax = table.Column<float>(nullable: true),
                     GunTax = table.Column<float>(nullable: true),
                     GlobalTax = table.Column<float>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Fractions", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Inventories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    MaxSlots = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Inventories", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Items",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(nullable: true),
+                    StackSize = table.Column<int>(nullable: false),
+                    Discriminator = table.Column<string>(nullable: false),
+                    Value = table.Column<ushort>(nullable: true),
+                    Model = table.Column<string>(nullable: true),
+                    Slot = table.Column<int>(nullable: true),
+                    WeaponItem_Model = table.Column<string>(nullable: true),
+                    WeaponModel = table.Column<uint>(nullable: true),
+                    Ammo = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Items", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -128,6 +161,30 @@ namespace AltVStrefaRPServer.Database.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "VehicleShops",
+                columns: table => new
+                {
+                    VehicleShopId = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    X = table.Column<float>(nullable: false),
+                    Y = table.Column<float>(nullable: false),
+                    Z = table.Column<float>(nullable: false),
+                    BoughtVehiclesX = table.Column<float>(nullable: false),
+                    BoughtVehiclesY = table.Column<float>(nullable: false),
+                    BoughtVehiclesZ = table.Column<float>(nullable: false),
+                    BoughtVehiclesRoll = table.Column<float>(nullable: false),
+                    BoughtVehiclesPitch = table.Column<float>(nullable: false),
+                    BoughtVehiclesYaw = table.Column<float>(nullable: false),
+                    Money = table.Column<float>(nullable: false),
+                    BlipSprite = table.Column<int>(nullable: false),
+                    BlipColor = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VehicleShops", x => x.VehicleShopId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "BusinessesRanks",
                 columns: table => new
                 {
@@ -150,13 +207,38 @@ namespace AltVStrefaRPServer.Database.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "FractionRanks",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    RankName = table.Column<string>(nullable: true),
+                    Priority = table.Column<int>(nullable: false),
+                    RankType = table.Column<int>(nullable: false, defaultValue: 1),
+                    FractionId = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FractionRanks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_FractionRanks_Fractions_FractionId",
+                        column: x => x.FractionId,
+                        principalTable: "Fractions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Characters",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     AccountId = table.Column<int>(nullable: false),
-                    BackgroundImage = table.Column<string>(nullable: true),
+                    IsBanned = table.Column<bool>(nullable: false),
+                    IsMuted = table.Column<bool>(nullable: false),
+                    CanDriveVehicles = table.Column<bool>(nullable: false),
+                    InventoryId = table.Column<int>(nullable: false),
                     ProfileImage = table.Column<string>(nullable: true),
                     X = table.Column<float>(nullable: false),
                     Y = table.Column<float>(nullable: false),
@@ -172,7 +254,8 @@ namespace AltVStrefaRPServer.Database.Migrations
                     TimePlayed = table.Column<int>(nullable: false),
                     CurrentBusinessId = table.Column<int>(nullable: true),
                     BusinessRank = table.Column<int>(nullable: false),
-                    CurrentFractionId = table.Column<int>(nullable: true)
+                    CurrentFractionId = table.Column<int>(nullable: true),
+                    FractionRank = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -194,6 +277,60 @@ namespace AltVStrefaRPServer.Database.Migrations
                         column: x => x.CurrentFractionId,
                         principalTable: "Fractions",
                         principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Characters_Inventories_InventoryId",
+                        column: x => x.InventoryId,
+                        principalTable: "Inventories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "InventoryItems",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Quantity = table.Column<int>(nullable: false),
+                    BaseItemId = table.Column<int>(nullable: false),
+                    InventoryControllerId = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InventoryItems", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_InventoryItems_Items_BaseItemId",
+                        column: x => x.BaseItemId,
+                        principalTable: "Items",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_InventoryItems_Inventories_InventoryControllerId",
+                        column: x => x.InventoryControllerId,
+                        principalTable: "Inventories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "VehiclePrices",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Price = table.Column<int>(nullable: false),
+                    VehicleModel = table.Column<uint>(nullable: false),
+                    VehicleShopId = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VehiclePrices", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_VehiclePrices_VehicleShops_VehicleShopId",
+                        column: x => x.VehicleShopId,
+                        principalTable: "VehicleShops",
+                        principalColumn: "VehicleShopId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -219,6 +356,29 @@ namespace AltVStrefaRPServer.Database.Migrations
                         name: "FK_BusinessesPermissions_BusinessesRanks_BusinessRankForeignKey",
                         column: x => x.BusinessRankForeignKey,
                         principalTable: "BusinessesRanks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "FractionPermissions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true),
+                    HasPermission = table.Column<bool>(nullable: false),
+                    Discriminator = table.Column<string>(nullable: false),
+                    FractionRankId = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FractionPermissions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_FractionPermissions_FractionRanks_FractionRankId",
+                        column: x => x.FractionRankId,
+                        principalTable: "FractionRanks",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -275,6 +435,38 @@ namespace AltVStrefaRPServer.Database.Migrations
                 name: "IX_Characters_CurrentFractionId",
                 table: "Characters",
                 column: "CurrentFractionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Characters_InventoryId",
+                table: "Characters",
+                column: "InventoryId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FractionPermissions_FractionRankId",
+                table: "FractionPermissions",
+                column: "FractionRankId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FractionRanks_FractionId",
+                table: "FractionRanks",
+                column: "FractionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InventoryItems_BaseItemId",
+                table: "InventoryItems",
+                column: "BaseItemId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InventoryItems_InventoryControllerId",
+                table: "InventoryItems",
+                column: "InventoryControllerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_VehiclePrices_VehicleShopId",
+                table: "VehiclePrices",
+                column: "VehicleShopId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -286,7 +478,16 @@ namespace AltVStrefaRPServer.Database.Migrations
                 name: "BusinessesPermissions");
 
             migrationBuilder.DropTable(
+                name: "FractionPermissions");
+
+            migrationBuilder.DropTable(
+                name: "InventoryItems");
+
+            migrationBuilder.DropTable(
                 name: "MoneyTransactions");
+
+            migrationBuilder.DropTable(
+                name: "VehiclePrices");
 
             migrationBuilder.DropTable(
                 name: "Vehicles");
@@ -298,13 +499,25 @@ namespace AltVStrefaRPServer.Database.Migrations
                 name: "BusinessesRanks");
 
             migrationBuilder.DropTable(
+                name: "FractionRanks");
+
+            migrationBuilder.DropTable(
+                name: "Items");
+
+            migrationBuilder.DropTable(
+                name: "VehicleShops");
+
+            migrationBuilder.DropTable(
                 name: "Accounts");
 
             migrationBuilder.DropTable(
-                name: "Fractions");
+                name: "Inventories");
 
             migrationBuilder.DropTable(
                 name: "Businesses");
+
+            migrationBuilder.DropTable(
+                name: "Fractions");
         }
     }
 }
