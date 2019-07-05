@@ -51,7 +51,7 @@ namespace AltVStrefaRPServer
             var temporaryChatHandler = Startup.ServiceProvider.GetService<TemporaryChatHandler> ();
             var timeManager = Startup.ServiceProvider.GetService<TimeManager> ();
             var objectSync = Startup.ServiceProvider.GetService<ObjectSync> ();
-            var networkingTest = Startup.ServiceProvider.GetService<TestNetworking>();
+            var networkingTest = Startup.ServiceProvider.GetService<NetworkingManager>();
             _vehicleSpawnService = Startup.ServiceProvider.GetService<IVehicleSpawnService> ();
 
             vehicleManager = Startup.ServiceProvider.GetService<VehicleManager> ();
