@@ -1,4 +1,6 @@
-﻿using AltV.Net;
+﻿using System.Threading.Tasks;
+using AltV.Net;
+using AltV.Net.Async;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Extensions;
@@ -17,32 +19,33 @@ namespace AltVStrefaRPServer.Modules.Inventory
             _inventoryManager = inventoryManager;
             _notificationService = notificationService;
 
-            Alt.On<IPlayer, int, int, Position, Rotation>("DropItem", DropItem);
+            AltAsync.On<IPlayer, int, int, Position>("DropItem", async (player, id, amount, position) 
+                => await DropItem(player, id, amount, position));
         }
 
-        private void DropItem(IPlayer player, int id, int amount, Position position, Rotation rotation)
+        public async Task DropItem(IPlayer player, int id, int amount, Position position)
         {
             if (!player.TryGetCharacter(out var character)) return;
-            //var response = character.Inventory.DropItem(id, amount, position, _inventoryManager);
-            //switch (response)
-            //{
-            //    case InventoryDropResponse.ItemNotDroppable:
-            //        _notificationService.ShowErrorNotification(player, "Błąd", "Nie da się wyrzucić tego przedmiotu.");
-            //        break;
-            //    case InventoryDropResponse.ItemNotFound:
-            //        _notificationService.ShowErrorNotification(player, "Błąd", "Nie posiadasz tego przedmiotu.");
-            //        break;
-            //    case InventoryDropResponse.NotEnoughItems:
-            //        _notificationService.ShowErrorNotification(player, "Błąd", "Nie masz wystarczającej ilości przedmiotu.");
-            //        break;
-            //    case InventoryDropResponse.ItemAlreadyDropped:
-            //        Alt.Log($"{character.Id} wanted to drop item that was already dropped. Item id {id}");
-            //        break;
-            //    case InventoryDropResponse.DroppedItem:
-            //        // Propably update user inventory
-            //        // Remove item with id and ammount
-            //        break;
-            //}
+            var response = await character.Inventory.DropItem(id, amount, position, _inventoryManager);
+            switch (response)
+            {
+                case InventoryDropResponse.ItemNotDroppable:
+                    _notificationService.ShowErrorNotification(player, "Błąd", "Nie da się wyrzucić tego przedmiotu.");
+                    break;
+                case InventoryDropResponse.ItemNotFound:
+                    _notificationService.ShowErrorNotification(player, "Błąd", "Nie posiadasz tego przedmiotu.");
+                    break;
+                case InventoryDropResponse.NotEnoughItems:
+                    _notificationService.ShowErrorNotification(player, "Błąd", "Nie masz wystarczającej ilości przedmiotu.");
+                    break;
+                case InventoryDropResponse.ItemAlreadyDropped:
+                    Alt.Log($"{character.Id} wanted to drop item that was already dropped. Item id {id}");
+                    break;
+                case InventoryDropResponse.DroppedItem:
+                    // Propably update user inventory
+                    // Remove item with id and ammount
+                    break;
+            }
         }
     }
 }

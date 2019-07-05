@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using AltV.Net.Data;
 using AltVStrefaRPServer.Models.Interfaces.Inventory;
 using AltVStrefaRPServer.Models.Inventory.Items;
 using AltVStrefaRPServer.Models.Inventory.Responses;
 using AltVStrefaRPServer.Modules.Inventory;
+using AltVStrefaRPServer.Services.Inventory;
 
 namespace AltVStrefaRPServer.Models.Inventory
 {
@@ -44,19 +46,19 @@ namespace AltVStrefaRPServer.Models.Inventory
             return InventoryUseResponse.ItemNotFound;
         }
 
-        public InventoryDropResponse DropItem(InventoryItem item, int amount, Position position, InventoryManager inventoryManager)
+        public async Task<InventoryDropResponse> DropItem(InventoryItem item, int amount, Position position, InventoryManager inventoryManager)
         {
             if (!(item is IDroppable droppable)) return InventoryDropResponse.ItemNotDroppable;
             if (RemoveItem(item, amount) == InventoryRemoveResponse.NotEnoughItems) return InventoryDropResponse.NotEnoughItems;
-            if (!inventoryManager.AddDroppedItem(new DroppedItem(item.Id, amount, droppable.Model, item.Item, position)))
+            if (!await inventoryManager.AddDroppedItem(new DroppedItem(item.Id, amount, droppable.Model, item.Item, position)))
                 return InventoryDropResponse.ItemAlreadyDropped;
             return InventoryDropResponse.DroppedItem;
         }
 
-        public InventoryDropResponse DropItem(int itemId, int amount, Position position, InventoryManager inventoryManager)
+        public async Task<InventoryDropResponse> DropItem(int itemId, int amount, Position position, InventoryManager inventoryManager)
         {
             if (!HasItem(itemId, out var item)) return InventoryDropResponse.ItemNotFound;
-            return DropItem(item, amount, position, inventoryManager);
+            return await DropItem(item, amount, position, inventoryManager);
         }
 
         public InventoryRemoveResponse RemoveItem(int id, int amount)
@@ -76,9 +78,10 @@ namespace AltVStrefaRPServer.Models.Inventory
             return InventoryRemoveResponse.ItemRemoved;
         }
 
-        public AddItemResponse AddItem(BaseItem itemToAdd, int amount)
+        public async Task<AddItemResponse> AddItemAsync(BaseItem itemToAdd, int amount, IInventoryDatabaseService inventoryDatabaseService)
         {
             int added = 0;
+            List<InventoryItem> newItems = new List<InventoryItem>();
             while (amount > 0)
             {
                 if (TryToGetItem<BaseItem>(out var item) && item.Quantity < itemToAdd.StackSize)
@@ -106,9 +109,15 @@ namespace AltVStrefaRPServer.Models.Inventory
                             Quantity = toAdd,
                         });
                         amount -= toAdd;
+                        newItems.Add(_items.Last());
                         // Save to database to get item id propably
                     }
                 }
+            }
+            await inventoryDatabaseService.UpdateInventoryAsync(this);
+            if (newItems.Count > 0)
+            {
+                // Add to dictionary in inventory manager
             }
             return AddItemResponse.ItemsAdded;
         }

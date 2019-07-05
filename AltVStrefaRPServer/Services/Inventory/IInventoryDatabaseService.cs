@@ -12,7 +12,9 @@ namespace AltVStrefaRPServer.Services.Inventory
         IEnumerable<DroppedItem> GetAllDroppedItems();
         BaseItem GetItem(int id);
         InventoryItem GetInventoryItem(int id);
-        void SaveItem(BaseItem item);
-        Task SaveItemAsync(BaseItem item);
+        void UpdateItem(BaseItem item);
+        Task UpdateItemAsync(BaseItem item);
+        Task UpdateInventoryAsync(InventoryController inventoryController);
+        Task AddDroppedItem(DroppedItem droppedItem);
     }
 }

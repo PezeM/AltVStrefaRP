@@ -1,8 +1,10 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using AltV.Net;
-using AltVStrefaRPServer.Database;
+using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models.Inventory;
+using AltVStrefaRPServer.Services.Inventory;
 
 namespace AltVStrefaRPServer.Modules.Inventory
 {
@@ -10,35 +12,34 @@ namespace AltVStrefaRPServer.Modules.Inventory
     {
         private ConcurrentDictionary<int, DroppedItem> _droppedItems;
         private ConcurrentDictionary<int, InventoryItem> _items;
+        private readonly IInventoryDatabaseService _inventoryDatabaseService;
 
-        private Func<ServerContext> _factory;
-
-        public InventoryManager(Func<ServerContext> factory)
+        public InventoryManager(IInventoryDatabaseService inventoryDatabaseService)
         {
+            _inventoryDatabaseService = inventoryDatabaseService;
             _droppedItems = new ConcurrentDictionary<int, DroppedItem>();
             _items = new ConcurrentDictionary<int, InventoryItem>();
-            _factory = factory;
 
             LoadItems();
         }
 
         private void LoadItems()
         {
-            using (var context = _factory.Invoke())
+            var startTime = Time.GetTimestampMs();
+            foreach (var item in _inventoryDatabaseService.GetAllInventoryItems())
             {
-                //var itemsToRemove = context.BankAccounts.Where(q => q.AccountNumber > 1000);
-                //if (itemsToRemove.Count() > 0)
-                //{
-                //    context.RemoveRange(itemsToRemove);
-                //    context.SaveChanges();
-                //}
+                _items.TryAdd(item.Id, item);
             }
+            Alt.Log($"Loaded {_items.Count} items from database in {Time.GetTimestampMs() - startTime}ms.");
         }
 
-        public bool AddDroppedItem(DroppedItem droppedItem)
+        public IEnumerable<DroppedItem> GetAllDroppedItems() => _droppedItems.Values;
+
+        public async Task<bool> AddDroppedItem(DroppedItem droppedItem)
         {
             if (!_droppedItems.TryAdd(droppedItem.Id, droppedItem)) return false;
             Alt.EmitAllClients("streamInDroppedItem", droppedItem);
+            await _inventoryDatabaseService.AddDroppedItem(droppedItem);
             return true;
         }
     }

@@ -9,14 +9,17 @@ using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Enums;
+using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Models.Server;
 using AltVStrefaRPServer.Modules.Businesses;
 using AltVStrefaRPServer.Modules.CharacterModule;
 using AltVStrefaRPServer.Modules.Chat;
 using AltVStrefaRPServer.Modules.Fractions;
+using AltVStrefaRPServer.Modules.Inventory;
 using AltVStrefaRPServer.Modules.Money;
 using AltVStrefaRPServer.Modules.Vehicle;
 using AltVStrefaRPServer.Services;
+using AltVStrefaRPServer.Services.Inventory;
 using AltVStrefaRPServer.Services.Money;
 using AltVStrefaRPServer.Services.Vehicles;
 using Newtonsoft.Json;
@@ -25,6 +28,7 @@ namespace AltVStrefaRPServer.Modules.Admin
 {
     public class AdminCommands
     {
+        private ChatHandler _chat;
         private TemporaryChatHandler _chatHandler;
         private VehicleManager _vehicleManager;
         private BankHandler _bankHandler;
@@ -35,11 +39,13 @@ namespace AltVStrefaRPServer.Modules.Admin
         private IVehicleSpawnService _vehicleSpawnService;
         private readonly FractionHandler _fractionHandler;
         private readonly IMoneyService _moneyService;
+        private readonly InventoryHandler _inventoryHandler;
+        private readonly IInventoryDatabaseService _inventoryDatabaseService;
 
         public AdminCommands (TemporaryChatHandler chatHandler, VehicleManager vehicleManager, BankHandler bankHandler,
             BusinessManager businessManager, BusinessHandler businessHandler, INotificationService notificationService,
             VehicleShopsManager vehicleShopsManager, IVehicleSpawnService vehicleSpawnService, FractionHandler fractionHandler, 
-            IMoneyService moneyService)
+            IMoneyService moneyService, InventoryHandler inventoryHandler, IInventoryDatabaseService inventoryDatabaseService)
         {
             _chatHandler = chatHandler;
             _vehicleManager = vehicleManager;
@@ -51,7 +57,10 @@ namespace AltVStrefaRPServer.Modules.Admin
             _vehicleSpawnService = vehicleSpawnService;
             _fractionHandler = fractionHandler;
             _moneyService = moneyService;
+            _inventoryHandler = inventoryHandler;
+            _inventoryDatabaseService = inventoryDatabaseService;
 
+            _chat = new ChatHandler();
             Alt.Log ($"Admin commands initialized");
             AddCommands ();
         }
@@ -78,6 +87,9 @@ namespace AltVStrefaRPServer.Modules.Admin
             _chatHandler.RegisterCommand("addEmployeeToFraction", async (player, args) => await AddEmployeeToFraction(player,args));
             _chatHandler.RegisterCommand("getAllVehicles", GetAllVehicles);
             _chatHandler.RegisterCommand("setAdminLevel", SetAdminLevel);
+            _chatHandler.RegisterCommand("dropItem", async (player, args) => await DropItem(player, args));
+            _chatHandler.RegisterCommand("addItem", async (player, args) => await AddItem(player, args));
+            _chatHandler.RegisterCommand("getInventory", GetInventory);
         }
 
         private void OpenVehicleShop (IPlayer player, string[] arg2)
@@ -384,6 +396,42 @@ namespace AltVStrefaRPServer.Modules.Admin
         {
             if (!player.TryGetCharacter(out Character character)) return;
             character.Account.AdminLevel = AdminLevel.Admin;
+        }
+
+        private void GetInventory(IPlayer player, string[] args)
+        {
+            if (!player.TryGetCharacter(out var character)) return;
+            var inventory = JsonConvert.SerializeObject(character.Inventory.Items, Formatting.Indented);
+            Alt.Log(inventory);
+            player.Emit("testInventory", inventory);
+        }
+
+        private async Task AddItem(IPlayer player, string[] args)
+        {
+            if (args == null && args.Length < 1) return;
+            if (!player.TryGetCharacter(out var character)) return;
+            if (!Enum.TryParse(args[0].ToString(), out ItemType itemId))
+            {
+                _chat.Send(player, "Podano błędne item ID");
+            }
+            var newItem = ItemDefinitions.Items[itemId];
+            Alt.Log($"New item is of type {newItem.GetType()} and name {newItem.Name}");
+            await character.Inventory.AddItemAsync(newItem, 15, _inventoryDatabaseService);
+            Alt.Log($"Added item id is {newItem.Id}");
+        }
+
+        private async Task DropItem(IPlayer player, string[] args)
+        {
+            if(args == null || args.Length < 2) return;
+            if (!int.TryParse(args[0].ToString(), out int itemId))
+            {
+                _chat.Send(player, "{FF0000} Nie podano itemId!");
+            }
+            if (!int.TryParse(args[0].ToString(), out int amount))
+            {
+                _chat.Send(player, "{FF0000} Nie podano ilości.");
+            }
+            await _inventoryHandler.DropItem(player, itemId, amount, new Position(player.Position.X + 1, player.Position.Y + 1, player.Position.Z + 2));
         }
     }
 }

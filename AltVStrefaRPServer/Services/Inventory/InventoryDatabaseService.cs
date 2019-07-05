@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Models.Inventory.Items;
+using Microsoft.EntityFrameworkCore;
 
 namespace AltVStrefaRPServer.Services.Inventory
 {
@@ -23,32 +25,72 @@ namespace AltVStrefaRPServer.Services.Inventory
 
         public IEnumerable<InventoryItem> GetAllInventoryItems()
         {
-            throw new NotImplementedException();
+            using (var context = _factory.Invoke())
+            {
+                return context.InventoryItems
+                    .Include(i => i.Item)
+                    .ToList();
+            }
         }
 
         public IEnumerable<BaseItem> GetAllItems()
         {
-            throw new NotImplementedException();
+            using (var context = _factory.Invoke())
+            {
+                return context.Items.ToList();
+            }
         }
 
         public InventoryItem GetInventoryItem(int id)
         {
-            throw new NotImplementedException();
+            using (var context = _factory.Invoke())
+            {
+                return context.InventoryItems.Find(id);
+            }
         }
 
         public BaseItem GetItem(int id)
         {
-            throw new NotImplementedException();
+            using (var context = _factory.Invoke())
+            {
+                return context.Items.Find(id);
+            }
         }
 
-        public void SaveItem(BaseItem item)
+        public void UpdateItem(BaseItem item)
         {
-            throw new NotImplementedException();
+            using (var context = _factory.Invoke())
+            {
+                context.Items.Update(item);
+                context.SaveChangesAsync();
+            }
         }
 
-        public Task SaveItemAsync(BaseItem item)
+        public async Task UpdateItemAsync(BaseItem item)
         {
-            throw new NotImplementedException();
+            using (var context = _factory.Invoke())
+            {
+                context.Items.Update(item);
+                await context.SaveChangesAsync();
+            }
+        }
+
+        public async Task UpdateInventoryAsync(InventoryController inventoryController)
+        {
+            using (var context = _factory.Invoke())
+            {
+                context.Inventories.Update(inventoryController);
+                await context.SaveChangesAsync();
+            }
+        }
+
+        public async Task AddDroppedItem(DroppedItem droppedItem)
+        {
+            //using (var context = _factory.Invoke())
+            //{
+            //    context.i
+            //}
+            await Task.FromResult(true);
         }
     }
 }

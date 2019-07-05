@@ -296,12 +296,12 @@ namespace AltVStrefaRPServer.Modules.Fractions
             }
         }
 
-        public Task<bool> SetFractionOwner(int fractionId, Character newOwner)
+        public async Task<bool> SetFractionOwner(int fractionId, Character newOwner)
         {
-            if (!_fractionManager.TryToGetFraction(fractionId, out Fraction fraction)) return Task.FromResult(false);
-            if (newOwner == null) return Task.FromResult(false);
+            if (!_fractionManager.TryToGetFraction(fractionId, out Fraction fraction)) return false;
+            if (newOwner == null) return false;
 
-            return fraction.SetFractionOwner(newOwner, _fractionDatabaseService);
+            return await fraction.SetFractionOwner(newOwner, _fractionDatabaseService);
         }
 
         private FractionEmployeesDto GetFractionEmloyeesDto(Fraction fraction)

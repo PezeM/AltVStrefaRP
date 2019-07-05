@@ -6,6 +6,7 @@ using AltVStrefaRPServer.Services.Inventory;
 
 namespace AltVStrefaRPServer.Models.Inventory
 {
+    // Todo save to database
     public class DroppedItem : IMValueConvertible
     {
         public int Id { get;set; }

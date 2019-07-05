@@ -55,6 +55,7 @@ namespace AltVStrefaRPServer.Handlers
                 await AltAsync.Do(() =>
                 {
                     CharacterManager.Instance.IntializeCharacter(player, character);
+                    // TODO: Add dropped items to stream
                     player.Emit("loadedCharacter");
                 });
             }
