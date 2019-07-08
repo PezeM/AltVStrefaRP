@@ -80,13 +80,14 @@ namespace AltVStrefaRPServer.Models.Inventory
             if (item.Quantity <= 0)
             {
                 _items.Remove(item);
+                // Propably save to database if item was removed 
             }
             return InventoryUseResponse.ItemUsed;
         }
 
-        public InventoryUseResponse UseItem(Character character, int id)
+        public InventoryUseResponse UseItem(Character character, int itemId)
         {
-            var item = _items.FirstOrDefault(i => i.Id == id);
+            var item = GetInventoryItem(itemId);
             if (item != null)
             {
                 return UseItem(character, item);
@@ -198,6 +199,18 @@ namespace AltVStrefaRPServer.Models.Inventory
         {
             item = _equippedItems.FirstOrDefault(i => i.SlotId == (int)slot);
             return true;
+        }
+
+        public InventoryItem GetInventoryItem(int itemId)
+        {
+            for (int i = 0; i < _items.Count; i++)
+            {
+                if (_items[i].Id == itemId)
+                {
+                    return _items[i];
+                }
+            }
+            return null;
         }
 
         public int GetFreeSlot()

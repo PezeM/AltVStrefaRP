@@ -41,8 +41,14 @@ namespace AltVStrefaRPServer.Modules.CharacterModule.Customization
             // Create character, temporary name/last name
             var character = _characterCreatorService.CreateNewCharacter(accountId, accountId.ToString(), accountId.ToString(), 10, 0);
             await _characterCreatorService.SaveNewCharacter(character).ConfigureAwait(false);
-            CharacterManager.Instance.IntializeCharacter(player, character);
-            player.Emit("CharacterCreatedSuccessfully");
+            if (CharacterManager.Instance.IntializeCharacter(player, character))
+            {
+                player.Emit("CharacterCreatedSuccessfully");
+            }
+            else
+            {
+                // Emit error that player with given ID is already on the server
+            }
         }
     }
 }

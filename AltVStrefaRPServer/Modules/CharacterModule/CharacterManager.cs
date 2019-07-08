@@ -48,10 +48,14 @@ namespace AltVStrefaRPServer.Modules.CharacterModule
         /// </summary>
         /// <param name="player"></param>
         /// <param name="character"></param>
-        public void IntializeCharacter(IPlayer player, Character character)
+        public bool IntializeCharacter(IPlayer player, Character character)
         {
             lock (_characterList)
             {
+                if (_characterList.ContainsKey(player.Id))
+                {
+                    return false;
+                }
                 character.Player = player;
                 player.Name = character.GetFullName();
 
@@ -65,6 +69,7 @@ namespace AltVStrefaRPServer.Modules.CharacterModule
 
                 _characterList.Add(player.Id, character);
                 Alt.Log($"Initialized character {character.GetFullName()} with ID({player.Id}) CID({character.Id}) in the world.");
+                return true;
             }
         }
 

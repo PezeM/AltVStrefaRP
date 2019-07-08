@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Data;
@@ -21,6 +22,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
 
             AltAsync.On<IPlayer, int, int, Position>("DropItem", async (player, id, amount, position) 
                 => await DropItem(player, id, amount, position));
+            AltAsync.On<IPlayer, int>("UseInventoryItem", async (player, itemId) => await UseInventoryItem(player, itemId));
         }
 
         public async Task DropItem(IPlayer player, int id, int amount, Position position)
@@ -30,13 +32,13 @@ namespace AltVStrefaRPServer.Modules.Inventory
             switch (response)
             {
                 case InventoryDropResponse.ItemNotDroppable:
-                    _notificationService.ShowErrorNotification(player, "Błąd", "Nie da się wyrzucić tego przedmiotu.");
+                    await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie da się wyrzucić tego przedmiotu.");
                     break;
                 case InventoryDropResponse.ItemNotFound:
-                    _notificationService.ShowErrorNotification(player, "Błąd", "Nie posiadasz tego przedmiotu.");
+                    await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie posiadasz tego przedmiotu.");
                     break;
                 case InventoryDropResponse.NotEnoughItems:
-                    _notificationService.ShowErrorNotification(player, "Błąd", "Nie masz wystarczającej ilości przedmiotu.");
+                    await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie masz wystarczającej ilości przedmiotu.");
                     break;
                 case InventoryDropResponse.ItemAlreadyDropped:
                     Alt.Log($"{character.Id} wanted to drop item that was already dropped. Item id {id}");
@@ -44,6 +46,25 @@ namespace AltVStrefaRPServer.Modules.Inventory
                 case InventoryDropResponse.DroppedItem:
                     // Propably update user inventory
                     // Remove item with id and ammount
+                    break;
+            }
+        }
+
+        public async Task UseInventoryItem(IPlayer player, int itemId)
+        {
+            if (!player.TryGetCharacter(out var character)) return;
+            var response = character.Inventory.UseItem(character, itemId);
+            switch (response)
+            {
+                case InventoryUseResponse.ItemNotFound:
+                    await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie posiadasz takiego przedmiotu.");
+                    break;
+                case InventoryUseResponse.ItemNotUsed:
+                    await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie udało się użyć tego przedmiotu.");
+                    break;
+                case InventoryUseResponse.ItemUsed:
+                    await _notificationService.ShowSuccessNotificationAsync(player, "Błąd", "Pomyślnie użyto przedmiot.");
+                    //TODO: If he used the item, remove quantity, if the item was removed, remove it from user inventory UI
                     break;
             }
         }
