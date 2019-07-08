@@ -3,6 +3,7 @@ using AltVStrefaRPServer.Models.Businesses;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Fractions;
 using AltVStrefaRPServer.Models.Fractions.Permissions;
+using AltVStrefaRPServer.Models.Interfaces.Items;
 using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Models.Inventory.Items;
 using AltVStrefaRPServer.Modules.Vehicle;
@@ -50,8 +51,10 @@ namespace AltVStrefaRPServer.Database
         // Inventory
         public DbSet<InventoryController> Inventories { get; set; }
         public DbSet<BaseItem> Items { get; set; }
+        public DbSet<Equipmentable> Equipmentables { get; set; }
         public DbSet<FoodItem> FoodItems { get; set; }
         public DbSet<WeaponItem> WeaponItems { get; set; }
+        public DbSet<ClothItem> Clothes { get; set; }
         public DbSet<InventoryItem> InventoryItems { get; set; }
 
         public ServerContext(DbContextOptions options) : base(options)
@@ -100,11 +103,13 @@ namespace AltVStrefaRPServer.Database
                 .HasOne<Fraction>(c => c.Fraction)
                 .WithMany(f => f.Employees)
                 .HasForeignKey(c => c.CurrentFractionId);
-            //.OnDelete(DeleteBehavior.SetNull);
+                //.OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Character>()
                 .HasOne(c => c.Inventory)
-                .WithOne();
+                .WithOne(i => i.Owner)
+                .HasForeignKey<InventoryController>(i => i.OwnerId);
+                //.OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<VehicleModel>()
                 .Ignore(v => v.VehicleHandle)
@@ -180,7 +185,7 @@ namespace AltVStrefaRPServer.Database
                 .HasConversion<uint>();
 
             // Items
-            modelBuilder.Entity<WeaponItem>()
+            modelBuilder.Entity<Equipmentable>()
                 .Property(i => i.Slot)
                 .HasConversion<int>();
 
@@ -199,6 +204,14 @@ namespace AltVStrefaRPServer.Database
 
             var inventoryControllerNavigation = modelBuilder.Entity<InventoryController>()
                 .Metadata.FindNavigation(nameof(InventoryController.Items));
+            navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+
+            modelBuilder.Entity<InventoryController>()
+                .HasMany(i => i.EquippedItems)
+                .WithOne();
+
+            var inventoryControllerEquippedItemsNavigation = modelBuilder.Entity<InventoryController>()
+                .Metadata.FindNavigation(nameof(InventoryController.EquippedItems));
             navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
         }
     }

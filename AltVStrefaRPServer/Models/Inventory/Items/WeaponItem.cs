@@ -1,24 +1,23 @@
 ﻿using AltV.Net.Enums;
 using AltVStrefaRPServer.Models.Interfaces.Inventory;
+using AltVStrefaRPServer.Models.Interfaces.Items;
 
 namespace AltVStrefaRPServer.Models.Inventory.Items
 {
-    public class WeaponItem : BaseItem, IEquipmentable, IDroppable
+    public class WeaponItem : Equipmentable, IDroppable
     {
-        public EquipmentSlot Slot { get; set; } = EquipmentSlot.LeftHand;
         public string Model { get; set; }
 
         public WeaponModel WeaponModel { get; set; }
         public int Ammo { get; set; }
 
-        public WeaponItem(string name, int stackSize, string model, WeaponModel weaponModel, int ammo, EquipmentSlot slot = EquipmentSlot.LeftHand) 
-            : base(name, stackSize)
+        public WeaponItem(string name, string model, WeaponModel weaponModel, int ammo, EquipmentSlot slot = EquipmentSlot.LeftHand) 
+            : base(name, slot)
         {
             Model = model;
             WeaponModel = weaponModel;
             Ammo = ammo;
             WeaponModel = weaponModel;
-            Slot = slot;
         }
 
         public override bool UseItem(Character character)
@@ -26,6 +25,11 @@ namespace AltVStrefaRPServer.Models.Inventory.Items
             // Equip on slot
             character.Player.GiveWeapon((uint)WeaponModel, Ammo, false);
             return true;
+        }
+
+        public override BaseItem Copy()
+        {
+            return (WeaponItem)MemberwiseClone();
         }
     }
 }

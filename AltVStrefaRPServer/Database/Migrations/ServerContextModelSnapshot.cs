@@ -173,8 +173,6 @@ namespace AltVStrefaRPServer.Database.Migrations
 
                     b.Property<int>("Gender");
 
-                    b.Property<int>("InventoryId");
-
                     b.Property<bool>("IsBanned");
 
                     b.Property<bool>("IsMuted");
@@ -202,9 +200,6 @@ namespace AltVStrefaRPServer.Database.Migrations
                     b.HasIndex("CurrentBusinessId");
 
                     b.HasIndex("CurrentFractionId");
-
-                    b.HasIndex("InventoryId")
-                        .IsUnique();
 
                     b.ToTable("Characters");
                 });
@@ -298,7 +293,12 @@ namespace AltVStrefaRPServer.Database.Migrations
 
                     b.Property<int>("MaxSlots");
 
+                    b.Property<int>("OwnerId");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("OwnerId")
+                        .IsUnique();
 
                     b.ToTable("Inventories");
                 });
@@ -312,7 +312,11 @@ namespace AltVStrefaRPServer.Database.Migrations
 
                     b.Property<int?>("InventoryControllerId");
 
+                    b.Property<int?>("InventoryControllerId1");
+
                     b.Property<int>("Quantity");
+
+                    b.Property<int>("SlotId");
 
                     b.HasKey("Id");
 
@@ -320,6 +324,8 @@ namespace AltVStrefaRPServer.Database.Migrations
                         .IsUnique();
 
                     b.HasIndex("InventoryControllerId");
+
+                    b.HasIndex("InventoryControllerId1");
 
                     b.ToTable("InventoryItems");
                 });
@@ -557,27 +563,52 @@ namespace AltVStrefaRPServer.Database.Migrations
                     b.HasDiscriminator().HasValue("VehiclePermission");
                 });
 
+            modelBuilder.Entity("AltVStrefaRPServer.Models.Interfaces.Items.Equipmentable", b =>
+                {
+                    b.HasBaseType("AltVStrefaRPServer.Models.Inventory.Items.BaseItem");
+
+                    b.Property<int>("Slot");
+
+                    b.HasDiscriminator().HasValue("Equipmentable");
+                });
+
             modelBuilder.Entity("AltVStrefaRPServer.Models.Inventory.Items.FoodItem", b =>
                 {
                     b.HasBaseType("AltVStrefaRPServer.Models.Inventory.Items.BaseItem");
 
-                    b.Property<string>("Model");
+                    b.Property<string>("Model")
+                        .HasColumnName("FoodItem_Model");
 
                     b.Property<ushort>("Value");
 
                     b.HasDiscriminator().HasValue("FoodItem");
                 });
 
+            modelBuilder.Entity("AltVStrefaRPServer.Models.Inventory.Items.ClothItem", b =>
+                {
+                    b.HasBaseType("AltVStrefaRPServer.Models.Interfaces.Items.Equipmentable");
+
+                    b.Property<int>("DrawableId");
+
+                    b.Property<bool>("IsProp");
+
+                    b.Property<string>("Model");
+
+                    b.Property<int>("PaletteId");
+
+                    b.Property<int>("TextureId");
+
+                    b.HasDiscriminator().HasValue("ClothItem");
+                });
+
             modelBuilder.Entity("AltVStrefaRPServer.Models.Inventory.Items.WeaponItem", b =>
                 {
-                    b.HasBaseType("AltVStrefaRPServer.Models.Inventory.Items.BaseItem");
+                    b.HasBaseType("AltVStrefaRPServer.Models.Interfaces.Items.Equipmentable");
 
                     b.Property<int>("Ammo");
 
                     b.Property<string>("Model")
                         .HasColumnName("WeaponItem_Model");
-
-                    b.Property<int>("Slot");
 
                     b.Property<uint>("WeaponModel");
 
@@ -622,11 +653,6 @@ namespace AltVStrefaRPServer.Database.Migrations
                     b.HasOne("AltVStrefaRPServer.Models.Fractions.Fraction", "Fraction")
                         .WithMany("Employees")
                         .HasForeignKey("CurrentFractionId");
-
-                    b.HasOne("AltVStrefaRPServer.Models.Inventory.InventoryController", "Inventory")
-                        .WithOne()
-                        .HasForeignKey("AltVStrefaRPServer.Models.Character", "InventoryId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("AltVStrefaRPServer.Models.Fractions.FractionRank", b =>
@@ -645,6 +671,14 @@ namespace AltVStrefaRPServer.Database.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("AltVStrefaRPServer.Models.Inventory.InventoryController", b =>
+                {
+                    b.HasOne("AltVStrefaRPServer.Models.Character", "Owner")
+                        .WithOne("Inventory")
+                        .HasForeignKey("AltVStrefaRPServer.Models.Inventory.InventoryController", "OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("AltVStrefaRPServer.Models.Inventory.InventoryItem", b =>
                 {
                     b.HasOne("AltVStrefaRPServer.Models.Inventory.Items.BaseItem", "Item")
@@ -653,8 +687,12 @@ namespace AltVStrefaRPServer.Database.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("AltVStrefaRPServer.Models.Inventory.InventoryController")
-                        .WithMany("Items")
+                        .WithMany("EquippedItems")
                         .HasForeignKey("InventoryControllerId");
+
+                    b.HasOne("AltVStrefaRPServer.Models.Inventory.InventoryController")
+                        .WithMany("Items")
+                        .HasForeignKey("InventoryControllerId1");
                 });
 
             modelBuilder.Entity("AltVStrefaRPServer.Models.VehiclePrice", b =>

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AltV.Net;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models.Inventory;
+using AltVStrefaRPServer.Modules.Networking;
 using AltVStrefaRPServer.Services.Inventory;
 
 namespace AltVStrefaRPServer.Modules.Inventory
@@ -13,10 +14,12 @@ namespace AltVStrefaRPServer.Modules.Inventory
         private ConcurrentDictionary<int, DroppedItem> _droppedItems;
         private ConcurrentDictionary<int, InventoryItem> _items;
         private readonly IInventoryDatabaseService _inventoryDatabaseService;
+        private readonly NetworkingManager _networkingManager;
 
-        public InventoryManager(IInventoryDatabaseService inventoryDatabaseService)
+        public InventoryManager(IInventoryDatabaseService inventoryDatabaseService, NetworkingManager networkingManager)
         {
             _inventoryDatabaseService = inventoryDatabaseService;
+            _networkingManager = networkingManager;
             _droppedItems = new ConcurrentDictionary<int, DroppedItem>();
             _items = new ConcurrentDictionary<int, InventoryItem>();
 
@@ -38,7 +41,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
         public async Task<bool> AddDroppedItem(DroppedItem droppedItem)
         {
             if (!_droppedItems.TryAdd(droppedItem.Id, droppedItem)) return false;
-            Alt.EmitAllClients("streamInDroppedItem", droppedItem);
+            _networkingManager.AddNewDroppedItem(droppedItem);
             await _inventoryDatabaseService.AddDroppedItem(droppedItem);
             return true;
         }

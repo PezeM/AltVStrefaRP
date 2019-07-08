@@ -84,6 +84,42 @@ namespace AltVStrefaRPServer.Services.Inventory
             }
         }
 
+        public void AddNewItem(BaseItem item)
+        {
+            using (var context = _factory.Invoke())
+            {
+                context.Items.Add(item);
+                context.SaveChanges();
+            }
+        }
+
+        public async Task AddNewItemAsync(BaseItem item)
+        {
+            using (var context = _factory.Invoke())
+            {
+                await context.Items.AddAsync(item);
+                await context.SaveChangesAsync();
+            }
+        }
+
+        public async Task AddInventoryItemAsync(InventoryItem item)
+        {
+            using (var context = _factory.Invoke())
+            {
+                await context.InventoryItems.AddAsync(item).ConfigureAwait(false);
+                await context.SaveChangesAsync();
+            }
+        }
+
+        public async Task AddInventoryItemsAsync(List<InventoryItem> inventoryItems)
+        {
+            using (var context = _factory.Invoke())
+            {
+                await context.InventoryItems.AddRangeAsync(inventoryItems).ConfigureAwait(false);
+                await context.SaveChangesAsync();
+            }
+        }
+
         public async Task AddDroppedItem(DroppedItem droppedItem)
         {
             //using (var context = _factory.Invoke())

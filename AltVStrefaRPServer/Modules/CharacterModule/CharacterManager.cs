@@ -50,19 +50,22 @@ namespace AltVStrefaRPServer.Modules.CharacterModule
         /// <param name="character"></param>
         public void IntializeCharacter(IPlayer player, Character character)
         {
-            character.Player = player;
-            player.Name = character.GetFullName();
+            lock (_characterList)
+            {
+                character.Player = player;
+                player.Name = character.GetFullName();
 
-            // TODO: Setting skin and shared data
-            player.SetPosition(character.X, character.Y, character.Z);
-            //player.Spawn(character.GetPosition());
-            player.SetSyncedMetaData("remoteId", character.Id);
-            player.Model = character.Gender == 0 ? (uint)PedModel.FreemodeMale01 : (uint)PedModel.FreemodeFemale01; 
-            player.Dimension = character.Dimension;
-            character.LastPlayed = DateTime.Now;
+                // TODO: Setting skin and shared data
+                player.SetPosition(character.X, character.Y, character.Z);
+                //player.Spawn(character.GetPosition());
+                player.SetSyncedMetaData("remoteId", character.Id);
+                player.Model = character.Gender == 0 ? (uint)PedModel.FreemodeMale01 : (uint)PedModel.FreemodeFemale01; 
+                player.Dimension = character.Dimension;
+                character.LastPlayed = DateTime.Now;
 
-            _characterList.Add(player.Id, character);
-            Alt.Log($"Initialized character {character.GetFullName()} with ID({player.Id}) CID({character.Id}) in the world.");
+                _characterList.Add(player.Id, character);
+                Alt.Log($"Initialized character {character.GetFullName()} with ID({player.Id}) CID({character.Id}) in the world.");
+            }
         }
 
         /// <summary>

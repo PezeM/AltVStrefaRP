@@ -23,5 +23,10 @@ namespace AltVStrefaRPServer.Models.Inventory.Items
             character.Player.Health += Value;
             return true;
         }
+
+        public override BaseItem Copy()
+        {
+            return (FoodItem)MemberwiseClone();
+        }
     }
 }

@@ -28,7 +28,6 @@ namespace AltVStrefaRPServer.Modules.Admin
 {
     public class AdminCommands
     {
-        private ChatHandler _chat;
         private TemporaryChatHandler _chatHandler;
         private VehicleManager _vehicleManager;
         private BankHandler _bankHandler;
@@ -60,7 +59,6 @@ namespace AltVStrefaRPServer.Modules.Admin
             _inventoryHandler = inventoryHandler;
             _inventoryDatabaseService = inventoryDatabaseService;
 
-            _chat = new ChatHandler();
             Alt.Log ($"Admin commands initialized");
             AddCommands ();
         }
@@ -403,35 +401,45 @@ namespace AltVStrefaRPServer.Modules.Admin
             if (!player.TryGetCharacter(out var character)) return;
             var inventory = JsonConvert.SerializeObject(character.Inventory.Items, Formatting.Indented);
             Alt.Log(inventory);
-            player.Emit("testInventory", inventory);
+            player.Emit("testInventory", inventory, JsonConvert.SerializeObject(character.Inventory.EquippedItems));
         }
 
         private async Task AddItem(IPlayer player, string[] args)
         {
-            if (args == null && args.Length < 1) return;
+            var startTime = Time.GetTimestampMs();
+            if (args == null && args.Length < 2) return;
+            if (!int.TryParse(args[0].ToString(), out int itemID)) return;
+            if (!int.TryParse(args[1].ToString(), out int itemAmount)) return;
             if (!player.TryGetCharacter(out var character)) return;
-            if (!Enum.TryParse(args[0].ToString(), out ItemType itemId))
+            if (!Enum.IsDefined(typeof(ItemType), itemID))
             {
-                _chat.Send(player, "Podano błędne item ID");
+                //_chat.Send(player, "Podano błędne item ID");
+                return;
             }
-            var newItem = ItemDefinitions.Items[itemId];
+            var newItem = ItemDefinitions.Items[(ItemType)itemID];
+            //await _inventoryDatabaseService.AddNewItemAsync(newItem);
+            // Add to database if errors still persists
             Alt.Log($"New item is of type {newItem.GetType()} and name {newItem.Name}");
-            await character.Inventory.AddItemAsync(newItem, 15, _inventoryDatabaseService);
-            Alt.Log($"Added item id is {newItem.Id}");
+            await character.Inventory.AddItemAsync(newItem, itemAmount, _inventoryDatabaseService);
+            Alt.Log($"Added item id is {newItem.Id} in {Time.GetTimestampMs() - startTime}ms");
         }
 
         private async Task DropItem(IPlayer player, string[] args)
         {
+            var startTime = Time.GetTimestampMs();
             if(args == null || args.Length < 2) return;
             if (!int.TryParse(args[0].ToString(), out int itemId))
             {
-                _chat.Send(player, "{FF0000} Nie podano itemId!");
+                //_chat.Send(player, "{FF0000} Nie podano itemId!");
+                return;
             }
-            if (!int.TryParse(args[0].ToString(), out int amount))
+            if (!int.TryParse(args[1].ToString(), out int amount))
             {
-                _chat.Send(player, "{FF0000} Nie podano ilości.");
+                //_chat.Send(player, "{FF0000} Nie podano ilości.");
+                return;
             }
-            await _inventoryHandler.DropItem(player, itemId, amount, new Position(player.Position.X + 1, player.Position.Y + 1, player.Position.Z + 2));
+            await _inventoryHandler.DropItem(player, itemId, amount, new Position(player.Position.X + 1, player.Position.Y + 1, player.Position.Z));
+            Alt.Log($"Dropped item {itemId} in {Time.GetTimestampMs() - startTime}ms");
         }
     }
 }
