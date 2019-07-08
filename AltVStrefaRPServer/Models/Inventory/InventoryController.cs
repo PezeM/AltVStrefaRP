@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using AltV.Net;
 using AltV.Net.Data;
 using AltVStrefaRPServer.Models.Interfaces.Inventory;
 using AltVStrefaRPServer.Models.Interfaces.Items;
@@ -101,7 +102,7 @@ namespace AltVStrefaRPServer.Models.Inventory
                 return InventoryDropResponse.ItemAlreadyDropped;
             return InventoryDropResponse.DroppedItem;
         }
-
+        
         public async Task<InventoryDropResponse> DropItem(int itemId, int amount, Position position, InventoryManager inventoryManager)
         {
             if (!HasItem(itemId, out var item)) return InventoryDropResponse.ItemNotFound;
@@ -128,10 +129,10 @@ namespace AltVStrefaRPServer.Models.Inventory
         public async Task<AddItemResponse> AddItemAsync(BaseItem itemToAdd, int amount, IInventoryDatabaseService inventoryDatabaseService)
         {
             int added = 0;
-            bool hasBeenAdded = false;
+            bool newItemAdded = false;
             while (amount > 0)
             {
-                if (TryToGetInventoryItem(itemToAdd, out var item) && item.Quantity < itemToAdd.StackSize)
+                if (TryToGetInventoryItemWithoutFullStack(itemToAdd, out var item))
                 {
                     int maxQuantity = itemToAdd.StackSize - item.Quantity;
                     int toAdd = Math.Min(amount, maxQuantity);
@@ -143,32 +144,26 @@ namespace AltVStrefaRPServer.Models.Inventory
                 {
                     if (!HasEmptySlots()) return AddItemResponse.InventoryFull;
                     int toAdd = Math.Min(amount, itemToAdd.StackSize);
-                    if (hasBeenAdded)
+                    if (newItemAdded)
                     {
-                        var copy = itemToAdd.ShallowClone();
+                        //var copy = itemToAdd.ShallowClone();
                         var another = BaseItem.ShallowClone(itemToAdd);
-                        var thirdOption = itemToAdd.Copy();
-                        _items.Add(new InventoryItem(copy, toAdd, GetFreeSlot()));
+                        Alt.Log($"Copy of item {itemToAdd.GetType().Name} is {itemToAdd.GetType().Name}.");
+                        _items.Add(new InventoryItem(another, toAdd, GetFreeSlot()));
                     }
                     else
                     {
-                        // What if the amount is more than one item
                         var newItem = new InventoryItem(itemToAdd, toAdd, GetFreeSlot());
                         _items.Add(newItem);
-                        // Save to database to get item id propably
                     }
                     amount -= toAdd;
-                    hasBeenAdded = true;
-
-                    //int toAdd = Math.Min(amount, itemToAdd.StackSize);
-                    //var newItem = new InventoryItem(itemToAdd, toAdd, GetFreeSlot());
-                    //_items.Add(newItem);
-                    //// Save to database to get item id propably
-                    //amount -= toAdd;
-                    //hasBeenAdded = true;
+                    newItemAdded = true;
                 }
             }
-            await inventoryDatabaseService.UpdateInventoryAsync(this);
+            if (newItemAdded)
+            {
+                await inventoryDatabaseService.UpdateInventoryAsync(this);
+            }
             return AddItemResponse.ItemsAdded;
         }
 
@@ -193,9 +188,9 @@ namespace AltVStrefaRPServer.Models.Inventory
             return (_items.FirstOrDefault(i => i.Item is TItem)) != null;
         }
 
-        public bool TryToGetInventoryItem(BaseItem item, out InventoryItem inventoryItem)
+        public bool TryToGetInventoryItemWithoutFullStack(BaseItem item, out InventoryItem inventoryItem)
         {
-            inventoryItem = _items.FirstOrDefault(i => i.Item.GetType() == item.GetType());
+            inventoryItem = _items.FirstOrDefault(i => i.Item.GetType() == item.GetType() && i.Quantity < item.StackSize);
             return inventoryItem != null;
         }
 

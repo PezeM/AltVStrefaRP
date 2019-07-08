@@ -11,6 +11,6 @@ namespace AltVStrefaRPServer.Models.Inventory
         bool HasEmptySlots();
         bool HasItem(int id, out InventoryItem item);
         bool HasItem<TItem>() where TItem : BaseItem;
-        bool TryToGetInventoryItem(BaseItem item, out InventoryItem inventoryItem);
+        bool TryToGetInventoryItemWithoutFullStack(BaseItem item, out InventoryItem inventoryItem);
     }
 }

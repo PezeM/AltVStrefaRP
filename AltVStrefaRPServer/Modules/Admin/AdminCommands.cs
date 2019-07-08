@@ -416,7 +416,9 @@ namespace AltVStrefaRPServer.Modules.Admin
                 //_chat.Send(player, "Podano błędne item ID");
                 return;
             }
-            var newItem = ItemDefinitions.Items[(ItemType)itemID];
+            //var newItem = ItemDefinitions.Items[(ItemType)itemID];
+            var newItem = ItemDefinitions.GenerateNewItem((ItemType)itemID);
+            if (newItem == null) return;
             //await _inventoryDatabaseService.AddNewItemAsync(newItem);
             // Add to database if errors still persists
             Alt.Log($"New item is of type {newItem.GetType()} and name {newItem.Name}");
