@@ -73,24 +73,25 @@ namespace AltVStrefaRPServer.Models.Inventory
             character.Player.Emit("unequippedItem", equippedItemId, itemToUnequip.SlotId);
         }
 
-        public InventoryUseResponse UseItem(Character character, InventoryItem item)
+        public async Task<InventoryUseResponse> UseItem(Character character, InventoryItem item, IInventoryDatabaseService inventoryDatabaseService)
         {
             if (!item.Item.UseItem(character)) return InventoryUseResponse.ItemNotUsed;
             item.RemoveQuantity(1);
             if (item.Quantity <= 0)
             {
                 _items.Remove(item);
+                await inventoryDatabaseService.UpdateInventoryAsync(this);
                 // Propably save to database if item was removed 
             }
             return InventoryUseResponse.ItemUsed;
         }
 
-        public InventoryUseResponse UseItem(Character character, int itemId)
+        public async Task<InventoryUseResponse> UseItem(Character character, int itemId, IInventoryDatabaseService inventoryDatabaseService)
         {
             var item = GetInventoryItem(itemId);
             if (item != null)
             {
-                return UseItem(character, item);
+                return await UseItem(character, item, inventoryDatabaseService);
             }
             return InventoryUseResponse.ItemNotFound;
         }

@@ -7,6 +7,7 @@ using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models.Inventory.Responses;
 using AltVStrefaRPServer.Services;
+using AltVStrefaRPServer.Services.Inventory;
 using Newtonsoft.Json;
 
 namespace AltVStrefaRPServer.Modules.Inventory
@@ -14,11 +15,13 @@ namespace AltVStrefaRPServer.Modules.Inventory
     public class InventoryHandler
     {
         private readonly InventoryManager _inventoryManager;
+        private readonly IInventoryDatabaseService _inventoryDatabaseService;
         private readonly INotificationService _notificationService;
 
-        public InventoryHandler(InventoryManager inventoryManager, INotificationService notificationService)
+        public InventoryHandler(InventoryManager inventoryManager, IInventoryDatabaseService inventoryDatabaseService, INotificationService notificationService)
         {
             _inventoryManager = inventoryManager;
+            _inventoryDatabaseService = inventoryDatabaseService;
             _notificationService = notificationService;
 
             AltAsync.On<IPlayer, int, int, Position>("DropItem", async (player, id, amount, position) 
@@ -63,7 +66,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
         public async Task UseInventoryItem(IPlayer player, int itemId)
         {
             if (!player.TryGetCharacter(out var character)) return;
-            var response = character.Inventory.UseItem(character, itemId);
+            var response = await character.Inventory.UseItem(character, itemId, _inventoryDatabaseService);
             switch (response)
             {
                 case InventoryUseResponse.ItemNotFound:
