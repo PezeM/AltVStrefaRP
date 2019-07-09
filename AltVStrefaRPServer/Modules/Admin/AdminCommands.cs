@@ -10,6 +10,7 @@ using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Inventory;
+using AltVStrefaRPServer.Models.Inventory.Items;
 using AltVStrefaRPServer.Models.Server;
 using AltVStrefaRPServer.Modules.Businesses;
 using AltVStrefaRPServer.Modules.CharacterModule;
@@ -40,11 +41,12 @@ namespace AltVStrefaRPServer.Modules.Admin
         private readonly IMoneyService _moneyService;
         private readonly InventoryHandler _inventoryHandler;
         private readonly IInventoryDatabaseService _inventoryDatabaseService;
+        private readonly ItemFactory _itemFactory;
 
         public AdminCommands (TemporaryChatHandler chatHandler, VehicleManager vehicleManager, BankHandler bankHandler,
             BusinessManager businessManager, BusinessHandler businessHandler, INotificationService notificationService,
             VehicleShopsManager vehicleShopsManager, IVehicleSpawnService vehicleSpawnService, FractionHandler fractionHandler, 
-            IMoneyService moneyService, InventoryHandler inventoryHandler, IInventoryDatabaseService inventoryDatabaseService)
+            IMoneyService moneyService, InventoryHandler inventoryHandler, IInventoryDatabaseService inventoryDatabaseService, ItemFactory itemFactory)
         {
             _chatHandler = chatHandler;
             _vehicleManager = vehicleManager;
@@ -58,6 +60,7 @@ namespace AltVStrefaRPServer.Modules.Admin
             _moneyService = moneyService;
             _inventoryHandler = inventoryHandler;
             _inventoryDatabaseService = inventoryDatabaseService;
+            _itemFactory = itemFactory;
 
             Alt.Log ($"Admin commands initialized");
             AddCommands ();
@@ -417,11 +420,8 @@ namespace AltVStrefaRPServer.Modules.Admin
                 //_chat.Send(player, "Podano błędne item ID");
                 return;
             }
-            //var newItem = ItemDefinitions.Items[(ItemType)itemID];
-            var newItem = ItemDefinitions.GenerateNewItem((ItemType)itemID);
+            var newItem = _itemFactory.CreateItem((ItemType)itemID);
             if (newItem == null) return;
-            //await _inventoryDatabaseService.AddNewItemAsync(newItem);
-            // Add to database if errors still persists
             Alt.Log($"New item is of type {newItem.GetType()} and name {newItem.Name}");
             await character.Inventory.AddItemAsync(newItem, itemAmount, _inventoryDatabaseService);
             Alt.Log($"Added item id is {newItem.Id} in {Time.GetTimestampMs() - startTime}ms");

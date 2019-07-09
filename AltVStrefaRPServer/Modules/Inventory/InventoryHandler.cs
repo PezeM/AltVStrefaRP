@@ -1,12 +1,13 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Extensions;
+using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models.Inventory.Responses;
 using AltVStrefaRPServer.Services;
+using Newtonsoft.Json;
 
 namespace AltVStrefaRPServer.Modules.Inventory
 {
@@ -23,6 +24,15 @@ namespace AltVStrefaRPServer.Modules.Inventory
             AltAsync.On<IPlayer, int, int, Position>("DropItem", async (player, id, amount, position) 
                 => await DropItem(player, id, amount, position));
             AltAsync.On<IPlayer, int>("UseInventoryItem", async (player, itemId) => await UseInventoryItem(player, itemId));
+            Alt.On<IPlayer>("GetPlayerInventory", GetPlayerInventory);
+        }
+
+        private void GetPlayerInventory(IPlayer player)
+        {
+            var startTime = Time.GetTimestampMs();
+            if(!player.TryGetCharacter(out var character)) return;
+            player.Emit("populatePlayerInventory", JsonConvert.SerializeObject(character.Inventory.Items), JsonConvert.SerializeObject(character.Inventory.EquippedItems));
+            Alt.Log($"Send player inventory in {Time.GetTimestampMs() - startTime}ms.");
         }
 
         public async Task DropItem(IPlayer player, int id, int amount, Position position)
