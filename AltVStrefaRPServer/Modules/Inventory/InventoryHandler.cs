@@ -1,10 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Helpers;
+using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Models.Inventory.Responses;
 using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Inventory;
@@ -34,7 +36,8 @@ namespace AltVStrefaRPServer.Modules.Inventory
         {
             var startTime = Time.GetTimestampMs();
             if(!player.TryGetCharacter(out var character)) return;
-            player.Emit("populatePlayerInventory", JsonConvert.SerializeObject(character.Inventory.Items), JsonConvert.SerializeObject(character.Inventory.EquippedItems));
+            var inventoryItems = character.Inventory.Items.Select(i => new InventoryItemDto(i));
+            player.Emit("populatePlayerInventory", JsonConvert.SerializeObject(inventoryItems), JsonConvert.SerializeObject(character.Inventory.EquippedItems));
             Alt.Log($"Send player inventory in {Time.GetTimestampMs() - startTime}ms.");
         }
 

@@ -15,7 +15,6 @@ namespace AltVStrefaRPServer.Models.Inventory.Items
             : base(name, slot)
         {
             Model = model;
-            WeaponModel = weaponModel;
             Ammo = ammo;
             WeaponModel = weaponModel;
         }

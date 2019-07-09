@@ -11,7 +11,7 @@ namespace AltVStrefaRPServer.Models.Inventory
         public int Quantity { get;set; }
         public bool IsDroppable { get; set; }
         public int EquipmentSlot { get;set; }
-
+        public int SlotId { get; set; }
         public InventoryItemDto(InventoryItem item)
         {
             Id = item.Id;
@@ -19,7 +19,15 @@ namespace AltVStrefaRPServer.Models.Inventory
             StackSize = item.Item.StackSize;
             Quantity = item.Quantity;
             IsDroppable = (item.Item is IDroppable);
-            EquipmentSlot = (item.Item is IEquipmentable equipmentable ? (int)equipmentable.Slot : -1);
+            if (item.Item is IEquipmentable equipmentable)
+            {
+                EquipmentSlot = (int)equipmentable.Slot;
+            }
+            else
+            {
+                SlotId = item.SlotId;
+                EquipmentSlot = -1;
+            }
         }
     }
 }

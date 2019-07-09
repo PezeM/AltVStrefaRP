@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using AltV.Net;
 using AltV.Net.Data;
@@ -42,14 +41,6 @@ namespace AltVStrefaRPServer.Models.Inventory
         }
 
         public bool HasEmptySlots() => _items.Count < MaxSlots;
-
-        public void AddItem(InventoryItem item)
-        {
-            if (Items.Any(i => i.SlotId == i.SlotId))
-            {
-
-            }
-        }
 
         public void TestEquip(Character character, int inventoryItemId)
         {
@@ -214,7 +205,7 @@ namespace AltVStrefaRPServer.Models.Inventory
             return null;
         }
 
-        public int GetFreeSlot()
+        private int GetFreeSlot()
         {
             var freeSlots = Enumerable.Range(0, MaxSlots).ToList();
             for (int i = 0; i < _items.Count; i++)
@@ -227,7 +218,7 @@ namespace AltVStrefaRPServer.Models.Inventory
             return Enumerable.First(freeSlots);
         }
 
-        public void Test()
+        private void Test()
         {
             var item = new EquippedItem<ClothItem>();
         }
