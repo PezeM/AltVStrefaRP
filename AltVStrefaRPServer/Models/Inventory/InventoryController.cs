@@ -207,7 +207,7 @@ namespace AltVStrefaRPServer.Models.Inventory
 
         private int GetFreeSlot()
         {
-            var freeSlots = Enumerable.Range(0, MaxSlots).ToList();
+            var freeSlots = Enumerable.Range(0, MaxSlots - 1).ToList();
             for (int i = 0; i < _items.Count; i++)
             {
                 if (freeSlots.Contains(_items[i].SlotId))

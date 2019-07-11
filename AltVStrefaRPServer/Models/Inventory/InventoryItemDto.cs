@@ -12,6 +12,7 @@ namespace AltVStrefaRPServer.Models.Inventory
         public bool IsDroppable { get; set; }
         public int EquipmentSlot { get;set; }
         public int SlotId { get; set; }
+
         public InventoryItemDto(InventoryItem item)
         {
             Id = item.Id;

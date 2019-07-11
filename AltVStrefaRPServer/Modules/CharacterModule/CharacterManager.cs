@@ -5,6 +5,7 @@ using AltVStrefaRPServer.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AltVStrefaRPServer.Data;
 
 namespace AltVStrefaRPServer.Modules.CharacterModule
 {
@@ -57,12 +58,12 @@ namespace AltVStrefaRPServer.Modules.CharacterModule
                     return false;
                 }
                 character.Player = player;
-                player.Name = character.GetFullName();
+                player.SetSyncedMetaData(MetaData.PLAYER_NAME, character.GetFullName());
+                player.SetSyncedMetaData(MetaData.REMOTE_ID, character.Id);
 
                 // TODO: Setting skin and shared data
                 player.SetPosition(character.X, character.Y, character.Z);
                 //player.Spawn(character.GetPosition());
-                player.SetSyncedMetaData("remoteId", character.Id);
                 player.Model = character.Gender == 0 ? (uint)PedModel.FreemodeMale01 : (uint)PedModel.FreemodeFemale01; 
                 player.Dimension = character.Dimension;
                 character.LastPlayed = DateTime.Now;
