@@ -52,8 +52,12 @@ namespace AltVStrefaRPServer.Modules.Inventory
 
         public async Task<bool> AddDroppedItem(DroppedItem droppedItem)
         {
-            if (!_droppedItems.TryAdd(droppedItem.Id, droppedItem)) return false;
             await _inventoryDatabaseService.AddDroppedItem(droppedItem);
+            if (!_droppedItems.TryAdd(droppedItem.Id, droppedItem))
+            {
+                // Remove the item
+                return false; 
+            }
             _networkingManager.AddNewDroppedItem(droppedItem);
             return true;
         }

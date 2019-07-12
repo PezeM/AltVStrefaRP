@@ -46,7 +46,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
         public async Task DropItem(IPlayer player, int id, int amount, Position position)
         {
             if (!player.TryGetCharacter(out var character)) return;
-            var response = await character.Inventory.DropItem(id, amount, position, _inventoryManager);
+            var response = await character.Inventory.DropItem(id, amount, position, _inventoryManager, _inventoryDatabaseService);
             switch (response)
             {
                 case InventoryDropResponse.ItemNotDroppable:
@@ -90,7 +90,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
         private async Task InventoryDropItem(IPlayer player, int itemId, int amount)
         {
             if (!player.TryGetCharacter(out var character)) return;
-            var response = await character.Inventory.DropItem(itemId, amount, player.Position, _inventoryManager);
+            var response = await character.Inventory.DropItem(itemId, amount, player.Position, _inventoryManager, _inventoryDatabaseService);
             switch (response)
             {
                 case InventoryDropResponse.NotEnoughItems:
