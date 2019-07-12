@@ -7,14 +7,16 @@ using Position = AltV.Net.Data.Position;
 namespace AltVStrefaRPServer.Models.Inventory
 {
     // Todo save to database
-    public class DroppedItem : IMValueConvertible
+    public class DroppedItem : IMValueConvertible, IPosition
     {
         public int Id { get;set; }
         public string Name => Item.Name;
         public int Count { get; set; }
         public string Model { get; set; }
+        public float X { get; set; }
+        public float Y { get; set; }
+        public float Z { get; set; }
         public DateTime RemoveTime { get; set; }
-        public Position Position { get; set; }
         public BaseItem Item { get; set; }
 
         public DroppedItem(){}
@@ -24,7 +26,9 @@ namespace AltVStrefaRPServer.Models.Inventory
             Count = count;
             Item = item;
             Model = model;
-            Position = position;
+            X = position.X;
+            Y = position.Y;
+            Z = position.Z;
             RemoveTime = DateTime.Now.AddMinutes(5); // For testing now
         }
 
@@ -34,5 +38,10 @@ namespace AltVStrefaRPServer.Models.Inventory
         }
 
         public IMValueBaseAdapter GetAdapter() => ItemAdapters.DroppedItemAdapter;
+
+        public Position GetPosition()
+        {
+            return new Position(X,Y,Z);
+        }
     }
 }

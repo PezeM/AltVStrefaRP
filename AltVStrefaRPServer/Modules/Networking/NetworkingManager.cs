@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Timers;
 using AltV.Net;
 using AltV.Net.NetworkingEntity;
@@ -48,7 +47,7 @@ namespace AltVStrefaRPServer.Modules.Networking
 
         public INetworkingEntity AddNewDroppedItem(DroppedItem droppedItem)
         {
-            var networkingEntity = AltNetworking.CreateEntity(new Position {X = droppedItem.Position.X, Y = droppedItem.Position.Y, Z = droppedItem.Position.Z}, 
+            var networkingEntity = AltNetworking.CreateEntity(new Position {X = droppedItem.X, Y = droppedItem.Y, Z = droppedItem.Z}, 
                 0, 50, new Dictionary<string, object>
                 {
                     { "entityType", (long)NetworkingEntityTypes.Item },

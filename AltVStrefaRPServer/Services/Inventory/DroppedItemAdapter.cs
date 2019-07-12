@@ -49,7 +49,9 @@ namespace AltVStrefaRPServer.Services.Inventory
                 Count = count,
                 Id = id,
                 Model = model,
-                Position = new Position((float)x,(float)y,(float)z),
+                X = (float)x,
+                Y = (float)y,
+                Z = (float)z
             };
         }
 
@@ -65,11 +67,11 @@ namespace AltVStrefaRPServer.Services.Inventory
             writer.Name("count");
             writer.Value(value.Count);
             writer.Name("x");
-            writer.Value(value.Position.X);
+            writer.Value(value.X);
             writer.Name("y");
-            writer.Value(value.Position.Y);
+            writer.Value(value.Y);
             writer.Name("z");
-            writer.Value(value.Position.Z);
+            writer.Value(value.Z);
             writer.EndObject();
         }
 

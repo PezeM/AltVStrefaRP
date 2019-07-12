@@ -115,6 +115,7 @@ namespace AltVStrefaRPServer.Models.Inventory
             if (item.Quantity <= 0)
             {
                 _items.Remove(item);
+                //return InventoryRemoveResponse.ItemRemovedCompletly;
             }
             return InventoryRemoveResponse.ItemRemoved;
         }

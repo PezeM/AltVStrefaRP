@@ -4,6 +4,7 @@
     {
         ItemNotFound,
         NotEnoughItems,
-        ItemRemoved
+        ItemRemoved,
+        ItemRemovedCompletly,
     }
 }
