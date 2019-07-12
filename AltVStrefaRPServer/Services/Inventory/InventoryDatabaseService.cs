@@ -20,7 +20,12 @@ namespace AltVStrefaRPServer.Services.Inventory
 
         public IEnumerable<DroppedItem> GetAllDroppedItems()
         {
-            throw new NotImplementedException();
+            using (var context = _factory.Invoke())
+            {
+                return context.DroppedItems
+                    .Include(i => i.Item)
+                    .ToList();
+            }
         }
 
         public IEnumerable<InventoryItem> GetAllInventoryItems()
@@ -122,11 +127,11 @@ namespace AltVStrefaRPServer.Services.Inventory
 
         public async Task AddDroppedItem(DroppedItem droppedItem)
         {
-            //using (var context = _factory.Invoke())
-            //{
-            //    context.i
-            //}
-            await Task.FromResult(true);
+            using (var context = _factory.Invoke())
+            {
+                await context.DroppedItems.AddAsync(droppedItem);
+                await context.SaveChangesAsync();
+            }
         }
     }
 }

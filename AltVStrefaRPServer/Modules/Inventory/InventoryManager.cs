@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AltV.Net;
@@ -24,6 +25,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
             _items = new ConcurrentDictionary<int, InventoryItem>();
 
             LoadItems();
+            LoadDroppedItems();
         }
 
         private void LoadItems()
@@ -36,13 +38,23 @@ namespace AltVStrefaRPServer.Modules.Inventory
             Alt.Log($"Loaded {_items.Count} items from database in {Time.GetTimestampMs() - startTime}ms.");
         }
 
+        private void LoadDroppedItems()
+        {
+            var startTime = Time.GetTimestampMs();
+            foreach (var droppedItem in _inventoryDatabaseService.GetAllDroppedItems())
+            {
+                _droppedItems.TryAdd(droppedItem.Id, droppedItem);
+            }
+            Alt.Log($"Loaded {_droppedItems} dropped items from databse in {Time.GetTimestampMs() - startTime}ms.");
+        }
+
         public IEnumerable<DroppedItem> GetAllDroppedItems() => _droppedItems.Values;
 
         public async Task<bool> AddDroppedItem(DroppedItem droppedItem)
         {
             if (!_droppedItems.TryAdd(droppedItem.Id, droppedItem)) return false;
-            _networkingManager.AddNewDroppedItem(droppedItem);
             await _inventoryDatabaseService.AddDroppedItem(droppedItem);
+            _networkingManager.AddNewDroppedItem(droppedItem);
             return true;
         }
     }

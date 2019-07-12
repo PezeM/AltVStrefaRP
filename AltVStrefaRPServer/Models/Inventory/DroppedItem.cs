@@ -18,6 +18,7 @@ namespace AltVStrefaRPServer.Models.Inventory
         public float Z { get; set; }
         public DateTime RemoveTime { get; set; }
         public BaseItem Item { get; set; }
+        public int BaseItemId { get; protected set; }
 
         public DroppedItem(){}
 

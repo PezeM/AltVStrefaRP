@@ -56,6 +56,7 @@ namespace AltVStrefaRPServer.Database
         public DbSet<WeaponItem> WeaponItems { get; set; }
         public DbSet<ClothItem> Clothes { get; set; }
         public DbSet<InventoryItem> InventoryItems { get; set; }
+        public DbSet<DroppedItem> DroppedItems { get; set; }
 
         public ServerContext(DbContextOptions options) : base(options)
         {
@@ -213,6 +214,11 @@ namespace AltVStrefaRPServer.Database
             var inventoryControllerEquippedItemsNavigation = modelBuilder.Entity<InventoryController>()
                 .Metadata.FindNavigation(nameof(InventoryController.EquippedItems));
             navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+
+            modelBuilder.Entity<DroppedItem>()
+                .HasOne(i => i.Item)
+                .WithOne()
+                .HasForeignKey<DroppedItem>(i => i.BaseItemId);
         }
     }
 }
