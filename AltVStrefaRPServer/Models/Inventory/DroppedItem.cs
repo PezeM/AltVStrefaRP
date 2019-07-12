@@ -1,8 +1,8 @@
 ﻿using System;
 using AltV.Net;
-using AltV.Net.Data;
 using AltVStrefaRPServer.Models.Inventory.Items;
 using AltVStrefaRPServer.Services.Inventory;
+using Position = AltV.Net.Data.Position;
 
 namespace AltVStrefaRPServer.Models.Inventory
 {
@@ -18,14 +18,19 @@ namespace AltVStrefaRPServer.Models.Inventory
         public BaseItem Item { get; set; }
 
         public DroppedItem(){}
-        public DroppedItem(int id, int count, string model, BaseItem item, Position position)
+
+        public DroppedItem(int count, string model, BaseItem item, Position position)
         {
-            Id = id;
             Count = count;
             Item = item;
             Model = model;
             Position = position;
             RemoveTime = DateTime.Now.AddMinutes(5); // For testing now
+        }
+
+        public DroppedItem(int id, int count, string model, BaseItem item, Position position) : this(count, model, item, position)
+        {
+            Id = id;
         }
 
         public IMValueBaseAdapter GetAdapter() => ItemAdapters.DroppedItemAdapter;

@@ -91,7 +91,7 @@ namespace AltVStrefaRPServer.Models.Inventory
         {
             if (!(item.Item is IDroppable droppable)) return InventoryDropResponse.ItemNotDroppable;
             if (RemoveItem(item, amount) == InventoryRemoveResponse.NotEnoughItems) return InventoryDropResponse.NotEnoughItems;
-            if (!await inventoryManager.AddDroppedItem(new DroppedItem(item.Item.Id, amount, droppable.Model, item.Item, position)))
+            if (!await inventoryManager.AddDroppedItem(new DroppedItem(amount, droppable.Model, item.Item, position)))
                 return InventoryDropResponse.ItemAlreadyDropped;
             return InventoryDropResponse.DroppedItem;
         }

@@ -53,10 +53,7 @@ namespace AltVStrefaRPServer.Modules.CharacterModule
         {
             lock (_characterList)
             {
-                if (_characterList.ContainsKey(player.Id))
-                {
-                    return false;
-                }
+                if (_characterList.ContainsKey(player.Id)) return false;
                 character.Player = player;
                 player.SetSyncedMetaData(MetaData.PLAYER_NAME, character.GetFullName());
                 player.SetSyncedMetaData(MetaData.REMOTE_ID, character.Id);

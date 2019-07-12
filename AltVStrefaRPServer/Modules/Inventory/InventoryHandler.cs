@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using AltV.Net;
 using AltV.Net.Async;
@@ -30,6 +31,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
                 => await DropItem(player, id, amount, position));
             AltAsync.On<IPlayer, int>("UseInventoryItem", async (player, itemId) => await UseInventoryItem(player, itemId));
             Alt.On<IPlayer>("GetPlayerInventory", GetPlayerInventory);
+            AltAsync.On<IPlayer, int, int>("InventoryDropItem", async (player, id, amount) => await InventoryDropItem(player, id, amount));
         }
 
         private void GetPlayerInventory(IPlayer player)
@@ -81,6 +83,24 @@ namespace AltVStrefaRPServer.Modules.Inventory
                 case InventoryUseResponse.ItemUsed:
                     await _notificationService.ShowSuccessNotificationAsync(player, "Błąd", "Pomyślnie użyto przedmiot.");
                     //TODO: If he used the item, remove quantity, if the item was removed, remove it from user inventory UI
+                    break;
+            }
+        }
+
+        private async Task InventoryDropItem(IPlayer player, int itemId, int amount)
+        {
+            if (!player.TryGetCharacter(out var character)) return;
+            var response = await character.Inventory.DropItem(itemId, amount, player.Position, _inventoryManager);
+            switch (response)
+            {
+                case InventoryDropResponse.NotEnoughItems:
+                case InventoryDropResponse.ItemNotFound:
+                case InventoryDropResponse.ItemNotDroppable:
+                case InventoryDropResponse.ItemAlreadyDropped:
+                    await player.EmitAsync("inventoryItemDropResponse", false, itemId);
+                    break;
+                case InventoryDropResponse.DroppedItem:
+                    await player.EmitAsync("inventoryItemDropResponse", true, itemId);
                     break;
             }
         }
