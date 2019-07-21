@@ -47,16 +47,16 @@ namespace AltVStrefaRPServer
             var vehicleShopsHandler = Startup.ServiceProvider.GetService<VehicleShopsHandler> ();
             var bankHandler = Startup.ServiceProvider.GetServices<BankHandler> ();
             var sittingHandler = Startup.ServiceProvider.GetService<SittingHandler> ();
-            var thrashBinsHandler = Startup.ServiceProvider.GetService<TrashBinsHandler> ();
+            var thrashBinsHandler = Startup.ServiceProvider.GetService<TrashbinsController> ();
             var temporaryChatHandler = Startup.ServiceProvider.GetService<TemporaryChatHandler> ();
-            var timeManager = Startup.ServiceProvider.GetService<TimeManager> ();
+            var timeManager = Startup.ServiceProvider.GetService<TimeController> ();
             var objectSync = Startup.ServiceProvider.GetService<ObjectSync> ();
             var networkingTest = Startup.ServiceProvider.GetService<NetworkingManager>();
             _vehicleSpawnService = Startup.ServiceProvider.GetService<IVehicleSpawnService> ();
 
             _vehiclesManager = Startup.ServiceProvider.GetService<VehiclesManager> ();
             var vehicleShopManager = Startup.ServiceProvider.GetService<VehicleShopsManager> ();
-            var businessesManager = Startup.ServiceProvider.GetService<BusinessManager> ();
+            var businessesManager = Startup.ServiceProvider.GetService<BusinessesManager> ();
             var businessHandler = Startup.ServiceProvider.GetServices<BusinessHandler> ();
             var characterCreator = Startup.ServiceProvider.GetService<CharacterCreator> ();
             var adminCommands = Startup.ServiceProvider.GetService<AdminCommands> ();
@@ -64,7 +64,7 @@ namespace AltVStrefaRPServer
             var inventoryManager = Startup.ServiceProvider.GetService<InventoriesManager>();
             var inventoryHandler = Startup.ServiceProvider.GetService<InventoryHandler>();
             // Fractions
-            var fractionManager = Startup.ServiceProvider.GetService<FractionManager> ();
+            var fractionManager = Startup.ServiceProvider.GetService<FractionsManager> ();
             var fractionHandler = Startup.ServiceProvider.GetService<FractionHandler> ();
             var townHallFractionHandler = Startup.ServiceProvider.GetService<TownHallFractionHandler>();
             Test ();

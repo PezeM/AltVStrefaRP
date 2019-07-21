@@ -10,7 +10,7 @@ using AltVStrefaRPServer.Services.Fractions;
 
 namespace AltVStrefaRPServer.Modules.Fractions
 {
-    public class FractionManager
+    public class FractionsManager
     {
         private Dictionary<int, Fraction> _fractions;
         private IFractionDatabaseService _fractionDatabaseService;
@@ -18,7 +18,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
         private PoliceFraction _policeFraction;
         private SamsFraction _samsFraction;
 
-        public FractionManager(IFractionDatabaseService fractionDatabaseService)
+        public FractionsManager(IFractionDatabaseService fractionDatabaseService)
         {
             _fractionDatabaseService = fractionDatabaseService;
             _fractions = new Dictionary<int, Fraction>();

@@ -2,12 +2,11 @@
 using System.Timers;
 using AltVStrefaRPServer.Models.Enums;
 using System;
-using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Server;
 
 namespace AltVStrefaRPServer.Modules.Environment
 {
-    public class TimeManager
+    public class TimeController
     {
         private Timer _gameTimeTimer;
         private readonly int _timerInterval = 60000;
@@ -18,7 +17,7 @@ namespace AltVStrefaRPServer.Modules.Environment
         public uint CurrentWeather { get; set; } = (uint)Weathers.ExtraSunny;
         public GameTime GameTime { get; set; }
 
-        public TimeManager()
+        public TimeController()
         {
             _rng = new Random();
             GameTime = new GameTime
@@ -35,8 +34,10 @@ namespace AltVStrefaRPServer.Modules.Environment
                 player.SetDateTime(GameTime.Days, 0, 0, GameTime.Hours, GameTime.Minutes, 0);
             }
 
-            _gameTimeTimer = new Timer();
-            _gameTimeTimer.Interval = _timerInterval;
+            _gameTimeTimer = new Timer
+            {
+                Interval = _timerInterval
+            };
             _gameTimeTimer.Elapsed += GameTimerOnElapsed;
             _gameTimeTimer.AutoReset = true;
             _gameTimeTimer.Start();

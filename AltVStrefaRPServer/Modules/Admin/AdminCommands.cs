@@ -32,7 +32,7 @@ namespace AltVStrefaRPServer.Modules.Admin
         private TemporaryChatHandler _chatHandler;
         private VehiclesManager _vehiclesManager;
         private BankHandler _bankHandler;
-        private BusinessManager _businessManager;
+        private BusinessesManager _businessesManager;
         private BusinessHandler _businessHandler;
         private INotificationService _notificationService;
         private VehicleShopsManager _vehicleShopsManager;
@@ -44,14 +44,14 @@ namespace AltVStrefaRPServer.Modules.Admin
         private readonly ItemFactory _itemFactory;
 
         public AdminCommands (TemporaryChatHandler chatHandler, VehiclesManager vehiclesManager, BankHandler bankHandler,
-            BusinessManager businessManager, BusinessHandler businessHandler, INotificationService notificationService,
+            BusinessesManager businessesManager, BusinessHandler businessHandler, INotificationService notificationService,
             VehicleShopsManager vehicleShopsManager, IVehicleSpawnService vehicleSpawnService, FractionHandler fractionHandler, 
             IMoneyService moneyService, InventoryHandler inventoryHandler, IInventoryDatabaseService inventoryDatabaseService, ItemFactory itemFactory)
         {
             _chatHandler = chatHandler;
             _vehiclesManager = vehiclesManager;
             _bankHandler = bankHandler;
-            _businessManager = businessManager;
+            _businessesManager = businessesManager;
             _businessHandler = businessHandler;
             _notificationService = notificationService;
             _vehicleShopsManager = vehicleShopsManager;
@@ -151,14 +151,14 @@ namespace AltVStrefaRPServer.Modules.Admin
                     _notificationService.ShowErrorNotification (player, "Błąd", $"Podano złe id biznesu.", 5000);
                     return;
                 }
-                var business = _businessManager.GetBusiness (businessId);
+                var business = _businessesManager.GetBusiness (businessId);
                 if (business == null)
                 {
                     _notificationService.ShowErrorNotification (player, "Błąd", $"Nie znaleziono biznesu z takim id.", 5000);
                     return;
                 }
 
-                if (await _businessManager.UpdateBusinessOwner (business, character))
+                if (await _businessesManager.UpdateBusinessOwner (business, character))
                 {
                     _notificationService.ShowSuccessNotification (player, "Aktualizacja właściciela", $"Pomyślnie zaktualizowano właściciela biznesu ID({business.Id}) na {character.GetFullName()}", 6000);
                     Alt.Log ($"Updated owner of business ID({business.Id}) Name({business.BusinessName}) " +
@@ -207,30 +207,30 @@ namespace AltVStrefaRPServer.Modules.Admin
             {
                 if (!int.TryParse (args[0].ToString (), out int characterId))
                 {
-                    _notificationService.ShowErrorNotification (player, "Błąd", $"Podano zły numer postaci.", 5000);
+                    await _notificationService.ShowErrorNotificationAsync(player, "Błąd", $"Podano zły numer postaci.", 5000);
                     return;
                 }
                 var character = CharacterManager.Instance.GetCharacter (characterId);
                 if (character == null)
                 {
-                    _notificationService.ShowErrorNotification (player, "Błąd", $"Nie znaleziono postaci z takim id.", 5000);
+                    await _notificationService.ShowErrorNotificationAsync(player, "Błąd", $"Nie znaleziono postaci z takim id.", 5000);
                     return;
                 }
 
                 if (!int.TryParse (args[1].ToString (), out int fractionId))
                 {
-                    _notificationService.ShowErrorNotification (player, "Błąd", $"Podano złe id biznesu.", 5000);
+                    await _notificationService.ShowErrorNotificationAsync(player, "Błąd", $"Podano złe id biznesu.", 5000);
                     return;
                 }
 
                 if (await _fractionHandler.SetFractionOwner(fractionId, character))
                 {
-                    _notificationService.ShowSuccessNotification (player, "Aktualizacja właściciela", $"Pomyślnie zaktualizowano właściciela frakcji ID({fractionId}) " +
+                    await _notificationService.ShowSuccessNotificationAsync(player, "Aktualizacja właściciela", $"Pomyślnie zaktualizowano właściciela frakcji ID({fractionId}) " +
                                                                                                       $"na ID({character.Id}) {character.GetFullName()}");
                 }
                 else
                 {
-                    _notificationService.ShowErrorNotification (player, "Błąd", "Nie udało się zaktualizować właściciela biznesu.");
+                    await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie udało się zaktualizować właściciela biznesu.");
                 }
 
                 AltAsync.Log($"[UPDATED FRACTION OWNER] ({sender.Id}) {sender.GetFullName()} updated fraction owner ID({fractionId}) to ID({character.Id}) {character.GetFullName()}");
@@ -257,7 +257,7 @@ namespace AltVStrefaRPServer.Modules.Admin
                     return;
                 }
 
-                if (_businessManager.CreateNewBusinessAsync (character.Id, businessType, player.Position, args[1]).Result)
+                if (_businessesManager.CreateNewBusinessAsync (character.Id, businessType, player.Position, args[1]).Result)
                 {
                     _notificationService.ShowSuccessNotification (player, "Nowy biznes",
                         $"Pomyślnie stworzono nowy biznes: {businessType} z nazwą {args[1]}.", 6000);

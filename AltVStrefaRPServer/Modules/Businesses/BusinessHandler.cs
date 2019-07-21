@@ -19,12 +19,12 @@ namespace AltVStrefaRPServer.Modules.Businesses
 {
     public class BusinessHandler
     {
-        private BusinessManager _businessManager;
+        private BusinessesManager _businessesManager;
         private INotificationService _notificationService;
 
-        public BusinessHandler(BusinessManager businessManager, INotificationService notificationService)
+        public BusinessHandler(BusinessesManager businessesManager, INotificationService notificationService)
         {
-            _businessManager = businessManager;
+            _businessesManager = businessesManager;
             _notificationService = notificationService;
 
             Alt.Log("Intialized business handler.");
@@ -49,7 +49,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
 
         private bool GetBusiness(int businessId, out Business business)
         {
-            business = _businessManager.GetBusiness(businessId);
+            business = _businessesManager.GetBusiness(businessId);
             return business != null;
         }
 
@@ -84,7 +84,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
         public void OpenBusinessMenu(Character character)
         {
             var startTime = Time.GetTimestampMs();
-            if (!_businessManager.TryGetBusiness(character, out Business business))
+            if (!_businessesManager.TryGetBusiness(character, out Business business))
             {
                 _notificationService.ShowErrorNotification(character.Player, "Błąd", "Nie jesteś w żadnym biznesie.", 4000);
                 return;
@@ -142,7 +142,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
                 return;
             }
 
-            await _businessManager.UpdateEmployeeRank(business, employee, newRankId).ConfigureAwait(false);
+            await _businessesManager.UpdateEmployeeRank(business, employee, newRankId).ConfigureAwait(false);
             await player.EmitAsync("successfullyUpdatedEmployeeRank", employeeId, newRankId).ConfigureAwait(false);
             AltAsync.Log($"Character ID({character.Id}) changed business rank of character ID({employee.Id}) to RankID({newRankId})" +
                     $" in {Time.GetTimestampMs() - startTime}ms.");
@@ -211,7 +211,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
                 return;
             }
 
-            if (await _businessManager.AddNewEmployee(business, character).ConfigureAwait(false))
+            if (await _businessesManager.AddNewEmployee(business, character).ConfigureAwait(false))
             {
                 _notificationService.ShowSuccessNotification(player, "Nowa praca!", $"Pomyślnie dołączono do biznesu {business.BusinessName}.", 5000);
             }
@@ -292,7 +292,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
                 return;
             }
 
-            await _businessManager.UpdateBusinessRank(businessRankToUpdate, newPermissions).ConfigureAwait(false);
+            await _businessesManager.UpdateBusinessRank(businessRankToUpdate, newPermissions).ConfigureAwait(false);
             _notificationService.ShowSuccessNotification(player, "Zaktualizowano stanowisko", "Pomyślnie zaktualizowano stanowisko.");
             AltAsync.Log($"Character ID({character.Id}) changed permissions in rank ID({businessRank.Id})" +
                     $" in {Time.GetTimestampMs() - startTime}ms.");
@@ -334,7 +334,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
             }
 
             if(newRank == null) return;
-            if (await _businessManager.AddNewBusinessRank(business, newRank).ConfigureAwait(false))
+            if (await _businessesManager.AddNewBusinessRank(business, newRank).ConfigureAwait(false))
             {
                 _notificationService.ShowSuccessNotification(player, "Zaktualizowano stanowisko", "Pomyślnie zaktualizowano stanowisko");
             }
@@ -378,7 +378,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
                 return;
             }
 
-            if (await _businessManager.RemoveEmployee(business, employee))
+            if (await _businessesManager.RemoveEmployee(business, employee))
             {
                 _notificationService.ShowSuccessNotification(player, "Usunięto pracownika", $"Pomyślnie usunięto {employee.GetFullName()} z firmy.", 5000);
                 AltAsync.Log($"Character ID({character.Id}) deleted employee ID({employee.Id}) from business {business.BusinessName} " +
@@ -416,7 +416,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
 
             if (!business.CheckIfRankExists(rankId)) return;
 
-            if (await _businessManager.RemoveRank(business, rankId))
+            if (await _businessesManager.RemoveRank(business, rankId))
             {
                 _notificationService.ShowSuccessNotification(player, "Usunięto stanowisko", $"Pomyślnie usunięto stanowisko.", 5000);
                 AltAsync.Log($"Character ID({character.Id}) deleted rank ID({rankId}) " +
@@ -452,7 +452,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
                 return;
             }
 
-            if (await _businessManager.DeleteBusiness(business))
+            if (await _businessesManager.DeleteBusiness(business))
             {
                 _notificationService.ShowSuccessNotification(player, "Usunięto biznes", $"Pomyślnie usunięto biznes {business.BusinessName}.", 5000);
                 AltAsync.Log($"Character ID({character.Id}) deleted business ID({business.BusinessName}) " +

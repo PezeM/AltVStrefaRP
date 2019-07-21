@@ -102,12 +102,12 @@ namespace AltVStrefaRPServer
             services.AddSingleton<VehiclesManager>();
             services.AddSingleton<BankHandler>();
             services.AddSingleton<BankAccountManager>();
-            services.AddSingleton<BusinessManager>();
+            services.AddSingleton<BusinessesManager>();
             services.AddSingleton<BusinessHandler>();
             services.AddSingleton<TemporaryChatHandler>();
-            services.AddSingleton<TimeManager>();
+            services.AddSingleton<TimeController>();
             services.AddSingleton<VehicleShopsManager>();
-            services.AddSingleton<FractionManager>();
+            services.AddSingleton<FractionsManager>();
             services.AddSingleton<FractionHandler>();
             services.AddSingleton<InventoriesManager>();
             services.AddSingleton<InventoryHandler>();
@@ -115,7 +115,7 @@ namespace AltVStrefaRPServer
             services.AddTransient<AdminCommands>();
             services.AddTransient<CharacterCreator>();
             services.AddTransient<SittingHandler>();
-            services.AddTransient<TrashBinsHandler>();
+            services.AddTransient<TrashbinsController>();
             services.AddTransient<VehicleShopsHandler>();
             services.AddTransient<TownHallFractionHandler>();
             services.AddTransient<ItemFactory>();

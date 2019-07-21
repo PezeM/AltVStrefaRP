@@ -6,16 +6,16 @@ namespace AltVStrefaRPServer.Services.Money
 {
     public class TaxService : ITaxService
     {
-        private readonly FractionManager _fractionManager;
+        private readonly FractionsManager _fractionsManager;
 
-        public TaxService(FractionManager fractionManager)
+        public TaxService(FractionsManager fractionsManager)
         {
-            _fractionManager = fractionManager;
+            _fractionsManager = fractionsManager;
         }
 
         public float CalculatePriceAfterTax(float price, TransactionType transactionType)
         {
-            if (!_fractionManager.TryToGetTownHallFraction(out TownHallFraction townHall)) return price;
+            if (!_fractionsManager.TryToGetTownHallFraction(out TownHallFraction townHall)) return price;
 
             switch (transactionType)
             {

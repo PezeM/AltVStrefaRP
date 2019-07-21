@@ -8,13 +8,13 @@ using AltVStrefaRPServer.Services.Money;
 
 namespace AltVStrefaRPServer.Modules.Environment
 {
-    public class TrashBinsHandler
+    public class TrashbinsController
     {
         private readonly Random _rng;
         private readonly INotificationService _notificationService;
         private readonly IMoneyService _moneyService;
 
-        public TrashBinsHandler(INotificationService notificationService, IMoneyService moneyService)
+        public TrashbinsController(INotificationService notificationService, IMoneyService moneyService)
         {
             _notificationService = notificationService;
             _moneyService = moneyService;

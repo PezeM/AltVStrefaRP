@@ -21,14 +21,14 @@ namespace AltVStrefaRPServer.Handlers
         private readonly ILogin _loginService;
         private readonly ICharacterDatabaseService _characterDatabaseService;
         private readonly IAccountDatabaseService _accountDatabaseService;
-        private readonly TimeManager _timeManager;
+        private readonly TimeController _timeController;
 
         public PlayerConnect(AppSettings appSettings, ILogin loginService, ICharacterDatabaseService characterDatabaseService, 
-            IAccountDatabaseService accountDatabaseService, TimeManager timeManager)
+            IAccountDatabaseService accountDatabaseService, TimeController timeController)
         {
             _appSettings = appSettings;
             _loginService = loginService;
-            _timeManager = timeManager;
+            _timeController = timeController;
             _characterDatabaseService = characterDatabaseService;
             _accountDatabaseService = accountDatabaseService;
 
@@ -150,8 +150,8 @@ namespace AltVStrefaRPServer.Handlers
             player.Spawn(new Position(_appSettings.ServerConfig.LoginPosition.X, _appSettings.ServerConfig.LoginPosition.Y,
                 _appSettings.ServerConfig.LoginPosition.Z));
 
-            player.SetDateTime(_timeManager.GameTime.Days, 0, 0, _timeManager.GameTime.Hours, _timeManager.GameTime.Minutes, 0);
-            player.SetWeather(_timeManager.CurrentWeather);
+            player.SetDateTime(_timeController.GameTime.Days, 0, 0, _timeController.GameTime.Hours, _timeController.GameTime.Minutes, 0);
+            player.SetWeather(_timeController.CurrentWeather);
             player.Emit("showAuthenticateWindow");
         }
     }

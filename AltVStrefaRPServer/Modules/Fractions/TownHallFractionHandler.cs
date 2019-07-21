@@ -20,15 +20,15 @@ namespace AltVStrefaRPServer.Modules.Fractions
 {
     public class TownHallFractionHandler
     {
-        private FractionManager _fractionManager;
+        private FractionsManager _fractionsManager;
         private readonly INotificationService _notificationService;
         private readonly ICharacterDatabaseService _characterDatabaseService;
         private readonly VehiclesManager _vehiclesManager;
 
-        public TownHallFractionHandler(FractionManager fractionManager, ICharacterDatabaseService characterDatabaseService,
+        public TownHallFractionHandler(FractionsManager fractionsManager, ICharacterDatabaseService characterDatabaseService,
             INotificationService notificationService, VehiclesManager vehiclesManager)
         {
-            _fractionManager = fractionManager;
+            _fractionsManager = fractionsManager;
             _notificationService = notificationService;
             _characterDatabaseService = characterDatabaseService;
             _vehiclesManager = vehiclesManager;
@@ -69,7 +69,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
         private void TryToOpenFractionTaxesPage(IPlayer player)
         {
             if (!player.TryGetCharacter(out Character character)) return;
-            if (!_fractionManager.TryToGetTownHallFraction(out TownHallFraction townHallFraction)) return;
+            if (!_fractionsManager.TryToGetTownHallFraction(out TownHallFraction townHallFraction)) return;
             if (!townHallFraction.HasPermission<OpenTaxesPagePermission>(character))
             {
                 _notificationService.ShowErrorNotification(player, "Brak uprawnień",
@@ -83,7 +83,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
         private void TryToUpdateTaxValue(IPlayer player, int taxId, float newTax)
         {
             if (!player.TryGetCharacter(out Character character)) return;
-            if(!_fractionManager.TryToGetTownHallFraction(out TownHallFraction townHallFraction)) return;
+            if(!_fractionsManager.TryToGetTownHallFraction(out TownHallFraction townHallFraction)) return;
             if (!(townHallFraction.GetEmployeeRank(character)?.RankType == RankType.Highest))
             {
                 _notificationService.ShowErrorNotification(player, "Brak uprawnień",
@@ -106,7 +106,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
         private void TryToOpenFractionRegistrationPage(IPlayer player)
         {
             if (!player.TryGetCharacter(out Character character)) return;
-            if(!_fractionManager.TryToGetTownHallFraction(out TownHallFraction townHallFraction)) return;
+            if(!_fractionsManager.TryToGetTownHallFraction(out TownHallFraction townHallFraction)) return;
             if (!townHallFraction.HasPermission<TownHallActionsPermission>(character))
             {
                 _notificationService.ShowErrorNotification(player, "Brak uprawnień",

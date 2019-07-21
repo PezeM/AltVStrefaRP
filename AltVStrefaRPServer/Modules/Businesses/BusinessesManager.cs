@@ -15,7 +15,7 @@ using AltVStrefaRPServer.Services.Characters;
 
 namespace AltVStrefaRPServer.Modules.Businesses
 {
-    public class BusinessManager
+    public class BusinessesManager
     {
         private Dictionary<int, Business> _businesses;
 
@@ -24,7 +24,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
         private ICharacterDatabaseService _characterDatabaseService;
         private BusinessFactory _businessFactory;
 
-        public BusinessManager(IBusinessService businessService, IBusinessDatabaseService businessDatabaseService, ICharacterDatabaseService characterDatabaseService)
+        public BusinessesManager(IBusinessService businessService, IBusinessDatabaseService businessDatabaseService, ICharacterDatabaseService characterDatabaseService)
         {
             _characterDatabaseService = characterDatabaseService;
             _businessDatabaseService = businessDatabaseService;

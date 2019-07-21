@@ -22,5 +22,8 @@ namespace AltVStrefaRPServer.Extensions
         /// <returns></returns>
         public static bool TryGetCharacter(this IPlayer player, out Character character) 
             => CharacterManager.Instance.TryGetCharacter(player, out character);
+
+        public static void PlayAnimation(this IPlayer player, string animationName) =>
+            player.Emit("playAnimation", animationName);
     }
 }
