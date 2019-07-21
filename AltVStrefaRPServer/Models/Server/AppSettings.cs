@@ -15,6 +15,7 @@
 
     public class ServerConfig
     {
+        public NetworkingManagerConfig NetworkingManagerConfig { get; set; }
         public ConfigPosition SpawnPosition { get; set; }
         public ConfigPosition LoginPosition { get; set; }
         public EconomySettings EconomySettings { get; set; }

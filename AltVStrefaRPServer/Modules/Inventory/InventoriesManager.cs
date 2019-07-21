@@ -44,7 +44,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
             {
                 _droppedItems.TryAdd(droppedItem.Id, droppedItem);
             }
-            Alt.Log($"Loaded {_droppedItems} dropped items from databse in {Time.GetTimestampMs() - startTime}ms.");
+            Alt.Log($"Loaded {_droppedItems.Count} dropped items from databse in {Time.GetTimestampMs() - startTime}ms.");
         }
 
         public IEnumerable<DroppedItem> GetAllDroppedItems() => _droppedItems.Values;

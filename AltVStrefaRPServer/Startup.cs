@@ -49,7 +49,7 @@ namespace AltVStrefaRPServer
         {
             // Configurations
             Configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
+                .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "resources", "AltVStrefaRPServer"))
                 .AddJsonFile("appsettings.json", false)
                 .Build();
 

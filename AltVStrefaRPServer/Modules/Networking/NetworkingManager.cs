@@ -12,6 +12,7 @@ using Timer = System.Timers.Timer;
 using Entity;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Inventory;
+using AltVStrefaRPServer.Models.Server;
 
 namespace AltVStrefaRPServer.Modules.Networking
 {
@@ -20,26 +21,20 @@ namespace AltVStrefaRPServer.Modules.Networking
         public ConcurrentDictionary<ulong, INetworkingEntity> Entities { get; set; }
         private Random _rng;
         private Timer _testTimer;
-
-        public NetworkingManager()
+        
+        public NetworkingManager(AppSettings appSettings)
         {
             _rng = new Random();
             Entities = new ConcurrentDictionary<ulong, INetworkingEntity>();
             AltNetworking.Configure(options =>
             {
-                options.Port = 46429;
-                options.Ip = "127.0.0.1";
+                options.Port = appSettings.ServerConfig.NetworkingManagerConfig.Port;
+                options.Ip = appSettings.ServerConfig.NetworkingManagerConfig.Ip;
             });
             Alt.Log("Initialized TestNetworking");
-            var someEntity = AltNetworking.CreateEntity(new Position { X = -82, Y = -109, Z = 62 }, 0, 500, new Dictionary<string, object>
-            {
-                { "someData", 2331 },
-            });
-            Alt.Log($"Created entity with id: {someEntity.Id} and data 2331");
-            Entities.TryAdd(someEntity.Id, someEntity);
+
             AltNetworking.OnEntityStreamIn = OnEntityStreamIn;
             AltNetworking.OnEntityStreamOut = OnEntityStreamOut;
-            //SetupTimer();
 
             CreateRandomItems();
             CreateRandomPeds();

@@ -14,7 +14,6 @@
     <StartupObject />
   </PropertyGroup>
 
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>E:\AltVServer\windows\resources\AltVStrefaRPServer\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -23,12 +22,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <OutputPath>E:\AltVServer\windows\resources\AltVStrefaRPServer\</OutputPath>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="Models\Client\**" />
-    <EmbeddedResource Remove="Models\Client\**" />
-    <None Remove="Models\Client\**" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AltV.Net" Version="1.10.0" />
@@ -51,11 +44,6 @@
     <None Update="resource.cfg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Database\Migrations\" />
-    <Folder Include="Models\Jobs\" />
   </ItemGroup>
 
 </Project>
