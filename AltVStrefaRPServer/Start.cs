@@ -27,7 +27,7 @@ namespace AltVStrefaRPServer
 {
     public class Start : AsyncResource
     {
-        private VehicleManager vehicleManager;
+        private VehiclesManager _vehiclesManager;
         private IVehicleSpawnService _vehicleSpawnService;
         private SerializatorTest _serializatorTest;
 
@@ -54,14 +54,14 @@ namespace AltVStrefaRPServer
             var networkingTest = Startup.ServiceProvider.GetService<NetworkingManager>();
             _vehicleSpawnService = Startup.ServiceProvider.GetService<IVehicleSpawnService> ();
 
-            vehicleManager = Startup.ServiceProvider.GetService<VehicleManager> ();
+            _vehiclesManager = Startup.ServiceProvider.GetService<VehiclesManager> ();
             var vehicleShopManager = Startup.ServiceProvider.GetService<VehicleShopsManager> ();
             var businessesManager = Startup.ServiceProvider.GetService<BusinessManager> ();
             var businessHandler = Startup.ServiceProvider.GetServices<BusinessHandler> ();
             var characterCreator = Startup.ServiceProvider.GetService<CharacterCreator> ();
             var adminCommands = Startup.ServiceProvider.GetService<AdminCommands> ();
             var bankAccountsManager = Startup.ServiceProvider.GetServices<BankAccountManager> ();
-            var inventoryManager = Startup.ServiceProvider.GetService<InventoryManager>();
+            var inventoryManager = Startup.ServiceProvider.GetService<InventoriesManager>();
             var inventoryHandler = Startup.ServiceProvider.GetService<InventoryHandler>();
             // Fractions
             var fractionManager = Startup.ServiceProvider.GetService<FractionManager> ();
@@ -153,14 +153,14 @@ namespace AltVStrefaRPServer
             var character = player.GetCharacter ();
             if (character == null) return;
 
-            var vehicle = await vehicleManager.CreateVehicleAsync (vehicleModel, player.Position, player.Rotation,
+            var vehicle = await _vehiclesManager.CreateVehicleAsync (vehicleModel, player.Position, player.Rotation,
                 player.Dimension, character.Id, OwnerType.None).ConfigureAwait (false);
             await _vehicleSpawnService.SpawnVehicleAsync (vehicle);
         }
 
         public void SpawnVehicleComand (int vehicleId)
         {
-            if (!vehicleManager.TryGetVehicleModel (vehicleId, out VehicleModel vehicle)) return;
+            if (!_vehiclesManager.TryGetVehicleModel (vehicleId, out VehicleModel vehicle)) return;
             _vehicleSpawnService.SpawnVehicle (vehicle);
         }
 

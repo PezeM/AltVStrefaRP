@@ -16,13 +16,13 @@ using VehicleModel = AltVStrefaRPServer.Models.VehicleModel;
 
 namespace AltVStrefaRPServer.Modules.Vehicle
 {
-    public class VehicleManager
+    public class VehiclesManager
     {
         private Dictionary<int, VehicleModel> _vehicles = new Dictionary<int, VehicleModel>();
         private IVehicleDatabaseService _vehicleDatabaseService;
         private IVehicleCreatorService _vehicleCreator;
 
-        public VehicleManager(IVehicleDatabaseService vehicleDatabaseService, IVehicleCreatorService vehicleCreatorService)
+        public VehiclesManager(IVehicleDatabaseService vehicleDatabaseService, IVehicleCreatorService vehicleCreatorService)
         {
             _vehicleDatabaseService = vehicleDatabaseService;
             _vehicleCreator = vehicleCreatorService;

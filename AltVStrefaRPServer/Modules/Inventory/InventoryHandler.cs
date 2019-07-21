@@ -17,17 +17,17 @@ namespace AltVStrefaRPServer.Modules.Inventory
 {
     public class InventoryHandler
     {
-        private readonly InventoryManager _inventoryManager;
+        private readonly InventoriesManager _inventoriesManager;
         private readonly IInventoryDatabaseService _inventoryDatabaseService;
         private readonly INotificationService _notificationService;
 
-        public InventoryHandler(InventoryManager inventoryManager, IInventoryDatabaseService inventoryDatabaseService, INotificationService notificationService)
+        public InventoryHandler(InventoriesManager inventoriesManager, IInventoryDatabaseService inventoryDatabaseService, INotificationService notificationService)
         {
-            _inventoryManager = inventoryManager;
+            _inventoriesManager = inventoriesManager;
             _inventoryDatabaseService = inventoryDatabaseService;
             _notificationService = notificationService;
 
-            AltAsync.On<IPlayer, int, int, Position>("DropItem", async (player, id, amount, position) 
+            AltAsync.On<IPlayer, int, int, Position>("DropItem", async (player, id, amount, position)
                 => await DropItem(player, id, amount, position));
             AltAsync.On<IPlayer, int>("UseInventoryItem", async (player, itemId) => await UseInventoryItem(player, itemId));
             Alt.On<IPlayer>("GetPlayerInventory", GetPlayerInventory);
@@ -46,7 +46,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
         public async Task DropItem(IPlayer player, int id, int amount, Position position)
         {
             if (!player.TryGetCharacter(out var character)) return;
-            var response = await character.Inventory.DropItem(id, amount, position, _inventoryManager, _inventoryDatabaseService);
+            var response = await character.Inventory.DropItemAsync(id, amount, position, _inventoriesManager, _inventoryDatabaseService);
             switch (response)
             {
                 case InventoryDropResponse.ItemNotDroppable:
@@ -71,7 +71,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
         public async Task UseInventoryItem(IPlayer player, int itemId)
         {
             if (!player.TryGetCharacter(out var character)) return;
-            var response = await character.Inventory.UseItem(character, itemId, _inventoryDatabaseService);
+            var response = await character.Inventory.UseItemAsync(character, itemId, _inventoryDatabaseService);
             switch (response)
             {
                 case InventoryUseResponse.ItemNotFound:
@@ -90,7 +90,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
         private async Task InventoryDropItem(IPlayer player, int itemId, int amount)
         {
             if (!player.TryGetCharacter(out var character)) return;
-            var response = await character.Inventory.DropItem(itemId, amount, player.Position, _inventoryManager, _inventoryDatabaseService);
+            var response = await character.Inventory.DropItemAsync(itemId, amount, player.Position, _inventoriesManager, _inventoryDatabaseService);
             switch (response)
             {
                 case InventoryDropResponse.NotEnoughItems:

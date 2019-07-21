@@ -67,7 +67,7 @@ namespace AltVStrefaRPServer.Services.Inventory
             using (var context = _factory.Invoke())
             {
                 context.Items.Update(item);
-                context.SaveChangesAsync();
+                context.SaveChanges();
             }
         }
 
@@ -125,7 +125,7 @@ namespace AltVStrefaRPServer.Services.Inventory
             }
         }
 
-        public async Task AddDroppedItem(DroppedItem droppedItem)
+        public async Task AddDroppedItemAsync(DroppedItem droppedItem)
         {
             using (var context = _factory.Invoke())
             {

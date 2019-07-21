@@ -17,15 +17,15 @@ namespace AltVStrefaRPServer.Modules.Vehicle
         private readonly VehicleShopsManager _vehicleShopsManager;
         private readonly INotificationService _notificationService;
         private readonly IMoneyService _moneyService;
-        private readonly VehicleManager _vehicleManager;
+        private readonly VehiclesManager _vehiclesManager;
 
-        public VehicleShopsHandler(VehicleShopsManager vehicleShopsManager, VehicleManager vehicleManager,
+        public VehicleShopsHandler(VehicleShopsManager vehicleShopsManager, VehiclesManager vehiclesManager,
             INotificationService notificationService, IMoneyService moneyService)
         {
             _vehicleShopsManager = vehicleShopsManager;
             _notificationService = notificationService;
             _moneyService = moneyService;
-            _vehicleManager = vehicleManager;
+            _vehiclesManager = vehiclesManager;
 
             Alt.On<IPlayer, int>("OpenVehicleShop", OpenVehicleShopEvent);
             AltAsync.On<IPlayer, int, string>("BuyVehicle", async (player, shopId, vehicleModel) => await BuyVehicleEvent(player, shopId, vehicleModel));
@@ -73,7 +73,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             }
 
             // Player bought the vehicle, create vehicleModel and save it to database.
-            await _vehicleManager.CreateVehicleAsync(vehicleToBuy.VehicleModel.ToString(), shop.GetPositionOfBoughtVehicles(), 
+            await _vehiclesManager.CreateVehicleAsync(vehicleToBuy.VehicleModel.ToString(), shop.GetPositionOfBoughtVehicles(), 
                 shop.GetRotationOfBoughtVehicles(), 0, character.Id, OwnerType.Character);
             await _notificationService.ShowSuccessNotificationAsync(player, "Zakupiono pojazd!", 
                 $"Pomyślnie zakupiono pojazd {vehicleToBuy.VehicleModel.ToString()} za {vehicleToBuy.Price}$.");

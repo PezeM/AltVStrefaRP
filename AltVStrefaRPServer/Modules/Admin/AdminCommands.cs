@@ -30,7 +30,7 @@ namespace AltVStrefaRPServer.Modules.Admin
     public class AdminCommands
     {
         private TemporaryChatHandler _chatHandler;
-        private VehicleManager _vehicleManager;
+        private VehiclesManager _vehiclesManager;
         private BankHandler _bankHandler;
         private BusinessManager _businessManager;
         private BusinessHandler _businessHandler;
@@ -43,13 +43,13 @@ namespace AltVStrefaRPServer.Modules.Admin
         private readonly IInventoryDatabaseService _inventoryDatabaseService;
         private readonly ItemFactory _itemFactory;
 
-        public AdminCommands (TemporaryChatHandler chatHandler, VehicleManager vehicleManager, BankHandler bankHandler,
+        public AdminCommands (TemporaryChatHandler chatHandler, VehiclesManager vehiclesManager, BankHandler bankHandler,
             BusinessManager businessManager, BusinessHandler businessHandler, INotificationService notificationService,
             VehicleShopsManager vehicleShopsManager, IVehicleSpawnService vehicleSpawnService, FractionHandler fractionHandler, 
             IMoneyService moneyService, InventoryHandler inventoryHandler, IInventoryDatabaseService inventoryDatabaseService, ItemFactory itemFactory)
         {
             _chatHandler = chatHandler;
-            _vehicleManager = vehicleManager;
+            _vehiclesManager = vehiclesManager;
             _bankHandler = bankHandler;
             _businessManager = businessManager;
             _businessHandler = businessHandler;
@@ -363,7 +363,7 @@ namespace AltVStrefaRPServer.Modules.Admin
             if (character.Account.AdminLevel < AdminLevel.Admin) return;
             var model = args[0];
 
-            var vehicle = _vehicleManager.CreateVehicle (model, PositionHelper.GetPositionInFrontOf (player.Position, player.HeadRotation.Roll, 4f),
+            var vehicle = _vehiclesManager.CreateVehicle (model, PositionHelper.GetPositionInFrontOf (player.Position, player.HeadRotation.Roll, 4f),
                 player.Rotation, player.Dimension, character.Id, OwnerType.Character);
 
             _vehicleSpawnService.SpawnVehicle (vehicle);
@@ -383,7 +383,7 @@ namespace AltVStrefaRPServer.Modules.Admin
                 return;
             }
 
-            var characterVehicles = _vehicleManager.GetAllPlayerVehicles(character);
+            var characterVehicles = _vehiclesManager.GetAllPlayerVehicles(character);
             if (characterVehicles == null)
             {
                 _notificationService.ShowErrorNotification (player, "Błąd", "Gracz nie posiada żadnych pojazdów.");

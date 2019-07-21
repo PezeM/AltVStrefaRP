@@ -16,15 +16,15 @@ namespace AltVStrefaRPServer.Handlers
     public class VehicleHandler
     {
         private IVehicleDatabaseService _vehicleDatabaseService;
-        private VehicleManager _vehicleManager;
+        private VehiclesManager _vehiclesManager;
         private INotificationService _notificationService;
         private IVehicleSpawnService _vehicleSpawnService;
 
-        public VehicleHandler(VehicleManager vehicleManager, IVehicleDatabaseService vehiceVehicleDatabaseService,
+        public VehicleHandler(VehiclesManager vehiclesManager, IVehicleDatabaseService vehiceVehicleDatabaseService,
             INotificationService notificationService, IVehicleSpawnService vehicleSpawnService)
         {
             _vehicleDatabaseService = vehiceVehicleDatabaseService;
-            _vehicleManager = vehicleManager;
+            _vehiclesManager = vehiclesManager;
             _notificationService = notificationService;
             _vehicleSpawnService = vehicleSpawnService;
 
@@ -43,8 +43,8 @@ namespace AltVStrefaRPServer.Handlers
         private void ToggleLockStateEvent(IPlayer player, IVehicle closestVehicle)
         {
             if (!player.TryGetCharacter(out Character character)) return;
-            if (!_vehicleManager.TryGetVehicleModel(closestVehicle, out VehicleModel vehicle)) return;
-            if (!_vehicleManager.HasVehiclePermission(character, vehicle)) return;
+            if (!_vehiclesManager.TryGetVehicleModel(closestVehicle, out VehicleModel vehicle)) return;
+            if (!_vehiclesManager.HasVehiclePermission(character, vehicle)) return;
 
             vehicle.IsLocked = !vehicle.IsLocked;
             vehicle.VehicleHandle.LockState = vehicle.IsLocked ? VehicleLockState.Locked : VehicleLockState.Unlocked;
@@ -86,9 +86,9 @@ namespace AltVStrefaRPServer.Handlers
             if (!player.TryGetCharacter(out Character character)) return;
             if (player.Seat != 1) return;
 
-            if (!_vehicleManager.TryGetVehicleModel(vehicle, out VehicleModel vehicleModel)) return;
+            if (!_vehiclesManager.TryGetVehicleModel(vehicle, out VehicleModel vehicleModel)) return;
 
-            if (_vehicleManager.HasVehiclePermission(character, vehicleModel))
+            if (_vehiclesManager.HasVehiclePermission(character, vehicleModel))
             {
                 vehicle.EngineOn = !vehicle.EngineOn;
             }
@@ -102,8 +102,8 @@ namespace AltVStrefaRPServer.Handlers
         {
             if (!player.TryGetCharacter(out Character character)) return;
 
-            if (!_vehicleManager.TryGetVehicleModel(myVehicle, out VehicleModel vehicleModel)) return;
-            if (!_vehicleManager.HasVehiclePermission(character, vehicleModel))
+            if (!_vehiclesManager.TryGetVehicleModel(myVehicle, out VehicleModel vehicleModel)) return;
+            if (!_vehiclesManager.HasVehiclePermission(character, vehicleModel))
             {
                 _notificationService.ShowErrorNotification(player, "Brak kluczyków", "Nie posiadasz kluczyków do tego pojazdu.");
                 return;
@@ -120,10 +120,10 @@ namespace AltVStrefaRPServer.Handlers
             var character = player.GetCharacter();
             if(character == null) return;
 
-            var vehicle = _vehicleManager.GetVehicleModel((ushort)vehicleId);
+            var vehicle = _vehiclesManager.GetVehicleModel((ushort)vehicleId);
             if(vehicle == null) return;
 
-            if(!_vehicleManager.HasVehiclePermission(character, vehicle))
+            if(!_vehiclesManager.HasVehiclePermission(character, vehicle))
             {
                 _notificationService.ShowErrorNotification(player, "Brak kluczyków", "Nie posiadasz kluczyków do tego pojazdu.");
             }
@@ -152,7 +152,7 @@ namespace AltVStrefaRPServer.Handlers
             var startTime = Time.GetTimestampMs();
             // Saves vehicle only if the drivers exits
             if(vehicle.Driver != player) return;
-            if (!_vehicleManager.TryGetVehicleModel(vehicle, out VehicleModel vehicleModel)) return;
+            if (!_vehiclesManager.TryGetVehicleModel(vehicle, out VehicleModel vehicleModel)) return;
 
             // For thread safety
             await AltAsync.Do(() =>

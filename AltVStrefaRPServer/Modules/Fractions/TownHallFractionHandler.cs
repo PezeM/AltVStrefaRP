@@ -23,15 +23,15 @@ namespace AltVStrefaRPServer.Modules.Fractions
         private FractionManager _fractionManager;
         private readonly INotificationService _notificationService;
         private readonly ICharacterDatabaseService _characterDatabaseService;
-        private readonly VehicleManager _vehicleManager;
+        private readonly VehiclesManager _vehiclesManager;
 
         public TownHallFractionHandler(FractionManager fractionManager, ICharacterDatabaseService characterDatabaseService,
-            INotificationService notificationService, VehicleManager vehicleManager)
+            INotificationService notificationService, VehiclesManager vehiclesManager)
         {
             _fractionManager = fractionManager;
             _notificationService = notificationService;
             _characterDatabaseService = characterDatabaseService;
-            _vehicleManager = vehicleManager;
+            _vehiclesManager = vehiclesManager;
 
             Alt.On<IPlayer, int, float>("TryToUpdateTaxValue", TryToUpdateTaxValue);  
             AltAsync.On<IPlayer, string, string>("TryToGetResidentData", async (player, firstName, lastName) 
@@ -151,7 +151,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
                 BankMoney = character.BankAccount != null ? character.BankAccount.Money : 0,
                 BusinessName = character.Business != null ? character.Business.BusinessName : "Brak",
                 FractionName = character.Fraction != null ? character.Fraction.Name : "Brak",
-                Vehicles = _vehicleManager.GetAllPlayerVehicles(character).Select(q => new VehicleDataDto(q.Model, q.PlateText)).ToList(),
+                Vehicles = _vehiclesManager.GetAllPlayerVehicles(character).Select(q => new VehicleDataDto(q.Model, q.PlateText)).ToList(),
             };
         }
     }

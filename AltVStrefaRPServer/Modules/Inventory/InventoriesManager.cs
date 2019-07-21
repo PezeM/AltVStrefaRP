@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AltV.Net;
@@ -10,14 +9,14 @@ using AltVStrefaRPServer.Services.Inventory;
 
 namespace AltVStrefaRPServer.Modules.Inventory
 {
-    public class InventoryManager
+    public class InventoriesManager
     {
         private ConcurrentDictionary<int, DroppedItem> _droppedItems;
         private ConcurrentDictionary<int, InventoryItem> _items;
         private readonly IInventoryDatabaseService _inventoryDatabaseService;
         private readonly NetworkingManager _networkingManager;
 
-        public InventoryManager(IInventoryDatabaseService inventoryDatabaseService, NetworkingManager networkingManager)
+        public InventoriesManager(IInventoryDatabaseService inventoryDatabaseService, NetworkingManager networkingManager)
         {
             _inventoryDatabaseService = inventoryDatabaseService;
             _networkingManager = networkingManager;
@@ -50,9 +49,9 @@ namespace AltVStrefaRPServer.Modules.Inventory
 
         public IEnumerable<DroppedItem> GetAllDroppedItems() => _droppedItems.Values;
 
-        public async Task<bool> AddDroppedItem(DroppedItem droppedItem)
+        public async Task<bool> AddDroppedItemAsync(DroppedItem droppedItem)
         {
-            await _inventoryDatabaseService.AddDroppedItem(droppedItem);
+            await _inventoryDatabaseService.AddDroppedItemAsync(droppedItem);
             if (!_droppedItems.TryAdd(droppedItem.Id, droppedItem))
             {
                 // Remove the item

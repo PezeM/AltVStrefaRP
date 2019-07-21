@@ -99,7 +99,7 @@ namespace AltVStrefaRPServer
             services.AddTransient<ObjectSync>();
 
             services.AddSingleton<HashingService>();
-            services.AddSingleton<VehicleManager>();
+            services.AddSingleton<VehiclesManager>();
             services.AddSingleton<BankHandler>();
             services.AddSingleton<BankAccountManager>();
             services.AddSingleton<BusinessManager>();
@@ -109,7 +109,7 @@ namespace AltVStrefaRPServer
             services.AddSingleton<VehicleShopsManager>();
             services.AddSingleton<FractionManager>();
             services.AddSingleton<FractionHandler>();
-            services.AddSingleton<InventoryManager>();
+            services.AddSingleton<InventoriesManager>();
             services.AddSingleton<InventoryHandler>();
 
             services.AddTransient<AdminCommands>();
