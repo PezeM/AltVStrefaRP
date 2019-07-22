@@ -40,10 +40,10 @@ namespace AltVStrefaRPServer.Modules.Networking
             CreateRandomPeds();
         }
 
-        public INetworkingEntity AddNewDroppedItem(DroppedItem droppedItem)
+        public INetworkingEntity AddNewDroppedItem(DroppedItem droppedItem, int streamingRange = 50, int dimension = 0)
         {
             var networkingEntity = AltNetworking.CreateEntity(new Position {X = droppedItem.X, Y = droppedItem.Y, Z = droppedItem.Z}, 
-                0, 50, new Dictionary<string, object>
+                dimension, streamingRange, new Dictionary<string, object>
                 {
                     { "entityType", (long)NetworkingEntityTypes.Item },
                     { "id", droppedItem.Id },

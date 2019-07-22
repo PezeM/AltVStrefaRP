@@ -142,5 +142,14 @@ namespace AltVStrefaRPServer.Services.Inventory
                 await context.SaveChangesAsync();
             }
         }
+
+        public async Task RemoveItemAsync(DroppedItem item)
+        {
+            using (var context = _factory.Invoke())
+            {
+                context.DroppedItems.Remove(item);
+                await context.SaveChangesAsync();
+            }
+        }
     }
 }

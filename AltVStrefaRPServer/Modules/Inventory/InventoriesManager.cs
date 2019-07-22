@@ -43,6 +43,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
             foreach (var droppedItem in _inventoryDatabaseService.GetAllDroppedItems())
             {
                 _droppedItems.TryAdd(droppedItem.Id, droppedItem);
+                _networkingManager.AddNewDroppedItem(droppedItem);
             }
             Alt.Log($"Loaded {_droppedItems.Count} dropped items from databse in {Time.GetTimestampMs() - startTime}ms.");
         }
@@ -55,6 +56,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
             if (!_droppedItems.TryAdd(droppedItem.Id, droppedItem))
             {
                 // Remove the item
+                await _inventoryDatabaseService.RemoveItemAsync(droppedItem);
                 return false; 
             }
             _networkingManager.AddNewDroppedItem(droppedItem);
