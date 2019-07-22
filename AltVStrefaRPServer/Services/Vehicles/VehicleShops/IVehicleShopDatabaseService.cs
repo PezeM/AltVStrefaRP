@@ -2,11 +2,12 @@
 using System.Threading.Tasks;
 using AltVStrefaRPServer.Modules.Vehicle;
 
-namespace AltVStrefaRPServer.Services.Vehicles
+namespace AltVStrefaRPServer.Services.Vehicles.VehicleShops
 {
     public interface IVehicleShopDatabaseService
     {
         IEnumerable<VehicleShop> GetAllVehicleShops();
-        Task SaveVehicleShop(VehicleShop shop);
+        Task SaveVehicleShopAsync(VehicleShop shop);
+        void AddNewVehicleShop(VehicleShop shop);
     }
 }

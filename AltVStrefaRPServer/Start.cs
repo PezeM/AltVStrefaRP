@@ -68,12 +68,7 @@ namespace AltVStrefaRPServer
             var fractionHandler = Startup.ServiceProvider.GetService<FractionHandler> ();
             var townHallFractionHandler = Startup.ServiceProvider.GetService<TownHallFractionHandler>();
             Test ();
-            // For now not working on windows
-            //var chat = new ChatHandler();
-            //chat.RegisterCommand("test", (player, strings) =>
-            //{
-            //    Alt.Log($"{player.Id} triggered command test");
-            //});
+
             Alt.On<IPlayer, ulong>("bigNumber", (player, number) =>
             {
                 Alt.Log($"ULONG BIGNUMBER VALUE: {number}");

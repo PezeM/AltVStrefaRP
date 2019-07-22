@@ -6,7 +6,7 @@ using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Modules.Vehicle;
 using Microsoft.EntityFrameworkCore;
 
-namespace AltVStrefaRPServer.Services.Vehicles
+namespace AltVStrefaRPServer.Services.Vehicles.VehicleShops
 {
     public class VehicleShopDatabaseService : IVehicleShopDatabaseService
     {
@@ -26,7 +26,7 @@ namespace AltVStrefaRPServer.Services.Vehicles
             }
         }
 
-        public async Task SaveVehicleShop(VehicleShop shop)
+        public async Task SaveVehicleShopAsync(VehicleShop shop)
         {
             using (var context = _factory.Invoke())
             {
@@ -34,5 +34,15 @@ namespace AltVStrefaRPServer.Services.Vehicles
                 await context.SaveChangesAsync();
             }
         }
+
+        public void AddNewVehicleShop(VehicleShop shop)
+        {
+            using (var context = _factory.Invoke())
+            {
+                context.VehicleShops.Add(shop);
+                context.SaveChanges();
+            }
+        }
+
     }
 }

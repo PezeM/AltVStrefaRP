@@ -3,22 +3,25 @@ using System.Linq;
 using AltV.Net;
 using AltV.Net.Data;
 using AltVStrefaRPServer.Helpers;
-using AltVStrefaRPServer.Services.Vehicles;
+using AltVStrefaRPServer.Services.Vehicles.VehicleShops;
 
 namespace AltVStrefaRPServer.Modules.Vehicle
 {
     public class VehicleShopsManager
     {
         private readonly IVehicleShopDatabaseService _vehicleShopDatabaseService;
+        private readonly IVehicleShopsFactory _vehicleShopsFactory;
 
         public List<VehicleShop> VehicleShops { get; private set; }
 
-        public VehicleShopsManager(IVehicleShopDatabaseService vehicleShopDatabaseService)
+        public VehicleShopsManager(IVehicleShopDatabaseService vehicleShopDatabaseService, IVehicleShopsFactory vehicleShopsFactory)
         {
             VehicleShops = new List<VehicleShop>();
             _vehicleShopDatabaseService = vehicleShopDatabaseService;
+            _vehicleShopsFactory = vehicleShopsFactory;
 
             LoadVehicleShops();
+            CreateDefaultVehicleShops();
         }
 
         private void LoadVehicleShops()
@@ -40,6 +43,14 @@ namespace AltVStrefaRPServer.Modules.Vehicle
         {
             vehicleShop = VehicleShops.FirstOrDefault(s => s.GetPosition().Distance(position) < range);
             return vehicleShop != null;
+        }
+
+        private void CreateDefaultVehicleShops()
+        {
+            if (VehicleShops.Count > 0) return;
+            Alt.Server.LogWarning("There were no vehicle shops on the server. Creating new default vehicle shops");
+            VehicleShops.AddRange(_vehicleShopsFactory.CreateDefaultVehicleShops(_vehicleShopDatabaseService));
+            Alt.Log($"Created {VehicleShops.Count} new vehicle shops.");
         }
     }
 }

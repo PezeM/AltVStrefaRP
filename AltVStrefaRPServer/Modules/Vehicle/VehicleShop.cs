@@ -6,7 +6,7 @@ using AltV.Net;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Models;
-using AltVStrefaRPServer.Services.Vehicles;
+using AltVStrefaRPServer.Services.Vehicles.VehicleShops;
 
 namespace AltVStrefaRPServer.Modules.Vehicle
 {
@@ -39,7 +39,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
 
         private VehicleShop() { }
 
-        public VehicleShop(int vehicleShopId, Position position, List<VehiclePrice> avaibleVehicles, Position positionOfBoughtVehicles, 
+        public VehicleShop(int vehicleShopId, Position position, List<VehiclePrice> availableVehicles, Position positionOfBoughtVehicles, 
             Rotation rotationOfBoughtVehicles, int blipSprite = 67, int blipColor = 1)
         {
             VehicleShopId = vehicleShopId;
@@ -52,11 +52,9 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             BoughtVehiclesPitch = rotationOfBoughtVehicles.Pitch;
             BoughtVehiclesRoll = rotationOfBoughtVehicles.Roll;
             BoughtVehiclesYaw = rotationOfBoughtVehicles.Yaw;
-            AvailableVehicles = avaibleVehicles;
+            AvailableVehicles = availableVehicles;
             BlipColor = blipColor;
             BlipSprite = blipSprite;
-
-            AvailableVehicles = new List<VehiclePrice>();
 
             CreateShopBlip();
         }
@@ -88,7 +86,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             if (vehiclePrice == null) return false;
 
             AvailableVehicles.Add(vehiclePrice);
-            await vehicleShopDatabaseService.SaveVehicleShop(this);
+            await vehicleShopDatabaseService.SaveVehicleShopAsync(this);
             return true;
         }
     }

@@ -23,6 +23,7 @@ using AltVStrefaRPServer.Services.Inventory;
 using AltVStrefaRPServer.Services.Money;
 using AltVStrefaRPServer.Services.Money.Bank;
 using AltVStrefaRPServer.Services.Vehicles;
+using AltVStrefaRPServer.Services.Vehicles.VehicleShops;
 using EFCore.DbContextFactory.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -90,6 +91,7 @@ namespace AltVStrefaRPServer
             services.AddTransient<IVehicleCreatorService, VehicleCreatorService>();
             services.AddTransient<IVehicleDatabaseService, VehicleDatabaseService>();
             services.AddTransient<IVehicleShopDatabaseService, VehicleShopDatabaseService>();
+            services.AddTransient<IVehicleShopsFactory, VehicleShopsFactory>();
             services.AddTransient<IFractionDatabaseService, FractionDatabaseService>();
             services.AddTransient<IFractionFactoryService, FractionFactoryService>();
             services.AddTransient<IInventoryDatabaseService, InventoryDatabaseService>();
