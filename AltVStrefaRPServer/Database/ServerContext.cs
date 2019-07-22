@@ -197,7 +197,8 @@ namespace AltVStrefaRPServer.Database
             modelBuilder.Entity<InventoryItem>()
                 .HasOne(i => i.Item)
                 .WithOne()
-                .HasForeignKey<InventoryItem>(i => i.BaseItemId);
+                .HasForeignKey<InventoryItem>(i => i.BaseItemId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<InventoryController>()
                 .HasMany(i => i.Items)
@@ -218,7 +219,8 @@ namespace AltVStrefaRPServer.Database
             modelBuilder.Entity<DroppedItem>()
                 .HasOne(i => i.Item)
                 .WithOne()
-                .HasForeignKey<DroppedItem>(i => i.BaseItemId);
+                .HasForeignKey<DroppedItem>(i => i.BaseItemId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
