@@ -218,7 +218,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
                 return;
             }
 
-            if (await fraction.UpdateEmployeeRank(character, employeeId, newRankId, _fractionDatabaseService))
+            if (await fraction.UpdateEmployeeRankAsync(character, employeeId, newRankId, _fractionDatabaseService))
             {
                 await player.EmitAsync("succesfullyUpdatedEmployeeRank", employeeId, newRankId);
                 AltAsync.Log($"[UPDATE EMPLOYEE RANK] ({character.Id}) changed employee({employeeId}) rank to ID({newRankId}) in fraction ID({fractionId}) {fraction.Name}");
@@ -251,7 +251,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
             }
             if(newRank == null) return;
 
-            if (await fraction.AddNewRank(newRank, _fractionDatabaseService))
+            if (await fraction.AddNewRankAsync(newRank, _fractionDatabaseService))
             {
                 player.EmitLocked("succesfullyAddedNewFractionRank", newRank.RankName, JsonConvert.SerializeObject(GetAllFractionRanks(fraction)));
                 AltAsync.Log($"[ADD NEW FRACTION RANK] ({character.Id}) added new role ({newRank.RankName}) to fraction ID({fraction.Id}) {fraction.Name}");
@@ -285,7 +285,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
             }
             if(updatedPermissions == null) return;
 
-            if (await fraction.UpdateRank(character, updatedPermissions, _fractionDatabaseService))
+            if (await fraction.UpdateRankAsync(character, updatedPermissions, _fractionDatabaseService))
             {
                 await player.EmitAsync("succesfullyUpdatedFractionRank", JsonConvert.SerializeObject(updatedPermissions));
                 AltAsync.Log($"[UPADTE FRACTION RANK] ({character.Id}) updated fraction rank {updatedPermissions.RankName} in fraction ID({fraction.Id}) {fraction.Name}");
@@ -301,7 +301,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
             if (!_fractionsManager.TryToGetFraction(fractionId, out Fraction fraction)) return false;
             if (newOwner == null) return false;
 
-            return await fraction.SetFractionOwner(newOwner, _fractionDatabaseService);
+            return await fraction.SetFractionOwnerAsync(newOwner, _fractionDatabaseService);
         }
 
         private FractionEmployeesDto GetFractionEmloyeesDto(Fraction fraction)

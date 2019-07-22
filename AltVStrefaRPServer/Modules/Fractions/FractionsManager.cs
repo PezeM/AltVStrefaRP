@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using AltV.Net;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
-using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Fractions;
-using AltVStrefaRPServer.Models.Fractions.Permissions;
 using AltVStrefaRPServer.Services.Fractions;
 
 namespace AltVStrefaRPServer.Modules.Fractions
@@ -13,18 +11,22 @@ namespace AltVStrefaRPServer.Modules.Fractions
     public class FractionsManager
     {
         private Dictionary<int, Fraction> _fractions;
-        private IFractionDatabaseService _fractionDatabaseService;
+        private readonly IFractionFactoryService _fractionFactoryService;
+        private readonly IFractionDatabaseService _fractionDatabaseService;
         private TownHallFraction _townHallFraction;
         private PoliceFraction _policeFraction;
         private SamsFraction _samsFraction;
 
-        public FractionsManager(IFractionDatabaseService fractionDatabaseService)
+        public FractionsManager(IFractionDatabaseService fractionDatabaseService, IFractionFactoryService fractionFactoryService)
         {
+            _fractionFactoryService = fractionFactoryService;
             _fractionDatabaseService = fractionDatabaseService;
             _fractions = new Dictionary<int, Fraction>();
 
             Initialize();
-            //AddNewPermissions(); Was already added
+
+            // Create default fractions if they are not created yet
+            CreateDeafultFractions();
         }
 
         public void Initialize()
@@ -47,36 +49,6 @@ namespace AltVStrefaRPServer.Modules.Fractions
                 }
             }
             Alt.Log($"Loaded {_fractions.Count} fractions in {Time.GetTimestampMs() - startTime}ms.");
-        }
-
-        private void AddNewPermissions()
-        {
-            foreach (var fraction in _fractions.Values)
-            {
-                foreach (var fractionRank in fraction.FractionRanks)
-                {
-                    fractionRank.AddNewPermission(new ManageEmployeesPermission(true));
-                    fractionRank.AddNewPermission(new OpenMenuPermission(true));
-                    fractionRank.AddNewPermission(new InventoryPermission(true));
-                    fractionRank.AddNewPermission(new ManageRanksPermission(true));
-                    fractionRank.AddNewPermission(new VehiclePermission(true));
-
-                    if (fraction is TownHallFraction)
-                    {
-                        fractionRank.AddNewPermission(new TownHallActionsPermission(true));
-                        if (fractionRank.RankType == RankType.Highest)
-                        {
-                            fractionRank.AddNewPermission(new TownHallActionsPermission(true));
-                        }
-                        else
-                        {
-                            fractionRank.AddNewPermission(new TownHallActionsPermission(false));
-                        }
-                    }
-                }
-
-                _fractionDatabaseService.UpdateFraction(fraction);
-            }
         }
 
         public bool TryToGetFraction(int fractionId, out Fraction fraction)
@@ -114,6 +86,31 @@ namespace AltVStrefaRPServer.Modules.Fractions
         {
             samsFraction = _samsFraction;
             return samsFraction != null;
+        }
+
+        private void CreateDeafultFractions()
+        {
+            if (_policeFraction == null)
+            {
+                Alt.Server.LogWarning("Police fraction was empty. Creating missing fractions.");
+               _policeFraction = _fractionFactoryService.CreateDefaultPoliceFraction(_fractionDatabaseService);
+               _fractions.Add(_policeFraction.Id, _policeFraction);
+               Alt.Log($"Created police fraction with id {_policeFraction.Id} and position {_policeFraction.GetPosition()}");
+            } 
+            if (_samsFraction == null)
+            {
+                Alt.Server.LogWarning("SAMS fraction was empty. Creating missing fractions.");
+                _samsFraction = _fractionFactoryService.CreateDefaultSamsFraction(_fractionDatabaseService);
+                _fractions.Add(_samsFraction.Id, _samsFraction);
+                Alt.Log($"Created sams fraction with id {_samsFraction.Id} and position {_samsFraction.GetPosition()}");
+            }
+            if (_townHallFraction == null)
+            {
+                Alt.Server.LogWarning("Townhall fraction was empty. Creating missing fractions.");
+                _townHallFraction = _fractionFactoryService.CreateDefaultTownHallFraction(_fractionDatabaseService);
+                _fractions.Add(_townHallFraction.Id, _townHallFraction);
+                Alt.Log($"Created townhall fraction with id {_townHallFraction.Id} and position {_townHallFraction.GetPosition()}");
+            }
         }
     }
 }

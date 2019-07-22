@@ -91,6 +91,7 @@ namespace AltVStrefaRPServer
             services.AddTransient<IVehicleDatabaseService, VehicleDatabaseService>();
             services.AddTransient<IVehicleShopDatabaseService, VehicleShopDatabaseService>();
             services.AddTransient<IFractionDatabaseService, FractionDatabaseService>();
+            services.AddTransient<IFractionFactoryService, FractionFactoryService>();
             services.AddTransient<IInventoryDatabaseService, InventoryDatabaseService>();
 
             services.AddTransient<PlayerConnect>();

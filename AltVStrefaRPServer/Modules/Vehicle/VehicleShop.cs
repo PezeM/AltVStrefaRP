@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using AltV.Net;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
-using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Services.Vehicles;
 
@@ -84,7 +83,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
 
         public string MoneyTransactionDisplayName() => $"VehicleShop {VehicleShopId}";
 
-        public async Task<bool> AddVehicle(VehiclePrice vehiclePrice, IVehicleShopDatabaseService vehicleShopDatabaseService)
+        public async Task<bool> AddVehicleAsync(VehiclePrice vehiclePrice, IVehicleShopDatabaseService vehicleShopDatabaseService)
         {
             if (vehiclePrice == null) return false;
 
