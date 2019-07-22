@@ -4,6 +4,6 @@ namespace AltVStrefaRPServer.Models.Interfaces.Inventory
 {
     public interface IEquipmentable
     {
-        EquipmentSlot Slot { get; set; }
+        EquipmentSlot EquipmentSlot { get; set; }
     }
 }

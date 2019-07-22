@@ -45,10 +45,10 @@ namespace AltVStrefaRPServer.Models.Inventory
         {
             if(!HasItem(inventoryItemId, out InventoryItem inventoryItem)) return;
             if (!(inventoryItem.Item is Equipmentable equipmentable)) return;
-            if (_equippedItems.Any(i => i.SlotId == (int)equipmentable.Slot)) return;
+            if (_equippedItems.Any(i => i.SlotId == (int)equipmentable.EquipmentSlot)) return;
             inventoryItem.Item.UseItem(character);
             _items.Remove(inventoryItem);
-            inventoryItem.SetSlot((int)equipmentable.Slot);
+            inventoryItem.SetSlot((int)equipmentable.EquipmentSlot);
             _equippedItems.Add(inventoryItem);
         }
 
@@ -91,9 +91,8 @@ namespace AltVStrefaRPServer.Models.Inventory
         {
             if (!(item.Item is IDroppable droppable)) return InventoryDropResponse.ItemNotDroppable;
             if (await RemoveItemAsync(item, amount, inventoryDatabaseService) == InventoryRemoveResponse.NotEnoughItems) return InventoryDropResponse.NotEnoughItems;
-            var newItem = BaseItem.ShallowClone(item.Item);
-            newItem.Id = 0;
-            if (!await inventoriesManager.AddDroppedItemAsync(new DroppedItem(amount, droppable.Model, newItem, position)))
+            var newBaseItem = BaseItem.ShallowClone(item.Item);
+            if (!await inventoriesManager.AddDroppedItemAsync(new DroppedItem(amount, droppable.Model, newBaseItem, position)))
                 return InventoryDropResponse.ItemAlreadyDropped;
             return InventoryDropResponse.DroppedItem;
         }
@@ -144,15 +143,13 @@ namespace AltVStrefaRPServer.Models.Inventory
                     int toAdd = Math.Min(amount, itemToAdd.StackSize);
                     if (newItemAdded)
                     {
-                        //var copy = itemToAdd.ShallowClone();
-                        var another = BaseItem.ShallowClone(itemToAdd);
-                        Alt.Log($"Copy of item {itemToAdd.GetType().Name} is {itemToAdd.GetType().Name}.");
-                        _items.Add(new InventoryItem(another, toAdd, GetFreeSlot()));
+                        var newBaseItem = BaseItem.ShallowClone(itemToAdd);
+                        Alt.Log($"Copy of item {itemToAdd.GetType().Name} is {newBaseItem.GetType().Name}.");
+                        _items.Add(new InventoryItem(newBaseItem, toAdd, GetFreeSlot()));
                     }
                     else
                     {
-                        var newItem = new InventoryItem(itemToAdd, toAdd, GetFreeSlot());
-                        _items.Add(newItem);
+                        _items.Add(new InventoryItem(itemToAdd, toAdd, GetFreeSlot()));
                     }
                     amount -= toAdd;
                     newItemAdded = true;

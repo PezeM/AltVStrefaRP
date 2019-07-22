@@ -12,8 +12,8 @@ namespace AltVStrefaRPServer.Models.Inventory.Items
         public bool IsProp { get; set; }
         public string Model { get; set; }
 
-        public ClothItem(string name, EquipmentSlot slot, int drawableId, int textureId, int paletteId, bool isProp, string model)
-            : base(name, slot)
+        public ClothItem(string name, EquipmentSlot equipmentSlot, int drawableId, int textureId, int paletteId, bool isProp, string model)
+            : base(name, equipmentSlot)
         {
             DrawableId = drawableId;
             TextureId = textureId;
@@ -24,7 +24,7 @@ namespace AltVStrefaRPServer.Models.Inventory.Items
 
         public override bool UseItem(Character character)
         {
-            character.Player.Emit("equipClothableItem", (int)Slot, DrawableId, TextureId, PaletteId, IsProp);
+            character.Player.Emit("equipClothableItem", (int)EquipmentSlot, DrawableId, TextureId, PaletteId, IsProp);
             return true;
         }
 

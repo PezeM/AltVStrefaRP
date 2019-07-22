@@ -30,6 +30,7 @@
 
         public static T ShallowClone<T>(T original) where T : BaseItem
         {
+            original.Id = 0;
             return (T)original.ShallowClone();
         }
 

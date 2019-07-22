@@ -187,7 +187,7 @@ namespace AltVStrefaRPServer.Database
 
             // Items
             modelBuilder.Entity<Equipmentable>()
-                .Property(i => i.Slot)
+                .Property(i => i.EquipmentSlot)
                 .HasConversion<int>();
 
             modelBuilder.Entity<WeaponItem>()
