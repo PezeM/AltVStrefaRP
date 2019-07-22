@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AltV.Net;
 using AltV.Net.Data;
 using AltVStrefaRPServer.Models.Interfaces.Inventory;
 using AltVStrefaRPServer.Models.Interfaces.Items;
@@ -16,7 +15,7 @@ namespace AltVStrefaRPServer.Models.Inventory
     public class InventoryController : IInventory
     {
         public int Id { get; set; }
-        public int MaxSlots { get; set; } = 50;
+        public int MaxSlots { get; set; } = 30;
         public Character Owner { get; set; }
         public int OwnerId { get; set; }
 
@@ -70,8 +69,7 @@ namespace AltVStrefaRPServer.Models.Inventory
             if (item.Quantity <= 0)
             {
                 _items.Remove(item);
-                await inventoryDatabaseService.UpdateInventoryAsync(this);
-                // Propably save to database if item was removed 
+                await inventoryDatabaseService.RemoveItemAsync(item);
             }
             return InventoryUseResponse.ItemUsed;
         }
@@ -144,7 +142,6 @@ namespace AltVStrefaRPServer.Models.Inventory
                     if (newItemAdded)
                     {
                         var newBaseItem = BaseItem.ShallowClone(itemToAdd);
-                        Alt.Log($"Copy of item {itemToAdd.GetType().Name} is {newBaseItem.GetType().Name}.");
                         _items.Add(new InventoryItem(newBaseItem, toAdd, GetFreeSlot()));
                     }
                     else
