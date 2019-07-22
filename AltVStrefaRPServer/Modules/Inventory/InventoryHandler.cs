@@ -11,6 +11,7 @@ using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Models.Inventory.Responses;
 using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Inventory;
+using Microsoft.AspNetCore.Mvc.Formatters.Internal;
 using Newtonsoft.Json;
 
 namespace AltVStrefaRPServer.Modules.Inventory
@@ -28,10 +29,11 @@ namespace AltVStrefaRPServer.Modules.Inventory
             _notificationService = notificationService;
 
             AltAsync.On<IPlayer, int, int, Position>("DropItem", async (player, id, amount, position)
-                => await DropItem(player, id, amount, position));
-            AltAsync.On<IPlayer, int>("UseInventoryItem", async (player, itemId) => await UseInventoryItem(player, itemId));
+                => await DropItemAsync(player, id, amount, position));
+            AltAsync.On<IPlayer, int>("UseInventoryItem", async (player, itemId) => await UseInventoryItemAsync(player, itemId));
             Alt.On<IPlayer>("GetPlayerInventory", GetPlayerInventory);
-            AltAsync.On<IPlayer, int, int>("InventoryDropItem", async (player, id, amount) => await InventoryDropItem(player, id, amount));
+            AltAsync.On<IPlayer, int, int>("InventoryDropItem", async (player, id, amount) => await InventoryDropItemAsync(player, id, amount));
+            AltAsync.On<IPlayer, int, int>("InventoryRemoveItem", async (player, id, amount) => await InventoryRemoveItemAsync(player, id, amount));
         }
 
         private void GetPlayerInventory(IPlayer player)
@@ -43,7 +45,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
             Alt.Log($"Send player inventory in {Time.GetTimestampMs() - startTime}ms.");
         }
 
-        public async Task DropItem(IPlayer player, int id, int amount, Position position)
+        public async Task DropItemAsync(IPlayer player, int id, int amount, Position position)
         {
             if (!player.TryGetCharacter(out var character)) return;
             var response = await character.Inventory.DropItemAsync(id, amount, position, _inventoriesManager, _inventoryDatabaseService);
@@ -68,7 +70,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
             }
         }
 
-        public async Task UseInventoryItem(IPlayer player, int itemId)
+        public async Task UseInventoryItemAsync(IPlayer player, int itemId)
         {
             if (!player.TryGetCharacter(out var character)) return;
             var response = await character.Inventory.UseItemAsync(character, itemId, _inventoryDatabaseService);
@@ -87,7 +89,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
             }
         }
 
-        private async Task InventoryDropItem(IPlayer player, int itemId, int amount)
+        private async Task InventoryDropItemAsync(IPlayer player, int itemId, int amount)
         {
             if (!player.TryGetCharacter(out var character)) return;
             var response = await character.Inventory.DropItemAsync(itemId, amount, player.Position, _inventoriesManager, _inventoryDatabaseService);
@@ -101,6 +103,27 @@ namespace AltVStrefaRPServer.Modules.Inventory
                     break;
                 case InventoryDropResponse.DroppedItem:
                     await player.EmitAsync("inventoryItemDropResponse", true, itemId);
+                    break;
+            }
+        }
+        
+        public async Task InventoryRemoveItemAsync(IPlayer player, int id, int amount)
+        {
+            if (!player.TryGetCharacter(out var character)) return;
+            var response = await character.Inventory.RemoveItemAsync(id, amount, _inventoryDatabaseService);
+            switch (response)
+            {
+                case InventoryRemoveResponse.ItemRemovedCompletly:
+                    Alt.Log($"Item id {id} should be removed from database");
+                    break;
+                case InventoryRemoveResponse.NotEnoughItems:
+                    await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Posiadasz za mało przedmiotów");
+                    break;
+                case InventoryRemoveResponse.ItemNotFound:
+                    await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie posiadasz takiego przedmiotu.", 5500);
+                    break;
+                case InventoryRemoveResponse.ItemRemoved:
+                    await _notificationService.ShowSuccessNotificationAsync(player, "Usunięto przedmiot", "Pomyślnie usunięto przedmiot.");
                     break;
             }
         }

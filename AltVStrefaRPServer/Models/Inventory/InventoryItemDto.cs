@@ -20,15 +20,8 @@ namespace AltVStrefaRPServer.Models.Inventory
             StackSize = item.Item.StackSize;
             Quantity = item.Quantity;
             IsDroppable = (item.Item is IDroppable);
-            if (item.Item is IEquipmentable equipmentable)
-            {
-                EquipmentSlot = (int)equipmentable.Slot;
-            }
-            else
-            {
-                SlotId = item.SlotId;
-                EquipmentSlot = -1;
-            }
+            EquipmentSlot = item.Item is IEquipmentable equipmentable ? (int)equipmentable.Slot : -1;
+            SlotId = item.SlotId;
         }
     }
 }

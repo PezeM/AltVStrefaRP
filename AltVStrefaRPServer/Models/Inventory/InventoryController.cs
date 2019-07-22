@@ -10,7 +10,6 @@ using AltVStrefaRPServer.Models.Inventory.Items;
 using AltVStrefaRPServer.Models.Inventory.Responses;
 using AltVStrefaRPServer.Modules.Inventory;
 using AltVStrefaRPServer.Services.Inventory;
-using net.vieapps.Components.Utility;
 
 namespace AltVStrefaRPServer.Models.Inventory
 {
@@ -92,7 +91,9 @@ namespace AltVStrefaRPServer.Models.Inventory
         {
             if (!(item.Item is IDroppable droppable)) return InventoryDropResponse.ItemNotDroppable;
             if (await RemoveItemAsync(item, amount, inventoryDatabaseService) == InventoryRemoveResponse.NotEnoughItems) return InventoryDropResponse.NotEnoughItems;
-            if (!await inventoriesManager.AddDroppedItemAsync(new DroppedItem(amount, droppable.Model, BaseItem.ShallowClone(item.Item), position)))
+            var newItem = BaseItem.ShallowClone(item.Item);
+            newItem.Id = 0;
+            if (!await inventoriesManager.AddDroppedItemAsync(new DroppedItem(amount, droppable.Model, newItem, position)))
                 return InventoryDropResponse.ItemAlreadyDropped;
             return InventoryDropResponse.DroppedItem;
         }
@@ -117,7 +118,7 @@ namespace AltVStrefaRPServer.Models.Inventory
             if (item.Quantity <= 0)
             {
                 _items.Remove(item);
-                await inventoryDatabaseService.UpdateInventoryAsync(this);
+                await inventoryDatabaseService.RemoveItemAsync(item);
                 return InventoryRemoveResponse.ItemRemovedCompletly;
             }
             return InventoryRemoveResponse.ItemRemoved;

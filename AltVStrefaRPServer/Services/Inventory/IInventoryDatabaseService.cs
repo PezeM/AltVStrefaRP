@@ -20,5 +20,6 @@ namespace AltVStrefaRPServer.Services.Inventory
         Task AddInventoryItemAsync(InventoryItem item);
         Task AddInventoryItemsAsync(List<InventoryItem> newItems);
         Task AddDroppedItemAsync(DroppedItem droppedItem);
+        Task RemoveItemAsync(InventoryItem item);
     }
 }

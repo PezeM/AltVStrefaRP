@@ -129,8 +129,16 @@ namespace AltVStrefaRPServer.Services.Inventory
         {
             using (var context = _factory.Invoke())
             {
-                context.Entry(droppedItem.Item).State = EntityState.Unchanged;
                 await context.DroppedItems.AddAsync(droppedItem);
+                await context.SaveChangesAsync();
+            }
+        }
+
+        public async Task RemoveItemAsync(InventoryItem item)
+        {
+            using (var context = _factory.Invoke())
+            {
+                context.InventoryItems.Remove(item);
                 await context.SaveChangesAsync();
             }
         }

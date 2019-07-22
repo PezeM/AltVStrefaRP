@@ -92,6 +92,7 @@ namespace AltVStrefaRPServer.Modules.Admin
             _chatHandler.RegisterCommand("addItem", async (player, args) => await AddItem(player, args));
             _chatHandler.RegisterCommand("getInventory", GetInventory);
             _chatHandler.RegisterCommand("useItem", async (player, args) => await UseItem(player, args));
+            _chatHandler.RegisterCommand("removeItem", async (player, args) => await RemoveItemAsync(player, args));
         }
 
         private void OpenVehicleShop (IPlayer player, string[] arg2)
@@ -441,7 +442,7 @@ namespace AltVStrefaRPServer.Modules.Admin
                 //_chat.Send(player, "{FF0000} Nie podano ilości.");
                 return;
             }
-            await _inventoryHandler.DropItem(player, itemId, amount, new Position(player.Position.X + 1, player.Position.Y + 1, player.Position.Z));
+            await _inventoryHandler.DropItemAsync(player, itemId, amount, new Position(player.Position.X + 1, player.Position.Y + 1, player.Position.Z));
             Alt.Log($"Dropped item {itemId} in {Time.GetTimestampMs() - startTime}ms");
         }
 
@@ -450,8 +451,17 @@ namespace AltVStrefaRPServer.Modules.Admin
             var startTime = Time.GetTimestampMs();
             if(args == null || args.Length < 1) return;
             if (!int.TryParse(args[0].ToString(), out int itemId)) return;
-            await _inventoryHandler.UseInventoryItem(player, itemId);
+            await _inventoryHandler.UseInventoryItemAsync(player, itemId);
             Alt.Log($"Used item in {Time.GetTimestampMs() - startTime}ms");
+        }
+
+        private async Task RemoveItemAsync(IPlayer player, string[] args)
+        {
+            if (args == null || args.Length < 2) return;
+            if (!int.TryParse(args[0].ToString(), out int itemId)) return;
+            if (!int.TryParse(args[1].ToString(), out int amount)) return;
+            await _inventoryHandler.InventoryRemoveItemAsync(player, itemId, amount);
+            Alt.Log($"");
         }
     }
 }
