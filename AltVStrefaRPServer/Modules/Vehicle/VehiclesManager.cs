@@ -27,13 +27,13 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             _vehicleDatabaseService = vehicleDatabaseService;
             _vehicleCreator = vehicleCreatorService;
 
-            LoadVehiclesFromDatabaseAsync();
+            LoadVehiclesFromDatabase();
         }
 
         /// <summary>
         /// Loads all vehicles from database to memory and sets every vehicle IsSpawned property to false
         /// </summary>
-        public void LoadVehiclesFromDatabaseAsync()
+        public void LoadVehiclesFromDatabase()
         {
             var startTime = Time.GetTimestampMs();
             foreach (var vehicle in _vehicleDatabaseService.LoadVehiclesFromDatabase())
@@ -73,7 +73,6 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             return _vehicles.TryGetValue(vehicleId, out vehicleModel);
         }
 
-
         /// <summary>
         /// Removes <see cref="VehicleModel"/> from vehicle list by id
         /// </summary>
@@ -99,7 +98,13 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             {
                 try
                 {
-                    Alt.RemoveVehicle(vehicle.VehicleHandle);
+                    lock (vehicle.VehicleHandle)
+                    {
+                        if (vehicle.VehicleHandle.Exists)
+                        {
+                            Alt.RemoveVehicle(vehicle.VehicleHandle);
+                        }
+                    }
                     await _vehicleDatabaseService.RemoveVehicleAsync(vehicle).ConfigureAwait(false);
                     return true;
                 }
@@ -169,7 +174,10 @@ namespace AltVStrefaRPServer.Modules.Vehicle
         {
             var vehicle = _vehicleCreator.CreateVehicle(vehicleModel, position, rotation, dimension, ownerId, ownerType);
             await _vehicleDatabaseService.AddVehicleToDatabaseAsync(vehicle);
-            _vehicles.Add(vehicle.Id, vehicle);
+            lock (_vehicles)
+            {
+                _vehicles.Add(vehicle.Id, vehicle);
+            }
             AltAsync.Log($"Created vehicle {vehicle.Model} UID({vehicle.Id}).");
             return vehicle;
         }
