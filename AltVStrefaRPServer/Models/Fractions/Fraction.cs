@@ -197,12 +197,7 @@ namespace AltVStrefaRPServer.Models.Fractions
         {
             if (!CanAddRank(newRank)) return false;
 
-            var newFractionRank = new FractionRank
-            {
-                RankName = newRank.RankName,
-                RankType = RankType.Normal,
-                Permissions = GenerateNewPermissions()
-            };
+            var newFractionRank = new FractionRank(newRank.RankName, RankType.Normal, 1, GenerateNewPermissions());
 
             if (!newFractionRank.SetPriority(newRank.Priority)) return false;
             _fractionRanks.Add(newFractionRank);
@@ -253,6 +248,23 @@ namespace AltVStrefaRPServer.Models.Fractions
             SetEmployeeRank(newOwner, highestRank);
             await fractionDatabaseService.UpdateFractionAsync(this);
             return true;
+        }
+
+        public async Task<bool> ForceFractionOwnerAsync(Character newOwner, IFractionDatabaseService fractionDatabaseService)
+        {
+            if ((newOwner.CurrentFractionId ?? 0) != Id)
+            {
+                var defaultRank = GetDefaultRank();
+                if (defaultRank == null) return false;
+                _employees.Add(newOwner);
+                SetEmployeeRank(newOwner, defaultRank);
+                await fractionDatabaseService.UpdateFractionAsync(this);
+                return await SetFractionOwnerAsync(newOwner, fractionDatabaseService);
+            }
+            else
+            {
+                return await SetFractionOwnerAsync(newOwner, fractionDatabaseService);
+            }
         }
 
         protected virtual bool IsCharacterEmployee(int characterId, out Character character)

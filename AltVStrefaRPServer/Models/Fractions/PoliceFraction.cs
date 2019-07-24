@@ -12,27 +12,17 @@ namespace AltVStrefaRPServer.Models.Fractions
 
         protected override void GenerateDefaultRanks()
         {
-            var highestRank = new FractionRank
+            var highestRank = new FractionRank("Chief of Police", RankType.Highest, 100, new List<FractionPermission>
             {
-                RankType = RankType.Highest,
-                RankName = "Chief of Police",
-                Permissions = new List<FractionPermission>
-                {
-                    new InventoryPermission(true),
-                    new ManageEmployeesPermission(true),
-                    new ManageRanksPermission(true),
-                    new OpenMenuPermission(true),
-                    new VehiclePermission(true)
-                }
-            };
+                new InventoryPermission(true),
+                new ManageEmployeesPermission(true),
+                new ManageRanksPermission(true),
+                new OpenMenuPermission(true),
+                new VehiclePermission(true)
+            });
             _fractionRanks.Add(highestRank);
 
-            var defaultRank = new FractionRank
-            {
-                RankType = RankType.Default,
-                RankName = "Officer I",
-                Permissions = GenerateNewPermissions()
-            };
+            var defaultRank = new FractionRank("Officer I", RankType.Default, 0, GenerateNewPermissions());
             _fractionRanks.Add(defaultRank);
         }
     }

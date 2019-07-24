@@ -172,7 +172,7 @@ namespace AltVStrefaRPServer.Models.Inventory
                 await inventoryDatabaseService.UpdateInventoryAsync(this);
                 if (player != null)
                 {
-                    player.EmitLocked("inventoryAddNewItem", JsonConvert.SerializeObject(response.NewItems));
+                    player.EmitLocked("inventoryAddNewItem", response.NewItems);
                 }
             }
             return response;

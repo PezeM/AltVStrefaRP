@@ -2,8 +2,8 @@
 {
     public enum RankType
     {
-        Default,
-        Normal,
-        Highest
+        Default = 0,
+        Normal = 1,
+        Highest = 2
     }
 }

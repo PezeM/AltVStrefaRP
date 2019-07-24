@@ -167,7 +167,6 @@ namespace AltVStrefaRPServer.Database
 
             modelBuilder.Entity<FractionRank>()
                 .Property(r => r.RankType)
-                .HasDefaultValue(RankType.Normal)
                 .HasConversion<int>();
 
             modelBuilder.Entity<TownHallFraction>()

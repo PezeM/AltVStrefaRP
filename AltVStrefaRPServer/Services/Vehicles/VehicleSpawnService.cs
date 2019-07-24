@@ -98,7 +98,7 @@ namespace AltVStrefaRPServer.Services.Vehicles
         private bool CanSpawnVehicle(VehicleModel vehicleModel)
         {
             if (vehicleModel == null || vehicleModel.IsSpawned) return false;
-            return vehicleModel.VehicleHandle != null;
+            return vehicleModel.VehicleHandle == null;
         }
 
         private void SaveVehicleData(VehicleModel vehicleModel)

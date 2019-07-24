@@ -20,6 +20,7 @@ using AltVStrefaRPServer.Modules.Inventory;
 using AltVStrefaRPServer.Modules.Money;
 using AltVStrefaRPServer.Modules.Vehicle;
 using AltVStrefaRPServer.Services;
+using AltVStrefaRPServer.Services.Fractions;
 using AltVStrefaRPServer.Services.Inventory;
 using AltVStrefaRPServer.Services.Money;
 using AltVStrefaRPServer.Services.Vehicles;
@@ -38,6 +39,8 @@ namespace AltVStrefaRPServer.Modules.Admin
         private VehicleShopsManager _vehicleShopsManager;
         private IVehicleSpawnService _vehicleSpawnService;
         private readonly FractionHandler _fractionHandler;
+        private readonly FractionsManager _fractionsManager;
+        private readonly IFractionDatabaseService _fractionDatabaseService;
         private readonly IMoneyService _moneyService;
         private readonly InventoryHandler _inventoryHandler;
         private readonly IInventoryDatabaseService _inventoryDatabaseService;
@@ -45,8 +48,9 @@ namespace AltVStrefaRPServer.Modules.Admin
 
         public AdminCommands (TemporaryChatHandler chatHandler, VehiclesManager vehiclesManager, BankHandler bankHandler,
             BusinessesManager businessesManager, BusinessHandler businessHandler, INotificationService notificationService,
-            VehicleShopsManager vehicleShopsManager, IVehicleSpawnService vehicleSpawnService, FractionHandler fractionHandler, 
-            IMoneyService moneyService, InventoryHandler inventoryHandler, IInventoryDatabaseService inventoryDatabaseService, ItemFactory itemFactory)
+            VehicleShopsManager vehicleShopsManager, IVehicleSpawnService vehicleSpawnService, FractionHandler fractionHandler, FractionsManager fractionsManager,
+            IFractionDatabaseService fractionDatabaseService, IMoneyService moneyService, 
+            InventoryHandler inventoryHandler, IInventoryDatabaseService inventoryDatabaseService, ItemFactory itemFactory)
         {
             _chatHandler = chatHandler;
             _vehiclesManager = vehiclesManager;
@@ -57,6 +61,8 @@ namespace AltVStrefaRPServer.Modules.Admin
             _vehicleShopsManager = vehicleShopsManager;
             _vehicleSpawnService = vehicleSpawnService;
             _fractionHandler = fractionHandler;
+            _fractionsManager = fractionsManager;
+            _fractionDatabaseService = fractionDatabaseService;
             _moneyService = moneyService;
             _inventoryHandler = inventoryHandler;
             _inventoryDatabaseService = inventoryDatabaseService;
@@ -84,7 +90,7 @@ namespace AltVStrefaRPServer.Modules.Admin
             _chatHandler.RegisterCommand("addMoney", AddMoneyToPlayer);
             _chatHandler.RegisterCommand ("openVehicleShop", OpenVehicleShop);
             _chatHandler.RegisterCommand ("openFractionMenu", OpenFractionMenu);
-            _chatHandler.RegisterCommand("setFractionRank", async (player, args) => await SetFractionOwner(player,args));
+            _chatHandler.RegisterCommand("setFractionOwner", async (player, args) => await SetFractionOwner(player,args));
             _chatHandler.RegisterCommand("addEmployeeToFraction", async (player, args) => await AddEmployeeToFraction(player,args));
             _chatHandler.RegisterCommand("getAllVehicles", GetAllVehicles);
             _chatHandler.RegisterCommand("setAdminLevel", SetAdminLevel);
@@ -211,8 +217,8 @@ namespace AltVStrefaRPServer.Modules.Admin
                     await _notificationService.ShowErrorNotificationAsync(player, "Błąd", $"Podano zły numer postaci.", 5000);
                     return;
                 }
-                var character = CharacterManager.Instance.GetCharacter (characterId);
-                if (character == null)
+                var newOwner = CharacterManager.Instance.GetCharacter (characterId);
+                if (newOwner == null)
                 {
                     await _notificationService.ShowErrorNotificationAsync(player, "Błąd", $"Nie znaleziono postaci z takim id.", 5000);
                     return;
@@ -224,17 +230,19 @@ namespace AltVStrefaRPServer.Modules.Admin
                     return;
                 }
 
-                if (await _fractionHandler.SetFractionOwner(fractionId, character))
+                if (!_fractionsManager.TryToGetFraction(fractionId, out var fraction)) return;
+
+                if (await fraction.ForceFractionOwnerAsync(newOwner, _fractionDatabaseService))
                 {
                     await _notificationService.ShowSuccessNotificationAsync(player, "Aktualizacja właściciela", $"Pomyślnie zaktualizowano właściciela frakcji ID({fractionId}) " +
-                                                                                                      $"na ID({character.Id}) {character.GetFullName()}");
+                                                                                                      $"na ID({newOwner.Id}) {newOwner.GetFullName()}");
+                    AltAsync.Log($"[UPDATED FRACTION OWNER] ({sender.Id}) {sender.GetFullName()} updated fraction owner ID({fractionId}) to ID({newOwner.Id}) {newOwner.GetFullName()}");
                 }
                 else
                 {
                     await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie udało się zaktualizować właściciela biznesu.");
                 }
 
-                AltAsync.Log($"[UPDATED FRACTION OWNER] ({sender.Id}) {sender.GetFullName()} updated fraction owner ID({fractionId}) to ID({character.Id}) {character.GetFullName()}");
             }
             catch (Exception e)
             {

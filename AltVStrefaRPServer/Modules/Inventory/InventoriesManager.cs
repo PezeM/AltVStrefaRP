@@ -70,7 +70,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
 
         public bool TryToGetDroppedItem(int networkingEntityId, int droppedItemId, out DroppedItem droppedItem)
         {
-            droppedItem = default;
+            droppedItem = null;
             if (!_networkingManager.DoesNetworkingEntityExists(networkingEntityId)) return false;
             if (!TryToGetDroppedItem(droppedItemId, out droppedItem)) return false; 
             return true;

@@ -14,6 +14,16 @@ namespace AltVStrefaRPServer.Models.Fractions
         public ICollection<FractionPermission> Permissions { get; set; } = new List<FractionPermission>();
         public Fraction Fraction { get; set; }
 
+        private FractionRank(){}
+
+        public FractionRank(string rankName, RankType rankType, int rankPriority, List<FractionPermission> permissions)
+        {
+            RankName = rankName;
+            RankType = rankType;
+            Permissions = permissions;
+            SetPriority(rankPriority);
+        }
+
         public bool AddNewPermission(FractionPermission permission)
         {
             if (!Permissions.Any(p => p.Name == permission.Name))

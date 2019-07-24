@@ -296,7 +296,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
             }
         }
 
-        public async Task<bool> SetFractionOwner(int fractionId, Character newOwner)
+        public async Task<bool> SetFractionOwnerAsync(int fractionId, Character newOwner)
         {
             if (!_fractionsManager.TryToGetFraction(fractionId, out Fraction fraction)) return false;
             if (newOwner == null) return false;
