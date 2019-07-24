@@ -21,7 +21,14 @@ namespace AltVStrefaRPServer.Models.Fractions
             ServerEconomySettings.UpdateTaxes(VehicleTax, PropertyTax, GunTax, GlobalTax);
         }
 
-        public TownHallFraction(string name, string description, float money, Position position) : base(name, description, money, position) { }
+        public TownHallFraction(string name, string description, float money, Position position,
+            float vehicleTax, float propertyTax, float gunTax, float globalTax) : base(name, description, money, position)
+        {
+            SetGlobalTax(globalTax);
+            SetVehicleTax(vehicleTax);
+            SetPropertyTax(propertyTax);
+            SetGunTax(gunTax);
+        }
 
         public bool SetVehicleTax(float newTax)
         {

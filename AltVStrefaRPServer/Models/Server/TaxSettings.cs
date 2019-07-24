@@ -4,5 +4,6 @@
     {
         public float Max { get; set; }
         public float Min { get; set; }
+        public float Default { get; set; }
     }
 }

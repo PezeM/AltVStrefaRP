@@ -19,8 +19,8 @@ namespace AltVStrefaRPServer.Modules.Money
 
         public static bool SetVehicleTax(float newTax)
         {
-            if (newTax <= AppSettings.Current.ServerConfig.EconomySettings.VehicleTaxSettings.Max &&
-                newTax >= AppSettings.Current.ServerConfig.EconomySettings.VehicleTaxSettings.Min)
+            if (newTax <= AppSettings.Current.ServerConfig.EconomySettings.VehicleTax.Max &&
+                newTax >= AppSettings.Current.ServerConfig.EconomySettings.VehicleTax.Min)
             {
                 VehicleTax = newTax;
                 return true;

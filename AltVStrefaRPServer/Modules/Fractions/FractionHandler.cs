@@ -43,11 +43,11 @@ namespace AltVStrefaRPServer.Modules.Fractions
             AltAsync.On<IPlayer, int, int>("TryToDeleteFractionRank", async (player, fractionId, rankId) 
                 => await DeleteFractionRankEvent(player, fractionId, rankId));
             AltAsync.On<IPlayer, int, int, int>("UpdateFractionEmployeeRank", async (player, fractionId, employeeId, newRankId)
-                => await UpdateFractionEmployeeRankEvent(player, fractionId, employeeId, newRankId));
+                => await UpdateFractionEmployeeRankEventAsync(player, fractionId, employeeId, newRankId));
             AltAsync.On<IPlayer, int, string>("TryToAddNewFractionRank", async (player, fractionId, newRank) 
                 => await AddNewFractionRankEvent(player, fractionId, newRank));
             AltAsync.On<IPlayer, int, string>("TryToUpdateFractionRank", async(player, fractionId, updatedRank) 
-                => await UpdateFractionRankEvent(player, fractionId, updatedRank));
+                => await UpdateFractionRankEventAsync(player, fractionId, updatedRank));
         }
 
         public void OpenFractionMenu (Character character)
@@ -207,7 +207,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
             }
         }
 
-        public async Task UpdateFractionEmployeeRankEvent(IPlayer player, int fractionId, int employeeId, int newRankId)
+        public async Task UpdateFractionEmployeeRankEventAsync(IPlayer player, int fractionId, int employeeId, int newRankId)
         {
             if (!player.TryGetCharacter (out Character character)) return;
             if (!_fractionsManager.TryToGetFraction (fractionId, out Fraction fraction)) return;
@@ -263,7 +263,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
         }
 
         
-        private async Task UpdateFractionRankEvent(IPlayer player, int fractionId, string updatedRank)
+        private async Task UpdateFractionRankEventAsync(IPlayer player, int fractionId, string updatedRank)
         {
             if (!player.TryGetCharacter (out Character character)) return;
             if (!_fractionsManager.TryToGetFraction (fractionId, out Fraction fraction)) return;

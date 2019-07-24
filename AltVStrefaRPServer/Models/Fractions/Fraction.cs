@@ -207,14 +207,14 @@ namespace AltVStrefaRPServer.Models.Fractions
 
         public async Task<bool> UpdateRankAsync(Character updatingEmployee, UpdatedFractionRankDto updatedRank, IFractionDatabaseService fractionDatabaseService)
         {
-            var rank = GetRankById(updatedRank.Id);
-            if (rank == null || updatedRank.Permissions == null) return false;
+            var rankToUpdate = GetRankById(updatedRank.Id);
+            if (rankToUpdate == null || updatedRank.Permissions == null) return false;
             var updatingEmployeeRank = GetEmployeeRank(updatingEmployee);
-            if (updatingEmployeeRank == null || !updatingEmployeeRank.HasHigherPriority(rank)) return false;
+            if (updatingEmployeeRank == null || !updatingEmployeeRank.HasHigherPriority(rankToUpdate)) return false;
 
-            if (!rank.SetPriority(updatedRank.Priority)) return false;
-            rank.RankName = updatedRank.RankName;
-            foreach (var permission in rank.Permissions)
+            if (!rankToUpdate.SetPriority(updatedRank.Priority)) return false;
+            rankToUpdate.RankName = updatedRank.RankName;
+            foreach (var permission in rankToUpdate.Permissions)
             {
                 foreach (var updatedPermission in updatedRank.Permissions)
                 {

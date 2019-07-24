@@ -1,5 +1,6 @@
 ﻿using AltV.Net.Data;
 using AltVStrefaRPServer.Models.Fractions;
+using AltVStrefaRPServer.Models.Server;
 
 namespace AltVStrefaRPServer.Services.Fractions
 {
@@ -21,7 +22,9 @@ namespace AltVStrefaRPServer.Services.Fractions
 
         public TownHallFraction CreateDefaultTownHallFraction(IFractionDatabaseService fractionDatabaseService)
         {
-            var townHallFraction = new TownHallFraction("Urząd miasta", "Urząd miasta Los Santos", 10000.00f, new Position(100, 200, 300)); // Some random for now
+            var defaultTaxes = AppSettings.Current.ServerConfig.EconomySettings;
+            var townHallFraction = new TownHallFraction("Urząd miasta", "Urząd miasta Los Santos", 10000.00f, new Position(100, 200, 300), // Some random for now
+                defaultTaxes.VehicleTax.Default, defaultTaxes.PropertyTax.Default, defaultTaxes.GunTax.Default, defaultTaxes.GlobalTax.Default); 
             fractionDatabaseService.AddNewFraction(townHallFraction);
             return townHallFraction;
         }
