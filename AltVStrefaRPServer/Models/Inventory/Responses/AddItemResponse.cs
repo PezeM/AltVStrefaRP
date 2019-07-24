@@ -6,7 +6,7 @@ namespace AltVStrefaRPServer.Models.Inventory.Responses
     {
         public bool AddedNewItem { get; set; }
         public int ItemsAddedCount { get; set; }
-        public List<InventoryItem> NewItems { get; internal set; }
+        public List<InventoryItem> NewItems { get; set; }
 
         public AddItemResponse(int itemsAddedCount = 0, bool addedNewItem = false)
         {

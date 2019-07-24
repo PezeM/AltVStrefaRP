@@ -118,7 +118,8 @@ namespace AltVStrefaRPServer.Modules.Networking
             if (quantity <= 0)
             {
                 _entities.TryRemove(networkingEntity.Id, out _);
-                AltNetworking.RemoveEntity(networkingEntity);
+                networkingEntity.Remove();
+                //AltNetworking.RemoveEntity(networkingEntity);
             }
             else
             {

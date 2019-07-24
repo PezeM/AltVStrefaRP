@@ -138,7 +138,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
             // Make it possible to decrease dropped item quantity - also decrease networking entity count
             if (!player.TryGetCharacter(out var character)) return;
             if (!_inventoriesManager.TryToGetDroppedItem(networkItemId, droppedItemId, out var droppedItem)) return;
-            var response = await character.Inventory.AddItemAsync(droppedItem.Item, droppedItem.Count, _inventoryDatabaseService);
+            var response = await character.Inventory.AddItemAsync(droppedItem.Item, droppedItem.Count, _inventoryDatabaseService, player);
             if (!response.AnyChangesMade)
             {
                 await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie udało się podnieść przedmiotu");

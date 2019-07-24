@@ -126,7 +126,8 @@ namespace AltVStrefaRPServer.Models.Inventory
 
         public async Task<AddItemResponse> AddItemAsync(BaseItem itemToAdd, int amount, IInventoryDatabaseService inventoryDatabaseService, IPlayer player = null)
         {
-            var response = new AddItemResponse();
+            var response = new AddItemResponse(0, false);
+
             while (amount > 0)
             {
                 if (TryToGetInventoryItemWithoutFullStack(itemToAdd, out var item))
