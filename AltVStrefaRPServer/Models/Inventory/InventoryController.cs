@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AltV.Net.Async;
 using AltV.Net.Data;
+using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Models.Interfaces.Inventory;
 using AltVStrefaRPServer.Models.Interfaces.Items;
 using AltVStrefaRPServer.Models.Inventory.Items;
 using AltVStrefaRPServer.Models.Inventory.Responses;
 using AltVStrefaRPServer.Modules.Inventory;
 using AltVStrefaRPServer.Services.Inventory;
+using Newtonsoft.Json;
 
 namespace AltVStrefaRPServer.Models.Inventory
 {
@@ -121,42 +124,57 @@ namespace AltVStrefaRPServer.Models.Inventory
             return InventoryRemoveResponse.ItemRemoved;
         }
 
-        public async Task<AddItemResponse> AddItemAsync(BaseItem itemToAdd, int amount, IInventoryDatabaseService inventoryDatabaseService)
+        public async Task<AddItemResponse> AddItemAsync(BaseItem itemToAdd, int amount, IInventoryDatabaseService inventoryDatabaseService, IPlayer player = null)
         {
-            int added = 0;
-            bool newItemAdded = false;
+            var response = new AddItemResponse();
             while (amount > 0)
             {
                 if (TryToGetInventoryItemWithoutFullStack(itemToAdd, out var item))
                 {
-                    int maxQuantity = itemToAdd.StackSize - item.Quantity;
-                    int toAdd = Math.Min(amount, maxQuantity);
+                    int toAdd = NumberOfItemsToAdd(itemToAdd, amount, item);
                     item.AddToQuantity(toAdd);
-                    added += toAdd;
-                    amount -= added;
+                    response.ItemsAddedCount += toAdd;
+                    amount -= toAdd;
+                    // Update item quantity
+                    if (player != null)
+                    {
+                        player.EmitLocked("updateInventoryItemQuantity", item.Id, item.Quantity);
+                    }
                 }
                 else
                 {
-                    if (!HasEmptySlots()) return AddItemResponse.InventoryFull;
+                    if (!HasEmptySlots()) return response;
+
                     int toAdd = Math.Min(amount, itemToAdd.StackSize);
-                    if (newItemAdded)
+
+                    if (response.AddedNewItem)
                     {
                         var newBaseItem = BaseItem.ShallowClone(itemToAdd);
-                        _items.Add(new InventoryItem(newBaseItem, toAdd, GetFreeSlot()));
+                        var newInventoryItem = new InventoryItem(newBaseItem, toAdd, GetFreeSlot());
+                        response.NewItems.Add(newInventoryItem);
+                        _items.Add(newInventoryItem);
                     }
                     else
                     {
-                        _items.Add(new InventoryItem(itemToAdd, toAdd, GetFreeSlot()));
+                        var newInventoryItem = new InventoryItem(itemToAdd, toAdd, GetFreeSlot());
+                        response.NewItems.Add(newInventoryItem);
+                        _items.Add(newInventoryItem);
                     }
+
                     amount -= toAdd;
-                    newItemAdded = true;
+                    response.ItemsAddedCount += toAdd;
+                    response.AddedNewItem = true;
                 }
             }
-            if (newItemAdded)
+            if (response.AddedNewItem)
             {
                 await inventoryDatabaseService.UpdateInventoryAsync(this);
+                if (player != null)
+                {
+                    player.EmitLocked("inventoryAddNewItem", JsonConvert.SerializeObject(response.NewItems));
+                }
             }
-            return AddItemResponse.ItemsAdded;
+            return response;
         }
 
         public bool HasItem(int id, out InventoryItem item)
@@ -215,6 +233,13 @@ namespace AltVStrefaRPServer.Models.Inventory
                 }    
             }
             return Enumerable.First(freeSlots);
+        }
+
+        private int NumberOfItemsToAdd(BaseItem itemToAdd, int amount, InventoryItem item)
+        {
+            int maxQuantity = itemToAdd.StackSize - item.Quantity;
+            int toAdd = Math.Min(amount, maxQuantity);
+            return toAdd;
         }
 
         private void Test()

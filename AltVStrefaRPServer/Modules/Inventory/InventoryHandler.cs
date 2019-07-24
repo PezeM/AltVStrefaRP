@@ -1,9 +1,7 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using AltV.Net;
 using AltV.Net.Async;
-using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Helpers;
@@ -11,8 +9,8 @@ using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Models.Inventory.Responses;
 using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Inventory;
-using Microsoft.AspNetCore.Mvc.Formatters.Internal;
 using Newtonsoft.Json;
+using Position = AltV.Net.Data.Position;
 
 namespace AltVStrefaRPServer.Modules.Inventory
 {
@@ -34,6 +32,8 @@ namespace AltVStrefaRPServer.Modules.Inventory
             Alt.On<IPlayer>("GetPlayerInventory", GetPlayerInventory);
             AltAsync.On<IPlayer, int, int>("InventoryDropItem", async (player, id, amount) => await InventoryDropItemAsync(player, id, amount));
             AltAsync.On<IPlayer, int, int>("InventoryRemoveItem", async (player, id, amount) => await InventoryRemoveItemAsync(player, id, amount));
+            AltAsync.On<IPlayer, int, int>("PickupDroppedItem", async (player, networkItemId, droppedItemId) 
+                => await PickupDroppedItemAsync(player, networkItemId, droppedItemId));
         }
 
         private void GetPlayerInventory(IPlayer player)
@@ -126,6 +126,25 @@ namespace AltVStrefaRPServer.Modules.Inventory
                     await _notificationService.ShowSuccessNotificationAsync(player, "Usunięto przedmiot", "Pomyślnie usunięto przedmiot.");
                     break;
             }
+        }
+
+        private async Task PickupDroppedItemAsync(IPlayer player, int networkItemId, int droppedItemId)
+        {
+            // Check if networking entity exists and there is dropped item with given id
+            // Add items to inventory
+            // If items were added to inventory remove them from dropped item list and remove networking entity
+
+            // Make it possible to take only few quantity of item till full inventory.
+            // Make it possible to decrease dropped item quantity - also decrease networking entity count
+            if (!player.TryGetCharacter(out var character)) return;
+            if (!_inventoriesManager.TryToGetDroppedItem(networkItemId, droppedItemId, out var droppedItem)) return;
+            var response = await character.Inventory.AddItemAsync(droppedItem.Item, droppedItem.Count, _inventoryDatabaseService);
+            if (!response.AnyChangesMade)
+            {
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie udało się podnieść przedmiotu");
+                return;
+            }
+            await _inventoriesManager.RemoveDroppedItemAsync(droppedItem, networkItemId, response.ItemsAddedCount);
         }
     }
 }

@@ -18,14 +18,14 @@ namespace AltVStrefaRPServer.Modules.Networking
 {
     public class NetworkingManager
     {
-        public ConcurrentDictionary<ulong, INetworkingEntity> Entities { get; set; }
+        private ConcurrentDictionary<ulong, INetworkingEntity> _entities;
         private Random _rng;
         private Timer _testTimer;
         
         public NetworkingManager(AppSettings appSettings)
         {
             _rng = new Random();
-            Entities = new ConcurrentDictionary<ulong, INetworkingEntity>();
+            _entities = new ConcurrentDictionary<ulong, INetworkingEntity>();
             AltNetworking.Configure(options =>
             {
                 options.Port = appSettings.ServerConfig.NetworkingManagerConfig.Port;
@@ -40,6 +40,13 @@ namespace AltVStrefaRPServer.Modules.Networking
             CreateRandomPeds();
         }
 
+        public bool TryToGetNetworkingEntity(int networkignEntityId, out INetworkingEntity networkingEntity) 
+            => _entities.TryGetValue((ulong)networkignEntityId, out networkingEntity);
+
+        public bool DoesNetworkingEntityExists(int networkingEntityId) => _entities.ContainsKey((ulong)networkingEntityId);
+
+        public bool RemoveNetworkingEntity(int networkingItemId) => _entities.TryRemove((ulong)networkingItemId, out _);
+
         public INetworkingEntity AddNewDroppedItem(DroppedItem droppedItem, int streamingRange = 50, int dimension = 0)
         {
             var networkingEntity = AltNetworking.CreateEntity(new Position {X = droppedItem.X, Y = droppedItem.Y, Z = droppedItem.Z}, 
@@ -51,7 +58,7 @@ namespace AltVStrefaRPServer.Modules.Networking
                     { "count", droppedItem.Count },
                     { "model", droppedItem.Model }
                 });
-            Entities.TryAdd(networkingEntity.Id, networkingEntity);
+            _entities.TryAdd(networkingEntity.Id, networkingEntity);
             return networkingEntity;
         }
 
@@ -88,7 +95,7 @@ namespace AltVStrefaRPServer.Modules.Networking
                 var randomPosition = GenerateRandomPosition(player.Position);
                 var newEntity = AltNetworking.CreateEntity(new Position { X = player.Position.X, Y = player.Position.Y, Z = player.Position.Z, }, 
                     0, _rng.Next(100, 150), GetRandomItemData());
-                Entities.TryAdd(newEntity.Id, newEntity);
+                _entities.TryAdd(newEntity.Id, newEntity);
                 Alt.Log($"Created entity {newEntity.Id} dim {newEntity.Dimension} on thread {Thread.CurrentThread.ManagedThreadId}");
                 //if (Entities.Count >= 5)
                 //{
@@ -100,6 +107,22 @@ namespace AltVStrefaRPServer.Modules.Networking
             {
                 Console.WriteLine(exception);
                 throw;
+            }
+        }
+
+        public void DescreaseDroppedItemQuantity(int networkingItemId, int itemsToRemove)
+        {
+            if (!TryToGetNetworkingEntity(networkingItemId, out var networkingEntity)) return;
+            if (!networkingEntity.GetData("count", out long quantity)) return;
+            quantity -= itemsToRemove;
+            if (quantity <= 0)
+            {
+                _entities.TryRemove(networkingEntity.Id, out _);
+                AltNetworking.RemoveEntity(networkingEntity);
+            }
+            else
+            {
+                networkingEntity.SetData("count", quantity);
             }
         }
 

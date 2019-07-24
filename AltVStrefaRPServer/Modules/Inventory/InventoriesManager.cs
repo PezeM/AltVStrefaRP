@@ -1,7 +1,9 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AltV.Net;
+using AltV.Net.NetworkingEntity.Elements.Entities;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Modules.Networking;
@@ -50,6 +52,9 @@ namespace AltVStrefaRPServer.Modules.Inventory
 
         public IEnumerable<DroppedItem> GetAllDroppedItems() => _droppedItems.Values;
 
+        public bool TryToGetDroppedItem(int droppedItemId, out DroppedItem droppedItem)
+            => _droppedItems.TryGetValue(droppedItemId, out droppedItem);
+
         public async Task<bool> AddDroppedItemAsync(DroppedItem droppedItem)
         {
             await _inventoryDatabaseService.AddDroppedItemAsync(droppedItem);
@@ -60,6 +65,28 @@ namespace AltVStrefaRPServer.Modules.Inventory
                 return false; 
             }
             _networkingManager.AddNewDroppedItem(droppedItem);
+            return true;
+        }
+
+        public bool TryToGetDroppedItem(int networkingEntityId, int droppedItemId, out DroppedItem droppedItem)
+        {
+            droppedItem = default;
+            if (!_networkingManager.DoesNetworkingEntityExists(networkingEntityId)) return false;
+            if (!TryToGetDroppedItem(droppedItemId, out droppedItem)) return false; 
+            return true;
+        }
+
+        public async Task<bool> RemoveDroppedItemAsync(DroppedItem droppedItem, int networkingItemId, int itemsAddedCount)
+        {
+            if (!_droppedItems.ContainsKey(droppedItem.Id)) return false;
+            droppedItem.Count -= itemsAddedCount;
+            _networkingManager.DescreaseDroppedItemQuantity(networkingItemId, itemsAddedCount);
+            if (droppedItem.Count <= 0)
+            {
+                if (!_droppedItems.TryRemove(droppedItem.Id, out _)) return false;
+                await _inventoryDatabaseService.RemoveItemAsync(droppedItem);
+            }
+
             return true;
         }
     }
