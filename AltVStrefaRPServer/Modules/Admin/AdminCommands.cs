@@ -24,7 +24,9 @@ using AltVStrefaRPServer.Services.Fractions;
 using AltVStrefaRPServer.Services.Inventory;
 using AltVStrefaRPServer.Services.Money;
 using AltVStrefaRPServer.Services.Vehicles;
+using net.vieapps.Components.Utility;
 using Newtonsoft.Json;
+using VehicleModel = AltV.Net.Enums.VehicleModel;
 
 namespace AltVStrefaRPServer.Modules.Admin
 {
@@ -371,6 +373,12 @@ namespace AltVStrefaRPServer.Modules.Admin
             if (args == null || args.Length < 1 || !player.TryGetCharacter (out Character character)) return;
             if (character.Account.AdminLevel < AdminLevel.Admin) return;
             var model = args[0];
+            var containsEnum = Enum.GetNames(typeof(VehicleModel)).Contains(model.GetCapitalizedFirstLetter());
+            if (!containsEnum)
+            {
+                _notificationService.ShowErrorNotification(player, "Zła nazwa pojazdu.", $"Nie można stworzyć pojazdu z nazwa {model}");
+                return;
+            }
 
             var vehicle = _vehiclesManager.CreateVehicle (model, PositionHelper.GetPositionInFrontOf (player.Position, player.HeadRotation.Roll, 4f),
                 player.Rotation, player.Dimension, character.Id, OwnerType.Character);
