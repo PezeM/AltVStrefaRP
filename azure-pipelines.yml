@@ -13,13 +13,8 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-- script: dotnet restore
-- task: DotNetCoreCLI@2
-  displayName: 'dotnet build $(buildConfiguration)'
-  inputs:
-    command: build
-    projects: '**/*.csproj'
-    arguments: '--configuration ${buildConfiguration}'
+- script: dotnet build --configuration $(buildConfiguration)
+  displayName: 'Building application'
 - task: DotNetCoreCLI@2
   displayName: 'Running tests'
   inputs:
