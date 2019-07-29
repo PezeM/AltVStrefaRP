@@ -2,8 +2,9 @@
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Services.Money.Bank;
 using NUnit.Framework;
+using StrefaRPServer.UnitTests.Core;
 
-namespace StrefaRPServer.UnitTests
+namespace StrefaRPServer.UnitTests.Modules.Money
 {
     [TestFixture]
     public class BankAccountDatabaseServiceTest : ServerContextTestBase
@@ -28,7 +29,7 @@ namespace StrefaRPServer.UnitTests
         }
         
         [Test]
-        public void Test()
+        public void BasicTest()
         {
             var bankAccountDatabase = new BankAccountDatabaseService(_mockFactory.Object);
             var result = bankAccountDatabase.GetAllBankAccounts();

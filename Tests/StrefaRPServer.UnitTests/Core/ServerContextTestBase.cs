@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
 
-namespace StrefaRPServer.UnitTests
+namespace StrefaRPServer.UnitTests.Core
 {
     [TestFixture]
     public abstract class ServerContextTestBase
