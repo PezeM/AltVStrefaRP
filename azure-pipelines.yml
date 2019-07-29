@@ -15,15 +15,7 @@ variables:
 steps:
 - script: dotnet restore
   displayName: 'Restoring packages'
-- task: DotNetCoreCLI@2
+- script: dotnet build --configuration $(buildConfiguration)
   displayName: 'Building application'
-  inputs:
-    command: build
-    projects: '**/*.csproj'
-    arguments: '--configuration ${buildConfiguration}'
-- task: DotNetCoreCLI@2
+- script: dotnet test --configuration $(buildConfiguration)
   displayName: 'Running tests'
-  inputs:
-    command: test
-    projects: '**/*Tests/*.csproj'
-    arguments: '--configuration $(buildConfiguration) --collect "Code coverage"'
