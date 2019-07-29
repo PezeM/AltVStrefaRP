@@ -4,7 +4,7 @@
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <SignAssembly>false</SignAssembly>
-    <Configurations>Debug;Release;Publish</Configurations>
+    <Configurations>Debug;Release</Configurations>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AssemblyName>AltVStrefaRPServer</AssemblyName>
     <RootNamespace>AltVStrefaRPServer</RootNamespace>
@@ -23,6 +23,10 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <OutputPath>E:\AltVServer\windows\resources\AltVStrefaRPServer\</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Publish|AnyCPU'">
+    <Optimize>true</Optimize>
   </PropertyGroup>
 
   <ItemGroup>
