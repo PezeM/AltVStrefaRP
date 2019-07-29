@@ -34,7 +34,7 @@ namespace AltVStrefaRPServer
         protected Startup Startup;
         public override void OnStart ()
         {
-            Alt.Server.LogInfo ("Starting AltVTestResource...");
+            Alt.Server.LogInfo ("Starting StrefaRP...");
 
             AltAsync.OnConsoleCommand += OnConsoleCommand;
             AltAsync.OnPlayerEnterVehicle += OnPlayerEnterVehicleAsync;

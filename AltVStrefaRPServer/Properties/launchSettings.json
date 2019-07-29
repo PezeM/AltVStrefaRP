@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "AltVTestResource": {
+    "AltVStrefaRPServer": {
       "commandName": "Executable",
       "executablePath": "E:\\AltVServer\\windows\\altv-server.exe",
       "workingDirectory": "E:\\AltVServer\\windows"
