@@ -65,7 +65,7 @@ namespace AltVStrefaRPServer.Models.Fractions
         public float PriceAfterTax(float amount, float taxPercentage)
         {
             var tax = (float)Math.Round(amount * taxPercentage);
-            Money += tax;
+            AddMoney(tax);
             Taxes.Add(tax);
             return amount + tax;
         }

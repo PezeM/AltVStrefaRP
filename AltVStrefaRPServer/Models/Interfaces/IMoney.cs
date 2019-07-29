@@ -2,7 +2,9 @@
 {
     public interface IMoney
     {
-        float Money { get; set; }
+        float Money { get; }
+        void AddMoney(float amount);
+        bool RemoveMoney(float amount);
         string MoneyTransactionDisplayName();
     }
 }

@@ -101,7 +101,7 @@ namespace AltVStrefaRPServer.Modules.Money
             if (!player.TryGetCharacter(out Character character)) return;
             if (character.BankAccount == null) return;
 
-            if(await _moneyService.TransferMoneyFromEntityToEntity(character.BankAccount, character, money, TransactionType.BankWithdraw))
+            if(await _moneyService.TransferMoneyFromEntityToEntityAsync(character.BankAccount, character, money, TransactionType.BankWithdraw))
             {
                 AltAsync.Log($"{character.Id} withdraw {money}$ from his bank account.");
                 await player.EmitAsync("updateBankMoneyWithNotification",
@@ -119,7 +119,7 @@ namespace AltVStrefaRPServer.Modules.Money
             if (!player.TryGetCharacter(out Character character)) return;
             if (character.BankAccount == null) return;
 
-            if (await _moneyService.TransferMoneyFromEntityToEntity(character, character.BankAccount, money, TransactionType.BankDeposit))
+            if (await _moneyService.TransferMoneyFromEntityToEntityAsync(character, character.BankAccount, money, TransactionType.BankDeposit))
             {
                 AltAsync.Log($"{character.Id} deposited {money}$ to his bank account.");
                 await player.EmitAsync("updateBankMoneyWithNotification",
@@ -136,36 +136,20 @@ namespace AltVStrefaRPServer.Modules.Money
         {
             if (!player.TryGetCharacter(out Character character)) return;
             if (character.BankAccount == null) return;
-            if (!_bankAccountManager.TryToGetBankAccountByNumber(receiver, out BankAccount receiverBankAccount))
+            if (!_bankAccountManager.TryGetBankAccountByNumber(receiver, out BankAccount receiverBankAccount))
             {
                 await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Podano błędy numer konta bankowego.").ConfigureAwait(false);
                 return;
             }
 
-            if (await _moneyService.TransferMoneyFromEntityToEntity(character.BankAccount, receiverBankAccount, money, TransactionType.BankTransfer))
+            if (await _moneyService.TransferMoneyFromEntityToEntityAsync(character.BankAccount, receiverBankAccount, money, TransactionType.BankTransfer))
             {
-                var receiverCharacter = CharacterManager.Instance.GetCharacterByBankAccount(receiverBankAccount.Id);
-
-                // Receiver character is currently offline so don't send any notification to him
-                if (receiverCharacter == null)
-                {
-                    AltAsync.Log($"{character.Id} transfered {money} from his bank account to {receiverBankAccount} account.");
-                    await player.EmitAsync("updateBankMoneyWithNotification",
-                        $"Pomyślnie przesłano {money}$ na konto o numerze {receiverBankAccount}. <br>" +
-                        $"Twój aktualny stan konta wynosi {character.BankAccount.Money}$.",
-                        character.BankAccount.Money).ConfigureAwait(false);
-                }
-                else
-                {
-                    AltAsync.Log($"{character.Id} transfered {money} from his bank account to {receiverBankAccount} account.");
-                    await player.EmitAsync("updateBankMoneyWithNotification",
-                        $"Pomyślnie przesłano {money}$ na konto o numerze {receiverBankAccount}. <br>" +
-                        $"Twój aktualny stan konta wynosi {character.BankAccount.Money}$.",
-                        character.BankAccount.Money).ConfigureAwait(false);
-                    await _notificationService.ShowSuccessNotificationAsync(receiverCharacter.Player, "Otrzymano przelew!",
-                        $"Właśnie otrzymałeś przelew od {character.GetFullName()} w wysokości {money}. <br>" +
-                        $"Twój aktualny stan konta wynosi {receiverBankAccount.Money}$.",7000);
-                }
+                receiverBankAccount.NotifyOnMoneyTransfer(character, money, _notificationService);
+                await player.EmitAsync("updateBankMoneyWithNotification",
+                    $"Pomyślnie przesłano {money}$ na konto o numerze {receiverBankAccount}. <br>" +
+                    $"Twój aktualny stan konta wynosi {character.BankAccount.Money}$.",
+                    character.BankAccount.Money).ConfigureAwait(false);
+                AltAsync.Log($"{character.Id} transfered {money} from his bank account to {receiverBankAccount} account.");
             }
             else
             {

@@ -1,17 +1,16 @@
 ﻿using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using System;
-using System.ComponentModel.DataAnnotations.Schema;
+using AltVStrefaRPServer.Data;
 using AltVStrefaRPServer.Models.Businesses;
+using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Fractions;
 using AltVStrefaRPServer.Models.Inventory;
 
 namespace AltVStrefaRPServer.Models
 {
-    public class Character : IMoney, IOnMoneyChange, IPosition
+    public class Character : IMoney, IPosition
     {
-        private float _money;
-
         public int Id { get; set; }
         public int AccountId { get; set; }
         public Account Account { get; set; }
@@ -31,19 +30,8 @@ namespace AltVStrefaRPServer.Models
         public string LastName { get; set; }
         public int Age { get; set; }
 
-        /// <summary>
-        /// 0 is male, 1 is female
-        /// </summary>
-        public int Gender { get; set; }
-        public float Money
-        {
-            get { return _money; }
-            set
-            {
-                _money = value;
-                if(UpdateOnMoneyChange) OnMoneyChange();
-            }
-        }
+        public Gender Gender { get; set; }
+        public float Money { get; private set; }
 
         public DateTime CreationDate { get; set; }
         public DateTime LastPlayed { get; set; }
@@ -58,9 +46,6 @@ namespace AltVStrefaRPServer.Models
         public int? CurrentFractionId { get; set; }
         public Fraction Fraction { get; set; }
         public int FractionRank { get; set; }
-
-        [NotMapped]
-        public bool UpdateOnMoneyChange { get; set; } = true;
 
         public string GetFullName()
         {
@@ -79,11 +64,20 @@ namespace AltVStrefaRPServer.Models
             return new Position(X, Y, Z);
         }
 
-        public string MoneyTransactionDisplayName() => GetFullName();
-
-        public void OnMoneyChange()
+        public void AddMoney(float amount)
         {
-            Player?.SetSyncedMetaData("money", Money);
+            Money += amount;
+            Player?.SetSyncedMetaData(MetaData.PLAYER_MONEY, Money);
         }
+
+        public bool RemoveMoney(float amount)
+        {
+            if (Money < amount) return false;
+            Money -= amount;
+            Player?.SetSyncedMetaData(MetaData.PLAYER_MONEY, Money);
+            return true;
+        }
+
+        public string MoneyTransactionDisplayName() => GetFullName();
     }
 }

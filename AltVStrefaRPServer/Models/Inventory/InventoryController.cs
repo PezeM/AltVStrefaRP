@@ -16,10 +16,10 @@ namespace AltVStrefaRPServer.Models.Inventory
 {
     public class InventoryController : IInventory
     {
-        public int Id { get; set; }
-        public int MaxSlots { get; set; } = 30;
-        public Character Owner { get; set; }
-        public int OwnerId { get; set; }
+        public int Id { get; private set; }
+        public int MaxSlots { get; private set; } = 30;
+        public Character Owner { get; private set; }
+        public int OwnerId { get; private set; }
 
         public IReadOnlyCollection<InventoryItem> Items => _items;
         private List<InventoryItem> _items;

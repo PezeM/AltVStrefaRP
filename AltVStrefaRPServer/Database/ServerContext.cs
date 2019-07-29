@@ -1,6 +1,5 @@
 ﻿using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Businesses;
-using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Fractions;
 using AltVStrefaRPServer.Models.Fractions.Permissions;
 using AltVStrefaRPServer.Models.Interfaces.Items;
@@ -91,8 +90,8 @@ namespace AltVStrefaRPServer.Database
                 .HasForeignKey<BankAccount>(b => b.CharacterId);
 
             modelBuilder.Entity<Character>()
-                .Property(p => p.Money)
-                .HasField("_money");
+                .Property(c => c.Gender)
+                .HasConversion<int>();
 
             modelBuilder.Entity<Character>()
                 .HasOne<Business>(c => c.Business)

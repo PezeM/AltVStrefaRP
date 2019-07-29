@@ -66,7 +66,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
                 return;
             }
 
-            if (!await _moneyService.TransferMoneyFromBankAccountToEntity(character, shop, vehicleToBuy.Price, TransactionType.VehicleBuy))
+            if (!await _moneyService.TransferMoneyFromBankAccountToEntityAsync(character, shop, vehicleToBuy.Price, TransactionType.VehicleBuy))
             {
                 await _notificationService.ShowErrorNotificationAsync(player, 
                     "Błąd!", $"Nie posiadasz {vehicleToBuy.Price}$ aby zakupić ten pojazd.", 6000);

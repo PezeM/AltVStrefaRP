@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models;
+using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Models.Server;
 using Microsoft.EntityFrameworkCore;
@@ -36,17 +37,19 @@ namespace AltVStrefaRPServer.Services.Characters.Customization
         }
 
         public Character CreateNewCharacter(int accountId, string firstName, string lastName, int age, int gender)
+            => CreateNewDefaultCharacter(accountId, firstName, lastName, age, gender);
+
+        private Character CreateNewDefaultCharacter(int accountId, string firstName, string lastName, int age, int gender)
         {
-            return new Character
+            var newCharacter = new Character
             {
                 FirstName = firstName,
                 LastName = lastName,
                 AccountId = accountId,
                 BankAccount = null,
                 Age = age,
-                Money = AppSettings.Current.ServerConfig.StartingMoney,
                 Inventory = new InventoryController(50),
-                Gender = gender,
+                Gender = (Gender)gender,
                 Dimension = 0,
                 X = AppSettings.Current.ServerConfig.SpawnPosition.X,
                 Y = AppSettings.Current.ServerConfig.SpawnPosition.Y,
@@ -61,6 +64,9 @@ namespace AltVStrefaRPServer.Services.Characters.Customization
                 IsBanned = false,
                 IsMuted = true,
             };
-        }
+            newCharacter.AddMoney(AppSettings.Current.ServerConfig.StartingPlayerMoney);
+
+            return newCharacter;
+        } 
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
@@ -16,8 +15,7 @@ namespace AltVStrefaRPServer.Models.Businesses
         public float X { get; set; }
         public float Y { get; set; }
         public float Z { get; set; }
-
-        public float Money { get; set; }
+        public float Money { get; private set; }
 
         public virtual int MaxMembersCount { get; set; } = 20;
         public virtual int MaxRanksCount { get; set; } = 5;
@@ -32,9 +30,6 @@ namespace AltVStrefaRPServer.Models.Businesses
         public virtual int BlipSprite { get; protected set; }
         public virtual int BlipColor { get; protected set; }
         public virtual IBlip Blip { get; set; }
-
-        [NotMapped]
-        public bool UpdateOnMoneyChange => false;
 
         public Position GetPosition()
         {
@@ -157,5 +152,19 @@ namespace AltVStrefaRPServer.Models.Businesses
         }
 
         public string MoneyTransactionDisplayName() => $"Business {Id}";
+
+        public void AddMoney(float amount)
+        {
+            // MAYBE TODO: Add owner property as character and send him notification on transaction
+            // Some inner transaction list or use the global one
+            Money += amount;
+        }
+
+        public bool RemoveMoney(float amount)
+        {
+            if (Money < amount) return false;
+            Money -= amount;
+            return true;
+        }
     }
 }
