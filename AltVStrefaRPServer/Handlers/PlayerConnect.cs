@@ -94,10 +94,9 @@ namespace AltVStrefaRPServer.Handlers
                 }
 
                 //await _loginService.CreateNewAccountAndSaveAsync(login, password).ConfigureAwait(false);
-                //await player.EmitAsync("successfullyRegistered");
                 await Task.WhenAll(_accountDatabaseService.CreateNewAccountAndSaveAsync(login, _loginService.GeneratePassword(password)));
                 await player.EmitAsync("successfullyRegistered");
-                AltAsync.Log($"Registered account in {Time.GetTimestampMs() - startTime}ms");
+                AltAsync.Log($"Registered new account with login {login} in {Time.GetTimestampMs() - startTime}ms");
             }
             catch (Exception e)
             {
@@ -114,7 +113,6 @@ namespace AltVStrefaRPServer.Handlers
 
                 if (login.IsNullOrEmpty() || password.IsNullOrEmpty())
                 {
-                    Alt.Log($"Wrong data in try auth async");
                     await player.EmitAsync("showLoginError", "Uzupełnij wszystkie pola.");
                     return;
                 }

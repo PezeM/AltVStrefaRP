@@ -43,7 +43,7 @@ namespace AltVStrefaRPServer.Modules.CharacterModule.Customization
             await _characterCreatorService.SaveNewCharacter(character).ConfigureAwait(false);
             if (CharacterManager.Instance.IntializeCharacter(player, character))
             {
-                player.Emit("CharacterCreatedSuccessfully");
+                await player.EmitAsync("CharacterCreatedSuccessfully");
             }
             else
             {
