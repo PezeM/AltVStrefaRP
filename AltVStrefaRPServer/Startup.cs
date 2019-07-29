@@ -105,7 +105,7 @@ namespace AltVStrefaRPServer
             services.AddSingleton<HashingService>();
             services.AddSingleton<IVehiclesManager, VehiclesManager>();
             services.AddSingleton<BankHandler>();
-            services.AddSingleton<BankAccountManager>();
+            services.AddSingleton<IBankAccountManager, BankAccountManager>();
             services.AddSingleton<IBusinessesManager, BusinessesManager>();
             services.AddSingleton<BusinessHandler>();
             services.AddSingleton<TemporaryChatHandler>();
@@ -113,8 +113,9 @@ namespace AltVStrefaRPServer
             services.AddSingleton<VehicleShopsManager>();
             services.AddSingleton<IFractionsManager, FractionsManager>();
             services.AddSingleton<FractionHandler>();
-            services.AddSingleton<InventoriesManager>();
+            services.AddSingleton<IInventoriesManager, InventoriesManager>();
             services.AddSingleton<InventoryHandler>();
+            services.AddSingleton<INetworkingManager, NetworkingManager>();
 
             services.AddTransient<AdminCommands>();
             services.AddTransient<CharacterCreator>();
@@ -125,7 +126,6 @@ namespace AltVStrefaRPServer
             services.AddTransient<ItemFactory>();
 
             services.AddSingleton<SerializatorTest>();
-            services.AddSingleton<NetworkingManager>();
 
             // Build provider
             ServiceProvider = services.BuildServiceProvider();

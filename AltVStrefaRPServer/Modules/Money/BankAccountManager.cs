@@ -4,15 +4,16 @@ using System.Linq;
 using AltV.Net;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
+using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Services.Money.Bank;
 
 namespace AltVStrefaRPServer.Modules.Money
 {
-    public class BankAccountManager
+    public class BankAccountManager : IBankAccountManager
     {
         private ConcurrentDictionary<int, BankAccount> _bankAccounts;
         private readonly IBankAccountDatabaseService _bankAccountDatabaseService;
-        private static Random _rng = new Random();
+        private static readonly Random _rng = new Random();
 
         public BankAccountManager(IBankAccountDatabaseService bankAccountDatabaseService)
         {
@@ -22,17 +23,7 @@ namespace AltVStrefaRPServer.Modules.Money
             LoadBankAccountsFromDatabase();
         }
 
-        private void LoadBankAccountsFromDatabase()
-        {
-            var startTime = Time.GetTimestampMs();
-            foreach (var bankAccount in _bankAccountDatabaseService.GetAllBankAccounts())
-            {
-                _bankAccounts.TryAdd(bankAccount.AccountNumber, bankAccount);
-            }
-            Alt.Log($"Loaded {_bankAccounts.Count} bank accounts from databse in {Time.GetTimestampMs() - startTime}ms.");
-        }
-
-        public BankAccount GetBankAccountById(int bankAccountId) 
+        public BankAccount GetBankAccountById(int bankAccountId)
             => _bankAccounts.Values.FirstOrDefault(b => b.Id == bankAccountId);
 
         public bool TryToGetBankAccountByNumber(int bankAccountNumber, out BankAccount bankAccount)
@@ -41,7 +32,7 @@ namespace AltVStrefaRPServer.Modules.Money
         public BankAccount GetBankAccountByCharacterId(int characterId)
             => _bankAccounts.Values.FirstOrDefault(b => b.CharacterId == characterId);
 
-        public bool AddNewBankAccount(BankAccount bankAccount) 
+        public bool AddNewBankAccount(BankAccount bankAccount)
             => _bankAccounts.TryAdd(bankAccount.AccountNumber, bankAccount);
 
         /// <summary>
@@ -59,6 +50,16 @@ namespace AltVStrefaRPServer.Modules.Money
                 } while (_bankAccounts.ContainsKey(accountNumber));
                 return accountNumber;
             }
+        }
+
+        private void LoadBankAccountsFromDatabase()
+        {
+            var startTime = Time.GetTimestampMs();
+            foreach (var bankAccount in _bankAccountDatabaseService.GetAllBankAccounts())
+            {
+                _bankAccounts.TryAdd(bankAccount.AccountNumber, bankAccount);
+            }
+            Alt.Log($"Loaded {_bankAccounts.Count} bank accounts from databse in {Time.GetTimestampMs() - startTime}ms.");
         }
     }
 }

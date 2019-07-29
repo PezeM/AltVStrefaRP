@@ -7,6 +7,7 @@ using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Dto;
 using AltVStrefaRPServer.Models.Enums;
+using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Modules.CharacterModule;
 using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Money;
@@ -17,13 +18,13 @@ namespace AltVStrefaRPServer.Modules.Money
 {
     public class BankHandler
     {
-        private IMoneyService _moneyService;
+        private readonly IMoneyService _moneyService;
         private readonly IBankAccountDatabaseService _bankAccountDatabaseService;
-        private INotificationService _notificationService;
-        private BankAccountManager _bankAccountManager;
+        private readonly INotificationService _notificationService;
+        private readonly IBankAccountManager _bankAccountManager;
 
         public BankHandler(IMoneyService moneyService, INotificationService notificationService, IBankAccountDatabaseService banklAccountDatabaseService, 
-            BankAccountManager bankAccountManager)
+            IBankAccountManager bankAccountManager)
         {
             _moneyService = moneyService;
             _bankAccountDatabaseService = banklAccountDatabaseService;
