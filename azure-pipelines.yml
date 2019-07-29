@@ -17,14 +17,11 @@ steps:
   displayName: 'Restoring packages'
 - script: dotnet build --configuration $(buildConfiguration)
   displayName: 'Building application'
-- script: dotnet test --configuration $(buildConfiguration)
-  displayName: 'Running tests'
 - task: DotNetCoreCLI@2
+  displayName: 'Running tests'
   inputs:
     command: test
-    projects: '**/*.Tests.csproj'
-    arguments: '--configuration $(buildConfiguration) --collect "Code coverage"'
-- script: dotnet test --logger trx --collect "Code coverage"
+    arguments: '--configuration $(buildConfiguration) --logger trx --collect "Code coverage"'
 - task: PublishTestResults@2
   inputs:
     testRunner: VSTest
