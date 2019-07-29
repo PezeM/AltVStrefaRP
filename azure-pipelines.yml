@@ -13,5 +13,17 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-- script: dotnet build --configuration $(buildConfiguration)
-- script: dotnet test --configuration $(buildConfiguration)
+- script: dotnet restore
+  displayName: 'Restoring packages'
+- task: DotNetCoreCLI@2
+  displayName: 'Building application'
+  inputs:
+    command: build
+    projects: '**/*.csproj'
+    arguments: '--configuration ${buildConfiguration}'
+- task: DotNetCoreCLI@2
+  displayName: 'Running tests'
+  inputs:
+    command: test
+    projects: '**/*Tests/*.csproj'
+    arguments: '--configuration $(buildConfiguration) --collect "Code coverage"'
