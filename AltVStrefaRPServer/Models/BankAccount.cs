@@ -26,14 +26,14 @@ namespace AltVStrefaRPServer.Models
 
         public bool TransferMoney(IMoney receiver, float amount, float amountAfterTax)
         {
-            if (RemoveMoney(amountAfterTax)) return false;
+            if (!RemoveMoney(amountAfterTax)) return false;
             receiver.AddMoney(amount);
             return true;
         }
 
         public bool TransferMoney(IMoney receiver, float amount)
         {
-            if (RemoveMoney(amount)) return false;
+            if (!RemoveMoney(amount)) return false;
             receiver.AddMoney(amount);
             return true;
         }

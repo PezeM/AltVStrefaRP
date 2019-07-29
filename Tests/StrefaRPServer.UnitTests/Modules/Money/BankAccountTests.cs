@@ -1,5 +1,4 @@
 ﻿using AltVStrefaRPServer.Models;
-using Moq;
 using NUnit.Framework;
 
 namespace StrefaRPServer.UnitTests.Modules.Money
@@ -7,23 +6,22 @@ namespace StrefaRPServer.UnitTests.Modules.Money
     public class BankAccountTests
     {
         private BankAccount _bankAccount;
-        private Mock<IMoney> _receiverMock;
+        private BankAccount _receiverBankAccount;
 
         [SetUp]
         public void Setup()
         {
             _bankAccount = new BankAccount();
-            _receiverMock = new Mock<IMoney>();
+            _receiverBankAccount = new BankAccount();
         }
 
         [TestCase(12.35f)]
         [TestCase(1135788)]
         public void DepositIncreasesMoney(float moneyToDeposit)
         {
-            var result = _bankAccount.DepositMoney(moneyToDeposit);
+             _bankAccount.AddMoney(moneyToDeposit);
             
             Assert.That(_bankAccount.Money, Is.EqualTo(moneyToDeposit));
-            Assert.That(result, Is.True);
         }
 
         [TestCase(999.99f)]
@@ -33,7 +31,7 @@ namespace StrefaRPServer.UnitTests.Modules.Money
             _bankAccount.Money = 1000f;
 
             var expected = _bankAccount.Money - moneyToWithdraw;
-            var result = _bankAccount.WithdrawMoney(moneyToWithdraw);
+            var result = _bankAccount.RemoveMoney(moneyToWithdraw);
 
             Assert.That(_bankAccount.Money, Is.EqualTo(expected));
             Assert.That(result, Is.True);
@@ -45,7 +43,7 @@ namespace StrefaRPServer.UnitTests.Modules.Money
         {
             _bankAccount.Money = 1000.58f;
 
-            var result = _bankAccount.WithdrawMoney(moneyToWithdraw);
+            var result = _bankAccount.RemoveMoney(moneyToWithdraw);
 
             Assert.That(result, Is.False);
         }
@@ -58,9 +56,10 @@ namespace StrefaRPServer.UnitTests.Modules.Money
             var moneyLeft = depositedMoney - moneyToTransfer;
             _bankAccount.Money = 1000f;
 
-            _bankAccount.TransferMoney(_receiverMock.Object, moneyToTransfer);
+            _bankAccount.TransferMoney(_receiverBankAccount, moneyToTransfer);
 
             Assert.That(_bankAccount.Money, Is.EqualTo(moneyLeft));
+            Assert.That(_receiverBankAccount.Money, Is.EqualTo(moneyToTransfer));
         }
 
         [Test]
@@ -69,12 +68,13 @@ namespace StrefaRPServer.UnitTests.Modules.Money
             var moneyToTransfer = 100.01f;
             var bankAccountInitialMoney = 1000f;
             var moneyLeft = bankAccountInitialMoney - moneyToTransfer;
+            var receiver = new BankAccount();
             _bankAccount.Money = 1000f;
 
-            _bankAccount.TransferMoney(_receiverMock.Object, moneyToTransfer);
+            _bankAccount.TransferMoney(receiver, moneyToTransfer);
 
             Assert.That(_bankAccount.Money, Is.EqualTo(moneyLeft));
-            _receiverMock.VerifySet(m => m.Money = moneyToTransfer, Times.Once);
+            Assert.That(receiver.Money, Is.EqualTo(moneyToTransfer));
         }
 
         [TestCase(1000.01f)]
@@ -84,11 +84,11 @@ namespace StrefaRPServer.UnitTests.Modules.Money
             var startMoney = 1000f;
             _bankAccount.Money = startMoney;
 
-            var result = _bankAccount.TransferMoney(_receiverMock.Object, moneyToTransfer);
+            var result = _bankAccount.TransferMoney(_receiverBankAccount, moneyToTransfer);
 
             Assert.That(result, Is.False);
             Assert.That(_bankAccount.Money, Is.EqualTo(startMoney));
-            _receiverMock.VerifySet(m => m.Money = It.IsAny<float>(), Times.Never);
+            Assert.That(_receiverBankAccount.Money, Is.EqualTo(0));
         }
 
         [TestCase(100f, 120.50f)]
@@ -99,11 +99,11 @@ namespace StrefaRPServer.UnitTests.Modules.Money
             var moneyLeftInBankAccount = startMoney - amountAfterTax;
             _bankAccount.Money = startMoney;
 
-            var result = _bankAccount.TransferMoney(_receiverMock.Object, amountBeforeTax, amountAfterTax);
+            var result = _bankAccount.TransferMoney(_receiverBankAccount, amountBeforeTax, amountAfterTax);
 
             Assert.That(result, Is.True);
             Assert.That(_bankAccount.Money, Is.EqualTo(moneyLeftInBankAccount));
-            _receiverMock.VerifySet(m => m.Money = amountBeforeTax, Times.Once);
+            Assert.That(_receiverBankAccount.Money, Is.EqualTo(amountBeforeTax));
         }
     }
 }

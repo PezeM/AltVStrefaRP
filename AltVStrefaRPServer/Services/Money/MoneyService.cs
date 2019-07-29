@@ -44,7 +44,7 @@ namespace AltVStrefaRPServer.Services.Money
         public async Task<bool> TransferMoneyFromEntityToEntityAsync(IMoney source, IMoney receiver, float amount, TransactionType transactionType)
         {
             var afterTax = _taxService.CalculatePriceAfterTax(amount, transactionType);
-            if (source.RemoveMoney(afterTax)) return false;
+            if (!source.RemoveMoney(afterTax)) return false;
             receiver.AddMoney(amount);
             await SaveTransferAsync(source, receiver, amount, transactionType);
             return true;
