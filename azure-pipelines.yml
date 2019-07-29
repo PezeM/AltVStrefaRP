@@ -40,5 +40,5 @@ steps:
       !**\*TestAdapter.dll
       !**\obj\**
     searchFolder: '$(System.DefaultWorkingDirectory)'
-    runInParallel: true
+    runInParallel: false
     codeCoverageEnabled: true
