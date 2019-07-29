@@ -12,6 +12,7 @@ using AltVStrefaRPServer.Models.Dto.Fractions;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Fractions;
 using AltVStrefaRPServer.Models.Fractions.Permissions;
+using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Modules.CharacterModule;
 using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Fractions;
@@ -22,11 +23,11 @@ namespace AltVStrefaRPServer.Modules.Fractions
 {
     public class FractionHandler
     {
-        private readonly FractionsManager _fractionsManager;
+        private readonly IFractionsManager _fractionsManager;
         private readonly INotificationService _notificationService;
         private readonly IFractionDatabaseService _fractionDatabaseService;
 
-        public FractionHandler (FractionsManager fractionsManager, INotificationService notificationService,
+        public FractionHandler (IFractionsManager fractionsManager, INotificationService notificationService,
             IFractionDatabaseService fractionDatabaseService)
         {
             _fractionsManager = fractionsManager;

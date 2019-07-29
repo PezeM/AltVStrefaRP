@@ -34,7 +34,7 @@ namespace AltVStrefaRPServer
         protected Startup Startup;
         public override void OnStart ()
         {
-            Alt.Server.LogInfo ("Starting AltVTestResource...");
+            Alt.Server.LogInfo ("Starting StrefaRP...");
 
             AltAsync.OnConsoleCommand += OnConsoleCommand;
             AltAsync.OnPlayerEnterVehicle += OnPlayerEnterVehicleAsync;
@@ -171,12 +171,12 @@ namespace AltVStrefaRPServer
 
         public void Test ()
         {
-            Task.Run (() =>
-            {
-                _serializatorTest = Startup.ServiceProvider.GetService<SerializatorTest> ();
-                _serializatorTest.ConvertToJson (_serializatorTest.TestObject);
-                _serializatorTest.ConvertToMessagePack (_serializatorTest.TestObject);
-            });
+            _ = Task.Run(() =>
+              {
+                  _serializatorTest = Startup.ServiceProvider.GetService<SerializatorTest>();
+                  _serializatorTest.ConvertToJson(_serializatorTest.TestObject);
+                  _serializatorTest.ConvertToMessagePack(_serializatorTest.TestObject);
+              });
         }
     }
 }

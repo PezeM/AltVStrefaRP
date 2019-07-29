@@ -1,14 +1,14 @@
 ﻿using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Fractions;
-using AltVStrefaRPServer.Modules.Fractions;
+using AltVStrefaRPServer.Models.Interfaces.Managers;
 
 namespace AltVStrefaRPServer.Services.Money
 {
     public class TaxService : ITaxService
     {
-        private readonly FractionsManager _fractionsManager;
+        private readonly IFractionsManager _fractionsManager;
 
-        public TaxService(FractionsManager fractionsManager)
+        public TaxService(IFractionsManager fractionsManager)
         {
             _fractionsManager = fractionsManager;
         }

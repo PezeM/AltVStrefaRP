@@ -7,20 +7,19 @@ using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Models.Interfaces.Inventory;
 using AltVStrefaRPServer.Models.Interfaces.Items;
+using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Models.Inventory.Items;
 using AltVStrefaRPServer.Models.Inventory.Responses;
-using AltVStrefaRPServer.Modules.Inventory;
 using AltVStrefaRPServer.Services.Inventory;
-using Newtonsoft.Json;
 
 namespace AltVStrefaRPServer.Models.Inventory
 {
     public class InventoryController : IInventory
     {
-        public int Id { get; set; }
-        public int MaxSlots { get; set; } = 30;
-        public Character Owner { get; set; }
-        public int OwnerId { get; set; }
+        public int Id { get; private set; }
+        public int MaxSlots { get; private set; } = 30;
+        public Character Owner { get; private set; }
+        public int OwnerId { get; private set; }
 
         public IReadOnlyCollection<InventoryItem> Items => _items;
         private List<InventoryItem> _items;
@@ -87,7 +86,7 @@ namespace AltVStrefaRPServer.Models.Inventory
             return InventoryUseResponse.ItemNotFound;
         }
 
-        public async Task<InventoryDropResponse> DropItemAsync(InventoryItem item, int amount, Position position, InventoriesManager inventoriesManager, 
+        public async Task<InventoryDropResponse> DropItemAsync(InventoryItem item, int amount, Position position, IInventoriesManager inventoriesManager, 
             IInventoryDatabaseService inventoryDatabaseService)
         {
             if (!(item.Item is IDroppable droppable)) return InventoryDropResponse.ItemNotDroppable;
@@ -98,7 +97,7 @@ namespace AltVStrefaRPServer.Models.Inventory
             return InventoryDropResponse.DroppedItem;
         }
         
-        public async Task<InventoryDropResponse> DropItemAsync(int itemId, int amount, Position position, InventoriesManager inventoriesManager, 
+        public async Task<InventoryDropResponse> DropItemAsync(int itemId, int amount, Position position, IInventoriesManager inventoriesManager, 
             IInventoryDatabaseService inventoryDatabaseService)
         {
             if (!HasItem(itemId, out var item)) return InventoryDropResponse.ItemNotFound;

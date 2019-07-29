@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using AltV.Net;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Fractions;
+using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Services.Fractions;
 
 namespace AltVStrefaRPServer.Modules.Fractions
 {
-    public class FractionsManager
+    public class FractionsManager : IFractionsManager
     {
         private Dictionary<int, Fraction> _fractions;
         private readonly IFractionFactoryService _fractionFactoryService;
@@ -29,26 +29,10 @@ namespace AltVStrefaRPServer.Modules.Fractions
             CreateDeafultFractions();
         }
 
-        public void Initialize()
+        public bool TryToGetFraction<T>(int fractionId, out Fraction fraction) where T : Fraction
         {
-            var startTime = Time.GetTimestampMs();
-            foreach (var fraction in _fractionDatabaseService.GetAllFractionsList())
-            {
-                _fractions.Add(fraction.Id, fraction);
-                if (fraction is TownHallFraction townHallFraction)
-                {
-                    _townHallFraction = townHallFraction;
-                } 
-                else if (fraction is PoliceFraction policeFraction)
-                {
-                    _policeFraction = policeFraction;
-                }
-                else if (fraction is SamsFraction samsFraction)
-                {
-                    _samsFraction = samsFraction;
-                }
-            }
-            Alt.Log($"Loaded {_fractions.Count} fractions in {Time.GetTimestampMs() - startTime}ms.");
+            _fractions.TryGetValue(fractionId, out fraction);
+            return fraction is T;
         }
 
         public bool TryToGetFraction(int fractionId, out Fraction fraction)
@@ -60,11 +44,11 @@ namespace AltVStrefaRPServer.Modules.Fractions
         public Fraction GetFraction<T>() where T : Fraction
         {
             // TODO: Refactor this
-            if (_townHallFraction.GetType() == typeof(T)) 
+            if (_townHallFraction is T)
                 return _townHallFraction;
-            else if (_policeFraction.GetType() == typeof(T)) 
+            else if (_policeFraction is T) 
                 return _policeFraction;
-            else if (_samsFraction.GetType() == typeof(T)) 
+            else if (_samsFraction is T) 
                 return _samsFraction;
             else 
                 return null;
@@ -86,6 +70,28 @@ namespace AltVStrefaRPServer.Modules.Fractions
         {
             samsFraction = _samsFraction;
             return samsFraction != null;
+        }
+
+        private void Initialize()
+        {
+            var startTime = Time.GetTimestampMs();
+            foreach (var fraction in _fractionDatabaseService.GetAllFractionsList())
+            {
+                _fractions.Add(fraction.Id, fraction);
+                if (fraction is TownHallFraction townHallFraction)
+                {
+                    _townHallFraction = townHallFraction;
+                } 
+                else if (fraction is PoliceFraction policeFraction)
+                {
+                    _policeFraction = policeFraction;
+                }
+                else if (fraction is SamsFraction samsFraction)
+                {
+                    _samsFraction = samsFraction;
+                }
+            }
+            Alt.Log($"Loaded {_fractions.Count} fractions in {Time.GetTimestampMs() - startTime}ms.");
         }
 
         private void CreateDeafultFractions()

@@ -5,6 +5,7 @@ using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Helpers;
+using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Models.Inventory.Responses;
 using AltVStrefaRPServer.Services;
@@ -16,11 +17,11 @@ namespace AltVStrefaRPServer.Modules.Inventory
 {
     public class InventoryHandler
     {
-        private readonly InventoriesManager _inventoriesManager;
+        private readonly IInventoriesManager _inventoriesManager;
         private readonly IInventoryDatabaseService _inventoryDatabaseService;
         private readonly INotificationService _notificationService;
 
-        public InventoryHandler(InventoriesManager inventoriesManager, IInventoryDatabaseService inventoryDatabaseService, INotificationService notificationService)
+        public InventoryHandler(IInventoriesManager inventoriesManager, IInventoryDatabaseService inventoryDatabaseService, INotificationService notificationService)
         {
             _inventoriesManager = inventoriesManager;
             _inventoryDatabaseService = inventoryDatabaseService;

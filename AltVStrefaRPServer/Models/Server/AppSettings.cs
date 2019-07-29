@@ -19,7 +19,7 @@
         public ConfigPosition SpawnPosition { get; set; }
         public ConfigPosition LoginPosition { get; set; }
         public EconomySettings EconomySettings { get; set; }
-        public float StartingMoney { get; set; } = 250.0f;
+        public float StartingPlayerMoney { get; set; } = 250.0f;
         public int ChangeWeatherInterval { get; set; } = 30;
         public int OneMinuteIrlToGameTime { get; set; } = 20;
     }

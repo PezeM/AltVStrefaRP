@@ -19,7 +19,7 @@ namespace AltVStrefaRPServer.Models.Fractions
         public string Name { get; set; }
         public string Description { get; set; }
 
-        public float Money { get; set; }
+        public float Money { get; protected set; }
 
         public DateTime CreationDate { get; set; }
         public virtual float X { get; set; }
@@ -91,9 +91,19 @@ namespace AltVStrefaRPServer.Models.Fractions
             return Employees.FirstOrDefault(e => e.FractionRank == highestRank.Id);
         }
 
-        public void SetEmployeeRank(Character employee, FractionRank defaultRank)
+        public void SetEmployeeRank(Character employee, FractionRank defaultRank) => employee.FractionRank = defaultRank.Id;
+
+        public void AddMoney(float amount)
         {
-            employee.FractionRank = defaultRank.Id;
+            // Also maybe own list of transactions and notify owner but propably not
+            Money += amount;
+        }
+
+        public bool RemoveMoney(float amount)
+        {
+            if (Money < amount) return false;
+            Money += amount;
+            return true;
         }
 
         public virtual async Task<bool> RemoveEmployeeAsync(Character characterRemoving, int employeeId, IFractionDatabaseService fractionDatabaseService)

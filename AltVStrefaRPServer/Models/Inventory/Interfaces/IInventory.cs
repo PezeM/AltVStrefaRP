@@ -5,8 +5,8 @@ namespace AltVStrefaRPServer.Models.Inventory
 {
     public interface IInventory
     {
-        int Id { get; set; }
-        int MaxSlots { get; set; }
+        int Id { get; }
+        int MaxSlots { get; }
         IReadOnlyCollection<InventoryItem> Items { get; }
         bool HasEmptySlots();
         bool HasItem(int id, out InventoryItem item);

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 using AltV.Net;
@@ -27,15 +26,12 @@ namespace AltVStrefaRPServer.Modules.Vehicle
 
         public ICollection<VehiclePrice> AvailableVehicles { get; set; }
 
-        public float Money { get; set; }
+        public float Money { get; private set; }
 
         public IBlip ShopBlip { get; set; }
         public int BlipSprite { get; set; }
         public int BlipColor { get; set; }
         public string BlipName => "Sklep samochodowy";
-
-        [NotMapped]
-        public bool UpdateOnMoneyChange { get; } = false;
 
         private VehicleShop() { }
 
@@ -77,6 +73,18 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             ShopBlip.Sprite = 67;
             ShopBlip.Color = 1;
             Alt.Log($"VehicleShop blip for shop {VehicleShopId}. Type: {ShopBlip.BlipType} Position: {ShopBlip.Position}");
+        }
+
+        public void AddMoney(float amount)
+        {
+            Money += amount;
+        }
+
+        public bool RemoveMoney(float amount)
+        {
+            if (Money < amount) return false;
+            Money -= amount;
+            return true;
         }
 
         public string MoneyTransactionDisplayName() => $"VehicleShop {VehicleShopId}";

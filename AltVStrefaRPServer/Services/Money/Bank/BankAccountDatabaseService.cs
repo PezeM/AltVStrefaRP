@@ -10,7 +10,7 @@ namespace AltVStrefaRPServer.Services.Money.Bank
 {
     public class BankAccountDatabaseService : IBankAccountDatabaseService
     {
-        private Func<ServerContext> _factory;
+        private readonly Func<ServerContext> _factory;
 
         public BankAccountDatabaseService(Func<ServerContext> factory)
         {

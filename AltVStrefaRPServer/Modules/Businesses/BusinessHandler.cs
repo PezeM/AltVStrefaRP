@@ -14,15 +14,16 @@ using Newtonsoft.Json;
 using System.Linq;
 using System.Threading.Tasks;
 using AltVStrefaRPServer.Models.Businesses;
+using AltVStrefaRPServer.Models.Interfaces.Managers;
 
 namespace AltVStrefaRPServer.Modules.Businesses
 {
     public class BusinessHandler
     {
-        private BusinessesManager _businessesManager;
+        private IBusinessesManager _businessesManager;
         private INotificationService _notificationService;
 
-        public BusinessHandler(BusinessesManager businessesManager, INotificationService notificationService)
+        public BusinessHandler(IBusinessesManager businessesManager, INotificationService notificationService)
         {
             _businessesManager = businessesManager;
             _notificationService = notificationService;
@@ -142,7 +143,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
                 return;
             }
 
-            await _businessesManager.UpdateEmployeeRank(business, employee, newRankId).ConfigureAwait(false);
+            await _businessesManager.UpdateEmployeeRankAsync(business, employee, newRankId).ConfigureAwait(false);
             await player.EmitAsync("successfullyUpdatedEmployeeRank", employeeId, newRankId).ConfigureAwait(false);
             AltAsync.Log($"Character ID({character.Id}) changed business rank of character ID({employee.Id}) to RankID({newRankId})" +
                     $" in {Time.GetTimestampMs() - startTime}ms.");
@@ -211,7 +212,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
                 return;
             }
 
-            if (await _businessesManager.AddNewEmployee(business, character).ConfigureAwait(false))
+            if (await _businessesManager.AddNewEmployeeAsync(business, character).ConfigureAwait(false))
             {
                 _notificationService.ShowSuccessNotification(player, "Nowa praca!", $"Pomyślnie dołączono do biznesu {business.BusinessName}.", 5000);
             }
@@ -292,7 +293,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
                 return;
             }
 
-            await _businessesManager.UpdateBusinessRank(businessRankToUpdate, newPermissions).ConfigureAwait(false);
+            await _businessesManager.UpdateBusinessRankAsync(businessRankToUpdate, newPermissions).ConfigureAwait(false);
             _notificationService.ShowSuccessNotification(player, "Zaktualizowano stanowisko", "Pomyślnie zaktualizowano stanowisko.");
             AltAsync.Log($"Character ID({character.Id}) changed permissions in rank ID({businessRank.Id})" +
                     $" in {Time.GetTimestampMs() - startTime}ms.");
@@ -334,7 +335,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
             }
 
             if(newRank == null) return;
-            if (await _businessesManager.AddNewBusinessRank(business, newRank).ConfigureAwait(false))
+            if (await _businessesManager.AddNewBusinessRankAsync(business, newRank).ConfigureAwait(false))
             {
                 _notificationService.ShowSuccessNotification(player, "Zaktualizowano stanowisko", "Pomyślnie zaktualizowano stanowisko");
             }
@@ -378,7 +379,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
                 return;
             }
 
-            if (await _businessesManager.RemoveEmployee(business, employee))
+            if (await _businessesManager.RemoveEmployeeAsync(business, employee))
             {
                 _notificationService.ShowSuccessNotification(player, "Usunięto pracownika", $"Pomyślnie usunięto {employee.GetFullName()} z firmy.", 5000);
                 AltAsync.Log($"Character ID({character.Id}) deleted employee ID({employee.Id}) from business {business.BusinessName} " +
@@ -416,7 +417,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
 
             if (!business.CheckIfRankExists(rankId)) return;
 
-            if (await _businessesManager.RemoveRank(business, rankId))
+            if (await _businessesManager.RemoveRankAsync(business, rankId))
             {
                 _notificationService.ShowSuccessNotification(player, "Usunięto stanowisko", $"Pomyślnie usunięto stanowisko.", 5000);
                 AltAsync.Log($"Character ID({character.Id}) deleted rank ID({rankId}) " +
@@ -452,7 +453,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
                 return;
             }
 
-            if (await _businessesManager.DeleteBusiness(business))
+            if (await _businessesManager.DeleteBusinessAsync(business))
             {
                 _notificationService.ShowSuccessNotification(player, "Usunięto biznes", $"Pomyślnie usunięto biznes {business.BusinessName}.", 5000);
                 AltAsync.Log($"Character ID({character.Id}) deleted business ID({business.BusinessName}) " +

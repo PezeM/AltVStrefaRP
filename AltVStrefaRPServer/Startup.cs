@@ -2,6 +2,7 @@
 using System.IO;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Handlers;
+using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Models.Server;
 using AltVStrefaRPServer.Modules.Admin;
 using AltVStrefaRPServer.Modules.Businesses;
@@ -102,18 +103,19 @@ namespace AltVStrefaRPServer
             services.AddTransient<ObjectSync>();
 
             services.AddSingleton<HashingService>();
-            services.AddSingleton<VehiclesManager>();
+            services.AddSingleton<IVehiclesManager, VehiclesManager>();
             services.AddSingleton<BankHandler>();
-            services.AddSingleton<BankAccountManager>();
-            services.AddSingleton<BusinessesManager>();
+            services.AddSingleton<IBankAccountManager, BankAccountManager>();
+            services.AddSingleton<IBusinessesManager, BusinessesManager>();
             services.AddSingleton<BusinessHandler>();
             services.AddSingleton<TemporaryChatHandler>();
             services.AddSingleton<TimeController>();
             services.AddSingleton<VehicleShopsManager>();
-            services.AddSingleton<FractionsManager>();
+            services.AddSingleton<IFractionsManager, FractionsManager>();
             services.AddSingleton<FractionHandler>();
-            services.AddSingleton<InventoriesManager>();
+            services.AddSingleton<IInventoriesManager, InventoriesManager>();
             services.AddSingleton<InventoryHandler>();
+            services.AddSingleton<INetworkingManager, NetworkingManager>();
 
             services.AddTransient<AdminCommands>();
             services.AddTransient<CharacterCreator>();
@@ -124,7 +126,6 @@ namespace AltVStrefaRPServer
             services.AddTransient<ItemFactory>();
 
             services.AddSingleton<SerializatorTest>();
-            services.AddSingleton<NetworkingManager>();
 
             // Build provider
             ServiceProvider = services.BuildServiceProvider();
