@@ -14,10 +14,4 @@ variables:
 
 steps:
 - script: dotnet build --configuration $(buildConfiguration)
-  displayName: 'Building application'
-- task: DotNetCoreCLI@2
-  displayName: 'Running tests'
-  inputs:
-    command: test
-    projects: '**/*Tests/*.csproj'
-    arguments: '--configuration $(buildConfiguration) --collect "Code coverage"'
+- script: dotnet test --configuration $(buildConfiguration)
