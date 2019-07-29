@@ -11,12 +11,13 @@ using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Businesses;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Fractions.Permissions;
+using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Services.Vehicles;
 using VehicleModel = AltVStrefaRPServer.Models.VehicleModel;
 
 namespace AltVStrefaRPServer.Modules.Vehicle
 {
-    public class VehiclesManager
+    public class VehiclesManager : IVehiclesManager
     {
         private Dictionary<int, VehicleModel> _vehicles = new Dictionary<int, VehicleModel>();
         private IVehicleDatabaseService _vehicleDatabaseService;
@@ -28,20 +29,6 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             _vehicleCreator = vehicleCreatorService;
 
             LoadVehiclesFromDatabase();
-        }
-
-        /// <summary>
-        /// Loads all vehicles from database to memory and sets every vehicle IsSpawned property to false
-        /// </summary>
-        public void LoadVehiclesFromDatabase()
-        {
-            var startTime = Time.GetTimestampMs();
-            foreach (var vehicle in _vehicleDatabaseService.LoadVehiclesFromDatabase())
-            {
-                vehicle.IsSpawned = false;
-                _vehicles.Add(vehicle.Id, vehicle);
-            }
-            Alt.Log($"Loaded {_vehicles.Count} vehicles from database in {Time.GetTimestampMs() - startTime}ms.");
         }
 
         /// <summary>
@@ -169,7 +156,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
         public List<VehicleModel> GetAllPlayerVehicles(Character character)
             => _vehicles.Values.Where(v => v.Owner == character.Id && v.OwnerType == OwnerType.Character).ToList();
 
-        public async Task<VehicleModel> CreateVehicleAsync(string vehicleModel, Position position, Rotation rotation, short dimension, int ownerId, 
+        public async Task<VehicleModel> CreateVehicleAsync(string vehicleModel, Position position, Rotation rotation, short dimension, int ownerId,
             OwnerType ownerType)
         {
             var vehicle = _vehicleCreator.CreateVehicle(vehicleModel, position, rotation, dimension, ownerId, ownerType);
@@ -190,6 +177,17 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             _vehicles.Add(vehicle.Id, vehicle);
             Alt.Log($"Created vehicle {vehicle.Model} UID({vehicle.Id}).");
             return vehicle;
+        }
+
+        private void LoadVehiclesFromDatabase()
+        {
+            var startTime = Time.GetTimestampMs();
+            foreach (var vehicle in _vehicleDatabaseService.LoadVehiclesFromDatabase())
+            {
+                vehicle.IsSpawned = false;
+                _vehicles.Add(vehicle.Id, vehicle);
+            }
+            Alt.Log($"Loaded {_vehicles.Count} vehicles from database in {Time.GetTimestampMs() - startTime}ms.");
         }
     }
 }

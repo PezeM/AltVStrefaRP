@@ -9,6 +9,7 @@ using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Enums;
+using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Models.Inventory.Items;
 using AltVStrefaRPServer.Models.Server;
@@ -33,7 +34,7 @@ namespace AltVStrefaRPServer.Modules.Admin
     public class AdminCommands
     {
         private TemporaryChatHandler _chatHandler;
-        private VehiclesManager _vehiclesManager;
+        private IVehiclesManager _vehiclesManager;
         private BankHandler _bankHandler;
         private BusinessesManager _businessesManager;
         private BusinessHandler _businessHandler;
@@ -41,16 +42,16 @@ namespace AltVStrefaRPServer.Modules.Admin
         private VehicleShopsManager _vehicleShopsManager;
         private IVehicleSpawnService _vehicleSpawnService;
         private readonly FractionHandler _fractionHandler;
-        private readonly FractionsManager _fractionsManager;
+        private readonly IFractionsManager _fractionsManager;
         private readonly IFractionDatabaseService _fractionDatabaseService;
         private readonly IMoneyService _moneyService;
         private readonly InventoryHandler _inventoryHandler;
         private readonly IInventoryDatabaseService _inventoryDatabaseService;
         private readonly ItemFactory _itemFactory;
 
-        public AdminCommands (TemporaryChatHandler chatHandler, VehiclesManager vehiclesManager, BankHandler bankHandler,
+        public AdminCommands (TemporaryChatHandler chatHandler, IVehiclesManager vehiclesManager, BankHandler bankHandler,
             BusinessesManager businessesManager, BusinessHandler businessHandler, INotificationService notificationService,
-            VehicleShopsManager vehicleShopsManager, IVehicleSpawnService vehicleSpawnService, FractionHandler fractionHandler, FractionsManager fractionsManager,
+            VehicleShopsManager vehicleShopsManager, IVehicleSpawnService vehicleSpawnService, FractionHandler fractionHandler, IFractionsManager fractionsManager,
             IFractionDatabaseService fractionDatabaseService, IMoneyService moneyService, 
             InventoryHandler inventoryHandler, IInventoryDatabaseService inventoryDatabaseService, ItemFactory itemFactory)
         {

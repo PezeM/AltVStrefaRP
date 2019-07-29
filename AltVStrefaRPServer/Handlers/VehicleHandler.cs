@@ -6,7 +6,7 @@ using AltV.Net.Enums;
 using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
-using AltVStrefaRPServer.Modules.Vehicle;
+using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Vehicles;
 using VehicleModel = AltVStrefaRPServer.Models.VehicleModel;
@@ -16,11 +16,11 @@ namespace AltVStrefaRPServer.Handlers
     public class VehicleHandler
     {
         private IVehicleDatabaseService _vehicleDatabaseService;
-        private VehiclesManager _vehiclesManager;
+        private IVehiclesManager _vehiclesManager;
         private INotificationService _notificationService;
         private IVehicleSpawnService _vehicleSpawnService;
 
-        public VehicleHandler(VehiclesManager vehiclesManager, IVehicleDatabaseService vehiceVehicleDatabaseService,
+        public VehicleHandler(IVehiclesManager vehiclesManager, IVehicleDatabaseService vehiceVehicleDatabaseService,
             INotificationService notificationService, IVehicleSpawnService vehicleSpawnService)
         {
             _vehicleDatabaseService = vehiceVehicleDatabaseService;

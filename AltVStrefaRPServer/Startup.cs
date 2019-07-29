@@ -2,6 +2,7 @@
 using System.IO;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Handlers;
+using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Models.Server;
 using AltVStrefaRPServer.Modules.Admin;
 using AltVStrefaRPServer.Modules.Businesses;
@@ -102,7 +103,7 @@ namespace AltVStrefaRPServer
             services.AddTransient<ObjectSync>();
 
             services.AddSingleton<HashingService>();
-            services.AddSingleton<VehiclesManager>();
+            services.AddSingleton<IVehiclesManager, VehiclesManager>();
             services.AddSingleton<BankHandler>();
             services.AddSingleton<BankAccountManager>();
             services.AddSingleton<BusinessesManager>();
@@ -110,7 +111,7 @@ namespace AltVStrefaRPServer
             services.AddSingleton<TemporaryChatHandler>();
             services.AddSingleton<TimeController>();
             services.AddSingleton<VehicleShopsManager>();
-            services.AddSingleton<FractionsManager>();
+            services.AddSingleton<IFractionsManager, FractionsManager>();
             services.AddSingleton<FractionHandler>();
             services.AddSingleton<InventoriesManager>();
             services.AddSingleton<InventoryHandler>();

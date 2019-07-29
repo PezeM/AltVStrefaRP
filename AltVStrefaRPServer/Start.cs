@@ -171,12 +171,12 @@ namespace AltVStrefaRPServer
 
         public void Test ()
         {
-            Task.Run (() =>
-            {
-                _serializatorTest = Startup.ServiceProvider.GetService<SerializatorTest> ();
-                _serializatorTest.ConvertToJson (_serializatorTest.TestObject);
-                _serializatorTest.ConvertToMessagePack (_serializatorTest.TestObject);
-            });
+            _ = Task.Run(() =>
+              {
+                  _serializatorTest = Startup.ServiceProvider.GetService<SerializatorTest>();
+                  _serializatorTest.ConvertToJson(_serializatorTest.TestObject);
+                  _serializatorTest.ConvertToMessagePack(_serializatorTest.TestObject);
+              });
         }
     }
 }

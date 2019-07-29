@@ -10,6 +10,7 @@ using AltVStrefaRPServer.Models.Dto.Fractions;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Fractions;
 using AltVStrefaRPServer.Models.Fractions.Permissions;
+using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Modules.CharacterModule;
 using AltVStrefaRPServer.Modules.Vehicle;
 using AltVStrefaRPServer.Services;
@@ -20,13 +21,13 @@ namespace AltVStrefaRPServer.Modules.Fractions
 {
     public class TownHallFractionHandler
     {
-        private FractionsManager _fractionsManager;
+        private IFractionsManager _fractionsManager;
         private readonly INotificationService _notificationService;
         private readonly ICharacterDatabaseService _characterDatabaseService;
-        private readonly VehiclesManager _vehiclesManager;
+        private readonly IVehiclesManager _vehiclesManager;
 
-        public TownHallFractionHandler(FractionsManager fractionsManager, ICharacterDatabaseService characterDatabaseService,
-            INotificationService notificationService, VehiclesManager vehiclesManager)
+        public TownHallFractionHandler(IFractionsManager fractionsManager, ICharacterDatabaseService characterDatabaseService,
+            INotificationService notificationService, IVehiclesManager vehiclesManager)
         {
             _fractionsManager = fractionsManager;
             _notificationService = notificationService;

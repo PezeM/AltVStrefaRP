@@ -6,6 +6,7 @@ using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Enums;
+using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Money;
 using Newtonsoft.Json;
@@ -17,9 +18,9 @@ namespace AltVStrefaRPServer.Modules.Vehicle
         private readonly VehicleShopsManager _vehicleShopsManager;
         private readonly INotificationService _notificationService;
         private readonly IMoneyService _moneyService;
-        private readonly VehiclesManager _vehiclesManager;
+        private readonly IVehiclesManager _vehiclesManager;
 
-        public VehicleShopsHandler(VehicleShopsManager vehicleShopsManager, VehiclesManager vehiclesManager,
+        public VehicleShopsHandler(VehicleShopsManager vehicleShopsManager, IVehiclesManager vehiclesManager,
             INotificationService notificationService, IMoneyService moneyService)
         {
             _vehicleShopsManager = vehicleShopsManager;
