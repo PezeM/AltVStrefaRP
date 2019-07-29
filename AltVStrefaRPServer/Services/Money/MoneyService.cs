@@ -55,7 +55,7 @@ namespace AltVStrefaRPServer.Services.Money
             source.Money -= afterTax;
             receiver.Money += amount;
 
-            await SaveTransfer(source, receiver, amount, transactionType);
+            await SaveTransferAsync(source, receiver, amount, transactionType);
             return true;
         }
 
@@ -65,26 +65,26 @@ namespace AltVStrefaRPServer.Services.Money
             if (source.BankAccount == null) return false;
             else if (!source.BankAccount.TransferMoney(receiver, amount, afterTax)) return false;
 
-            await SaveTransfer(source, receiver, amount, transactionType);
+            await SaveTransferAsync(source, receiver, amount, transactionType);
             return true;
         }
 
-        private async Task SaveTransfer(IMoney source, IMoney receiver, float amount, TransactionType transactionType)
+        private async Task SaveTransferAsync(IMoney source, IMoney receiver, float amount, TransactionType transactionType)
         {
             using (var context = _factory.Invoke())
             {
-                await AddTransaction(context,
+                await AddTransactionAsync(context,
                     new MoneyTransaction(source.MoneyTransactionDisplayName(), receiver.MoneyTransactionDisplayName(), transactionType, amount));
                 context.UpdateRange(source, receiver);
                 await context.SaveChangesAsync();
             }
         }
 
-        private async Task SaveTransfer(Character source, IMoney receiver, float amount, TransactionType transactionType)
+        private async Task SaveTransferAsync(Character source, IMoney receiver, float amount, TransactionType transactionType)
         {
             using (var context = _factory.Invoke())
             {
-                await AddTransaction(context,
+                await AddTransactionAsync(context,
                     new MoneyTransaction(source.MoneyTransactionDisplayName(), receiver.MoneyTransactionDisplayName(), transactionType, amount));
                 context.Characters.Update(source);
                 context.Update(receiver);
@@ -92,7 +92,7 @@ namespace AltVStrefaRPServer.Services.Money
             }
         }
 
-        private async Task AddTransaction(ServerContext context, MoneyTransaction moneyTransaction)
+        private async Task AddTransactionAsync(ServerContext context, MoneyTransaction moneyTransaction)
         {
             await context.MoneyTransactions.AddAsync(moneyTransaction);
         }
