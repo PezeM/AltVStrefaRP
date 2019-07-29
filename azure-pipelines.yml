@@ -23,6 +23,7 @@ steps:
     command: test
     arguments: '--configuration $(buildConfiguration) --logger trx --collect "Code coverage"'
 - task: PublishTestResults@2
+  displayName: 'Publishing tests'
   inputs:
     testRunner: VSTest
     testResultsFiles: '**/*.trx'
