@@ -106,7 +106,7 @@ namespace AltVStrefaRPServer
             services.AddSingleton<IVehiclesManager, VehiclesManager>();
             services.AddSingleton<BankHandler>();
             services.AddSingleton<BankAccountManager>();
-            services.AddSingleton<BusinessesManager>();
+            services.AddSingleton<IBusinessesManager, BusinessesManager>();
             services.AddSingleton<BusinessHandler>();
             services.AddSingleton<TemporaryChatHandler>();
             services.AddSingleton<TimeController>();

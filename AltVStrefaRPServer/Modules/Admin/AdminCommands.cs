@@ -36,7 +36,7 @@ namespace AltVStrefaRPServer.Modules.Admin
         private TemporaryChatHandler _chatHandler;
         private IVehiclesManager _vehiclesManager;
         private BankHandler _bankHandler;
-        private BusinessesManager _businessesManager;
+        private IBusinessesManager _businessesManager;
         private BusinessHandler _businessHandler;
         private INotificationService _notificationService;
         private VehicleShopsManager _vehicleShopsManager;
@@ -50,7 +50,7 @@ namespace AltVStrefaRPServer.Modules.Admin
         private readonly ItemFactory _itemFactory;
 
         public AdminCommands (TemporaryChatHandler chatHandler, IVehiclesManager vehiclesManager, BankHandler bankHandler,
-            BusinessesManager businessesManager, BusinessHandler businessHandler, INotificationService notificationService,
+            IBusinessesManager businessesManager, BusinessHandler businessHandler, INotificationService notificationService,
             VehicleShopsManager vehicleShopsManager, IVehicleSpawnService vehicleSpawnService, FractionHandler fractionHandler, IFractionsManager fractionsManager,
             IFractionDatabaseService fractionDatabaseService, IMoneyService moneyService, 
             InventoryHandler inventoryHandler, IInventoryDatabaseService inventoryDatabaseService, ItemFactory itemFactory)
@@ -168,7 +168,7 @@ namespace AltVStrefaRPServer.Modules.Admin
                     return;
                 }
 
-                if (await _businessesManager.UpdateBusinessOwner (business, character))
+                if (await _businessesManager.UpdateBusinessOwnerAsync (business, character))
                 {
                     _notificationService.ShowSuccessNotification (player, "Aktualizacja właściciela", $"Pomyślnie zaktualizowano właściciela biznesu ID({business.Id}) na {character.GetFullName()}", 6000);
                     Alt.Log ($"Updated owner of business ID({business.Id}) Name({business.BusinessName}) " +
