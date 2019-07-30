@@ -15,8 +15,11 @@ variables:
 steps:
 - script: dotnet restore
   displayName: 'Restoring packages'
-- script: dotnet build --configuration $(buildConfiguration)
+- task: DotNetCoreCLI@2
   displayName: 'Building application'
+  inputs:
+    command: 'build'
+    arguments: '--configuration $(BuildConfiguration) --no-restore'
 - script: dotnet test --configuration $(buildConfiguration) --logger trx --collect "Code coverage"
   displayName: "Running tests"
 - task: PublishTestResults@2
@@ -24,3 +27,14 @@ steps:
   inputs:
     testRunner: VSTest
     testResultsFiles: '**/*.trx'
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'test'
+    projects: '**/*Tests/*.csproj'
+    arguments: '--configuration $(buildConfiguration) --logger trx --collect "Code coverage"'
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'NUnit'
+    testResultsFiles: '**/*.trx'
+    failTaskOnFailedTests: true
+    testRunTitle: 'Publishing tests'
