@@ -26,3 +26,22 @@ steps:
     command: 'test'
     projects: '**/*Tests/*.csproj'
     arguments: '--configuration $(buildConfiguration) --logger trx --collect "Code coverage"'
+- task: DotNetCoreCLI@2
+  displayName: 'Publishing app'
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    arguments: '-c $(buildConfiguration) -o $(Build.StagingDirectory)/ci-build --no-build'
+    zipAfterPublish: false
+    modifyOutputPath: false
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(Build.StagingDirectory)/ci-build'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/altVStrefaRP-$(Build.BuildNumber).zip'
+    replaceExistingArchive: true
+- task: PublishPipelineArtifact@1
+  inputs:
+    targetPath: '$(Build.ArtifactStagingDirectory)/altVStrefaRP-$(Build.BuildNumber).zip'
+    artifact: 'altVStrefaRP-$(Build.BuildNumber)'
