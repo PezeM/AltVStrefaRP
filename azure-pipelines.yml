@@ -28,13 +28,14 @@ steps:
     testRunner: VSTest
     testResultsFiles: '**/*.trx'
 - task: DotNetCoreCLI@2
+  displayName: "Running tests"
   inputs:
     command: 'test'
     projects: '**/*Tests/*.csproj'
     arguments: '--configuration $(buildConfiguration) --logger trx --collect "Code coverage"'
 - task: PublishTestResults@2
+  displayName: "Publishing tests"
   inputs:
-    testResultsFormat: 'NUnit'
     testResultsFiles: '**/*.trx'
     failTaskOnFailedTests: true
     testRunTitle: 'Publishing tests'
