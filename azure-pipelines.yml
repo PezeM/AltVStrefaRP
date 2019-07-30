@@ -26,9 +26,3 @@ steps:
     command: 'test'
     projects: '**/*Tests/*.csproj'
     arguments: '--configuration $(buildConfiguration) --logger trx --collect "Code coverage"'
-- task: PublishTestResults@2
-  displayName: "Publishing tests"
-  inputs:
-    testResultsFiles: '**/*.trx'
-    failTaskOnFailedTests: true
-    testRunTitle: 'Publishing tests'
