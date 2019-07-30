@@ -35,6 +35,7 @@ steps:
     zipAfterPublish: false
     modifyOutputPath: false
 - task: ArchiveFiles@2
+  displayName: 'Archiving files'
   inputs:
     rootFolderOrFile: '$(Build.StagingDirectory)/ci-build'
     includeRootFolder: false
@@ -42,6 +43,7 @@ steps:
     archiveFile: '$(Build.ArtifactStagingDirectory)/altVStrefaRP-$(Build.BuildNumber).zip'
     replaceExistingArchive: true
 - task: PublishPipelineArtifact@1
+  displayName: 'Publishing pipeline artifact'
   inputs:
     targetPath: '$(Build.ArtifactStagingDirectory)/altVStrefaRP-$(Build.BuildNumber).zip'
     artifact: 'altVStrefaRP-$(Build.BuildNumber)'
