@@ -30,8 +30,8 @@ namespace AltVStrefaRPServer.Modules.Businesses
 
             Alt.Log("Intialized business handler.");
             Alt.On<IPlayer, int>("GetBusinessEmployees", GetBusinessEmployeesEvent);
-            AltAsync.On<IPlayer, int, int, int>("UpdateEmployeeRank", async (player, employeeId, newRankId, businessId) 
-                => await UpdateEmployeeRankEvent(player, employeeId, newRankId, businessId));
+            AltAsync.On<IPlayer, int, int, int, Task>("UpdateEmployeeRank", (player, employeeId, newRankId, businessId) 
+                => UpdateEmployeeRankEventAsync(player, employeeId, newRankId, businessId));
             Alt.On<IPlayer, string, string, int>("AddNewEmployee", AddNewEmployeeEvent);
             AltAsync.On<IPlayer, int>("AcceptInviteToBusiness", async (player, businessId) 
                 => await AcceptInviteToBusinessEvent(player, businessId));
@@ -107,7 +107,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
             Alt.Log($"Character ID({character.Id}) opened business menu in {Time.GetTimestampMs() - startTime}ms.");
         }
 
-        private async Task UpdateEmployeeRankEvent(IPlayer player, int employeeId, int newRankId, int businessId)
+        private async Task UpdateEmployeeRankEventAsync(IPlayer player, int employeeId, int newRankId, int businessId)
         {
             var startTime = Time.GetTimestampMs();
             var character = player.GetCharacter();
