@@ -37,7 +37,7 @@ namespace AltVStrefaRPServer.Modules.Networking
             CreateRandomPeds();
         }
 
-        public bool TryToGetNetworkingEntity(int networkignEntityId, out INetworkingEntity networkingEntity)
+        public bool TryGetNetworkingEntity(int networkignEntityId, out INetworkingEntity networkingEntity)
             => _entities.TryGetValue((ulong)networkignEntityId, out networkingEntity);
 
         public bool DoesNetworkingEntityExists(int networkingEntityId) => _entities.ContainsKey((ulong)networkingEntityId);
@@ -61,7 +61,7 @@ namespace AltVStrefaRPServer.Modules.Networking
 
         public void DescreaseDroppedItemQuantity(int networkingItemId, int itemsToRemove)
         {
-            if (!TryToGetNetworkingEntity(networkingItemId, out var networkingEntity)) return;
+            if (!TryGetNetworkingEntity(networkingItemId, out var networkingEntity)) return;
             if (!networkingEntity.GetData("count", out long quantity)) return;
             quantity -= itemsToRemove;
             if (quantity <= 0)

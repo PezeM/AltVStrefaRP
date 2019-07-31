@@ -31,7 +31,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
                 => await DropItemAsync(player, id, amount, position));
             AltAsync.On<IPlayer, int>("UseInventoryItem", async (player, itemId) => await UseInventoryItemAsync(player, itemId));
             Alt.On<IPlayer>("GetPlayerInventory", GetPlayerInventory);
-            AltAsync.On<IPlayer, int, int>("InventoryDropItem", async (player, id, amount) => await InventoryDropItemAsync(player, id, amount));
+            AltAsync.On<IPlayer, int, int, Task>("InventoryDropItem", InventoryDropItemAsync);
             AltAsync.On<IPlayer, int, int>("InventoryRemoveItem", async (player, id, amount) => await InventoryRemoveItemAsync(player, id, amount));
             AltAsync.On<IPlayer, int, int>("PickupDroppedItem", async (player, networkItemId, droppedItemId) 
                 => await PickupDroppedItemAsync(player, networkItemId, droppedItemId));
@@ -138,7 +138,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
             // Make it possible to take only few quantity of item till full inventory.
             // Make it possible to decrease dropped item quantity - also decrease networking entity count
             if (!player.TryGetCharacter(out var character)) return;
-            if (!_inventoriesManager.TryToGetDroppedItem(networkItemId, droppedItemId, out var droppedItem)) return;
+            if (!_inventoriesManager.TryGetDroppedItem(networkItemId, droppedItemId, out var droppedItem)) return;
             var response = await character.Inventory.AddItemAsync(droppedItem.Item, droppedItem.Count, _inventoryDatabaseService, player);
             if (!response.AnyChangesMade)
             {
