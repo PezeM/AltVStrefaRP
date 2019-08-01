@@ -36,14 +36,14 @@ namespace AltVStrefaRPServer
         protected Startup Startup;
         public override void OnStart ()
         {
-            Alt.Server.LogInfo ("Starting StrefaRP...");
+            Startup = new Startup ();
+            _logger = Startup.ServiceProvider.GetService<ILogger<Start>>();
+            _logger.LogInformation("Starting StrefaRP...");
 
             AltAsync.OnConsoleCommand += OnConsoleCommand;
             AltAsync.OnPlayerEnterVehicle += OnPlayerEnterVehicleAsync;
             Alt.OnPlayerEvent += OnOnPlayerEvent;
-            
-            Startup = new Startup ();
-            _logger = Startup.ServiceProvider.GetService<ILogger<Start>>();
+
             var playerConnectEvent = Startup.ServiceProvider.GetService<PlayerConnect> ();
             var playerDiconnectEvent = Startup.ServiceProvider.GetService<PlayerDisconnect> ();
             var vehicleHandler = Startup.ServiceProvider.GetService<VehicleHandler>();
