@@ -31,6 +31,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Serilog;
+using Serilog.Events;
 using Serilog.Sinks.Elasticsearch;
 
 namespace AltVStrefaRPServer
@@ -135,12 +136,19 @@ namespace AltVStrefaRPServer
                 builder.AddSerilog();
             });
 
+            var logsPath = Path.Combine(Directory.GetCurrentDirectory(), "Logs/");
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .Enrich.WithThreadId()
                 .Enrich.WithThreadName()
                 .Enrich.FromLogContext()
-                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss}] [{Level:u3}] <{ThreadId}><{ThreadName}> {Message:lj} {NewLine}{Exception}")
+                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] <{ThreadId}><{ThreadName}> {Message:lj} {NewLine}{Exception}")
+                .WriteTo.File(logsPath + ".log",
+                    LogEventLevel.Verbose, 
+                    outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] <{ThreadId}><{ThreadName}> {Message:lj} {NewLine}{Exception}", 
+                    rollingInterval: RollingInterval.Day, 
+                    retainedFileCountLimit: 100, 
+                    rollOnFileSizeLimit: true)
                 .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(options.Uri))
                 {
                     AutoRegisterTemplate = options.AutoRegisterTemplate,
