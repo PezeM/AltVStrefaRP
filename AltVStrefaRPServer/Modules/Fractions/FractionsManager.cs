@@ -1,27 +1,29 @@
 ﻿using System.Collections.Generic;
-using AltV.Net;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Fractions;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Services.Fractions;
+using Microsoft.Extensions.Logging;
 
 namespace AltVStrefaRPServer.Modules.Fractions
 {
     public class FractionsManager : IFractionsManager
     {
         private Dictionary<int, Fraction> _fractions;
+        private readonly ILogger<FractionsManager> _logger;
         private readonly IFractionFactoryService _fractionFactoryService;
         private readonly IFractionDatabaseService _fractionDatabaseService;
         private TownHallFraction _townHallFraction;
         private PoliceFraction _policeFraction;
         private SamsFraction _samsFraction;
 
-        public FractionsManager(IFractionDatabaseService fractionDatabaseService, IFractionFactoryService fractionFactoryService)
+        public FractionsManager(IFractionDatabaseService fractionDatabaseService, IFractionFactoryService fractionFactoryService, ILogger<FractionsManager> logger)
         {
             _fractionFactoryService = fractionFactoryService;
             _fractionDatabaseService = fractionDatabaseService;
             _fractions = new Dictionary<int, Fraction>();
+            _logger = logger;
 
             Initialize();
 
@@ -91,31 +93,31 @@ namespace AltVStrefaRPServer.Modules.Fractions
                     _samsFraction = samsFraction;
                 }
             }
-            Alt.Log($"Loaded {_fractions.Count} fractions in {Time.GetTimestampMs() - startTime}ms.");
+            _logger.LogInformation("Loaded {fractionsCount} fractions from databse in {elapsedTime} ms", _fractions.Count, Time.GetTimestampMs() - startTime);
         }
 
         private void CreateDeafultFractions()
         {
             if (_policeFraction == null)
             {
-                Alt.Server.LogWarning("Police fraction was empty. Creating missing fractions.");
+               _logger.LogWarning("Police fraction was empty. Creating missing fractions.");
                _policeFraction = _fractionFactoryService.CreateDefaultPoliceFraction(_fractionDatabaseService);
                _fractions.Add(_policeFraction.Id, _policeFraction);
-               Alt.Log($"Created police fraction with id {_policeFraction.Id} and position {_policeFraction.GetPosition()}");
+               _logger.LogInformation("Created new police fraction {@fraction}", _policeFraction);
             } 
             if (_samsFraction == null)
             {
-                Alt.Server.LogWarning("SAMS fraction was empty. Creating missing fractions.");
+                _logger.LogWarning("SAMS fraction was empty. Creating missing fractions.");
                 _samsFraction = _fractionFactoryService.CreateDefaultSamsFraction(_fractionDatabaseService);
                 _fractions.Add(_samsFraction.Id, _samsFraction);
-                Alt.Log($"Created sams fraction with id {_samsFraction.Id} and position {_samsFraction.GetPosition()}");
+                _logger.LogInformation("Created new sams fraction {@fraction}", _samsFraction);
             }
             if (_townHallFraction == null)
             {
-                Alt.Server.LogWarning("Townhall fraction was empty. Creating missing fractions.");
+                _logger.LogWarning("Townhall fraction was empty. Creating missing fractions.");
                 _townHallFraction = _fractionFactoryService.CreateDefaultTownHallFraction(_fractionDatabaseService);
                 _fractions.Add(_townHallFraction.Id, _townHallFraction);
-                Alt.Log($"Created townhall fraction with id {_townHallFraction.Id} and position {_townHallFraction.GetPosition()}");
+                _logger.LogInformation("Created new townhall fraction {@fraction}", _townHallFraction);
             }
         }
     }
