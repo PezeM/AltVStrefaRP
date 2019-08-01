@@ -208,7 +208,7 @@ namespace AltVStrefaRPServer.Modules.Admin
             if (sender.Account.AdminLevel < AdminLevel.Admin) return;
             if(!int.TryParse(args[0].ToString(), out int fractionId)) return;
 
-            await _fractionHandler.AcceptFractionInviteEvent(player, fractionId);
+            await _fractionHandler.AcceptFractionInviteEventAsync(player, fractionId);
         }
 
         private async Task SetFractionOwnerAsync(IPlayer player, string[] args)
