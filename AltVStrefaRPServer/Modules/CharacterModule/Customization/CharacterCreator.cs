@@ -3,16 +3,19 @@ using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Services.Characters.Customization;
+using Microsoft.Extensions.Logging;
 
 namespace AltVStrefaRPServer.Modules.CharacterModule.Customization
 {
     public class CharacterCreator
     {
         private ICharacterCreatorService _characterCreatorService;
+        private ILogger<CharacterCreator> _logger;
 
-        public CharacterCreator(ICharacterCreatorService characterCreatorService)
+        public CharacterCreator(ICharacterCreatorService characterCreatorService, ILogger<CharacterCreator> logger)
         {
             _characterCreatorService = characterCreatorService;
+            _logger = logger;
 
             AltAsync.On<IPlayer, Task>("tryToCreateNewCharacter", TryToCreateNewCharacterAsync);
         }
@@ -33,7 +36,7 @@ namespace AltVStrefaRPServer.Modules.CharacterModule.Customization
             if (await _characterCreatorService.CheckIfCharacterExistsAsync(accountId.ToString().ToLower(), accountId.ToString().ToLower()))
             {
                 // Error to user 
-                Alt.Log($"User already exists");
+                _logger.LogInformation("Character already exists");
                 return;
             }
 

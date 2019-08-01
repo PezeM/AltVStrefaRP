@@ -309,7 +309,7 @@ namespace AltVStrefaRPServer.Modules.Admin
 
         private void DisplayPositionCommand (IPlayer player, string[] arg2)
         {
-            Alt.Log ($"Position: {player.Position} Dimension: {player.Dimension}");
+            _logger.LogInformation("Position {position} Dimension {dimension}", player.Position, player.Dimension);
         }
 
         private void TeleportToPosition (IPlayer player, string[] args)
@@ -484,7 +484,6 @@ namespace AltVStrefaRPServer.Modules.Admin
             if (!int.TryParse(args[0].ToString(), out int itemId)) return;
             if (!int.TryParse(args[1].ToString(), out int amount)) return;
             await _inventoryHandler.InventoryRemoveItemAsync(player, itemId, amount);
-            Alt.Log($"");
         }
     }
 }

@@ -77,7 +77,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
             {
                 _items.TryAdd(item.Id, item);
             }
-            _logger.LogInformation("Loaded {itemsCount} items from database in {elapsedTime}ms", Time.GetTimestampMs() - startTime);
+            _logger.LogInformation("Loaded {itemsCount} items from database in {elapsedTime}ms", _items.Count, Time.GetTimestampMs() - startTime);
         }
 
         private void LoadDroppedItems()
@@ -88,7 +88,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
                 _droppedItems.TryAdd(droppedItem.Id, droppedItem);
                 _networkingManager.AddNewDroppedItem(droppedItem);
             }
-            _logger.LogInformation("Loaded {droppedItemsCount} dropped items from database in {elapsedTime}ms", Time.GetTimestampMs() - startTime);
+            _logger.LogInformation("Loaded {droppedItemsCount} dropped items from database in {elapsedTime}ms", _droppedItems.Count, Time.GetTimestampMs() - startTime);
         }
     }
 }
