@@ -39,12 +39,9 @@ namespace AltVStrefaRPServer.Handlers
             _logger = logger;
 
             Alt.OnPlayerConnect += OnPlayerConnect;
-            AltAsync.On<IPlayer, string, string>("loginAccount", async (player, login, password) 
-                => await LoginAccountAsync(player, login, password));
-            AltAsync.On<IPlayer, string, string>("registerAccount", async (player, login, password) 
-                => await RegisterAccountAsync(player, login, password));
-            AltAsync.On<IPlayer, int>("tryToLoadCharacter", async (player, characterId) 
-                => await TryToLoadCharacterAsync(player, characterId));
+            AltAsync.On<IPlayer, string, string, Task>("loginAccount", LoginAccountAsync);
+            AltAsync.On<IPlayer, string, string, Task>("registerAccount", RegisterAccountAsync);
+            AltAsync.On<IPlayer, int, Task>("tryToLoadCharacter", TryToLoadCharacterAsync);
         }
 
         private async Task TryToLoadCharacterAsync(IPlayer player, int characterId)
@@ -55,7 +52,7 @@ namespace AltVStrefaRPServer.Handlers
                 if (character == null)
                 {
                     // TODO: Emit event to player that cound't find character with given ID
-                    _logger.LogWarning("Couldn't load character with ID({characterId)", characterId);
+                    _logger.LogWarning("Couldn't find character with ID({characterId)", characterId);
                     return;
                 }
 
