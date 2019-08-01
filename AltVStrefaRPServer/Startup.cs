@@ -78,6 +78,7 @@ namespace AltVStrefaRPServer
             // Add services
             services.AddTransient<INotificationService, NotificationService>();
             services.AddTransient<ILogin, Login>();
+            services.AddTransient<IAccountFactoryService, AccountFactoryService>();
             services.AddTransient<IAccountDatabaseService, AccountDatabaseService>();
             services.AddTransient<ICharacterCreatorService, CharacterCreatorService>();
             services.AddTransient<ICharacterDatabaseService, CharacterDatabaseService>();
