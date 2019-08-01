@@ -29,7 +29,6 @@ using EFCore.DbContextFactory.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Serilog;
 using Serilog.Sinks.Elasticsearch;
@@ -138,8 +137,10 @@ namespace AltVStrefaRPServer
 
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
+                .Enrich.WithThreadId()
+                .Enrich.WithThreadName()
                 .Enrich.FromLogContext()
-                .WriteTo.Console()
+                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss}] [{Level:u3}] <{ThreadId}><{ThreadName}> {Message:lj} {NewLine}{Exception}")
                 .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(options.Uri))
                 {
                     AutoRegisterTemplate = options.AutoRegisterTemplate,

@@ -13,6 +13,8 @@ using AltVStrefaRPServer.Models.Fractions.Permissions;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Services.Vehicles;
 using Microsoft.Extensions.Logging;
+using Serilog;
+using Serilog.Context;
 using VehicleModel = AltVStrefaRPServer.Models.VehicleModel;
 
 namespace AltVStrefaRPServer.Modules.Vehicle
