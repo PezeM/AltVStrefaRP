@@ -14,8 +14,7 @@ namespace AltVStrefaRPServer.Modules.CharacterModule.Customization
         {
             _characterCreatorService = characterCreatorService;
 
-            Alt.Log("Character creator initialized.");
-            AltAsync.On<IPlayer>("tryToCreateNewCharacter", async (player) => await TryToCreateNewCharacterAsync(player));
+            AltAsync.On<IPlayer, Task>("tryToCreateNewCharacter", TryToCreateNewCharacterAsync);
         }
 
         private async Task TryToCreateNewCharacterAsync(IPlayer player)
