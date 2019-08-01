@@ -13,8 +13,6 @@ using AltVStrefaRPServer.Models.Fractions.Permissions;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Services.Vehicles;
 using Microsoft.Extensions.Logging;
-using Serilog;
-using Serilog.Context;
 using VehicleModel = AltVStrefaRPServer.Models.VehicleModel;
 
 namespace AltVStrefaRPServer.Modules.Vehicle
@@ -34,20 +32,6 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             _logger = logger;
 
             LoadVehiclesFromDatabase();
-
-            try
-            {
-                TestException();
-            }
-            catch (Exception e)
-            {
-                _logger.LogCritical(e, "Test exception with vehicle object {@vehicle}", _vehicles[1]);
-            }
-        }
-
-        private void TestException()
-        {
-            throw new ArgumentException("Wrong argument exception");
         }
 
         /// <summary>
