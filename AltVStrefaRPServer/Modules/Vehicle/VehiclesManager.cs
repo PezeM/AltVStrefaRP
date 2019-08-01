@@ -100,7 +100,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError(e, "Error in removing vehicle from world. Vehicle {@vehicle} Error: {e}", vehicle);
+                    _logger.LogError(e, "Error in removing vehicle from world. Vehicle {@vehicle}", vehicle);
                     throw;
                 }
             }

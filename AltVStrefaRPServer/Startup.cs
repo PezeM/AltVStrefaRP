@@ -139,6 +139,7 @@ namespace AltVStrefaRPServer
             var logsPath = Path.Combine(Directory.GetCurrentDirectory(), "Logs/");
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Verbose)
                 .Enrich.WithThreadId()
                 .Enrich.WithThreadName()
                 .Enrich.FromLogContext()
