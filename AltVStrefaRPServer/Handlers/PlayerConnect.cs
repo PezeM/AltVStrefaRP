@@ -100,7 +100,7 @@ namespace AltVStrefaRPServer.Handlers
                 var account = _accountFactoryService.CreateNewAccount(login, _loginService.GeneratePassword(password));
                 await _accountDatabaseService.AddNewAccountAsync(account).ConfigureAwait(false);
                 await player.EmitAsync("successfullyRegistered");
-                _logger.LogInformation("Registered new account {@account} in {elapsedTime}ms", account, Time.GetElapsedTime(startTime));
+                _logger.LogInformation("Registered new account {login} ID(accountId) in {elapsedTime}ms", login, account.AccountId, Time.GetElapsedTime(startTime));
             }
             catch (Exception e)
             {

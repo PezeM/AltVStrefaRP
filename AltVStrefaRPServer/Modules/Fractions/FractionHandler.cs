@@ -113,8 +113,8 @@ namespace AltVStrefaRPServer.Modules.Fractions
                 _notificationService.ShowSuccessNotification(player, "Wysłano zaprosznie",
                     $"Pomyślnie wysłano zaproszenie do frakcji do {newEmployee.GetFullName()}", 6000);
 
-                _logger.LogInformation("Character CID({characterId}) invited new employee {@character} CID({employeeId}) to fraction {@fraction}", 
-                    character.Id, newEmployee, newEmployee.Id, fraction);
+                _logger.LogInformation("Character {characterName} CID({characterId}) invited new employee {employeeName} CID({employeeId}) to fraction {fractionName}", 
+                    character.GetFullName(), character.Id, newEmployee.GetFullName(), newEmployee.Id, fraction.Name);
             }
             else
             {
@@ -141,8 +141,8 @@ namespace AltVStrefaRPServer.Modules.Fractions
             if (await fraction.AddNewEmployeeAsync(character, _fractionDatabaseService))
             {
                 await _notificationService.ShowSuccessNotificationAsync(player, "Sukces", $"Pomyślnie dołączono do frakcji {fraction.Name}.");
-                _logger.LogInformation("Character CID({characterId}) {@character} joined fraction {@fraction} ID({fractionID})", 
-                    character.Id, character, fraction, fraction.Id);
+                _logger.LogInformation("Character {characterName} CID({characterId}) joined fraction {fractionName}", 
+                    character.GetFullName(), character.Id, fraction.Name);
             }
             else
             {
@@ -165,8 +165,8 @@ namespace AltVStrefaRPServer.Modules.Fractions
             {
                 // Maybe send some notification to user that he has been removed
                 await player.EmitAsync("succesfullyRemovedEmployeeFromFraction", employeeId);
-                _logger.LogInformation("Character CID({characterId}) {@character} removed employee ID({employeeId}) from fraction {@fraction}", 
-                    character.Id, character, employeeId, fraction);
+                _logger.LogInformation("Character {characterName} CID({characterId}) removed employee ID({employeeId}) from fraction {fractionName}", 
+                    character.GetFullName(), character.Id, employeeId, fraction.Name);
             }
             else
             {
@@ -200,7 +200,8 @@ namespace AltVStrefaRPServer.Modules.Fractions
             if (await fraction.RemoveRankAsync(character, rankId, _fractionDatabaseService))
             {
                 await player.EmitAsync("succesfullyDeletedFractionRank", rankId);
-                _logger.LogInformation("Character CID({characterId}) removed rank ID({rankId}) from fraction {fractionName}", character.Id, rankId, fraction.Name);
+                _logger.LogInformation("Character {characterName} CID({characterId}) removed rank ID({rankId}) from fraction {fractionName}", 
+                    character.GetFullName(), character.Id, rankId, fraction.Name);
             }
             else
             {
@@ -222,8 +223,8 @@ namespace AltVStrefaRPServer.Modules.Fractions
             if (await fraction.UpdateEmployeeRankAsync(character, employeeId, newRankId, _fractionDatabaseService))
             {
                 await player.EmitAsync("succesfullyUpdatedEmployeeRank", employeeId, newRankId);
-                _logger.LogInformation("Character CID({characterId}) changed employee ID({employeeId}) rank to rank ID({rankId}) in fraction {fractionName}",
-                    character.Id, employeeId, newRankId, fraction.Name);
+                _logger.LogInformation("Character {characterName} CID({characterId}) changed employee ID({employeeId}) rank to rank ID({rankId}) in fraction {fractionName}",
+                    character.GetFullName(), character.Id, employeeId, newRankId, fraction.Name);
             }
             else
             {
@@ -256,8 +257,8 @@ namespace AltVStrefaRPServer.Modules.Fractions
             if (await fraction.AddNewRankAsync(newRank, _fractionDatabaseService))
             {
                 player.EmitLocked("succesfullyAddedNewFractionRank", newRank.RankName, JsonConvert.SerializeObject(GetAllFractionRanks(fraction)));
-                _logger.LogInformation("Character CID({characterId}) added new rank {@newRank} to fraction {fractionName}", 
-                    character.Id, newRank, fraction.Name);
+                _logger.LogInformation("Character {characterName} CID({characterId}) added new rank {@newRank} to fraction {fractionName}", 
+                    character.GetFullName(), character.Id, newRank, fraction.Name);
 
             }
             else
@@ -292,8 +293,8 @@ namespace AltVStrefaRPServer.Modules.Fractions
             if (await fraction.UpdateRankAsync(character, updatedRank, _fractionDatabaseService))
             {
                 await player.EmitAsync("succesfullyUpdatedFractionRank", JsonConvert.SerializeObject(updatedRank));
-                _logger.LogInformation("Character CID({characterId}) updated rank {rankName} in fraction {fractionName}", 
-                    character.Id, updatedRank.RankName, fraction.Name);
+                _logger.LogInformation("Character {characterName} CID({characterId}) updated rank {rankName} in fraction {fractionName}", 
+                    character.GetFullName(), character.Id, updatedRank.RankName, fraction.Name);
             }
             else
             {

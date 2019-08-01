@@ -38,7 +38,7 @@ namespace AltVStrefaRPServer.Services.Vehicles
             }
 
             SetVehicleData(vehicleModel);
-            _logger.LogDebug("Spawned vehicle {@vehicle} VID({vehicleId})", vehicleModel, vehicleModel.Id);
+            _logger.LogDebug("Spawned vehicle VID({vehicleId})", vehicleModel.Id);
         }
 
         public void SpawnVehicle(VehicleModel vehicleModel)
@@ -88,7 +88,7 @@ namespace AltVStrefaRPServer.Services.Vehicles
 
             await _vehicleDatabaseService.SaveVehicleAsync(vehicleModel).ConfigureAwait(false);
             Alt.Server.RemoveVehicle(vehicleModel.VehicleHandle);
-            _logger.LogDebug("Despawned vehicle {@vehicle} VID({vehicleId})", vehicleModel, vehicleModel.Id);
+            _logger.LogDebug("Despawned vehicle VID({vehicleId})", vehicleModel.Id);
         }
 
         private bool CanDespawnVehicle(VehicleModel vehicleModel)

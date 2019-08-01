@@ -126,7 +126,7 @@ namespace AltVStrefaRPServer.Handlers
             var vehicle = _vehiclesManager.GetVehicleModel((ushort)vehicleId);
             if(vehicle == null) return;
 
-            _logger.LogDebug("Character {characterId} tried to open vehicle {@vehicle} VID({vehicleId)", character.Id, vehicle, vehicle.Id);
+            _logger.LogDebug("Character {characterId} tried to open vehicle VID({vehicleId)", character.Id, vehicle.Id);
             if(!_vehiclesManager.HasVehiclePermission(character, vehicle))
             {
                 await _notificationService.ShowErrorNotificationAsync(player, "Brak kluczyków", "Nie posiadasz kluczyków do tego pojazdu.");
@@ -143,7 +143,7 @@ namespace AltVStrefaRPServer.Handlers
 
         private Task OnVehicleRemoveAsync(IVehicle vehicle)
         {
-            _logger.LogInformation("Vehicle {@vehicle} was removed from the server", vehicle);
+            _logger.LogInformation("Vehicle {vehicleHandleId} was removed from the server", vehicle.Id);
             return Task.CompletedTask;
         }
 
@@ -172,7 +172,7 @@ namespace AltVStrefaRPServer.Handlers
             await _vehicleDatabaseService.SaveVehicleAsync(vehicleModel).ConfigureAwait(false);
             await _notificationService.ShowInfoNotificationAsync(player, "Pojazd zapisany!",
                 $"Zapisano pojazd UID({vehicleModel.Id}) w {Time.GetElapsedTime(startTime)}ms.");
-            _logger.LogDebug("Saved vehicle {@vehicle} VID({vehicleId}) to database in {elapsedTime}", vehicleModel, vehicleModel.Id, Time.GetElapsedTime(startTime));
+            _logger.LogDebug("Saved vehicle VID({vehicleId}) to database in {elapsedTime}ms", vehicleModel.Id, Time.GetElapsedTime(startTime));
         }
     }
 }

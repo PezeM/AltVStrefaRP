@@ -96,7 +96,8 @@ namespace AltVStrefaRPServer.Modules.Fractions
             if (UpdateTax(taxId, newTax, townHallFraction))
             {
                 player.Emit("updateTaxValue", taxId, newTax);
-                _logger.LogInformation("Character CID({characterId}) {@character} changed tax ID({taxId}) to {newTaxValue}%", character.Id, character, taxId, newTax*100);
+                _logger.LogInformation("Character {characterName} CID({characterId}) changed tax ID({taxId}) to {newTaxValue}%", 
+                    character.GetFullName(), character.Id, taxId, newTax*100);
             }
             else
             {
