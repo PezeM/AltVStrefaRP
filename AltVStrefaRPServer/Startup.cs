@@ -29,7 +29,10 @@ using EFCore.DbContextFactory.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using Serilog;
+using Serilog.Sinks.Elasticsearch;
 
 namespace AltVStrefaRPServer
 {
@@ -51,7 +54,7 @@ namespace AltVStrefaRPServer
         {
             // Configurations
             Configuration = new ConfigurationBuilder()
-                .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "resources", "AltVStrefaRPServer"))
+                .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", false)
                 .Build();
 
@@ -63,19 +66,14 @@ namespace AltVStrefaRPServer
             services.AddSingleton(appSettings);
             appSettings.Initialize();
 
-            // Add database
-            //services.AddDbContext<ServerContext>(options =>
-            //    options.UseMySql(appSettings.ConnectionString,
-            //        mysqlOptions =>
-            //        {
-            //            mysqlOptions.ServerVersion(new Version(10, 1, 37), ServerType.MariaDb);
-            //        }));
-            
-            services.AddDbContextFactory<ServerContext>(options => 
+            services.AddDbContextFactory<ServerContext>(options =>
                 options.UseMySql(appSettings.ConnectionString, mysqlOptions =>
                 {
                     mysqlOptions.ServerVersion(new Version(10, 1, 37), ServerType.MariaDb);
                 }));
+
+
+            AddLogging(services, appSettings.ElasticsearchOptions);
 
             // Add services
             services.AddTransient<INotificationService, NotificationService>();
@@ -129,6 +127,25 @@ namespace AltVStrefaRPServer
 
             // Build provider
             ServiceProvider = services.BuildServiceProvider();
+        }
+
+        private static void AddLogging(ServiceCollection services, ElasticsearchOptions options)
+        {
+            services.AddLogging(builder =>
+            {
+                builder.AddSerilog();
+            });
+
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .Enrich.FromLogContext()
+                .WriteTo.Console()
+                .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(options.Uri))
+                {
+                    AutoRegisterTemplate = options.AutoRegisterTemplate,
+                    ModifyConnectionSettings = x => x.BasicAuthentication(options.Username, options.Password)
+                })
+                .CreateLogger();
         }
     }
 }
