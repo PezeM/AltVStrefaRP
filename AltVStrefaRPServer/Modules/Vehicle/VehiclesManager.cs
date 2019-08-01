@@ -39,7 +39,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "Test exception with vehicle object {@vehicle}", _vehicles[1]);
+                _logger.LogCritical(e, "Test exception with vehicle object {@vehicle}", _vehicles[1]);
             }
         }
 
