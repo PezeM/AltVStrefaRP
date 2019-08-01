@@ -10,6 +10,7 @@ using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Models.Inventory.Responses;
 using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Inventory;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Position = AltV.Net.Data.Position;
 
@@ -20,21 +21,22 @@ namespace AltVStrefaRPServer.Modules.Inventory
         private readonly IInventoriesManager _inventoriesManager;
         private readonly IInventoryDatabaseService _inventoryDatabaseService;
         private readonly INotificationService _notificationService;
+        private readonly ILogger<InventoryHandler> _logger;
 
-        public InventoryHandler(IInventoriesManager inventoriesManager, IInventoryDatabaseService inventoryDatabaseService, INotificationService notificationService)
+        public InventoryHandler(IInventoriesManager inventoriesManager, IInventoryDatabaseService inventoryDatabaseService, INotificationService notificationService, 
+            ILogger<InventoryHandler> logger)
         {
             _inventoriesManager = inventoriesManager;
             _inventoryDatabaseService = inventoryDatabaseService;
             _notificationService = notificationService;
+            _logger = logger;
 
-            AltAsync.On<IPlayer, int, int, Position>("DropItem", async (player, id, amount, position)
-                => await DropItemAsync(player, id, amount, position));
-            AltAsync.On<IPlayer, int>("UseInventoryItem", async (player, itemId) => await UseInventoryItemAsync(player, itemId));
             Alt.On<IPlayer>("GetPlayerInventory", GetPlayerInventory);
-            AltAsync.On<IPlayer, int, int>("InventoryDropItem", async (player, id, amount) => await InventoryDropItemAsync(player, id, amount));
-            AltAsync.On<IPlayer, int, int>("InventoryRemoveItem", async (player, id, amount) => await InventoryRemoveItemAsync(player, id, amount));
-            AltAsync.On<IPlayer, int, int>("PickupDroppedItem", async (player, networkItemId, droppedItemId) 
-                => await PickupDroppedItemAsync(player, networkItemId, droppedItemId));
+            AltAsync.On<IPlayer, int, int, Position, Task>("DropItem", DropItemAsync);
+            AltAsync.On<IPlayer, int, Task>("UseInventoryItem",UseInventoryItemAsync);
+            AltAsync.On<IPlayer, int, int, Task>("InventoryDropItem", InventoryDropItemAsync);
+            AltAsync.On<IPlayer, int, int, Task>("InventoryRemoveItem", InventoryRemoveItemAsync);
+            AltAsync.On<IPlayer, int, int, Task>("PickupDroppedItem", PickupDroppedItemAsync);
         }
 
         private void GetPlayerInventory(IPlayer player)
@@ -62,7 +64,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
                     await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie masz wystarczającej ilości przedmiotu.");
                     break;
                 case InventoryDropResponse.ItemAlreadyDropped:
-                    Alt.Log($"{character.Id} wanted to drop item that was already dropped. Item id {id}");
+                    _logger.LogDebug("Character CID({characterId}) wanted to drop item that was already dropped, item ID({itemId})", character.Id, id);
                     break;
                 case InventoryDropResponse.DroppedItem:
                     // Propably update user inventory
@@ -115,7 +117,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
             switch (response)
             {
                 case InventoryRemoveResponse.ItemRemovedCompletly:
-                    Alt.Log($"Item id {id} should be removed from database");
+                    _logger.LogDebug("Item ID {itemId} should be removed from database", id);
                     break;
                 case InventoryRemoveResponse.NotEnoughItems:
                     await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Posiadasz za mało przedmiotów");
