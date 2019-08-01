@@ -53,6 +53,8 @@ namespace AltVStrefaRPServer.Modules.Businesses
         public bool TryGetBusiness(Character employee, out Business business)
             => _businesses.TryGetValue(employee.CurrentBusinessId.GetValueOrDefault(), out business);
 
+        public bool TryGetBusiness(int businessId, out Business business) => _businesses.TryGetValue(businessId, out business);
+
         /// <summary>
         /// Gets all owned businesses for given character id
         /// </summary>
