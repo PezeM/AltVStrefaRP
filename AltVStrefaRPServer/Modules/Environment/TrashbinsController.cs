@@ -19,6 +19,7 @@ namespace AltVStrefaRPServer.Modules.Environment
             _notificationService = notificationService;
             _moneyService = moneyService;
             _rng = new Random();
+
             Alt.On<IPlayer, bool>("SearchedInBin", SearchedInBin);
         }
 

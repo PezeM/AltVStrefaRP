@@ -12,6 +12,7 @@ namespace AltVStrefaRPServer.Models.Interfaces.Managers
     {
         Business GetBusiness(Character employee);
         Business GetBusiness(int businessId);
+        bool TryGetBusiness(int businessId, out Business business);
         List<Business> GetCharacterBusinesses(int ownerId);
         Business GetNearestBusiness(IPlayer player);
         Task<bool> AddNewBusinessRankAsync(Business business, BusinessNewRankDto newRank);

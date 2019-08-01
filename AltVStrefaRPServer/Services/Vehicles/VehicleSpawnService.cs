@@ -5,6 +5,7 @@ using AltV.Net.Enums;
 using System;
 using System.Threading.Tasks;
 using AltVStrefaRPServer.Models;
+using Microsoft.Extensions.Logging;
 using VehicleModel = AltVStrefaRPServer.Models.VehicleModel;
 
 namespace AltVStrefaRPServer.Services.Vehicles
@@ -12,10 +13,12 @@ namespace AltVStrefaRPServer.Services.Vehicles
     public class VehicleSpawnService : IVehicleSpawnService
     {
         private IVehicleDatabaseService _vehicleDatabaseService;
+        private readonly ILogger<VehicleSpawnService> _logger;
 
-        public VehicleSpawnService(IVehicleDatabaseService vehicelDatabaseService)
+        public VehicleSpawnService(IVehicleDatabaseService vehicelDatabaseService, ILogger<VehicleSpawnService> logger)
         {
             _vehicleDatabaseService = vehicelDatabaseService;
+            _logger = logger;
         }
 
         public async Task SpawnVehicleAsync(VehicleModel vehicleModel)
@@ -30,12 +33,12 @@ namespace AltVStrefaRPServer.Services.Vehicles
             }
             catch (Exception e)
             {
-                Alt.Log($"Error creating vehicle with model {vehicleModel.Model} ID({vehicleModel.Id}) ex: {e}");
+                _logger.LogError(e, "Error spawning vehicle {@vehicle} VID({vehicleId})", vehicleModel, vehicleModel.Id);
                 throw;
             }
 
             SetVehicleData(vehicleModel);
-            Alt.Log($"Spawned vehicle UID({vehicleModel.Id}) ID({vehicleModel.VehicleHandle.Id})");
+            _logger.LogDebug("Spawned vehicle {@vehicle} VID({vehicleId})", vehicleModel, vehicleModel.Id);
         }
 
         public void SpawnVehicle(VehicleModel vehicleModel)
@@ -50,12 +53,12 @@ namespace AltVStrefaRPServer.Services.Vehicles
             }
             catch (Exception e)
             {
-                Alt.Log($"Error creating vehicle with model {vehicleModel.Model} ID({vehicleModel.Id}) ex: {e}");
+                _logger.LogError(e, "Error spawning vehicle {@vehicle} VID({vehicleId})", vehicleModel, vehicleModel.Id);
                 throw;
             }
 
             SetVehicleData(vehicleModel);
-            Alt.Log($"Spawned vehicle UID({vehicleModel.Id}) ID({vehicleModel.VehicleHandle.Id})");
+            _logger.LogDebug("Spawned vehicle {@vehicle} VID({vehicleId})", vehicleModel, vehicleModel.Id);
         }
 
         /// <summary>
@@ -70,7 +73,7 @@ namespace AltVStrefaRPServer.Services.Vehicles
 
             _vehicleDatabaseService.SaveVehicle(vehicleModel);
             Alt.Server.RemoveVehicle(vehicleModel.VehicleHandle);
-            AltAsync.Log($"Despawned vehicle: {vehicleModel.Model} UID({vehicleModel.Id})");
+            _logger.LogDebug("Despawned vehicle {@vehicle} VID({vehicleId})", vehicleModel, vehicleModel.Id);
         }
 
         /// <summary>
@@ -85,7 +88,7 @@ namespace AltVStrefaRPServer.Services.Vehicles
 
             await _vehicleDatabaseService.SaveVehicleAsync(vehicleModel).ConfigureAwait(false);
             Alt.Server.RemoveVehicle(vehicleModel.VehicleHandle);
-            AltAsync.Log($"Despawned vehicle: {vehicleModel.Model} UID({vehicleModel.Id})");
+            _logger.LogDebug("Despawned vehicle {@vehicle} VID({vehicleId})", vehicleModel, vehicleModel.Id);
         }
 
         private bool CanDespawnVehicle(VehicleModel vehicleModel)

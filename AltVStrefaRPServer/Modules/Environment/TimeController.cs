@@ -3,6 +3,7 @@ using System.Timers;
 using AltVStrefaRPServer.Models.Enums;
 using System;
 using AltVStrefaRPServer.Models.Server;
+using Microsoft.Extensions.Logging;
 
 namespace AltVStrefaRPServer.Modules.Environment
 {
@@ -13,13 +14,15 @@ namespace AltVStrefaRPServer.Modules.Environment
         private int _elapsedMinutes = AppSettings.Current.ServerConfig.ChangeWeatherInterval == 0 
             ? 30 : AppSettings.Current.ServerConfig.ChangeWeatherInterval;
         private readonly Random _rng;
+        private readonly ILogger<TimeController> _logger;
 
         public uint CurrentWeather { get; set; } = (uint)Weathers.ExtraSunny;
         public GameTime GameTime { get; set; }
 
-        public TimeController()
+        public TimeController(ILogger<TimeController> logger)
         {
             _rng = new Random();
+            _logger = logger;
             GameTime = new GameTime
             {
                 Days = 0,
@@ -42,7 +45,7 @@ namespace AltVStrefaRPServer.Modules.Environment
             _gameTimeTimer.AutoReset = true;
             _gameTimeTimer.Start();
 
-            Alt.Log("Time manager initialized.");
+            _logger.LogInformation("Time manager initialized");
         }
 
         private void GameTimerOnElapsed(object sender, ElapsedEventArgs e)
@@ -65,7 +68,8 @@ namespace AltVStrefaRPServer.Modules.Environment
             {
                 player.SetDateTime(GameTime.Days, 0, 0, GameTime.Hours, GameTime.Minutes, 0);
             }
-            Alt.Log($"Updated game time to {GameTime}");
+
+            _logger.LogDebug("Updated game time to {gameTime}", GameTime);
         }
 
         private void ChangeWeather()
@@ -77,7 +81,8 @@ namespace AltVStrefaRPServer.Modules.Environment
             {
                 player.SetWeather(CurrentWeather);
             }
-            Alt.Log($"Updated weather to {CurrentWeather}.");
+
+            _logger.LogDebug("Updated weather to {weather}", CurrentWeather);
         }
 
         private void GetNewWeather(int weatherChance)

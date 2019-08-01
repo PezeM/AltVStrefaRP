@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AltV.Net;
-using AltV.Net.Async;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Helpers;
@@ -13,20 +12,24 @@ using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Fractions.Permissions;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Services.Vehicles;
+using Microsoft.Extensions.Logging;
 using VehicleModel = AltVStrefaRPServer.Models.VehicleModel;
 
 namespace AltVStrefaRPServer.Modules.Vehicle
 {
     public class VehiclesManager : IVehiclesManager
     {
-        private Dictionary<int, VehicleModel> _vehicles = new Dictionary<int, VehicleModel>();
+        private Dictionary<int, VehicleModel> _vehicles;
         private IVehicleDatabaseService _vehicleDatabaseService;
         private IVehicleCreatorService _vehicleCreator;
+        private readonly ILogger<VehiclesManager> _logger;
 
-        public VehiclesManager(IVehicleDatabaseService vehicleDatabaseService, IVehicleCreatorService vehicleCreatorService)
+        public VehiclesManager(IVehicleDatabaseService vehicleDatabaseService, IVehicleCreatorService vehicleCreatorService, ILogger<VehiclesManager> logger)
         {
+            _vehicles = new Dictionary<int, VehicleModel>();
             _vehicleDatabaseService = vehicleDatabaseService;
             _vehicleCreator = vehicleCreatorService;
+            _logger = logger;
 
             LoadVehiclesFromDatabase();
         }
@@ -97,7 +100,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
                 }
                 catch (Exception e)
                 {
-                    Alt.Log($"Error removing vehicle from world: {e}");
+                    _logger.LogError(e, "Error in removing vehicle from world. Vehicle {@vehicle}", vehicle);
                     throw;
                 }
             }
@@ -165,7 +168,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             {
                 _vehicles.Add(vehicle.Id, vehicle);
             }
-            AltAsync.Log($"Created vehicle {vehicle.Model} UID({vehicle.Id}).");
+            _logger.LogInformation("Created vehicle {vehicleModel} ID({vehicleId}) by CID({characterId})", vehicleModel, vehicle.Id, ownerId);
             return vehicle;
         }
 
@@ -175,7 +178,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             var vehicle = _vehicleCreator.CreateVehicle(vehicleModel, position, rotation, dimension, ownerId, ownerType);
             _vehicleDatabaseService.AddVehicleToDatabase(vehicle);
             _vehicles.Add(vehicle.Id, vehicle);
-            Alt.Log($"Created vehicle {vehicle.Model} UID({vehicle.Id}).");
+            _logger.LogInformation("Created vehicle {vehicleModel} ID({vehicleId}) by CID({characterId})", vehicleModel, vehicle.Id, ownerId);
             return vehicle;
         }
 
@@ -187,7 +190,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
                 vehicle.IsSpawned = false;
                 _vehicles.Add(vehicle.Id, vehicle);
             }
-            Alt.Log($"Loaded {_vehicles.Count} vehicles from database in {Time.GetTimestampMs() - startTime}ms.");
+            _logger.LogInformation("Loaded {vehiclesCount} vehicles from databse in {elapsedTime} ms", _vehicles.Count, Time.GetTimestampMs() - startTime);
         }
     }
 }

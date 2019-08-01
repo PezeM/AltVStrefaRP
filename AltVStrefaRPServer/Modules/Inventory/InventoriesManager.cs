@@ -1,12 +1,11 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using AltV.Net;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Models.Inventory;
-using AltVStrefaRPServer.Modules.Networking;
 using AltVStrefaRPServer.Services.Inventory;
+using Microsoft.Extensions.Logging;
 
 namespace AltVStrefaRPServer.Modules.Inventory
 {
@@ -16,11 +15,14 @@ namespace AltVStrefaRPServer.Modules.Inventory
         private ConcurrentDictionary<int, InventoryItem> _items;
         private readonly IInventoryDatabaseService _inventoryDatabaseService;
         private readonly INetworkingManager _networkingManager;
+        private readonly ILogger<InventoriesManager> _logger;
 
-        public InventoriesManager(IInventoryDatabaseService inventoryDatabaseService, INetworkingManager networkingManager)
+        public InventoriesManager(IInventoryDatabaseService inventoryDatabaseService, INetworkingManager networkingManager, 
+            ILogger<InventoriesManager> logger)
         {
             _inventoryDatabaseService = inventoryDatabaseService;
             _networkingManager = networkingManager;
+            _logger = logger;
             _droppedItems = new ConcurrentDictionary<int, DroppedItem>();
             _items = new ConcurrentDictionary<int, InventoryItem>();
 
@@ -75,7 +77,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
             {
                 _items.TryAdd(item.Id, item);
             }
-            Alt.Log($"Loaded {_items.Count} items from database in {Time.GetTimestampMs() - startTime}ms.");
+            _logger.LogInformation("Loaded {itemsCount} items from database in {elapsedTime}ms", _items.Count, Time.GetTimestampMs() - startTime);
         }
 
         private void LoadDroppedItems()
@@ -86,7 +88,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
                 _droppedItems.TryAdd(droppedItem.Id, droppedItem);
                 _networkingManager.AddNewDroppedItem(droppedItem);
             }
-            Alt.Log($"Loaded {_droppedItems.Count} dropped items from databse in {Time.GetTimestampMs() - startTime}ms.");
+            _logger.LogInformation("Loaded {droppedItemsCount} dropped items from database in {elapsedTime}ms", _droppedItems.Count, Time.GetTimestampMs() - startTime);
         }
     }
 }

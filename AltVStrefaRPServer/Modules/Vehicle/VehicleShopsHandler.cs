@@ -9,6 +9,7 @@ using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Money;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace AltVStrefaRPServer.Modules.Vehicle
@@ -19,17 +20,19 @@ namespace AltVStrefaRPServer.Modules.Vehicle
         private readonly INotificationService _notificationService;
         private readonly IMoneyService _moneyService;
         private readonly IVehiclesManager _vehiclesManager;
+        private readonly ILogger<VehicleShopsHandler> _logger;
 
         public VehicleShopsHandler(VehicleShopsManager vehicleShopsManager, IVehiclesManager vehiclesManager,
-            INotificationService notificationService, IMoneyService moneyService)
+            INotificationService notificationService, IMoneyService moneyService, ILogger<VehicleShopsHandler> logger)
         {
             _vehicleShopsManager = vehicleShopsManager;
             _notificationService = notificationService;
             _moneyService = moneyService;
             _vehiclesManager = vehiclesManager;
+            _logger = logger;
 
             Alt.On<IPlayer, int>("OpenVehicleShop", OpenVehicleShopEvent);
-            AltAsync.On<IPlayer, int, string>("BuyVehicle", async (player, shopId, vehicleModel) => await BuyVehicleEvent(player, shopId, vehicleModel));
+            AltAsync.On<IPlayer, int, string, Task>("BuyVehicle", BuyVehicleEventAsync);
         }
 
         private void OpenVehicleShopEvent(IPlayer player, int shopId)
@@ -44,7 +47,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             player.Emit("openVehicleShop", shop.VehicleShopId, JsonConvert.SerializeObject(shop.AvailableVehicles));
         }
 
-        private async Task BuyVehicleEvent(IPlayer player, int shopId, string vehicleHash)
+        private async Task BuyVehicleEventAsync(IPlayer player, int shopId, string vehicleHash)
         {
             if (!player.TryGetCharacter(out Character character)) return;
             if (!long.TryParse(vehicleHash, out var vehicleModel))
@@ -78,6 +81,8 @@ namespace AltVStrefaRPServer.Modules.Vehicle
                 shop.GetRotationOfBoughtVehicles(), 0, character.Id, OwnerType.Character);
             await _notificationService.ShowSuccessNotificationAsync(player, "Zakupiono pojazd!", 
                 $"Pomyślnie zakupiono pojazd {vehicleToBuy.VehicleModel.ToString()} za {vehicleToBuy.Price}$.");
+            _logger.LogInformation("Character CID({characterId}) {characterName} bought new vehicle {vehicleModel} for {vehiclePrice} in shop ID({vehicleShopId})", 
+                character.Id, character.GetFullName(), vehicleToBuy.VehicleModel.ToString(), vehicleToBuy.Price, shop.VehicleShopId);
         }
     }
 }

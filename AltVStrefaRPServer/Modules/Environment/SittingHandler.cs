@@ -2,18 +2,21 @@
 using AltV.Net;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Services;
+using Microsoft.Extensions.Logging;
 
 namespace AltVStrefaRPServer.Modules.Environment
 {
     public class SittingHandler
     {
         private INotificationService _notificationService;
+        private readonly ILogger<SittingHandler> _logger;
         private Dictionary<int, int> _seatsTaken;
 
-        public SittingHandler(INotificationService notificationService)
+        public SittingHandler(INotificationService notificationService, ILogger<SittingHandler> logger)
         {
-            _notificationService = notificationService;
             _seatsTaken = new Dictionary<int, int>();
+            _notificationService = notificationService;
+            _logger = logger;
 
             Alt.On<IPlayer, int>("takeSeat", TakeSeat);
             Alt.On<IPlayer, int>("leaveSeat", LeaveSeat);
@@ -23,7 +26,7 @@ namespace AltVStrefaRPServer.Modules.Environment
         {
             if (_seatsTaken.ContainsKey(seatId))
             {
-                Alt.Log($"Removing {seatId} from seatsTaken dict");
+                _logger.LogDebug("Removing {seatId} from taken seats dictionary", seatId);
                 _seatsTaken.Remove(seatId);
             }
         }
@@ -33,7 +36,6 @@ namespace AltVStrefaRPServer.Modules.Environment
             if (_seatsTaken.ContainsKey(seatId))
             {
                 _notificationService.ShowErrorNotification(player, "Zajęte", "To miejsce jest już zajęte.", 4000);
-                Alt.Log($"Someone sits at object {seatId}");
                 return;
             }
 

@@ -30,6 +30,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using Serilog;
+using Serilog.Events;
+using Serilog.Sinks.Elasticsearch;
 
 namespace AltVStrefaRPServer
 {
@@ -51,7 +54,7 @@ namespace AltVStrefaRPServer
         {
             // Configurations
             Configuration = new ConfigurationBuilder()
-                .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "resources", "AltVStrefaRPServer"))
+                .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", false)
                 .Build();
 
@@ -63,23 +66,19 @@ namespace AltVStrefaRPServer
             services.AddSingleton(appSettings);
             appSettings.Initialize();
 
-            // Add database
-            //services.AddDbContext<ServerContext>(options =>
-            //    options.UseMySql(appSettings.ConnectionString,
-            //        mysqlOptions =>
-            //        {
-            //            mysqlOptions.ServerVersion(new Version(10, 1, 37), ServerType.MariaDb);
-            //        }));
-            
-            services.AddDbContextFactory<ServerContext>(options => 
+            services.AddDbContextFactory<ServerContext>(options =>
                 options.UseMySql(appSettings.ConnectionString, mysqlOptions =>
                 {
                     mysqlOptions.ServerVersion(new Version(10, 1, 37), ServerType.MariaDb);
                 }));
 
+
+            AddLogging(services, appSettings.ElasticsearchOptions);
+
             // Add services
             services.AddTransient<INotificationService, NotificationService>();
             services.AddTransient<ILogin, Login>();
+            services.AddTransient<IAccountFactoryService, AccountFactoryService>();
             services.AddTransient<IAccountDatabaseService, AccountDatabaseService>();
             services.AddTransient<ICharacterCreatorService, CharacterCreatorService>();
             services.AddTransient<ICharacterDatabaseService, CharacterDatabaseService>();
@@ -129,6 +128,35 @@ namespace AltVStrefaRPServer
 
             // Build provider
             ServiceProvider = services.BuildServiceProvider();
+        }
+
+        private static void AddLogging(ServiceCollection services, ElasticsearchOptions options)
+        {
+            services.AddLogging(builder =>
+            {
+                builder.AddSerilog();
+            });
+
+            var logsPath = Path.Combine(Directory.GetCurrentDirectory(), "Logs/");
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Verbose)
+                .Enrich.WithThreadId()
+                .Enrich.WithThreadName()
+                .Enrich.FromLogContext()
+                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] <{ThreadId}><{ThreadName}> {Message:lj} {NewLine}{Exception}")
+                .WriteTo.File(logsPath + ".log",
+                    LogEventLevel.Verbose, 
+                    outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] <{ThreadId}><{ThreadName}> {Message:lj} {NewLine}{Exception}", 
+                    rollingInterval: RollingInterval.Day, 
+                    retainedFileCountLimit: 100, 
+                    rollOnFileSizeLimit: true)
+                .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(options.Uri))
+                {
+                    AutoRegisterTemplate = options.AutoRegisterTemplate,
+                    ModifyConnectionSettings = x => x.BasicAuthentication(options.Username, options.Password)
+                })
+                .CreateLogger();
         }
     }
 }

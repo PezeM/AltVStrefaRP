@@ -10,6 +10,7 @@
         }
 
         public string ConnectionString { get; set; }
+        public ElasticsearchOptions ElasticsearchOptions { get; set; }
         public ServerConfig ServerConfig { get; set; }
     }
 

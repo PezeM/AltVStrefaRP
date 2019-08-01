@@ -12,9 +12,9 @@ using AltVStrefaRPServer.Models.Fractions;
 using AltVStrefaRPServer.Models.Fractions.Permissions;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Modules.CharacterModule;
-using AltVStrefaRPServer.Modules.Vehicle;
 using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Characters;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace AltVStrefaRPServer.Modules.Fractions
@@ -25,18 +25,19 @@ namespace AltVStrefaRPServer.Modules.Fractions
         private readonly INotificationService _notificationService;
         private readonly ICharacterDatabaseService _characterDatabaseService;
         private readonly IVehiclesManager _vehiclesManager;
+        private readonly ILogger<TownHallFractionHandler> _logger;
 
         public TownHallFractionHandler(IFractionsManager fractionsManager, ICharacterDatabaseService characterDatabaseService,
-            INotificationService notificationService, IVehiclesManager vehiclesManager)
+            INotificationService notificationService, IVehiclesManager vehiclesManager, ILogger<TownHallFractionHandler> logger)
         {
             _fractionsManager = fractionsManager;
             _notificationService = notificationService;
             _characterDatabaseService = characterDatabaseService;
             _vehiclesManager = vehiclesManager;
+            _logger = logger;
 
             Alt.On<IPlayer, int, float>("TryToUpdateTaxValue", TryToUpdateTaxValue);  
-            AltAsync.On<IPlayer, string, string>("TryToGetResidentData", async (player, firstName, lastName) 
-                => await TryToGetResidentDataEvent(player, firstName, lastName));
+            AltAsync.On<IPlayer, string, string, Task>("TryToGetResidentData", TryToGetResidentDataEventAsync);
             Alt.On<IPlayer>("TryToOpenFractionResidentsPage", TryToOpenFractionResidentsPage);
             Alt.On<IPlayer>("TryToOpenFractionTaxesPage", TryToOpenFractionTaxesPage);
             Alt.On<IPlayer>("TryToOpenFractionRegistrationPage", TryToOpenFractionRegistrationPage);
@@ -48,7 +49,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
             player.Emit("openFractionsResidentsPage", JsonConvert.SerializeObject(allOnlinePlayers));
         }
 
-        private async Task TryToGetResidentDataEvent(IPlayer player, string firstName, string lastName)
+        private async Task TryToGetResidentDataEventAsync(IPlayer player, string firstName, string lastName)
         {
             if (firstName.IsNullOrEmpty() || lastName.IsNullOrEmpty()) return;
             var character = CharacterManager.Instance.GetCharacter(firstName, lastName);
@@ -62,7 +63,6 @@ namespace AltVStrefaRPServer.Modules.Fractions
                     return;
                 }
             }
-
 
             await player.EmitAsync("populateResidentData", CreateFractionResidentDto(character));
         }
@@ -96,7 +96,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
             if (UpdateTax(taxId, newTax, townHallFraction))
             {
                 player.Emit("updateTaxValue", taxId, newTax);
-                Alt.Log($"[TAX UPDATE] ({character.Id}) updated tax ({taxId}) to {newTax*100}%.");
+                _logger.LogInformation("Character CID({characterId}) {@character} changed tax ID({taxId}) to {newTaxValue}%", character.Id, character, taxId, newTax*100);
             }
             else
             {

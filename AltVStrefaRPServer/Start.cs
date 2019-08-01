@@ -22,6 +22,7 @@ using AltVStrefaRPServer.Modules.Vehicle;
 using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Vehicles;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace AltVStrefaRPServer
 {
@@ -30,17 +31,19 @@ namespace AltVStrefaRPServer
         private VehiclesManager _vehiclesManager;
         private IVehicleSpawnService _vehicleSpawnService;
         private SerializatorTest _serializatorTest;
+        private ILogger<Start> _logger;
 
         protected Startup Startup;
         public override void OnStart ()
         {
-            Alt.Server.LogInfo ("Starting StrefaRP...");
+            Startup = new Startup ();
+            _logger = Startup.ServiceProvider.GetService<ILogger<Start>>();
+            _logger.LogInformation("Starting StrefaRP...");
 
             AltAsync.OnConsoleCommand += OnConsoleCommand;
             AltAsync.OnPlayerEnterVehicle += OnPlayerEnterVehicleAsync;
             Alt.OnPlayerEvent += OnOnPlayerEvent;
 
-            Startup = new Startup ();
             var playerConnectEvent = Startup.ServiceProvider.GetService<PlayerConnect> ();
             var playerDiconnectEvent = Startup.ServiceProvider.GetService<PlayerDisconnect> ();
             var vehicleHandler = Startup.ServiceProvider.GetService<VehicleHandler>();
@@ -67,7 +70,6 @@ namespace AltVStrefaRPServer
             var fractionManager = Startup.ServiceProvider.GetService<FractionsManager> ();
             var fractionHandler = Startup.ServiceProvider.GetService<FractionHandler> ();
             var townHallFractionHandler = Startup.ServiceProvider.GetService<TownHallFractionHandler>();
-            Test ();
 
             Alt.On<IPlayer, ulong>("bigNumber", (player, number) =>
             {
@@ -82,7 +84,7 @@ namespace AltVStrefaRPServer
 
         private void OnOnPlayerEvent (IPlayer player, string eventName, object[] args)
         {
-            Alt.Log ($"{eventName} event triggered for {player.Name} with {args.Length} args.");
+            _logger.LogDebug("Event {eventName} triggered for player {playerName} with {argsLength} args", eventName, player.Name, args.Length);
         }
 
         private Task OnPlayerEnterVehicleAsync (IVehicle vehicle, IPlayer player, byte seat)
@@ -91,7 +93,7 @@ namespace AltVStrefaRPServer
             {
                 if (vehicle is MyVehicle myVehicle)
                 {
-                    Alt.Log ($"Pojazd jest customowym typem IMyVehicle. Paliwo {myVehicle.Fuel} Olej {myVehicle.Oil} Data {myVehicle.CustomData}");
+                    _logger.LogDebug($"Pojazd jest customowym typem IMyVehicle. Paliwo {myVehicle.Fuel} Olej {myVehicle.Oil} Data {myVehicle.CustomData}");
                 }
             }
             catch (Exception ex)

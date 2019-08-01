@@ -42,6 +42,5 @@ namespace AltVStrefaRPServer.Modules.Chat
         {
             return _registeredCommands.TryAdd(commandName, callback);
         }
-
     }
 }

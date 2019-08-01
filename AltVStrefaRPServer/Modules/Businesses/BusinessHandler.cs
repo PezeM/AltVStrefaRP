@@ -15,52 +15,41 @@ using System.Linq;
 using System.Threading.Tasks;
 using AltVStrefaRPServer.Models.Businesses;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
+using Microsoft.Extensions.Logging;
 
 namespace AltVStrefaRPServer.Modules.Businesses
 {
     public class BusinessHandler
     {
-        private IBusinessesManager _businessesManager;
-        private INotificationService _notificationService;
+        private readonly IBusinessesManager _businessesManager;
+        private readonly INotificationService _notificationService;
+        private readonly ILogger<BusinessHandler> _logger;
 
-        public BusinessHandler(IBusinessesManager businessesManager, INotificationService notificationService)
+        public BusinessHandler(IBusinessesManager businessesManager, INotificationService notificationService, ILogger<BusinessHandler> logger)
         {
             _businessesManager = businessesManager;
             _notificationService = notificationService;
+            _logger = logger;
 
-            Alt.Log("Intialized business handler.");
             Alt.On<IPlayer, int>("GetBusinessEmployees", GetBusinessEmployeesEvent);
             AltAsync.On<IPlayer, int, int, int, Task>("UpdateEmployeeRank", (player, employeeId, newRankId, businessId) 
                 => UpdateEmployeeRankEventAsync(player, employeeId, newRankId, businessId));
             Alt.On<IPlayer, string, string, int>("AddNewEmployee", AddNewEmployeeEvent);
-            AltAsync.On<IPlayer, int>("AcceptInviteToBusiness", async (player, businessId) 
-                => await AcceptInviteToBusinessEvent(player, businessId));
+            AltAsync.On<IPlayer, int, Task>("AcceptInviteToBusiness", AcceptInviteToBusinessEventAsync);
             Alt.On<IPlayer, int>("GetBusinessRoles", GetBusinessRolesEvent);
-            AltAsync.On<IPlayer, string, int>("UpdateBusinessRank", async (player, business, businessId) 
-                => await UpdateBusinessRank(player, business, businessId));
-            AltAsync.On<IPlayer, string, int>("AddNewRole", async (player, newRole, businessId) 
-                => await AddNewRoleEvent(player, newRole, businessId));
-            AltAsync.On<IPlayer, int, int>("DeleteEmployee", async (player, employeeId, businessId) 
-                => await DeleteEmployeeEvent(player, employeeId, businessId));
-            AltAsync.On<IPlayer, int, int>("DeleteRole", async (player, roleId, businessId) 
-                => await DeleteRoleEvent(player, roleId, businessId));
-            AltAsync.On<IPlayer, int>("DeleteBusiness", async (player, businessId) 
-                => await DeleteBusinessEvent(player, businessId));
-        }
-
-        private bool GetBusiness(int businessId, out Business business)
-        {
-            business = _businessesManager.GetBusiness(businessId);
-            return business != null;
+            AltAsync.On<IPlayer, string, int, Task>("UpdateBusinessRank", UpdateBusinessRankAsync);
+            AltAsync.On<IPlayer, string, int, Task>("AddNewRole", AddNewRankEventAsync);
+            AltAsync.On<IPlayer, int, int, Task>("DeleteEmployee", DeleteEmployeeEventAsync);
+            AltAsync.On<IPlayer, int, int, Task>("DeleteRole", DeleteRankEventAsync);
+            AltAsync.On<IPlayer, int, Task>("DeleteBusiness", DeleteBusinessEventAsync);
         }
 
         private void GetBusinessEmployeesEvent(IPlayer player, int businessId)
         {
-            var startTime = Time.GetTimestampMs();
             var character = player.GetCharacter();
             if (character == null) return;
 
-            if (!GetBusiness(businessId, out Business business))
+            if (!_businessesManager.TryGetBusiness(businessId, out Business business))
             {
                 _notificationService.ShowErrorNotification(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
                 return;
@@ -79,7 +68,6 @@ namespace AltVStrefaRPServer.Modules.Businesses
             }
 
             player.Emit("populateEmployeeRanks", JsonConvert.SerializeObject(GetBusinessEmployeesDto(business)));
-            Alt.Log($"Character ID({character.Id}) requested business employees in {Time.GetTimestampMs() - startTime}ms.");
         }
 
         public void OpenBusinessMenu(Character character)
@@ -104,58 +92,56 @@ namespace AltVStrefaRPServer.Modules.Businesses
             }
 
             character.Player.Emit("openBusinessMenu", JsonConvert.SerializeObject(GetBusinessInfoDto(business)));
-            Alt.Log($"Character ID({character.Id}) opened business menu in {Time.GetTimestampMs() - startTime}ms.");
+            _logger.LogDebug("Character CID({characterId}) opened business menu in {elapsedTime}ms", character.Id, Time.GetTimestampMs() - startTime);
         }
 
         private async Task UpdateEmployeeRankEventAsync(IPlayer player, int employeeId, int newRankId, int businessId)
         {
             var startTime = Time.GetTimestampMs();
-            var character = player.GetCharacter();
-            if (character == null) return;
+            if (!player.TryGetCharacter(out var character)) return;
 
-            if (!GetBusiness(businessId, out Business business))
+            if (!_businessesManager.TryGetBusiness(businessId, out Business business))
             {
-                _notificationService.ShowErrorNotification(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
                 return;
             }
 
             if (!business.GetBusinessRankForEmployee(character, out BusinessRank businessRank))
             {
-                _notificationService.ShowErrorNotification(player, "Błąd", "Nie masz ustalonych żadnych możliwości w biznesie.", 6000);
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie masz ustalonych żadnych możliwości w biznesie.", 6000);
                 return;
             }
 
             if (!businessRank.Permissions.CanManageEmployess)
             {
-                _notificationService.ShowErrorNotification(player, "Błąd", "Nie posiadasz odpowiednich uprawień.", 4000);
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie posiadasz odpowiednich uprawień.", 4000);
                 return;
             }
 
             if (!business.IsCharacterEmployee(employeeId, out Character employee))
             {
-                _notificationService.ShowErrorNotification(player, "Błąd", "Ten pracownik nie jest zatrudniony u ciebie w firmie.", 7000);
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Ten pracownik nie jest zatrudniony u ciebie w firmie.", 7000);
                 return;
             }
 
             if (!business.CheckIfRankExists(newRankId))
             {
-                _notificationService.ShowErrorNotification(player, "Błąd", "Nie znaleziono podanego stanowiska.", 5000);
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie znaleziono podanego stanowiska.", 5000);
                 return;
             }
 
             await _businessesManager.UpdateEmployeeRankAsync(business, employee, newRankId).ConfigureAwait(false);
-            await player.EmitAsync("successfullyUpdatedEmployeeRank", employeeId, newRankId).ConfigureAwait(false);
-            AltAsync.Log($"Character ID({character.Id}) changed business rank of character ID({employee.Id}) to RankID({newRankId})" +
-                    $" in {Time.GetTimestampMs() - startTime}ms.");
+            player.EmitLocked("successfullyUpdatedEmployeeRank", employeeId, newRankId);
+            _logger.LogInformation("Character CID({characterId}) changed business rank of character CID({employeeId}) to RankID({rankId}) in {elapsedTime}",
+                character.Id, employee.Id, newRankId, Time.GetTimestampMs() - startTime);
         }
 
         private void AddNewEmployeeEvent(IPlayer player, string name, string lastName, int businessId)
         {
             var startTime = Time.GetTimestampMs();
-            var character = player.GetCharacter();
-            if (character == null) return;
+            if (!player.TryGetCharacter(out var character)) return;
 
-            if (!GetBusiness(businessId, out Business business))
+            if (!_businessesManager.TryGetBusiness(businessId, out Business business))
             {
                 _notificationService.ShowErrorNotification(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
                 return;
@@ -197,41 +183,38 @@ namespace AltVStrefaRPServer.Modules.Businesses
             _notificationService.ShowSuccessNotification(player, "Wysłano zaproszenie", 
                                                         $"Zaproszenie do firmy zostało wysłane do {newEmployee.GetFullName()}.", 6500);
 
-            Alt.Log($"Character ID({character.Id}) invited {character.GetFullName()} ID({character.Id}) " +
-                    $"to business({business.BusinessName}) ID({business.Id}) in {Time.GetTimestampMs() - startTime}ms.");
+            _logger.LogInformation("Character CID({characterId}) invited {@character} CID({newEmployeeId}) to business {@business} ID(businessID) in {elapsedTime}",
+                character.Id, newEmployee, newEmployee.Id, business, business.Id, Time.GetTimestampMs() - startTime);
         }
 
-        private async Task AcceptInviteToBusinessEvent(IPlayer player, int businessId)
+        private async Task AcceptInviteToBusinessEventAsync(IPlayer player, int businessId)
         {
-            var character = player.GetCharacter();
-            if (character == null) return;
+            if (!player.TryGetCharacter(out var character)) return;
 
-            if (!GetBusiness(businessId, out Business business))
+            if (!_businessesManager.TryGetBusiness(businessId, out Business business))
             {
-                _notificationService.ShowErrorNotification(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
                 return;
             }
 
             if (await _businessesManager.AddNewEmployeeAsync(business, character).ConfigureAwait(false))
             {
-                _notificationService.ShowSuccessNotification(player, "Nowa praca!", $"Pomyślnie dołączono do biznesu {business.BusinessName}.", 5000);
+                await _notificationService.ShowSuccessNotificationAsync(player, "Nowa praca!", $"Pomyślnie dołączono do biznesu {business.BusinessName}.", 5000);
             }
             else
             {
-                _notificationService.ShowErrorNotification(player, "Błąd", "Wystąpił błąd podczas dołączania do biznesu.", 5000);
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Wystąpił błąd podczas dołączania do biznesu.", 5000);
                 return;
             }
 
-            AltAsync.Log($"Character ID({character.Id}) joined business {business.BusinessName} ID({business.Id}).");
+            _logger.LogInformation("Character CID({characterId}) {@character} joined business {@business} ID({businessId})", character.Id, character, business, business.Id);
         }
 
         private void GetBusinessRolesEvent(IPlayer player, int businessId)
         {
-            var startTime = Time.GetTimestampMs();
-            var character = player.GetCharacter();
-            if (character == null) return;
+            if (!player.TryGetCharacter(out var character)) return;
 
-            if (!GetBusiness(businessId, out Business business))
+            if (!_businessesManager.TryGetBusiness(businessId, out Business business))
             {
                 _notificationService.ShowErrorNotification(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
                 return;
@@ -249,30 +232,28 @@ namespace AltVStrefaRPServer.Modules.Businesses
                 return;
             }
             player.Emit("populateBusinessRanksInfo", JsonConvert.SerializeObject(GetBusinessRanksInfo(business)));
-            Alt.Log($"Character ID({character.Id}) requested list of business roles in {Time.GetTimestampMs() - startTime}ms.");
         }
 
-        private async Task UpdateBusinessRank(IPlayer player, string newPermissionsString, int businessId)
+        private async Task UpdateBusinessRankAsync(IPlayer player, string newPermissionsString, int businessId)
         {
             var startTime = Time.GetTimestampMs();
-            var character = player.GetCharacter();
-            if (character == null) return;
+            if (!player.TryGetCharacter(out var character)) return;
 
-            if (!GetBusiness(businessId, out Business business))
+            if (!_businessesManager.TryGetBusiness(businessId, out Business business))
             {
-                _notificationService.ShowErrorNotification(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
                 return;
             }
             
             if (!business.GetBusinessRankForEmployee(character, out BusinessRank businessRank))
             {
-                _notificationService.ShowErrorNotification(character.Player, "Błąd", "Nie masz ustalonych żadnych możliwości w biznesie.", 6000);
+                await _notificationService.ShowErrorNotificationAsync(character.Player, "Błąd", "Nie masz ustalonych żadnych możliwości w biznesie.", 6000);
                 return;
             }
 
             if (!businessRank.Permissions.CanManageRanks)
             {
-                _notificationService.ShowErrorNotification(player, "Błąd", "Nie posiadasz odpowiednich uprawień.", 4000);
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie posiadasz odpowiednich uprawień.", 4000);
                 return;
             }
 
@@ -283,43 +264,42 @@ namespace AltVStrefaRPServer.Modules.Businesses
             }
             catch (Exception e)
             {
-                Alt.Log($"Error in deserializing new business permissions: {e}");
+                _logger.LogError(e, "Error in deserializing business permissions. New permissions string = {newPermissionsString}", newPermissionsString);
                 throw;
             }
 
             if (!business.GetBusinessRank(newPermissions.RankId, out BusinessRank businessRankToUpdate))
             {
-                _notificationService.ShowErrorNotification(player, "Błąd", "Nie znaleziono takiego stanowiska w biznesie.", 4000);
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie znaleziono takiego stanowiska w biznesie.", 4000);
                 return;
             }
 
             await _businessesManager.UpdateBusinessRankAsync(businessRankToUpdate, newPermissions).ConfigureAwait(false);
             _notificationService.ShowSuccessNotification(player, "Zaktualizowano stanowisko", "Pomyślnie zaktualizowano stanowisko.");
-            AltAsync.Log($"Character ID({character.Id}) changed permissions in rank ID({businessRank.Id})" +
-                    $" in {Time.GetTimestampMs() - startTime}ms.");
+            _logger.LogDebug("Character CID({characterId}) changed permissions of rank RankId({rankId}) in {elapsedTime}", 
+                character.Id, businessRank.Id, Time.GetTimestampMs() - startTime);
         }
 
-        private async Task AddNewRoleEvent(IPlayer player, string newRankString, int businessId)
+        private async Task AddNewRankEventAsync(IPlayer player, string newRankString, int businessId)
         {
             var startTime = Time.GetTimestampMs();
-            var character = player.GetCharacter();
-            if (character == null) return;
+            if (!player.TryGetCharacter(out var character)) return;
 
-            if (!GetBusiness(businessId, out Business business))
+            if (!_businessesManager.TryGetBusiness(businessId, out Business business))
             {
-                _notificationService.ShowErrorNotification(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
                 return;
             }
 
             if (!business.GetBusinessRankForEmployee(character, out BusinessRank businessRank))
             {
-                _notificationService.ShowErrorNotification(character.Player, "Błąd", "Nie masz ustalonych żadnych możliwości w biznesie.", 6000);
+                await _notificationService.ShowErrorNotificationAsync(character.Player, "Błąd", "Nie masz ustalonych żadnych możliwości w biznesie.", 6000);
                 return;
             }
 
             if (!businessRank.Permissions.CanManageRanks)
             {
-                _notificationService.ShowErrorNotification(player, "Błąd", "Nie posiadasz odpowiednich uprawień.", 4000);
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie posiadasz odpowiednich uprawień.", 4000);
                 return;
             }
 
@@ -330,88 +310,85 @@ namespace AltVStrefaRPServer.Modules.Businesses
             }
             catch (Exception e)
             {
-                Alt.Log($"Error in deserializing new business permissions: {e}");
+                _logger.LogError(e, "Error in deserializing new business rank. New rank string = {newRankString}", newRankString);
                 throw;
             }
 
             if(newRank == null) return;
             if (await _businessesManager.AddNewBusinessRankAsync(business, newRank).ConfigureAwait(false))
             {
-                _notificationService.ShowSuccessNotification(player, "Zaktualizowano stanowisko", "Pomyślnie zaktualizowano stanowisko");
+                await _notificationService.ShowSuccessNotificationAsync(player, "Zaktualizowano stanowisko", "Pomyślnie zaktualizowano stanowisko");
+                _logger.LogInformation("Character CID({characterId}) added new rank {@newRank} to business ID({businessId}) in {elapsedTime}ms", 
+                    character.Id, newRank, business.Id, Time.GetTimestampMs() - startTime);
             }
             else
             {
-                _notificationService.ShowErrorNotification(player, "Błąd", "Nie udało się dodać nowego stanowiska.", 5000);
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie udało się dodać nowego stanowiska.", 5000);
                 return;
             }
-
-            AltAsync.Log($"Character ID({character.Id}) added new role {newRank.RankName} to business ID({business.Id})" +
-                    $" in {Time.GetTimestampMs() - startTime}ms.");
         }
 
-        private async Task DeleteEmployeeEvent(IPlayer player, int employeeId, int businessId)
+        private async Task DeleteEmployeeEventAsync(IPlayer player, int employeeId, int businessId)
         {
             var startTime = Time.GetTimestampMs();
-            var character = player.GetCharacter();
-            if (character == null) return;
+            if (!player.TryGetCharacter(out var character)) return;
 
-            if (!GetBusiness(businessId, out Business business))
+            if (!_businessesManager.TryGetBusiness(businessId, out Business business))
             {
-                _notificationService.ShowErrorNotification(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
                 return;
             }
 
             if (!business.GetBusinessRankForEmployee(character, out BusinessRank businessRank))
             {
-                _notificationService.ShowErrorNotification(character.Player, "Błąd", "Nie masz ustalonych żadnych możliwości w biznesie.", 6000);
+                await _notificationService.ShowErrorNotificationAsync(character.Player, "Błąd", "Nie masz ustalonych żadnych możliwości w biznesie.", 6000);
                 return;
             }
 
             if (!businessRank.Permissions.CanManageEmployess)
             {
-                _notificationService.ShowErrorNotification(player, "Błąd", "Nie posiadasz odpowiednich uprawień.", 4000);
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie posiadasz odpowiednich uprawień.", 4000);
                 return;
             }
 
             if (!business.IsCharacterEmployee(employeeId, out Character employee))
             {
-                _notificationService.ShowErrorNotification(player, "Błąd", "Nie jest pracownikiem w firmie.", 4000);
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie jest pracownikiem w firmie.", 4000);
                 return;
             }
 
             if (await _businessesManager.RemoveEmployeeAsync(business, employee))
             {
-                _notificationService.ShowSuccessNotification(player, "Usunięto pracownika", $"Pomyślnie usunięto {employee.GetFullName()} z firmy.", 5000);
-                AltAsync.Log($"Character ID({character.Id}) deleted employee ID({employee.Id}) from business {business.BusinessName} " +
-                             $"ID({business.Id}) in {Time.GetTimestampMs() - startTime}ms.");
+                await _notificationService.ShowSuccessNotificationAsync(player, "Usunięto pracownika", $"Pomyślnie usunięto {employee.GetFullName()} z firmy.", 5000);
+                _logger.LogInformation("Character CID({characterId}) {@character} removed employee {@employee} from business {@business} ID({businessId}) in {elapsedTime}",
+                    character.Id, character, employee, business, business.Id, Time.GetTimestampMs() - startTime);
             }
             else
             {
-                _notificationService.ShowErrorNotification(player, "Błąd", $"Wystąpił błąd podczas usuwania {employee.GetFullName()} z firmy.", 6500);
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", $"Wystąpił błąd podczas usuwania {employee.GetFullName()} z firmy.", 6500);
             }
         }
 
-        private async Task DeleteRoleEvent(IPlayer player, int rankId, int businessId)
+        private async Task DeleteRankEventAsync(IPlayer player, int rankId, int businessId)
         {
             var startTime = Time.GetTimestampMs();
-            var character = player.GetCharacter();
-            if (character == null) return;
+            if (!player.TryGetCharacter(out var character)) return;
 
-            if (!GetBusiness(businessId, out Business business))
+            if (!_businessesManager.TryGetBusiness(businessId, out Business business))
             {
-                _notificationService.ShowErrorNotification(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
                 return;
             }
 
             if (!business.GetBusinessRankForEmployee(character, out BusinessRank businessRank))
             {
-                _notificationService.ShowErrorNotification(character.Player, "Błąd", "Nie masz ustalonych żadnych możliwości w biznesie.", 6000);
+                await _notificationService.ShowErrorNotificationAsync(character.Player, "Błąd", "Nie masz ustalonych żadnych możliwości w biznesie.", 6000);
                 return;
             }
 
             if (!businessRank.Permissions.CanManageRanks)
             {
-                _notificationService.ShowErrorNotification(player, "Błąd", "Nie posiadasz odpowiednich uprawień.", 4000);
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie posiadasz odpowiednich uprawień.", 4000);
                 return;
             }
 
@@ -419,49 +396,48 @@ namespace AltVStrefaRPServer.Modules.Businesses
 
             if (await _businessesManager.RemoveRankAsync(business, rankId))
             {
-                _notificationService.ShowSuccessNotification(player, "Usunięto stanowisko", $"Pomyślnie usunięto stanowisko.", 5000);
-                AltAsync.Log($"Character ID({character.Id}) deleted rank ID({rankId}) " +
-                             $"from business {business.BusinessName} ID({business.Id}) in {Time.GetTimestampMs() - startTime}ms.");
+                await _notificationService.ShowSuccessNotificationAsync(player, "Usunięto stanowisko", $"Pomyślnie usunięto stanowisko.", 5000);
+                _logger.LogInformation("Character CID({characterId}) deleted rank {@businessRank} from business ID({businessId}) in {elapsedTime}", 
+                    character.Id, businessRank, business.Id, Time.GetTimestampMs() - startTime);
             }
             else
             {
-                _notificationService.ShowErrorNotification(player, "Błąd", $"Nie udało się usunąć stanowiska: {businessRank.RankName}.");
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", $"Nie udało się usunąć stanowiska: {businessRank.RankName}.");
             }
         }
 
-        private async Task DeleteBusinessEvent(IPlayer player, int businessId)
+        private async Task DeleteBusinessEventAsync(IPlayer player, int businessId)
         {
             var startTime = Time.GetTimestampMs();
-            var character = player.GetCharacter();
-            if (character == null) return;
+            if (!player.TryGetCharacter(out var character)) return;
 
-            if (!GetBusiness(businessId, out Business business))
+            if (!_businessesManager.TryGetBusiness(businessId, out Business business))
             {
-                _notificationService.ShowErrorNotification(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
                 return;
             }
 
             if (!business.GetBusinessRankForEmployee(character, out BusinessRank businessRank))
             {
-                _notificationService.ShowErrorNotification(character.Player, "Błąd", "Nie masz ustalonych żadnych możliwości w biznesie.", 6000);
+                await _notificationService.ShowErrorNotificationAsync(character.Player, "Błąd", "Nie masz ustalonych żadnych możliwości w biznesie.", 6000);
                 return;
             }
 
             if (!businessRank.IsOwnerRank)
             {
-                _notificationService.ShowErrorNotification(player, "Błąd", "Nie posiadasz odpowiednich uprawień.", 4000);
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie posiadasz odpowiednich uprawień.", 4000);
                 return;
             }
 
             if (await _businessesManager.DeleteBusinessAsync(business))
             {
-                _notificationService.ShowSuccessNotification(player, "Usunięto biznes", $"Pomyślnie usunięto biznes {business.BusinessName}.", 5000);
-                AltAsync.Log($"Character ID({character.Id}) deleted business ID({business.BusinessName}) " +
-                             $"ID({business.Id}) in {Time.GetTimestampMs() - startTime}ms.");
+                await _notificationService.ShowSuccessNotificationAsync(player, "Usunięto biznes", $"Pomyślnie usunięto biznes {business.BusinessName}.", 5000);
+                _logger.LogInformation("Character CID({characterId}) {@character} delted business {@business} ID({businessId}) in {elapsedTime}", 
+                    character.Id, character, business, Time.GetTimestamp() - startTime);
             }
             else
             {
-                _notificationService.ShowErrorNotification(player, "Błąd", "Nie udało się usunąć biznesu.", 5000);
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie udało się usunąć biznesu.", 5000);
             }
         }
 
