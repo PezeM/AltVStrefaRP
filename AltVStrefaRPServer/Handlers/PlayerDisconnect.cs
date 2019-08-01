@@ -38,8 +38,9 @@ namespace AltVStrefaRPServer.Handlers
                 character.LastPlayed = DateTime.Now;
             });
 
+            _logger.LogInformation("Character {characterName} CID({characterId}) left the server. Reason {reason}. ID({playerId})",
+                character.GetFullName(), character.Id, reason, player.Id);
             CharacterManager.Instance.RemoveCharacterDataFromServer(character);
-            _logger.LogInformation("Player ID(playerId) {playerName} left the server. Reason {reason}", player.Id, player.Name, reason);
             await _characterDatabaseService.UpdateCharacterAsync(character);
         }
     }

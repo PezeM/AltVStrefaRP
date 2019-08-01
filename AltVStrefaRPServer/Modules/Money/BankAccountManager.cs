@@ -73,7 +73,7 @@ namespace AltVStrefaRPServer.Modules.Money
             {
                 _bankAccounts.TryAdd(bankAccount.AccountNumber, bankAccount);
             }
-            _logger.LogInformation("Loaded {bankAccountsCount} bank accounts from databse in {elapsedTime}ms", _bankAccounts.Count, Time.GetTimestampMs() - startTime);
+            _logger.LogInformation("Loaded {bankAccountsCount} bank accounts from databse in {elapsedTime}ms", _bankAccounts.Count, Time.GetElapsedTime(startTime));
         }
     }
 }

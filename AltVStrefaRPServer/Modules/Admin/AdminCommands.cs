@@ -86,7 +86,7 @@ namespace AltVStrefaRPServer.Modules.Admin
             _chatHandler.RegisterCommand ("openbank", OpenBankMenu);
             _chatHandler.RegisterCommand ("createBankAccount", async (player, args) => await CreateBankAccountAsync (player, args));
             _chatHandler.RegisterCommand ("createbusiness", async  (player, args) => await CreateNewBusinessAsync(player, args));
-            _chatHandler.RegisterCommand ("setBusinessOwner", async (player, args) => await SetBusinessOwner(player, args));
+            _chatHandler.RegisterCommand ("setBusinessOwner", async (player, args) => await SetBusinessOwnerAsync(player, args));
             _chatHandler.RegisterCommand ("openBusinessMenu", OpenBusinessMenu);
             _chatHandler.RegisterCommand ("enterCinema", EnterCinema);
             _chatHandler.RegisterCommand ("exitCinema", ExitCinema);
@@ -139,7 +139,7 @@ namespace AltVStrefaRPServer.Modules.Admin
             Alt.EmitAllClients ("enterCinema");
         }
 
-        private async Task SetBusinessOwner (IPlayer player, string[] args)
+        private async Task SetBusinessOwnerAsync (IPlayer player, string[] args)
         {
             if (args == null || args.Length < 2 || !player.TryGetCharacter (out Character sender)) return;
             if (sender.Account.AdminLevel < AdminLevel.Admin) return;
@@ -174,8 +174,8 @@ namespace AltVStrefaRPServer.Modules.Admin
                 {
                     await _notificationService.ShowSuccessNotificationAsync(player, "Aktualizacja właściciela", 
                         $"Pomyślnie zaktualizowano właściciela biznesu ID({business.Id}) na {character.GetFullName()}", 6000);
-                    _logger.LogInformation("Character CID({senderId}) updated owner of business ID({businessId}) {@business} to character CID({characterId}) {@character}", 
-                        sender.Id, businessId, business, characterId, character);
+                    _logger.LogInformation("Character {characterName} CID({senderId}) updated owner of business {businessName} ID({businessId}) to character {characterName} CID({characterId})", 
+                        sender.GetFullName(), sender.Id, business.BusinessName, businessId, character.GetFullName(), characterId);
                 }
                 else
                 {
@@ -242,8 +242,8 @@ namespace AltVStrefaRPServer.Modules.Admin
                 {
                     await _notificationService.ShowSuccessNotificationAsync(player, "Aktualizacja właściciela", 
                         $"Pomyślnie zaktualizowano właściciela frakcji ID({fractionId}) na ID({newOwner.Id}) {newOwner.GetFullName()}");
-                    _logger.LogInformation("Character CID({senderId}) updated fraction owner ID({fractionId}) to character {@character} CID({characterId})",
-                        sender.Id, fractionId, newOwner, newOwner.Id);
+                    _logger.LogInformation("Character {characterName} CID({characterId}) updated fraction {fractionName} ID({fractionId}) owner to character {characterName} CID({characterId})",
+                        sender.GetFullName(), sender.Id, fraction.Name, fractionId, newOwner.GetFullName(), newOwner.Id);
                 }
                 else
                 {
@@ -277,8 +277,8 @@ namespace AltVStrefaRPServer.Modules.Admin
                 {
                     await _notificationService.ShowSuccessNotificationAsync(player, "Nowy biznes",
                         $"Pomyślnie stworzono nowy biznes: {businessType} z nazwą {args[1]}.", 6000);
-                    _logger.LogInformation("Character CID({characterId}) {@character} created new business of type {businessType} with name {businessName}",
-                        character.Id, character, businessType, args[1]);
+                    _logger.LogInformation("Character {characterName} CID({characterId}) created new business of type {businessType} with name {businessName}",
+                        character.GetFullName(), character.Id, businessType, args[1]);
                 }
                 else
                 {
@@ -341,7 +341,8 @@ namespace AltVStrefaRPServer.Modules.Admin
 
             _moneyService.GiveMoney(characterToGiveMoneyTo, money);
             _notificationService.ShowSuccessNotification(characterToGiveMoneyTo.Player, "Otrzymano pieniądze", $"Otrzymałeś {money} pieniędzy.");
-            _logger.LogInformation("Character ({characterId}) added money ({money})$ to character {@character}", character.Id, money, characterToGiveMoneyTo);
+            _logger.LogInformation("Character {characterName} ({characterId}) added money ({money})$ to character {characterName} CID({characterID})",
+                character.GetFullName(), character.Id, money, characterToGiveMoneyTo.GetFullName(), characterToGiveMoneyTo.Id);
         }
 
 
@@ -349,8 +350,8 @@ namespace AltVStrefaRPServer.Modules.Admin
         {
             if (args == null || args.Length < 1 || !player.TryGetCharacter (out Character character)) return;
             if (character.Account.AdminLevel < AdminLevel.Support) return;
-            if (!int.TryParse (args[0].ToString (), out int playerId)) return;
-            var playerToBring = Alt.GetAllPlayers ().FirstOrDefault (p => p.Id == playerId);
+            if (!int.TryParse (args[0].ToString(), out int playerId)) return;
+            var playerToBring = Alt.GetAllPlayers().FirstOrDefault(p => p.Id == playerId);
             if (playerToBring == null)
             {
                 _notificationService.ShowErrorNotification (player, "Błąd", "Nie znaleziono gracza z podanym ID.", 4000);
@@ -365,7 +366,7 @@ namespace AltVStrefaRPServer.Modules.Admin
             if (args == null || args.Length < 1 || !player.TryGetCharacter (out Character character)) return;
             if (character.Account.AdminLevel < AdminLevel.TrialSupport) return;
             if (!int.TryParse (args[0].ToString (), out int playerId)) return;
-            var playerToTeleportTo = Alt.GetAllPlayers ().FirstOrDefault (p => p.Id == playerId);
+            var playerToTeleportTo = Alt.GetAllPlayers().FirstOrDefault(p => p.Id == playerId);
             if (playerToTeleportTo == null)
             {
                 _notificationService.ShowErrorNotification (player, "Błąd", "Nie znaleziono gracza z podanym ID.", 4000);
@@ -448,7 +449,7 @@ namespace AltVStrefaRPServer.Modules.Admin
             if (newItem == null) return;
             Alt.Log($"New item is of type {newItem.GetType()} and name {newItem.Name}");
             await character.Inventory.AddItemAsync(newItem, itemAmount, _inventoryDatabaseService);
-            Alt.Log($"Added item id is {newItem.Id} in {Time.GetTimestampMs() - startTime}ms");
+            Alt.Log($"Added item id is {newItem.Id} in {Time.GetElapsedTime(startTime)}ms");
         }
 
         private async Task DropItemAsync(IPlayer player, string[] args)
@@ -466,7 +467,7 @@ namespace AltVStrefaRPServer.Modules.Admin
                 return;
             }
             await _inventoryHandler.DropItemAsync(player, itemId, amount, new Position(player.Position.X + 1, player.Position.Y + 1, player.Position.Z));
-            Alt.Log($"Dropped item {itemId} in {Time.GetTimestampMs() - startTime}ms");
+            Alt.Log($"Dropped item {itemId} in {Time.GetElapsedTime(startTime)}ms");
         }
 
         private async Task UseItemAsync(IPlayer player, string[] args)
@@ -475,7 +476,7 @@ namespace AltVStrefaRPServer.Modules.Admin
             if(args == null || args.Length < 1) return;
             if (!int.TryParse(args[0].ToString(), out int itemId)) return;
             await _inventoryHandler.UseInventoryItemAsync(player, itemId);
-            Alt.Log($"Used item in {Time.GetTimestampMs() - startTime}ms");
+            Alt.Log($"Used item in {Time.GetElapsedTime(startTime)}ms");
         }
 
         private async Task RemoveItemAsync(IPlayer player, string[] args)

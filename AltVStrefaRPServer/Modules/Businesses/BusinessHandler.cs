@@ -92,7 +92,8 @@ namespace AltVStrefaRPServer.Modules.Businesses
             }
 
             character.Player.Emit("openBusinessMenu", JsonConvert.SerializeObject(GetBusinessInfoDto(business)));
-            _logger.LogDebug("Character CID({characterId}) opened business menu in {elapsedTime}ms", character.Id, Time.GetTimestampMs() - startTime);
+            _logger.LogDebug("Character {characterName} CID({characterId}) opened business menu in {elapsedTime}ms", 
+                character.Id, character.GetFullName(), Time.GetElapsedTime(startTime));
         }
 
         private async Task UpdateEmployeeRankEventAsync(IPlayer player, int employeeId, int newRankId, int businessId)
@@ -132,8 +133,8 @@ namespace AltVStrefaRPServer.Modules.Businesses
 
             await _businessesManager.UpdateEmployeeRankAsync(business, employee, newRankId).ConfigureAwait(false);
             player.EmitLocked("successfullyUpdatedEmployeeRank", employeeId, newRankId);
-            _logger.LogInformation("Character CID({characterId}) changed business rank of character CID({employeeId}) to RankID({rankId}) in {elapsedTime}",
-                character.Id, employee.Id, newRankId, Time.GetTimestampMs() - startTime);
+            _logger.LogInformation("Character {characterName} CID({characterId}) changed business rank of character CID({employeeId}) to RankID({rankId}) in {elapsedTime}",
+                character.GetFullName(), character.Id, employee.Id, newRankId, Time.GetElapsedTime(startTime));
         }
 
         private void AddNewEmployeeEvent(IPlayer player, string name, string lastName, int businessId)
@@ -183,8 +184,9 @@ namespace AltVStrefaRPServer.Modules.Businesses
             _notificationService.ShowSuccessNotification(player, "Wysłano zaproszenie", 
                                                         $"Zaproszenie do firmy zostało wysłane do {newEmployee.GetFullName()}.", 6500);
 
-            _logger.LogInformation("Character CID({characterId}) invited {@character} CID({newEmployeeId}) to business {@business} ID(businessID) in {elapsedTime}",
-                character.Id, newEmployee, newEmployee.Id, business, business.Id, Time.GetTimestampMs() - startTime);
+            _logger.LogInformation("Character {characterName} CID({characterId}) invited {newEmployeeName} CID({newEmployeeId}) " +
+                                   "to business {businessName} ID(businessID) in {elapsedTime}ms",
+                character.GetFullName(), character.Id, newEmployee.GetFullName(), newEmployee.Id, business.BusinessName, business.Id, Time.GetElapsedTime(startTime));
         }
 
         private async Task AcceptInviteToBusinessEventAsync(IPlayer player, int businessId)
@@ -207,7 +209,8 @@ namespace AltVStrefaRPServer.Modules.Businesses
                 return;
             }
 
-            _logger.LogInformation("Character CID({characterId}) {@character} joined business {@business} ID({businessId})", character.Id, character, business, business.Id);
+            _logger.LogInformation("Character {characterName} CID({characterId}) joined business {businessName} ID({businessId})", 
+                character.GetFullName(), character.Id, business.BusinessName, business.Id);
         }
 
         private void GetBusinessRolesEvent(IPlayer player, int businessId)
@@ -276,8 +279,8 @@ namespace AltVStrefaRPServer.Modules.Businesses
 
             await _businessesManager.UpdateBusinessRankAsync(businessRankToUpdate, newPermissions).ConfigureAwait(false);
             _notificationService.ShowSuccessNotification(player, "Zaktualizowano stanowisko", "Pomyślnie zaktualizowano stanowisko.");
-            _logger.LogDebug("Character CID({characterId}) changed permissions of rank RankId({rankId}) in {elapsedTime}", 
-                character.Id, businessRank.Id, Time.GetTimestampMs() - startTime);
+            _logger.LogDebug("Character {characterName} CID({characterId}) changed permissions of rank RankId({rankId}) in {elapsedTime}ms", 
+                character.GetFullName(), character.Id, businessRank.Id, Time.GetElapsedTime(startTime));
         }
 
         private async Task AddNewRankEventAsync(IPlayer player, string newRankString, int businessId)
@@ -318,8 +321,8 @@ namespace AltVStrefaRPServer.Modules.Businesses
             if (await _businessesManager.AddNewBusinessRankAsync(business, newRank).ConfigureAwait(false))
             {
                 await _notificationService.ShowSuccessNotificationAsync(player, "Zaktualizowano stanowisko", "Pomyślnie zaktualizowano stanowisko");
-                _logger.LogInformation("Character CID({characterId}) added new rank {@newRank} to business ID({businessId}) in {elapsedTime}ms", 
-                    character.Id, newRank, business.Id, Time.GetTimestampMs() - startTime);
+                _logger.LogInformation("Character {characterName} CID({characterId}) added new rank {@newRank} to business {businessName} ID({businessId}) in {elapsedTime}ms", 
+                    character.GetFullName(), character.Id, newRank, business.BusinessName, business.Id, Time.GetElapsedTime(startTime));
             }
             else
             {
@@ -360,8 +363,9 @@ namespace AltVStrefaRPServer.Modules.Businesses
             if (await _businessesManager.RemoveEmployeeAsync(business, employee))
             {
                 await _notificationService.ShowSuccessNotificationAsync(player, "Usunięto pracownika", $"Pomyślnie usunięto {employee.GetFullName()} z firmy.", 5000);
-                _logger.LogInformation("Character CID({characterId}) {@character} removed employee {@employee} from business {@business} ID({businessId}) in {elapsedTime}",
-                    character.Id, character, employee, business, business.Id, Time.GetTimestampMs() - startTime);
+                _logger.LogInformation("Character {characterName} CID({characterId}) removed employee {employeeName} ID({employeeId}) " +
+                                       "from business {businessName} ID({businessId}) in {elapsedTime}",
+                    character.GetFullName(), character.Id, employee.GetFullName(), employee.Id, business.BusinessName, business.Id, Time.GetElapsedTime(startTime));
             }
             else
             {
@@ -397,8 +401,8 @@ namespace AltVStrefaRPServer.Modules.Businesses
             if (await _businessesManager.RemoveRankAsync(business, rankId))
             {
                 await _notificationService.ShowSuccessNotificationAsync(player, "Usunięto stanowisko", $"Pomyślnie usunięto stanowisko.", 5000);
-                _logger.LogInformation("Character CID({characterId}) deleted rank {@businessRank} from business ID({businessId}) in {elapsedTime}", 
-                    character.Id, businessRank, business.Id, Time.GetTimestampMs() - startTime);
+                _logger.LogInformation("Character {characterName} CID({characterId}) deleted rank {rankName} ID({rankId}) from business {businessName} ID({businessId}) in {elapsedTime}ms", 
+                    character.GetFullName(), character.Id, businessRank.RankName, businessRank.Id, business.Id, business.BusinessName, Time.GetElapsedTime(startTime));
             }
             else
             {
@@ -432,8 +436,8 @@ namespace AltVStrefaRPServer.Modules.Businesses
             if (await _businessesManager.DeleteBusinessAsync(business))
             {
                 await _notificationService.ShowSuccessNotificationAsync(player, "Usunięto biznes", $"Pomyślnie usunięto biznes {business.BusinessName}.", 5000);
-                _logger.LogInformation("Character CID({characterId}) {@character} delted business {@business} ID({businessId}) in {elapsedTime}", 
-                    character.Id, character, business, Time.GetTimestamp() - startTime);
+                _logger.LogInformation("Character {characterName} CID({characterId}) deleted business {businessName} ID({businessId}) in {elapsedTime}ms", 
+                    character.GetFullName(), character.Id, business.BusinessName, business.Id, Time.GetTimestamp() - startTime);
             }
             else
             {

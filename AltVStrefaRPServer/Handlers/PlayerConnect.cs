@@ -100,7 +100,7 @@ namespace AltVStrefaRPServer.Handlers
                 var account = _accountFactoryService.CreateNewAccount(login, _loginService.GeneratePassword(password));
                 await _accountDatabaseService.AddNewAccountAsync(account).ConfigureAwait(false);
                 await player.EmitAsync("successfullyRegistered");
-                _logger.LogInformation("Registered new account {@account} in {elapsedTime}ms", account, Time.GetTimestampMs() - startTime);
+                _logger.LogInformation("Registered new account {@account} in {elapsedTime}ms", account, Time.GetElapsedTime(startTime));
             }
             catch (Exception e)
             {
@@ -134,9 +134,10 @@ namespace AltVStrefaRPServer.Handlers
                     return;
                 }
 
-                player.SetData("accountId", account.AccountId);
+                await player.SetMetaDataAsync("accountId", account.AccountId).ConfigureAwait(false);
                 await player.EmitAsync("loginSuccesfully", JsonConvert.SerializeObject(await _characterDatabaseService.GetCharacterList(account.AccountId)));
-                _logger.LogInformation("Loging in account {@account} completed in {elapsedTime}", account, Time.GetTimestampMs() - startTime);
+                _logger.LogInformation("Loging in account {accountName} ID({accountId}) completed in {elapsedTime}", account.Username, account.AccountId,
+                    Time.GetElapsedTime(startTime));
             }
             catch (Exception e)
             {
@@ -146,7 +147,8 @@ namespace AltVStrefaRPServer.Handlers
 
         private void OnPlayerConnect(IPlayer player, string reason)
         {
-            _logger.LogInformation("New player connected to the server. ID(playerId) Name {playerName} {@player}", player.Id, player.Name, player);
+            _logger.LogInformation("New player connected to the server. ID({playerId}) Name {playerName} Ip {playerIp} Hardwarehash {hardwareHash}", 
+                player.Id, player.Name, player.Ip, player.HardwareIdHash);
 
             player.Spawn(new Position(_appSettings.ServerConfig.LoginPosition.X, _appSettings.ServerConfig.LoginPosition.Y,
                 _appSettings.ServerConfig.LoginPosition.Z));

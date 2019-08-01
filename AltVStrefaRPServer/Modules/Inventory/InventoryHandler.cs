@@ -45,7 +45,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
             if(!player.TryGetCharacter(out var character)) return;
             var inventoryItems = character.Inventory.Items.Select(i => new InventoryItemDto(i));
             player.Emit("populatePlayerInventory", JsonConvert.SerializeObject(inventoryItems), JsonConvert.SerializeObject(character.Inventory.EquippedItems));
-            _logger.LogDebug("Send player inventory in {elapsedTime}", Time.GetTimestampMs() - startTime);
+            _logger.LogDebug("Send player inventory in {elapsedTime}", Time.GetElapsedTime(startTime));
         }
 
         public async Task DropItemAsync(IPlayer player, int id, int amount, Position position)

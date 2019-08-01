@@ -20,7 +20,7 @@ namespace AltVStrefaRPServer.Helpers
                     returnVehicle = vehicle;
                 }
             }
-            Alt.Log($"Found the nearest vehicle in {Time.GetTimestampMs() - startTime} ms.");
+            Alt.Log($"Found the nearest vehicle in {Time.GetElapsedTime(startTime)} ms.");
             return returnVehicle;
         }
     }

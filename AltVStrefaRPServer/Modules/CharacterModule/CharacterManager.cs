@@ -66,8 +66,8 @@ namespace AltVStrefaRPServer.Modules.CharacterModule
                 character.LastPlayed = DateTime.Now;
 
                 _characters.Add(player.Id, character);
-                Log.ForContext<CharacterManager>().Information("Initialized character {@character} with ID(playerId) CID(characterId) in the world", 
-                    character, player.Id, character.Id);
+                Log.ForContext<CharacterManager>().Information("Initialized character {characterName} CID({characterId}) ID({playerId}) in the world", 
+                    character.GetFullName(), character.Id, player.Id);
                 return true;
             }
         }
@@ -81,7 +81,7 @@ namespace AltVStrefaRPServer.Modules.CharacterModule
             lock (_characters)
             {
                 _characters.Remove(character.Player.Id);
-                Log.ForContext<CharacterManager>().Information("Removed character ID(characterId) {@character} from server", character.Id, character);
+                Log.ForContext<CharacterManager>().Information("Removed character {characterName} CID({characterId}) from server", character.GetFullName(), character.Id);
             }
         }
     }

@@ -178,7 +178,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             var vehicle = _vehicleCreator.CreateVehicle(vehicleModel, position, rotation, dimension, ownerId, ownerType);
             _vehicleDatabaseService.AddVehicleToDatabase(vehicle);
             _vehicles.Add(vehicle.Id, vehicle);
-            _logger.LogInformation("Created vehicle {vehicleModel} ID({vehicleId}) by CID({characterId})", vehicleModel, vehicle.Id, ownerId);
+            _logger.LogInformation("Created vehicle {vehicleModel} VID({vehicleId}) by CID({characterId})", vehicleModel, vehicle.Id, ownerId);
             return vehicle;
         }
 
@@ -190,7 +190,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
                 vehicle.IsSpawned = false;
                 _vehicles.Add(vehicle.Id, vehicle);
             }
-            _logger.LogInformation("Loaded {vehiclesCount} vehicles from databse in {elapsedTime} ms", _vehicles.Count, Time.GetTimestampMs() - startTime);
+            _logger.LogInformation("Loaded {vehiclesCount} vehicles from databse in {elapsedTime} ms", _vehicles.Count, Time.GetElapsedTime(startTime));
         }
     }
 }

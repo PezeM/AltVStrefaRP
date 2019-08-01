@@ -93,7 +93,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
                     _samsFraction = samsFraction;
                 }
             }
-            _logger.LogInformation("Loaded {fractionsCount} fractions from databse in {elapsedTime} ms", _fractions.Count, Time.GetTimestampMs() - startTime);
+            _logger.LogInformation("Loaded {fractionsCount} fractions from databse in {elapsedTime} ms", _fractions.Count, Time.GetElapsedTime(startTime));
         }
 
         private void CreateDeafultFractions()

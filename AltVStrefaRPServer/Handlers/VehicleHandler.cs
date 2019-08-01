@@ -171,8 +171,8 @@ namespace AltVStrefaRPServer.Handlers
             // For now saves vehicle when player leaves the vehicle and he was the driver
             await _vehicleDatabaseService.SaveVehicleAsync(vehicleModel).ConfigureAwait(false);
             await _notificationService.ShowInfoNotificationAsync(player, "Pojazd zapisany!",
-                $"Zapisano pojazd UID({vehicleModel.Id}) w {Time.GetTimestampMs() - startTime}ms.");
-            _logger.LogDebug("Saved vehicle {@vehicle} VID({vehicleId}) to database in {elapsedTime}", vehicleModel, vehicleModel.Id, Time.GetTimestampMs() - startTime);
+                $"Zapisano pojazd UID({vehicleModel.Id}) w {Time.GetElapsedTime(startTime)}ms.");
+            _logger.LogDebug("Saved vehicle {@vehicle} VID({vehicleId}) to database in {elapsedTime}", vehicleModel, vehicleModel.Id, Time.GetElapsedTime(startTime));
         }
     }
 }

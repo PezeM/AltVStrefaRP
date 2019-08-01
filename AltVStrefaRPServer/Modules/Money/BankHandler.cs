@@ -82,7 +82,7 @@ namespace AltVStrefaRPServer.Modules.Money
             await _notificationService.ShowSuccessNotificationAsync(player, "Nowe konto bankowe",
                 $"Otworzyłeś nowe konto w banku. Twój numer konta to: {character.BankAccount.AccountNumber}.", 7000);
             _logger.LogInformation("Character CID({characterId}) created new bank account {@bankAccount} in {elapsedTime}", 
-                character.Id, character.BankAccount, Time.GetTimestampMs() - startTime);
+                character.Id, character.BankAccount, Time.GetElapsedTime(startTime));
         }
 
         public void TryToOpenBankMenu(IPlayer player)
@@ -109,7 +109,7 @@ namespace AltVStrefaRPServer.Modules.Money
                 await player.EmitAsync("updateBankMoneyWithNotification",
                     $"Pomyślnie wypłacono {money}$ z konta. Obecny stan konta wynosi {character.BankAccount.Money}$.",
                     character.BankAccount.Money).ConfigureAwait(false);
-                _logger.LogInformation("Character CID({characterId}) {characterName} withdraw {money}$ from his bank account", character.Id, character.GetFullName(), money);
+                _logger.LogInformation("Character {characterName} CID({characterId}) withdraw {money}$ to his bank account", character.GetFullName(), character.Id, money);
             }
             else
             {
@@ -127,7 +127,7 @@ namespace AltVStrefaRPServer.Modules.Money
                 await player.EmitAsync("updateBankMoneyWithNotification",
                     $"Pomyślnie wpłacono {money}$ na konto. Obecny stan konta wynosi {character.BankAccount.Money}$.",
                     character.BankAccount.Money).ConfigureAwait(false);
-                _logger.LogInformation("Character CID({characterId}) {characterName} deposited {money}$ to his bank account", character.Id, character.GetFullName(), money);
+                _logger.LogInformation("Character {characterName} CID({characterId}) deposited {money}$ to his bank account", character.GetFullName(), character.Id, money);
             }
             else
             {
@@ -152,8 +152,8 @@ namespace AltVStrefaRPServer.Modules.Money
                     $"Pomyślnie przesłano {money}$ na konto o numerze {receiverBankAccount}. <br>" +
                     $"Twój aktualny stan konta wynosi {character.BankAccount.Money}$.",
                     character.BankAccount.Money).ConfigureAwait(false);
-                _logger.LogInformation("Character CID({characterId}) {characterName} transfered {money}$ to bank account {@bankAccount}", 
-                    character.Id, character.GetFullName(), money, receiverBankAccount);
+                _logger.LogInformation("Character {characterName} CID({characterId}) transfered {money}$ to bank account {@bankAccount}", 
+                    character.GetFullName(), character.Id, money, receiverBankAccount);
             }
             else
             {

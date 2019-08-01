@@ -111,7 +111,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
             var business = _businessFactory.CreateNewBusiness(ownerId, businessType, position, name);
             await _businessDatabaseService.AddNewBusinessAsync(business).ConfigureAwait(false);
             _businesses.Add(business.Id, business);
-            _logger.LogInformation("Character ID({characterId}) created new business {@business} in {elapsedTime} ms", ownerId, business, Time.GetTimestampMs() - startTime);
+            _logger.LogInformation("Character ID({characterId}) created new business {@business} in {elapsedTime} ms", ownerId, business, Time.GetElapsedTime(startTime));
             return true;
         }
 
@@ -247,7 +247,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
                 _businesses.TryAdd(business.Id, business);
                 //_businessFactory.CreateBusiness(business);
             }
-            _logger.LogInformation("Loaded {businessesCount} businesses from databse in {elapsedTime} ms", _businesses.Count, Time.GetTimestampMs() - startTime);
+            _logger.LogInformation("Loaded {businessesCount} businesses from databse in {elapsedTime} ms", _businesses.Count, Time.GetElapsedTime(startTime));
         }
     }
 }

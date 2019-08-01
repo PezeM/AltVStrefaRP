@@ -35,7 +35,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             {
                 VehicleShops.Add(vehicleShop);
             }
-            _logger.LogInformation("Loaded {vehicleShopsCount} vehicle shops in {elapsedTime}ms", VehicleShops.Count, Time.GetTimestampMs() - startTime);
+            _logger.LogInformation("Loaded {vehicleShopsCount} vehicle shops in {elapsedTime}ms", VehicleShops.Count, Time.GetElapsedTime(startTime));
         }
 
         public VehicleShop GetVehicleShop(int shopId) => VehicleShops.FirstOrDefault(s => s.VehicleShopId == shopId);
