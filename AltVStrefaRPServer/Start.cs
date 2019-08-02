@@ -11,6 +11,7 @@ using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Modules.Admin;
 using AltVStrefaRPServer.Modules.Businesses;
+using AltVStrefaRPServer.Modules.CharacterModule;
 using AltVStrefaRPServer.Modules.CharacterModule.Customization;
 using AltVStrefaRPServer.Modules.Chat;
 using AltVStrefaRPServer.Modules.Environment;
@@ -164,6 +165,11 @@ namespace AltVStrefaRPServer
         public override IEntityFactory<IVehicle> GetVehicleFactory ()
         {
             return new CustomVehicleFactory ();
+        }
+
+        public override IEntityFactory<IPlayer> GetPlayerFactory()
+        {
+            return new StrefaPlayerFactory();
         }
 
         public override void OnStop ()

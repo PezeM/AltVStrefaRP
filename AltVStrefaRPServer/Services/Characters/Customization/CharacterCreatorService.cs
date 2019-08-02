@@ -48,7 +48,7 @@ namespace AltVStrefaRPServer.Services.Characters.Customization
                 AccountId = accountId,
                 BankAccount = null,
                 Age = age,
-                Inventory = new InventoryController(50),
+                PlayerInventory = new PlayerInventoryController(30),
                 Gender = (Gender)gender,
                 Dimension = 0,
                 X = AppSettings.Current.ServerConfig.SpawnPosition.X,
@@ -62,7 +62,7 @@ namespace AltVStrefaRPServer.Services.Characters.Customization
                 FractionRank = 0,
                 CanDriveVehicles = true,
                 IsBanned = false,
-                IsMuted = true,
+                IsMuted = false,
             };
             newCharacter.AddMoney(AppSettings.Current.ServerConfig.StartingPlayerMoney);
 

@@ -340,6 +340,7 @@ namespace AltVStrefaRPServer.Models.Fractions
             }
         }
 
+        // TODO: Change it to virualt method so every fraction has to create own default permissions
         protected static List<FractionPermission> GenerateNewPermissions()
         {
             return new List<FractionPermission>

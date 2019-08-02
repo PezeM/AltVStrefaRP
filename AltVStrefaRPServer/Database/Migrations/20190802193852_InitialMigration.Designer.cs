@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AltVStrefaRPServer.Database.Migrations
 {
     [DbContext(typeof(ServerContext))]
-    [Migration("20190706173826_Intiail")]
-    partial class Intiail
+    [Migration("20190802193852_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -47,6 +47,8 @@ namespace AltVStrefaRPServer.Database.Migrations
                     b.Property<int>("CharacterId");
 
                     b.Property<float>("Money");
+
+                    b.Property<bool>("ShowNotificationOnMoneyTransfer");
 
                     b.HasKey("Id");
 
@@ -252,9 +254,7 @@ namespace AltVStrefaRPServer.Database.Migrations
 
                     b.Property<string>("RankName");
 
-                    b.Property<int>("RankType")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValue(1);
+                    b.Property<int>("RankType");
 
                     b.HasKey("Id");
 
@@ -288,21 +288,48 @@ namespace AltVStrefaRPServer.Database.Migrations
                     b.HasDiscriminator<string>("Discriminator").HasValue("FractionPermission");
                 });
 
+            modelBuilder.Entity("AltVStrefaRPServer.Models.Inventory.DroppedItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("BaseItemId");
+
+                    b.Property<int>("Count");
+
+                    b.Property<string>("Model");
+
+                    b.Property<DateTime>("RemoveTime");
+
+                    b.Property<float>("X");
+
+                    b.Property<float>("Y");
+
+                    b.Property<float>("Z");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BaseItemId")
+                        .IsUnique();
+
+                    b.ToTable("DroppedItems");
+                });
+
             modelBuilder.Entity("AltVStrefaRPServer.Models.Inventory.InventoryController", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("MaxSlots");
+                    b.Property<string>("Discriminator")
+                        .IsRequired();
 
-                    b.Property<int>("OwnerId");
+                    b.Property<int>("MaxSlots");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OwnerId")
-                        .IsUnique();
-
                     b.ToTable("Inventories");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("InventoryController");
                 });
 
             modelBuilder.Entity("AltVStrefaRPServer.Models.Inventory.InventoryItem", b =>
@@ -312,9 +339,9 @@ namespace AltVStrefaRPServer.Database.Migrations
 
                     b.Property<int>("BaseItemId");
 
-                    b.Property<int?>("InventoryControllerId");
+                    b.Property<int?>("EquippedItemsInventoryId");
 
-                    b.Property<int?>("InventoryControllerId1");
+                    b.Property<int>("InventoryId");
 
                     b.Property<int>("Quantity");
 
@@ -325,9 +352,9 @@ namespace AltVStrefaRPServer.Database.Migrations
                     b.HasIndex("BaseItemId")
                         .IsUnique();
 
-                    b.HasIndex("InventoryControllerId");
+                    b.HasIndex("EquippedItemsInventoryId");
 
-                    b.HasIndex("InventoryControllerId1");
+                    b.HasIndex("InventoryId");
 
                     b.ToTable("InventoryItems");
                 });
@@ -565,11 +592,23 @@ namespace AltVStrefaRPServer.Database.Migrations
                     b.HasDiscriminator().HasValue("VehiclePermission");
                 });
 
+            modelBuilder.Entity("AltVStrefaRPServer.Models.Inventory.PlayerInventoryController", b =>
+                {
+                    b.HasBaseType("AltVStrefaRPServer.Models.Inventory.InventoryController");
+
+                    b.Property<int>("OwnerId");
+
+                    b.HasIndex("OwnerId")
+                        .IsUnique();
+
+                    b.HasDiscriminator().HasValue("PlayerInventoryController");
+                });
+
             modelBuilder.Entity("AltVStrefaRPServer.Models.Interfaces.Items.Equipmentable", b =>
                 {
                     b.HasBaseType("AltVStrefaRPServer.Models.Inventory.Items.BaseItem");
 
-                    b.Property<int>("Slot");
+                    b.Property<int>("EquipmentSlot");
 
                     b.HasDiscriminator().HasValue("Equipmentable");
                 });
@@ -673,11 +712,11 @@ namespace AltVStrefaRPServer.Database.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("AltVStrefaRPServer.Models.Inventory.InventoryController", b =>
+            modelBuilder.Entity("AltVStrefaRPServer.Models.Inventory.DroppedItem", b =>
                 {
-                    b.HasOne("AltVStrefaRPServer.Models.Character", "Owner")
-                        .WithOne("Inventory")
-                        .HasForeignKey("AltVStrefaRPServer.Models.Inventory.InventoryController", "OwnerId")
+                    b.HasOne("AltVStrefaRPServer.Models.Inventory.Items.BaseItem", "Item")
+                        .WithOne()
+                        .HasForeignKey("AltVStrefaRPServer.Models.Inventory.DroppedItem", "BaseItemId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -688,13 +727,14 @@ namespace AltVStrefaRPServer.Database.Migrations
                         .HasForeignKey("AltVStrefaRPServer.Models.Inventory.InventoryItem", "BaseItemId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("AltVStrefaRPServer.Models.Inventory.InventoryController")
+                    b.HasOne("AltVStrefaRPServer.Models.Inventory.PlayerInventoryController")
                         .WithMany("EquippedItems")
-                        .HasForeignKey("InventoryControllerId");
+                        .HasForeignKey("EquippedItemsInventoryId");
 
                     b.HasOne("AltVStrefaRPServer.Models.Inventory.InventoryController")
                         .WithMany("Items")
-                        .HasForeignKey("InventoryControllerId1");
+                        .HasForeignKey("InventoryId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("AltVStrefaRPServer.Models.VehiclePrice", b =>
@@ -702,6 +742,14 @@ namespace AltVStrefaRPServer.Database.Migrations
                     b.HasOne("AltVStrefaRPServer.Modules.Vehicle.VehicleShop")
                         .WithMany("AvailableVehicles")
                         .HasForeignKey("VehicleShopId");
+                });
+
+            modelBuilder.Entity("AltVStrefaRPServer.Models.Inventory.PlayerInventoryController", b =>
+                {
+                    b.HasOne("AltVStrefaRPServer.Models.Character", "Owner")
+                        .WithOne("PlayerInventory")
+                        .HasForeignKey("AltVStrefaRPServer.Models.Inventory.PlayerInventoryController", "OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

@@ -80,11 +80,11 @@ namespace AltVStrefaRPServer.Services.Inventory
             }
         }
 
-        public async Task UpdateInventoryAsync(InventoryController inventoryController)
+        public async Task UpdateInventoryAsync(PlayerInventoryController playerInventoryController)
         {
             using (var context = _factory.Invoke())
             {
-                context.Inventories.Update(inventoryController);
+                context.Inventories.Update(playerInventoryController);
                 await context.SaveChangesAsync();
             }
         }

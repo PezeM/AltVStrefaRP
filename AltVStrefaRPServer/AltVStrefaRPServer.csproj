@@ -30,8 +30,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AltV.Net" Version="1.10.0" />
-    <PackageReference Include="AltV.Net.Async" Version="1.10.0" />
+    <PackageReference Include="AltV.Net" Version="1.11.0-dev-preview" />
+    <PackageReference Include="AltV.Net.Async" Version="1.11.0-dev-preview" />
     <PackageReference Include="AltV.Net.NetworkingEntity" Version="1.2.4-dev-preview" />
     <PackageReference Include="EFCore.DbContextFactory" Version="1.0.2" />
     <PackageReference Include="MessagePack" Version="2.0.123-beta" />
@@ -56,6 +56,10 @@
     <None Update="resource.cfg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Database\Migrations\" />
   </ItemGroup>
 
 </Project>

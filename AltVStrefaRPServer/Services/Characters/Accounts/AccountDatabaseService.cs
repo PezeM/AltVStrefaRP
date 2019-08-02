@@ -29,6 +29,14 @@ namespace AltVStrefaRPServer.Services.Characters.Accounts
             }
         }
 
+        public async Task<Account> GetAccountAsync(int accountId)
+        {
+            using (var context = _factory.Invoke())
+            {
+                return await context.Accounts.FindAsync(accountId);
+            }
+        }
+
         /// <summary>
         /// Checks if account with given username is already in database
         /// </summary>

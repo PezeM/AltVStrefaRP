@@ -81,8 +81,8 @@ namespace AltVStrefaRPServer.Modules.Money
             await _bankAccountDatabaseService.AddNewBankAccount(character);
             await _notificationService.ShowSuccessNotificationAsync(player, "Nowe konto bankowe",
                 $"Otworzyłeś nowe konto w banku. Twój numer konta to: {character.BankAccount.AccountNumber}.", 7000);
-            _logger.LogInformation("Character CID({characterId}) created new bank account {@bankAccount} in {elapsedTime}", 
-                character.Id, character.BankAccount, Time.GetElapsedTime(startTime));
+            _logger.LogInformation("Character {characterName} CID({characterId}) created new bank account {bankAccountNumber} in {elapsedTime}ms", 
+                character.GetFullName(), character.Id, character.BankAccount.AccountNumber, Time.GetElapsedTime(startTime));
         }
 
         public void TryToOpenBankMenu(IPlayer player)

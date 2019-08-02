@@ -72,10 +72,10 @@ namespace AltVStrefaRPServer.Services.Characters
                 return await context.Characters
                     .Include(c => c.BankAccount)
                     .Include(c => c.Account)
-                    .Include(c => c.Inventory)
+                    .Include(c => c.PlayerInventory)
                         .ThenInclude(i => i.Items)
                             .ThenInclude(i => i.Item)
-                    .Include(c => c.Inventory)
+                    .Include(c => c.PlayerInventory)
                         .ThenInclude(i => i.EquippedItems)
                             .ThenInclude(i => i.Item)
                     .FirstOrDefaultAsync(c => c.Id == characterId);

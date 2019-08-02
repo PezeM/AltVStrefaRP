@@ -93,7 +93,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
         /// </summary>
         /// <param name="businessName"></param>
         /// <returns></returns>
-        public bool CheckIfBusinessExists(string businessName) => _businesses.Values.Any(b => b.BusinessName == businessName);
+        public bool CheckIfBusinessExists(string businessName) => _businesses.Values.Any(b => b.BusinessName.ToLower() == businessName.ToLower());
 
         /// <summary>
         /// Create new business and save it to database
@@ -110,8 +110,14 @@ namespace AltVStrefaRPServer.Modules.Businesses
 
             var business = _businessFactory.CreateNewBusiness(ownerId, businessType, position, name);
             await _businessDatabaseService.AddNewBusinessAsync(business).ConfigureAwait(false);
-            _businesses.Add(business.Id, business);
-            _logger.LogInformation("Character ID({characterId}) created new business {@business} in {elapsedTime} ms", ownerId, business, Time.GetElapsedTime(startTime));
+
+            lock (_businesses)
+            {
+                _businesses.Add(business.Id, business);
+                _logger.LogInformation("Character ID({characterId}) created new business {businessName} ID({businessId}) in {elapsedTime} ms", 
+                    ownerId, business.BusinessName, business.Id, Time.GetElapsedTime(startTime));
+            }
+
             return true;
         }
 

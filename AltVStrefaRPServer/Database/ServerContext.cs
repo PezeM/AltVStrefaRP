@@ -49,6 +49,7 @@ namespace AltVStrefaRPServer.Database
 
         // Inventory
         public DbSet<InventoryController> Inventories { get; set; }
+        public DbSet<PlayerInventoryController> PlayerInventories { get; set; }
         public DbSet<BaseItem> Items { get; set; }
         public DbSet<Equipmentable> Equipmentables { get; set; }
         public DbSet<FoodItem> FoodItems { get; set; }
@@ -106,9 +107,9 @@ namespace AltVStrefaRPServer.Database
                 //.OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Character>()
-                .HasOne(c => c.Inventory)
+                .HasOne(c => c.PlayerInventory)
                 .WithOne(i => i.Owner)
-                .HasForeignKey<InventoryController>(i => i.OwnerId);
+                .HasForeignKey<PlayerInventoryController>(i => i.OwnerId);
                 //.OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<VehicleModel>()
@@ -184,6 +185,24 @@ namespace AltVStrefaRPServer.Database
                 .HasConversion<uint>();
 
             // Items
+            modelBuilder.Entity<InventoryController>()
+                .HasMany(i => i.Items)
+                .WithOne()
+                .HasForeignKey(i => i.InventoryId);
+
+            var inventoryControllerNavigation = modelBuilder.Entity<InventoryController>()
+                .Metadata.FindNavigation(nameof(InventoryController.Items));
+            navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+
+            modelBuilder.Entity<PlayerInventoryController>()
+                .HasMany(i => i.EquippedItems)
+                .WithOne()
+                .HasForeignKey("EquippedItemsInventoryId");
+
+            var inventoryControllerEquippedItemsNavigation = modelBuilder.Entity<PlayerInventoryController>()
+                .Metadata.FindNavigation(nameof(PlayerInventoryController.EquippedItems));
+            navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+
             modelBuilder.Entity<Equipmentable>()
                 .Property(i => i.EquipmentSlot)
                 .HasConversion<int>();
@@ -197,22 +216,6 @@ namespace AltVStrefaRPServer.Database
                 .WithOne()
                 .HasForeignKey<InventoryItem>(i => i.BaseItemId)
                 .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<InventoryController>()
-                .HasMany(i => i.Items)
-                .WithOne();
-
-            var inventoryControllerNavigation = modelBuilder.Entity<InventoryController>()
-                .Metadata.FindNavigation(nameof(InventoryController.Items));
-            navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
-
-            modelBuilder.Entity<InventoryController>()
-                .HasMany(i => i.EquippedItems)
-                .WithOne();
-
-            var inventoryControllerEquippedItemsNavigation = modelBuilder.Entity<InventoryController>()
-                .Metadata.FindNavigation(nameof(InventoryController.EquippedItems));
-            navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
 
             modelBuilder.Entity<DroppedItem>()
                 .HasOne(i => i.Item)

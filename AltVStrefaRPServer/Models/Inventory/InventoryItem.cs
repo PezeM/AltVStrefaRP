@@ -1,7 +1,6 @@
 ﻿using AltV.Net;
 using AltVStrefaRPServer.Models.Interfaces.Inventory;
 using AltVStrefaRPServer.Models.Inventory.Items;
-using DocumentFormat.OpenXml.Drawing.Wordprocessing;
 
 namespace AltVStrefaRPServer.Models.Inventory
 {
@@ -12,6 +11,7 @@ namespace AltVStrefaRPServer.Models.Inventory
         public BaseItem Item { get; protected set; }
         public int SlotId { get; protected set; }
         public int BaseItemId { get; protected set; }
+        public int InventoryId { get; protected set; }
 
         protected InventoryItem(){}
 

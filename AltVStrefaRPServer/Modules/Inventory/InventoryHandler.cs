@@ -43,15 +43,15 @@ namespace AltVStrefaRPServer.Modules.Inventory
         {
             var startTime = Time.GetTimestampMs();
             if(!player.TryGetCharacter(out var character)) return;
-            var inventoryItems = character.Inventory.Items.Select(i => new InventoryItemDto(i));
-            player.Emit("populatePlayerInventory", JsonConvert.SerializeObject(inventoryItems), JsonConvert.SerializeObject(character.Inventory.EquippedItems));
-            _logger.LogDebug("Send player inventory in {elapsedTime}", Time.GetElapsedTime(startTime));
+            var inventoryItems = character.PlayerInventory.Items.Select(i => new InventoryItemDto(i));
+            player.Emit("populatePlayerInventory", JsonConvert.SerializeObject(inventoryItems), JsonConvert.SerializeObject(character.PlayerInventory.EquippedItems));
+            _logger.LogDebug("Send player inventory in {elapsedTime}ms", Time.GetElapsedTime(startTime));
         }
 
         public async Task DropItemAsync(IPlayer player, int id, int amount, Position position)
         {
             if (!player.TryGetCharacter(out var character)) return;
-            var response = await character.Inventory.DropItemAsync(id, amount, position, _inventoriesManager, _inventoryDatabaseService);
+            var response = await character.PlayerInventory.DropItemAsync(id, amount, position, _inventoriesManager, _inventoryDatabaseService);
             switch (response)
             {
                 case InventoryDropResponse.ItemNotDroppable:
@@ -76,7 +76,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
         public async Task UseInventoryItemAsync(IPlayer player, int itemId)
         {
             if (!player.TryGetCharacter(out var character)) return;
-            var response = await character.Inventory.UseItemAsync(character, itemId, _inventoryDatabaseService);
+            var response = await character.PlayerInventory.UseItemAsync(character, itemId, _inventoryDatabaseService);
             switch (response)
             {
                 case InventoryUseResponse.ItemNotFound:
@@ -95,7 +95,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
         private async Task InventoryDropItemAsync(IPlayer player, int itemId, int amount)
         {
             if (!player.TryGetCharacter(out var character)) return;
-            var response = await character.Inventory.DropItemAsync(itemId, amount, player.Position, _inventoriesManager, _inventoryDatabaseService);
+            var response = await character.PlayerInventory.DropItemAsync(itemId, amount, player.Position, _inventoriesManager, _inventoryDatabaseService);
             switch (response)
             {
                 case InventoryDropResponse.NotEnoughItems:
@@ -113,7 +113,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
         public async Task InventoryRemoveItemAsync(IPlayer player, int id, int amount)
         {
             if (!player.TryGetCharacter(out var character)) return;
-            var response = await character.Inventory.RemoveItemAsync(id, amount, _inventoryDatabaseService);
+            var response = await character.PlayerInventory.RemoveItemAsync(id, amount, _inventoryDatabaseService);
             switch (response)
             {
                 case InventoryRemoveResponse.ItemRemovedCompletly:
@@ -141,7 +141,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
             // Make it possible to decrease dropped item quantity - also decrease networking entity count
             if (!player.TryGetCharacter(out var character)) return;
             if (!_inventoriesManager.TryGetDroppedItem(networkItemId, droppedItemId, out var droppedItem)) return;
-            var response = await character.Inventory.AddItemAsync(droppedItem.Item, droppedItem.Count, _inventoryDatabaseService, player);
+            var response = await character.PlayerInventory.AddItemAsync(droppedItem.Item, droppedItem.Count, _inventoryDatabaseService, player);
             if (!response.AnyChangesMade)
             {
                 await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie udało się podnieść przedmiotu");

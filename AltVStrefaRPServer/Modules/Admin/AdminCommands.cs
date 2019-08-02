@@ -428,15 +428,15 @@ namespace AltVStrefaRPServer.Modules.Admin
         private void GetInventory(IPlayer player, string[] args)
         {
             if (!player.TryGetCharacter(out var character)) return;
-            var inventory = JsonConvert.SerializeObject(character.Inventory.Items, Formatting.Indented);
+            var inventory = JsonConvert.SerializeObject(character.PlayerInventory.Items, Formatting.Indented);
             Alt.Log(inventory);
-            player.Emit("testInventory", inventory, JsonConvert.SerializeObject(character.Inventory.EquippedItems));
+            player.Emit("testInventory", inventory, JsonConvert.SerializeObject(character.PlayerInventory.EquippedItems));
         }
 
         private async Task AddItemAsync(IPlayer player, string[] args)
         {
             var startTime = Time.GetTimestampMs();
-            if (args == null && args.Length < 2) return;
+            if (args == null || args.Length < 2) return;
             if (!int.TryParse(args[0].ToString(), out int itemID)) return;
             if (!int.TryParse(args[1].ToString(), out int itemAmount)) return;
             if (!player.TryGetCharacter(out var character)) return;
@@ -448,7 +448,7 @@ namespace AltVStrefaRPServer.Modules.Admin
             var newItem = _itemFactory.CreateItem((ItemType)itemID);
             if (newItem == null) return;
             Alt.Log($"New item is of type {newItem.GetType()} and name {newItem.Name}");
-            await character.Inventory.AddItemAsync(newItem, itemAmount, _inventoryDatabaseService);
+            await character.PlayerInventory.AddItemAsync(newItem, itemAmount, _inventoryDatabaseService);
             Alt.Log($"Added item id is {newItem.Id} in {Time.GetElapsedTime(startTime)}ms");
         }
 

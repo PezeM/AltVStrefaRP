@@ -3,6 +3,7 @@ using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Fractions;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
+using AltVStrefaRPServer.Models.Logs;
 using AltVStrefaRPServer.Services.Fractions;
 using Microsoft.Extensions.Logging;
 
@@ -103,21 +104,21 @@ namespace AltVStrefaRPServer.Modules.Fractions
                _logger.LogWarning("Police fraction was empty. Creating missing fractions.");
                _policeFraction = _fractionFactoryService.CreateDefaultPoliceFraction(_fractionDatabaseService);
                _fractions.Add(_policeFraction.Id, _policeFraction);
-               _logger.LogInformation("Created new police fraction {@fraction}", _policeFraction);
+               _logger.LogInformation("Created new police fraction {@fraction}", new FractionLogDto(_policeFraction));
             } 
             if (_samsFraction == null)
             {
                 _logger.LogWarning("SAMS fraction was empty. Creating missing fractions.");
                 _samsFraction = _fractionFactoryService.CreateDefaultSamsFraction(_fractionDatabaseService);
                 _fractions.Add(_samsFraction.Id, _samsFraction);
-                _logger.LogInformation("Created new sams fraction {@fraction}", _samsFraction);
+                _logger.LogInformation("Created new sams fraction {@fraction}", new FractionLogDto(_samsFraction));
             }
             if (_townHallFraction == null)
             {
                 _logger.LogWarning("Townhall fraction was empty. Creating missing fractions.");
                 _townHallFraction = _fractionFactoryService.CreateDefaultTownHallFraction(_fractionDatabaseService);
                 _fractions.Add(_townHallFraction.Id, _townHallFraction);
-                _logger.LogInformation("Created new townhall fraction {@fraction}", _townHallFraction);
+                _logger.LogInformation("Created new townhall fraction {@fraction}", new FractionLogDto(_townHallFraction));
             }
         }
     }
