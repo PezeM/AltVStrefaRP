@@ -32,7 +32,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
 
         public IEnumerable<DroppedItem> GetAllDroppedItems() => _droppedItems.Values;
 
-        public bool TryToGetDroppedItem(int droppedItemId, out DroppedItem droppedItem)
+        public bool TryGetDroppedItem(int droppedItemId, out DroppedItem droppedItem)
             => _droppedItems.TryGetValue(droppedItemId, out droppedItem);
 
         public async Task<bool> AddDroppedItemAsync(DroppedItem droppedItem)
@@ -48,11 +48,11 @@ namespace AltVStrefaRPServer.Modules.Inventory
             return true;
         }
 
-        public bool TryToGetDroppedItem(int networkingEntityId, int droppedItemId, out DroppedItem droppedItem)
+        public bool TryGetDroppedItem(int networkingEntityId, int droppedItemId, out DroppedItem droppedItem)
         {
             droppedItem = null;
             if (!_networkingManager.DoesNetworkingEntityExists(networkingEntityId)) return false;
-            if (!TryToGetDroppedItem(droppedItemId, out droppedItem)) return false;
+            if (!TryGetDroppedItem(droppedItemId, out droppedItem)) return false;
             return true;
         }
 

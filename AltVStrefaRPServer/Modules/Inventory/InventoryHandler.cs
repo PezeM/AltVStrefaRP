@@ -140,7 +140,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
             // Make it possible to take only few quantity of item till full inventory.
             // Make it possible to decrease dropped item quantity - also decrease networking entity count
             if (!player.TryGetCharacter(out var character)) return;
-            if (!_inventoriesManager.TryToGetDroppedItem(networkItemId, droppedItemId, out var droppedItem)) return;
+            if (!_inventoriesManager.TryGetDroppedItem(networkItemId, droppedItemId, out var droppedItem)) return;
             var response = await character.Inventory.AddItemAsync(droppedItem.Item, droppedItem.Count, _inventoryDatabaseService, player);
             if (!response.AnyChangesMade)
             {
