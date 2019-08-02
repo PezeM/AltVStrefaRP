@@ -4,6 +4,7 @@ using AltV.Net;
 using AltV.Net.Data;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Services.Vehicles.VehicleShops;
+using Microsoft.Extensions.Logging;
 
 namespace AltVStrefaRPServer.Modules.Vehicle
 {
@@ -11,14 +12,17 @@ namespace AltVStrefaRPServer.Modules.Vehicle
     {
         private readonly IVehicleShopDatabaseService _vehicleShopDatabaseService;
         private readonly IVehicleShopsFactory _vehicleShopsFactory;
+        private readonly ILogger<VehicleShopsManager> _logger;
 
         public List<VehicleShop> VehicleShops { get; private set; }
 
-        public VehicleShopsManager(IVehicleShopDatabaseService vehicleShopDatabaseService, IVehicleShopsFactory vehicleShopsFactory)
+        public VehicleShopsManager(IVehicleShopDatabaseService vehicleShopDatabaseService, IVehicleShopsFactory vehicleShopsFactory, 
+            ILogger<VehicleShopsManager> logger)
         {
             VehicleShops = new List<VehicleShop>();
             _vehicleShopDatabaseService = vehicleShopDatabaseService;
             _vehicleShopsFactory = vehicleShopsFactory;
+            _logger = logger;
 
             LoadVehicleShops();
             CreateDefaultVehicleShops();
@@ -31,7 +35,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             {
                 VehicleShops.Add(vehicleShop);
             }
-            Alt.Log($"Loaded {VehicleShops.Count} vehicle shops in {Time.GetTimestampMs() - startTime}ms.");
+            _logger.LogInformation("Loaded {vehicleShopsCount} vehicle shops in {elapsedTime}ms", VehicleShops.Count, Time.GetElapsedTime(startTime));
         }
 
         public VehicleShop GetVehicleShop(int shopId) => VehicleShops.FirstOrDefault(s => s.VehicleShopId == shopId);
@@ -48,9 +52,9 @@ namespace AltVStrefaRPServer.Modules.Vehicle
         private void CreateDefaultVehicleShops()
         {
             if (VehicleShops.Count > 0) return;
-            Alt.Server.LogWarning("There were no vehicle shops on the server. Creating new default vehicle shops");
+            _logger.LogWarning("There were no vehicle shops on the server. Creating new default vehicle shops");
             VehicleShops.AddRange(_vehicleShopsFactory.CreateDefaultVehicleShops(_vehicleShopDatabaseService));
-            Alt.Log($"Created {VehicleShops.Count} new vehicle shops.");
+            _logger.LogInformation("Created {vehicleShopsCount} new vehicle shops", VehicleShops.Count);
         }
     }
 }

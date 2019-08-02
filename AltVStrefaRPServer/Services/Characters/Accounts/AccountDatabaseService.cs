@@ -43,20 +43,15 @@ namespace AltVStrefaRPServer.Services.Characters.Accounts
         }
 
         /// <summary>
-        /// Generates new hashed password and creates new account in the database
+        /// Adds new account to database
         /// </summary>
-        /// <param name="username"></param>
-        /// <param name="password"></param>
+        /// <param name="account">The account to add</param>
         /// <returns></returns>
-        public async Task CreateNewAccountAndSaveAsync(string username, string password)
+        public async Task AddNewAccountAsync(Account account)
         {
             using (var context = _factory.Invoke())
             {
-                await context.Accounts.AddAsync(new Account
-                {
-                    Username = username,
-                    Password = password,
-                });
+                context.Accounts.Add(account);
                 await context.SaveChangesAsync();
             }
         }

@@ -12,6 +12,6 @@ namespace AltVStrefaRPServer.Models.Interfaces.Managers
         bool TryGetCharacter(IPlayer player, out Character character);
         IEnumerable<Character> GetAllCharacters();
         bool IntializeCharacter(IPlayer player, Character character);
-        void RemoveCharacterDataFromServer(Character characterData);
+        void RemoveCharacterDataFromServer(Character character);
     }
 }

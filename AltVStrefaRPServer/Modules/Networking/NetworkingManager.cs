@@ -14,6 +14,7 @@ using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Models.Server;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
+using Microsoft.Extensions.Logging;
 
 namespace AltVStrefaRPServer.Modules.Networking
 {
@@ -21,14 +22,15 @@ namespace AltVStrefaRPServer.Modules.Networking
     {
         private ConcurrentDictionary<ulong, INetworkingEntity> _entities;
         private readonly Random _rng;
+        private readonly ILogger<NetworkingManager> _logger;
         private Timer _testTimer;
 
-        public NetworkingManager(AppSettings appSettings)
+        public NetworkingManager(AppSettings appSettings, ILogger<NetworkingManager> logger)
         {
             _rng = new Random();
+            _logger = logger;
             _entities = new ConcurrentDictionary<ulong, INetworkingEntity>();
             ConfigureAltNetworking(appSettings);
-            Alt.Log("Initialized TestNetworking");
 
             AltNetworking.OnEntityStreamIn = OnEntityStreamIn;
             AltNetworking.OnEntityStreamOut = OnEntityStreamOut;
@@ -77,13 +79,13 @@ namespace AltVStrefaRPServer.Modules.Networking
 
         private void OnEntityStreamOut(INetworkingEntity entity, INetworkingClient client)
         {
-            Alt.Log($"Entity streamed out {entity.Id}");
+            _logger.LogDebug("Entity streamed out {networkingEntityId}", entity.Id);
             //DisplayInfo(entity, client);
         }
 
         private void OnEntityStreamIn(INetworkingEntity entity, INetworkingClient client)
         {
-            Alt.Log($"Entity streamed in {entity.Id}");
+            _logger.LogDebug("Entity streamed in {networkingEntityId}", entity.Id);
             //DisplayInfo(entity, client);
         }
 
@@ -115,7 +117,7 @@ namespace AltVStrefaRPServer.Modules.Networking
             }
             catch (Exception e)
             {
-                Alt.Server.LogError($"Error in networking manager. Couldn't configure AltNetworking module. Error: {e}");
+                _logger.LogCritical(e, "Error in networking manager. Couldn't configure AltNetworking module.");
                 throw;
             }
         }

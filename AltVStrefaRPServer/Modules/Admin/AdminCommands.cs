@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using AltV.Net;
-using AltV.Net.Async;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Extensions;
@@ -10,7 +9,6 @@ using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
-using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Models.Inventory.Items;
 using AltVStrefaRPServer.Models.Server;
 using AltVStrefaRPServer.Modules.Businesses;
@@ -25,6 +23,7 @@ using AltVStrefaRPServer.Services.Fractions;
 using AltVStrefaRPServer.Services.Inventory;
 using AltVStrefaRPServer.Services.Money;
 using AltVStrefaRPServer.Services.Vehicles;
+using Microsoft.Extensions.Logging;
 using net.vieapps.Components.Utility;
 using Newtonsoft.Json;
 using VehicleModel = AltV.Net.Enums.VehicleModel;
@@ -48,12 +47,14 @@ namespace AltVStrefaRPServer.Modules.Admin
         private readonly InventoryHandler _inventoryHandler;
         private readonly IInventoryDatabaseService _inventoryDatabaseService;
         private readonly ItemFactory _itemFactory;
+        private readonly ILogger<AdminCommands> _logger;
 
-        public AdminCommands (TemporaryChatHandler chatHandler, IVehiclesManager vehiclesManager, BankHandler bankHandler,
+        public AdminCommands(TemporaryChatHandler chatHandler, IVehiclesManager vehiclesManager, BankHandler bankHandler,
             IBusinessesManager businessesManager, BusinessHandler businessHandler, INotificationService notificationService,
-            VehicleShopsManager vehicleShopsManager, IVehicleSpawnService vehicleSpawnService, FractionHandler fractionHandler, IFractionsManager fractionsManager,
-            IFractionDatabaseService fractionDatabaseService, IMoneyService moneyService, 
-            InventoryHandler inventoryHandler, IInventoryDatabaseService inventoryDatabaseService, ItemFactory itemFactory)
+            VehicleShopsManager vehicleShopsManager, IVehicleSpawnService vehicleSpawnService, FractionHandler fractionHandler,
+            IFractionsManager fractionsManager,
+            IFractionDatabaseService fractionDatabaseService, IMoneyService moneyService,
+            InventoryHandler inventoryHandler, IInventoryDatabaseService inventoryDatabaseService, ItemFactory itemFactory, ILogger<AdminCommands> logger)
         {
             _chatHandler = chatHandler;
             _vehiclesManager = vehiclesManager;
@@ -70,8 +71,9 @@ namespace AltVStrefaRPServer.Modules.Admin
             _inventoryHandler = inventoryHandler;
             _inventoryDatabaseService = inventoryDatabaseService;
             _itemFactory = itemFactory;
+            _logger = logger;
 
-            Alt.Log ($"Admin commands initialized");
+            _logger.LogDebug("Admin commands initialized");
             AddCommands ();
         }
 
@@ -82,9 +84,9 @@ namespace AltVStrefaRPServer.Modules.Admin
             _chatHandler.RegisterCommand ("pos", DisplayPositionCommand);
             _chatHandler.RegisterCommand ("tptowp", TeleportToWaypointCommand);
             _chatHandler.RegisterCommand ("openbank", OpenBankMenu);
-            _chatHandler.RegisterCommand ("createBankAccount", async (player, args) => await CreateBankAccount (player, args));
-            _chatHandler.RegisterCommand ("createbusiness", CreateNewBusiness);
-            _chatHandler.RegisterCommand ("setBusinessOwner", async (player, args) => await SetBusinessOwner(player, args));
+            _chatHandler.RegisterCommand ("createBankAccount", async (player, args) => await CreateBankAccountAsync (player, args));
+            _chatHandler.RegisterCommand ("createbusiness", async  (player, args) => await CreateNewBusinessAsync(player, args));
+            _chatHandler.RegisterCommand ("setBusinessOwner", async (player, args) => await SetBusinessOwnerAsync(player, args));
             _chatHandler.RegisterCommand ("openBusinessMenu", OpenBusinessMenu);
             _chatHandler.RegisterCommand ("enterCinema", EnterCinema);
             _chatHandler.RegisterCommand ("exitCinema", ExitCinema);
@@ -93,14 +95,14 @@ namespace AltVStrefaRPServer.Modules.Admin
             _chatHandler.RegisterCommand("addMoney", AddMoneyToPlayer);
             _chatHandler.RegisterCommand ("openVehicleShop", OpenVehicleShop);
             _chatHandler.RegisterCommand ("openFractionMenu", OpenFractionMenu);
-            _chatHandler.RegisterCommand("setFractionOwner", async (player, args) => await SetFractionOwner(player,args));
-            _chatHandler.RegisterCommand("addEmployeeToFraction", async (player, args) => await AddEmployeeToFraction(player,args));
+            _chatHandler.RegisterCommand("setFractionOwner", async (player, args) => await SetFractionOwnerAsync(player,args));
+            _chatHandler.RegisterCommand("addEmployeeToFraction", async (player, args) => await AddEmployeeToFractionAsync(player,args));
             _chatHandler.RegisterCommand("getAllVehicles", GetAllVehicles);
             _chatHandler.RegisterCommand("setAdminLevel", SetAdminLevel);
-            _chatHandler.RegisterCommand("dropItem", async (player, args) => await DropItem(player, args));
-            _chatHandler.RegisterCommand("addItem", async (player, args) => await AddItem(player, args));
+            _chatHandler.RegisterCommand("dropItem", async (player, args) => await DropItemAsync(player, args));
+            _chatHandler.RegisterCommand("addItem", async (player, args) => await AddItemAsync(player, args));
             _chatHandler.RegisterCommand("getInventory", GetInventory);
-            _chatHandler.RegisterCommand("useItem", async (player, args) => await UseItem(player, args));
+            _chatHandler.RegisterCommand("useItem", async (player, args) => await UseItemAsync(player, args));
             _chatHandler.RegisterCommand("removeItem", async (player, args) => await RemoveItemAsync(player, args));
         }
 
@@ -137,7 +139,7 @@ namespace AltVStrefaRPServer.Modules.Admin
             Alt.EmitAllClients ("enterCinema");
         }
 
-        private async Task SetBusinessOwner (IPlayer player, string[] args)
+        private async Task SetBusinessOwnerAsync (IPlayer player, string[] args)
         {
             if (args == null || args.Length < 2 || !player.TryGetCharacter (out Character sender)) return;
             if (sender.Account.AdminLevel < AdminLevel.Admin) return;
@@ -146,42 +148,43 @@ namespace AltVStrefaRPServer.Modules.Admin
             {
                 if (!int.TryParse (args[0].ToString (), out int characterId))
                 {
-                    _notificationService.ShowErrorNotification (player, "Błąd", $"Podano zły numer postaci.", 5000);
+                    await _notificationService.ShowErrorNotificationAsync(player, "Błąd", $"Podano zły numer postaci.", 5000);
                     return;
                 }
                 var character = CharacterManager.Instance.GetCharacter (characterId);
                 if (character == null)
                 {
-                    _notificationService.ShowErrorNotification (player, "Błąd", $"Nie znaleziono postaci z takim id.", 5000);
+                    await _notificationService.ShowErrorNotificationAsync(player, "Błąd", $"Nie znaleziono postaci z takim id.", 5000);
                     return;
                 }
 
                 if (!int.TryParse (args[1].ToString (), out int businessId))
                 {
-                    _notificationService.ShowErrorNotification (player, "Błąd", $"Podano złe id biznesu.", 5000);
+                    await _notificationService.ShowErrorNotificationAsync(player, "Błąd", $"Podano złe id biznesu.", 5000);
                     return;
                 }
                 var business = _businessesManager.GetBusiness (businessId);
                 if (business == null)
                 {
-                    _notificationService.ShowErrorNotification (player, "Błąd", $"Nie znaleziono biznesu z takim id.", 5000);
+                    await _notificationService.ShowErrorNotificationAsync(player, "Błąd", $"Nie znaleziono biznesu z takim id.", 5000);
                     return;
                 }
 
                 if (await _businessesManager.UpdateBusinessOwnerAsync (business, character))
                 {
-                    _notificationService.ShowSuccessNotification (player, "Aktualizacja właściciela", $"Pomyślnie zaktualizowano właściciela biznesu ID({business.Id}) na {character.GetFullName()}", 6000);
-                    Alt.Log ($"Updated owner of business ID({business.Id}) Name({business.BusinessName}) " +
-                        $"to character ID({character.Id}) Name({character.GetFullName()})");
+                    await _notificationService.ShowSuccessNotificationAsync(player, "Aktualizacja właściciela", 
+                        $"Pomyślnie zaktualizowano właściciela biznesu ID({business.Id}) na {character.GetFullName()}", 6000);
+                    _logger.LogInformation("Character {characterName} CID({senderId}) updated owner of business {businessName} ID({businessId}) to character {characterName} CID({characterId})", 
+                        sender.GetFullName(), sender.Id, business.BusinessName, businessId, character.GetFullName(), characterId);
                 }
                 else
                 {
-                    _notificationService.ShowErrorNotification (player, "Błąd", "Nie udało się zaktualizować właściciela biznesu.");
+                    await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie udało się zaktualizować właściciela biznesu.");
                 }
             }
             catch (Exception e)
             {
-                Alt.Log ($"Error setting business owner. Ex: {e}");
+                _logger.LogError(e, "Error setting business owner.");
                 throw;
             }
         }
@@ -199,16 +202,16 @@ namespace AltVStrefaRPServer.Modules.Admin
             _fractionHandler.OpenFractionMenu (character);
         }
 
-        private async Task AddEmployeeToFraction(IPlayer player, string[] args)
+        private async Task AddEmployeeToFractionAsync(IPlayer player, string[] args)
         {
             if(args == null || args.Length < 1 || !player.TryGetCharacter (out Character sender)) return;
             if (sender.Account.AdminLevel < AdminLevel.Admin) return;
             if(!int.TryParse(args[0].ToString(), out int fractionId)) return;
 
-            await _fractionHandler.AcceptFractionInviteEvent(player, fractionId);
+            await _fractionHandler.AcceptFractionInviteEventAsync(player, fractionId);
         }
 
-        private async Task SetFractionOwner(IPlayer player, string[] args)
+        private async Task SetFractionOwnerAsync(IPlayer player, string[] args)
         {
             if (args == null || args.Length < 2 || !player.TryGetCharacter (out Character sender)) return;
             if (sender.Account.AdminLevel < AdminLevel.Admin) return;
@@ -237,9 +240,10 @@ namespace AltVStrefaRPServer.Modules.Admin
 
                 if (await fraction.ForceFractionOwnerAsync(newOwner, _fractionDatabaseService))
                 {
-                    await _notificationService.ShowSuccessNotificationAsync(player, "Aktualizacja właściciela", $"Pomyślnie zaktualizowano właściciela frakcji ID({fractionId}) " +
-                                                                                                      $"na ID({newOwner.Id}) {newOwner.GetFullName()}");
-                    AltAsync.Log($"[UPDATED FRACTION OWNER] ({sender.Id}) {sender.GetFullName()} updated fraction owner ID({fractionId}) to ID({newOwner.Id}) {newOwner.GetFullName()}");
+                    await _notificationService.ShowSuccessNotificationAsync(player, "Aktualizacja właściciela", 
+                        $"Pomyślnie zaktualizowano właściciela frakcji ID({fractionId}) na ID({newOwner.Id}) {newOwner.GetFullName()}");
+                    _logger.LogInformation("Character {characterName} CID({characterId}) updated fraction {fractionName} ID({fractionId}) owner to character {characterName} CID({characterId})",
+                        sender.GetFullName(), sender.Id, fraction.Name, fractionId, newOwner.GetFullName(), newOwner.Id);
                 }
                 else
                 {
@@ -249,12 +253,12 @@ namespace AltVStrefaRPServer.Modules.Admin
             }
             catch (Exception e)
             {
-                Alt.Log ($"Error setting business owner. Ex: {e}");
+                _logger.LogError(e, "Error setting fraction owner.");
                 throw;
             }
         }
 
-        private void CreateNewBusiness (IPlayer player, string[] args)
+        private async Task CreateNewBusinessAsync (IPlayer player, string[] args)
         {
             if (args == null || args.Length < 2 || !player.TryGetCharacter (out Character character)) return;
             if (character.Account.AdminLevel < AdminLevel.Admin) return;
@@ -265,28 +269,30 @@ namespace AltVStrefaRPServer.Modules.Admin
                 // Second one is business name
                 if (!Enum.TryParse (args[0], out BusinessType businessType))
                 {
-                    _notificationService.ShowErrorNotification (player, "Błąd", "Podano zły typ biznesu");
+                    await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Podano zły typ biznesu");
                     return;
                 }
 
-                if (_businessesManager.CreateNewBusinessAsync (character.Id, businessType, player.Position, args[1]).Result)
+                if (await _businessesManager.CreateNewBusinessAsync (character.Id, businessType, player.Position, args[1]))
                 {
-                    _notificationService.ShowSuccessNotification (player, "Nowy biznes",
+                    await _notificationService.ShowSuccessNotificationAsync(player, "Nowy biznes",
                         $"Pomyślnie stworzono nowy biznes: {businessType} z nazwą {args[1]}.", 6000);
+                    _logger.LogInformation("Character {characterName} CID({characterId}) created new business of type {businessType} with name {businessName}",
+                        character.GetFullName(), character.Id, businessType, args[1]);
                 }
                 else
                 {
-                    _notificationService.ShowErrorNotification (player, "Błąd", $"Nie udało się stworzyć biznesu: {businessType} z nazwą {args[1]}.", 6000);
+                    await _notificationService.ShowErrorNotificationAsync(player, "Błąd", $"Nie udało się stworzyć biznesu: {businessType} z nazwą {args[1]}.", 6000);
                 }
             }
             catch (Exception e)
             {
-                Alt.Log ($"Error creating new business for player {player.Name}: {e}");
+                _logger.LogError(e, "Error while creating new business.");
                 throw;
             }
         }
 
-        private async Task CreateBankAccount (IPlayer player, string[] arg2)
+        private async Task CreateBankAccountAsync(IPlayer player, string[] arg2)
         {
             await _bankHandler.CreateBankAccountAsync (player);
         }
@@ -303,7 +309,7 @@ namespace AltVStrefaRPServer.Modules.Admin
 
         private void DisplayPositionCommand (IPlayer player, string[] arg2)
         {
-            Alt.Log ($"Position: {player.Position} Dimension: {player.Dimension}");
+            _logger.LogInformation("Position {position} Dimension {dimension}", player.Position, player.Dimension);
         }
 
         private void TeleportToPosition (IPlayer player, string[] args)
@@ -315,7 +321,7 @@ namespace AltVStrefaRPServer.Modules.Admin
             }
             catch (Exception e)
             {
-                Alt.Log ($"Error teleporting player ID({player.Id}) to new position with command. {e}");
+                _logger.LogError(e, "Error teleporting player {playerId} to new position with command", player.Id);
                 throw;
             }
         }
@@ -335,7 +341,8 @@ namespace AltVStrefaRPServer.Modules.Admin
 
             _moneyService.GiveMoney(characterToGiveMoneyTo, money);
             _notificationService.ShowSuccessNotification(characterToGiveMoneyTo.Player, "Otrzymano pieniądze", $"Otrzymałeś {money} pieniędzy.");
-            Alt.Log($"[ADD MONEY TO PLAYER] ({character.Id}) gave ID({characterToGiveMoneyTo.Id}) {characterToGiveMoneyTo.GetFullName()} {money}$.");
+            _logger.LogInformation("Character {characterName} ({characterId}) added money ({money})$ to character {characterName} CID({characterID})",
+                character.GetFullName(), character.Id, money, characterToGiveMoneyTo.GetFullName(), characterToGiveMoneyTo.Id);
         }
 
 
@@ -343,8 +350,8 @@ namespace AltVStrefaRPServer.Modules.Admin
         {
             if (args == null || args.Length < 1 || !player.TryGetCharacter (out Character character)) return;
             if (character.Account.AdminLevel < AdminLevel.Support) return;
-            if (!int.TryParse (args[0].ToString (), out int playerId)) return;
-            var playerToBring = Alt.GetAllPlayers ().FirstOrDefault (p => p.Id == playerId);
+            if (!int.TryParse (args[0].ToString(), out int playerId)) return;
+            var playerToBring = Alt.GetAllPlayers().FirstOrDefault(p => p.Id == playerId);
             if (playerToBring == null)
             {
                 _notificationService.ShowErrorNotification (player, "Błąd", "Nie znaleziono gracza z podanym ID.", 4000);
@@ -359,7 +366,7 @@ namespace AltVStrefaRPServer.Modules.Admin
             if (args == null || args.Length < 1 || !player.TryGetCharacter (out Character character)) return;
             if (character.Account.AdminLevel < AdminLevel.TrialSupport) return;
             if (!int.TryParse (args[0].ToString (), out int playerId)) return;
-            var playerToTeleportTo = Alt.GetAllPlayers ().FirstOrDefault (p => p.Id == playerId);
+            var playerToTeleportTo = Alt.GetAllPlayers().FirstOrDefault(p => p.Id == playerId);
             if (playerToTeleportTo == null)
             {
                 _notificationService.ShowErrorNotification (player, "Błąd", "Nie znaleziono gracza z podanym ID.", 4000);
@@ -426,7 +433,7 @@ namespace AltVStrefaRPServer.Modules.Admin
             player.Emit("testInventory", inventory, JsonConvert.SerializeObject(character.Inventory.EquippedItems));
         }
 
-        private async Task AddItem(IPlayer player, string[] args)
+        private async Task AddItemAsync(IPlayer player, string[] args)
         {
             var startTime = Time.GetTimestampMs();
             if (args == null && args.Length < 2) return;
@@ -442,10 +449,10 @@ namespace AltVStrefaRPServer.Modules.Admin
             if (newItem == null) return;
             Alt.Log($"New item is of type {newItem.GetType()} and name {newItem.Name}");
             await character.Inventory.AddItemAsync(newItem, itemAmount, _inventoryDatabaseService);
-            Alt.Log($"Added item id is {newItem.Id} in {Time.GetTimestampMs() - startTime}ms");
+            Alt.Log($"Added item id is {newItem.Id} in {Time.GetElapsedTime(startTime)}ms");
         }
 
-        private async Task DropItem(IPlayer player, string[] args)
+        private async Task DropItemAsync(IPlayer player, string[] args)
         {
             var startTime = Time.GetTimestampMs();
             if(args == null || args.Length < 2) return;
@@ -460,16 +467,16 @@ namespace AltVStrefaRPServer.Modules.Admin
                 return;
             }
             await _inventoryHandler.DropItemAsync(player, itemId, amount, new Position(player.Position.X + 1, player.Position.Y + 1, player.Position.Z));
-            Alt.Log($"Dropped item {itemId} in {Time.GetTimestampMs() - startTime}ms");
+            Alt.Log($"Dropped item {itemId} in {Time.GetElapsedTime(startTime)}ms");
         }
 
-        private async Task UseItem(IPlayer player, string[] args)
+        private async Task UseItemAsync(IPlayer player, string[] args)
         {
             var startTime = Time.GetTimestampMs();
             if(args == null || args.Length < 1) return;
             if (!int.TryParse(args[0].ToString(), out int itemId)) return;
             await _inventoryHandler.UseInventoryItemAsync(player, itemId);
-            Alt.Log($"Used item in {Time.GetTimestampMs() - startTime}ms");
+            Alt.Log($"Used item in {Time.GetElapsedTime(startTime)}ms");
         }
 
         private async Task RemoveItemAsync(IPlayer player, string[] args)
@@ -478,7 +485,6 @@ namespace AltVStrefaRPServer.Modules.Admin
             if (!int.TryParse(args[0].ToString(), out int itemId)) return;
             if (!int.TryParse(args[1].ToString(), out int amount)) return;
             await _inventoryHandler.InventoryRemoveItemAsync(player, itemId, amount);
-            Alt.Log($"");
         }
     }
 }

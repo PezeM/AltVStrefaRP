@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
-using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
@@ -9,18 +7,21 @@ using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Modules.CharacterModule;
 using AltVStrefaRPServer.Services.Characters;
+using Microsoft.Extensions.Logging;
 
 namespace AltVStrefaRPServer.Handlers
 {
     public class PlayerDisconnect
     {
         private ICharacterDatabaseService _characterDatabaseService;
+        private readonly ILogger<PlayerDisconnect> _logger;
 
-        public PlayerDisconnect(ICharacterDatabaseService characterDatabaseService)
+        public PlayerDisconnect(ICharacterDatabaseService characterDatabaseService, ILogger<PlayerDisconnect> logger)
         {
             _characterDatabaseService = characterDatabaseService;
+            _logger = logger;
 
-            Alt.Log("Player disconnect handler intialized");
+            _logger.LogDebug("Player disconnect handler initialized");
             AltAsync.OnPlayerDisconnect += OnPlayerDisconnectAsync;
         }
 
@@ -37,9 +38,9 @@ namespace AltVStrefaRPServer.Handlers
                 character.LastPlayed = DateTime.Now;
             });
 
+            _logger.LogInformation("Character {characterName} CID({characterId}) left the server. Reason {reason}. ID({playerId})",
+                character.GetFullName(), character.Id, reason, player.Id);
             CharacterManager.Instance.RemoveCharacterDataFromServer(character);
-            Alt.Log($"CID({character.Id}) ID({player.Id}) {player.Name} left the server. Reason {reason} " +
-                    $"Executed on thread {Thread.CurrentThread.ManagedThreadId}");
             await _characterDatabaseService.UpdateCharacterAsync(character);
         }
     }

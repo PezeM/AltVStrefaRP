@@ -9,6 +9,7 @@ using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Vehicles;
+using Microsoft.Extensions.Logging;
 using VehicleModel = AltVStrefaRPServer.Models.VehicleModel;
 
 namespace AltVStrefaRPServer.Handlers
@@ -19,14 +20,16 @@ namespace AltVStrefaRPServer.Handlers
         private IVehiclesManager _vehiclesManager;
         private INotificationService _notificationService;
         private IVehicleSpawnService _vehicleSpawnService;
+        private readonly ILogger<VehicleHandler> _logger;
 
         public VehicleHandler(IVehiclesManager vehiclesManager, IVehicleDatabaseService vehiceVehicleDatabaseService,
-            INotificationService notificationService, IVehicleSpawnService vehicleSpawnService)
+            INotificationService notificationService, IVehicleSpawnService vehicleSpawnService, ILogger<VehicleHandler> logger)
         {
             _vehicleDatabaseService = vehiceVehicleDatabaseService;
             _vehiclesManager = vehiclesManager;
             _notificationService = notificationService;
             _vehicleSpawnService = vehicleSpawnService;
+            _logger = logger;   
 
             AltAsync.OnPlayerLeaveVehicle += OnPlayerLeaveVehicleAsync;
             AltAsync.OnPlayerEnterVehicle += OnPlayerEnterVehicleAsync;
@@ -37,7 +40,7 @@ namespace AltVStrefaRPServer.Handlers
             Alt.On<IPlayer, IMyVehicle>("TryToOpenVehicle", TryToOpenVehicleEvent);
             Alt.On<IPlayer, IMyVehicle>("ToggleTrunkState", ToggleTrunkState);
             Alt.On<IPlayer, IMyVehicle>("ToggleHoodState", ToggleHoodState);
-            AltAsync.On<IPlayer, int>("DespawnVehicle", async (player, vehicleId) => await DespawnVehicleEvent(player, vehicleId));
+            AltAsync.On<IPlayer, int, Task>("DespawnVehicle", DespawnVehicleEventAsync);
         }
 
         private void ToggleLockStateEvent(IPlayer player, IVehicle closestVehicle)
@@ -115,7 +118,7 @@ namespace AltVStrefaRPServer.Handlers
             player.Emit("toggleLockState", myVehicle);
         }
 
-        private async Task DespawnVehicleEvent(IPlayer player, int vehicleId)
+        private async Task DespawnVehicleEventAsync(IPlayer player, int vehicleId)
         {
             var character = player.GetCharacter();
             if(character == null) return;
@@ -123,9 +126,11 @@ namespace AltVStrefaRPServer.Handlers
             var vehicle = _vehiclesManager.GetVehicleModel((ushort)vehicleId);
             if(vehicle == null) return;
 
+            _logger.LogDebug("Character {characterId} tried to open vehicle VID({vehicleId)", character.Id, vehicle.Id);
             if(!_vehiclesManager.HasVehiclePermission(character, vehicle))
             {
-                _notificationService.ShowErrorNotification(player, "Brak kluczyków", "Nie posiadasz kluczyków do tego pojazdu.");
+                await _notificationService.ShowErrorNotificationAsync(player, "Brak kluczyków", "Nie posiadasz kluczyków do tego pojazdu.");
+                return;
             }
 
             await _vehicleSpawnService.DespawnVehicleAsync(vehicle);
@@ -138,7 +143,7 @@ namespace AltVStrefaRPServer.Handlers
 
         private Task OnVehicleRemoveAsync(IVehicle vehicle)
         {
-            AltAsync.Log($"Vehicle {vehicle.Model} ID({vehicle.Id}) was removed from the server");
+            _logger.LogInformation("Vehicle {vehicleHandleId} was removed from the server", vehicle.Id);
             return Task.CompletedTask;
         }
 
@@ -161,13 +166,13 @@ namespace AltVStrefaRPServer.Handlers
                 vehicleModel.Y = vehicle.Position.Y;
                 vehicleModel.Z = vehicle.Position.Z;
                 vehicleModel.Dimension = vehicle.Dimension;
-            });
+            }).ConfigureAwait(false);
 
             // For now saves vehicle when player leaves the vehicle and he was the driver
-            await _vehicleDatabaseService.SaveVehicleAsync(vehicleModel);
+            await _vehicleDatabaseService.SaveVehicleAsync(vehicleModel).ConfigureAwait(false);
             await _notificationService.ShowInfoNotificationAsync(player, "Pojazd zapisany!",
-                $"Zapisano pojazd UID({vehicleModel.Id}) w {Time.GetTimestampMs() - startTime}ms.");
-            AltAsync.Log($"Saved vehicle {vehicleModel.Model} UID({vehicleModel.Id}) in {Time.GetTimestampMs() - startTime}ms.");
+                $"Zapisano pojazd UID({vehicleModel.Id}) w {Time.GetElapsedTime(startTime)}ms.");
+            _logger.LogDebug("Saved vehicle VID({vehicleId}) to database in {elapsedTime}ms", vehicleModel.Id, Time.GetElapsedTime(startTime));
         }
     }
 }

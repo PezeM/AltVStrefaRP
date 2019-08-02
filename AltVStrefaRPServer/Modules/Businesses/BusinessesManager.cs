@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AltV.Net;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Extensions;
@@ -13,6 +12,7 @@ using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Services.Businesses;
 using AltVStrefaRPServer.Services.Characters;
+using Microsoft.Extensions.Logging;
 
 namespace AltVStrefaRPServer.Modules.Businesses
 {
@@ -20,19 +20,23 @@ namespace AltVStrefaRPServer.Modules.Businesses
     {
         private Dictionary<int, Business> _businesses;
 
-        private IBusinessService _businessService;
-        private IBusinessDatabaseService _businessDatabaseService;
-        private ICharacterDatabaseService _characterDatabaseService;
-        private BusinessFactory _businessFactory;
+        private readonly IBusinessService _businessService;
+        private readonly IBusinessDatabaseService _businessDatabaseService;
+        private readonly ICharacterDatabaseService _characterDatabaseService;
+        private readonly BusinessFactory _businessFactory;
+        private readonly ILogger<BusinessesManager> _logger;
 
-        public BusinessesManager(IBusinessService businessService, IBusinessDatabaseService businessDatabaseService, ICharacterDatabaseService characterDatabaseService)
+        public BusinessesManager(IBusinessService businessService, IBusinessDatabaseService businessDatabaseService, ICharacterDatabaseService characterDatabaseService, 
+            ILogger<BusinessesManager> logger)
         {
+            _businesses = new Dictionary<int, Business>();
+
             _characterDatabaseService = characterDatabaseService;
             _businessDatabaseService = businessDatabaseService;
             _businessService = businessService;
             _businessFactory = new BusinessFactory();
+            _logger = logger;
 
-            _businesses = new Dictionary<int, Business>();
             LoadBusinesses();
         }
 
@@ -48,6 +52,8 @@ namespace AltVStrefaRPServer.Modules.Businesses
 
         public bool TryGetBusiness(Character employee, out Business business)
             => _businesses.TryGetValue(employee.CurrentBusinessId.GetValueOrDefault(), out business);
+
+        public bool TryGetBusiness(int businessId, out Business business) => _businesses.TryGetValue(businessId, out business);
 
         /// <summary>
         /// Gets all owned businesses for given character id
@@ -105,7 +111,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
             var business = _businessFactory.CreateNewBusiness(ownerId, businessType, position, name);
             await _businessDatabaseService.AddNewBusinessAsync(business).ConfigureAwait(false);
             _businesses.Add(business.Id, business);
-            Alt.Log($"Created new business ID({business.Id}) Name({business.BusinessName}) in {Time.GetTimestampMs() - startTime}ms.");
+            _logger.LogInformation("Character ID({characterId}) created new business {@business} in {elapsedTime} ms", ownerId, business, Time.GetElapsedTime(startTime));
             return true;
         }
 
@@ -241,7 +247,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
                 _businesses.TryAdd(business.Id, business);
                 //_businessFactory.CreateBusiness(business);
             }
-            Alt.Log($"Loaded {_businesses.Count} businesses from database in {Time.GetTimestampMs() - startTime}ms.");
+            _logger.LogInformation("Loaded {businessesCount} businesses from databse in {elapsedTime} ms", _businesses.Count, Time.GetElapsedTime(startTime));
         }
     }
 }

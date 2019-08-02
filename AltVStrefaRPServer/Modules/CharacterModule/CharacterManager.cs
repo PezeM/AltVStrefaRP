@@ -1,5 +1,4 @@
-﻿using AltV.Net;
-using AltV.Net.Elements.Entities;
+﻿using AltV.Net.Elements.Entities;
 using AltV.Net.Enums;
 using AltVStrefaRPServer.Models;
 using System;
@@ -7,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AltVStrefaRPServer.Data;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
+using Serilog;
 
 namespace AltVStrefaRPServer.Modules.CharacterModule
 {
@@ -66,7 +66,8 @@ namespace AltVStrefaRPServer.Modules.CharacterModule
                 character.LastPlayed = DateTime.Now;
 
                 _characters.Add(player.Id, character);
-                Alt.Log($"Initialized character {character.GetFullName()} with ID({player.Id}) CID({character.Id}) in the world.");
+                Log.ForContext<CharacterManager>().Information("Initialized character {characterName} CID({characterId}) ID({playerId}) in the world", 
+                    character.GetFullName(), character.Id, player.Id);
                 return true;
             }
         }
@@ -74,13 +75,13 @@ namespace AltVStrefaRPServer.Modules.CharacterModule
         /// <summary>
         /// Removes character data from server memory
         /// </summary>
-        /// <param name="characterData"></param>
-        public void RemoveCharacterDataFromServer(Character characterData)
+        /// <param name="character"></param>
+        public void RemoveCharacterDataFromServer(Character character)
         {
             lock (_characters)
             {
-                _characters.Remove(characterData.Player.Id);
-                Alt.Log($"Removed character data from server ID({characterData.Player.Id}) CID({characterData.Id})");
+                _characters.Remove(character.Player.Id);
+                Log.ForContext<CharacterManager>().Information("Removed character {characterName} CID({characterId}) from server", character.GetFullName(), character.Id);
             }
         }
     }

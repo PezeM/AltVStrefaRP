@@ -15,5 +15,7 @@ namespace AltVStrefaRPServer.Helpers
         /// </summary>
         /// <returns></returns>
         public static double GetTimestampMs() => DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+        public static double GetElapsedTime(double startTime) => DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - startTime;
     }
 }

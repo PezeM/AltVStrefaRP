@@ -1,9 +1,43 @@
-﻿using AltV.Net;
+﻿using System;
+using System.Runtime.InteropServices;
+using AltV.Net;
+using AltVStrefaRPServer.Models.Server;
+using Serilog;
 
 namespace AltVStrefaRPServer
 {
     internal static class Program
     {
-        private static void Main(string[] args) => new Start().Start(args);
+        [DllImport("Kernel32")]
+        private static extern bool SetConsoleCtrlHandler(SetConsoleCtrlEventHandler handler, bool add);
+        // https://msdn.microsoft.com/fr-fr/library/windows/desktop/ms683242.aspx
+        private delegate bool SetConsoleCtrlEventHandler(CtrlType sig);
+
+        private static void Main(string[] args)
+        {
+            SetConsoleCtrlHandler(ConsoleExitHandler, true);
+
+            new Start().Start(args);
+        }
+
+        private static bool ConsoleExitHandler(CtrlType sig)
+        {
+            Log.Information("Inside ctrl c handler and about to close application.");
+            switch (sig)
+            {
+                case CtrlType.CTRL_C_EVENT:
+                case CtrlType.CTRL_BREAK_EVENT:
+                case CtrlType.CTRL_CLOSE_EVENT:
+                case CtrlType.CTRL_LOGOFF_EVENT:
+                case CtrlType.CTRL_SHUTDOWN_EVENT:
+                    // Co some cleanup
+                    Log.Information("Closing application. Closing and flushing logger");
+                    Log.CloseAndFlush();
+                    Environment.Exit(0);
+                    return false;
+            }
+
+            return true;
+        }
     }
 }

@@ -8,6 +8,7 @@ using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Services.Money.Bank;
+using Microsoft.Extensions.Logging;
 
 namespace AltVStrefaRPServer.Modules.Money
 {
@@ -15,11 +16,13 @@ namespace AltVStrefaRPServer.Modules.Money
     {
         private ConcurrentDictionary<int, BankAccount> _bankAccounts;
         private readonly IBankAccountDatabaseService _bankAccountDatabaseService;
+        private readonly ILogger<BankAccountManager> _logger;
         private static readonly Random _rng = new Random();
 
-        public BankAccountManager(IBankAccountDatabaseService bankAccountDatabaseService)
+        public BankAccountManager(IBankAccountDatabaseService bankAccountDatabaseService, ILogger<BankAccountManager> logger)
         {
             _bankAccountDatabaseService = bankAccountDatabaseService;
+            _logger = logger;
             _bankAccounts = new ConcurrentDictionary<int, BankAccount>();
 
             LoadBankAccountsFromDatabase();
@@ -70,7 +73,7 @@ namespace AltVStrefaRPServer.Modules.Money
             {
                 _bankAccounts.TryAdd(bankAccount.AccountNumber, bankAccount);
             }
-            Alt.Log($"Loaded {_bankAccounts.Count} bank accounts from databse in {Time.GetTimestampMs() - startTime}ms.");
+            _logger.LogInformation("Loaded {bankAccountsCount} bank accounts from databse in {elapsedTime}ms", _bankAccounts.Count, Time.GetElapsedTime(startTime));
         }
     }
 }

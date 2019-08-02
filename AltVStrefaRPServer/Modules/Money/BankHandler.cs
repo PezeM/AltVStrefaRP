@@ -12,6 +12,7 @@ using AltVStrefaRPServer.Modules.CharacterModule;
 using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Money;
 using AltVStrefaRPServer.Services.Money.Bank;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace AltVStrefaRPServer.Modules.Money
@@ -22,23 +23,23 @@ namespace AltVStrefaRPServer.Modules.Money
         private readonly IBankAccountDatabaseService _bankAccountDatabaseService;
         private readonly INotificationService _notificationService;
         private readonly IBankAccountManager _bankAccountManager;
+        private readonly ILogger<BankHandler> _logger;
 
         public BankHandler(IMoneyService moneyService, INotificationService notificationService, IBankAccountDatabaseService banklAccountDatabaseService, 
-            IBankAccountManager bankAccountManager)
+            IBankAccountManager bankAccountManager, ILogger<BankHandler> logger)
         {
             _moneyService = moneyService;
             _bankAccountDatabaseService = banklAccountDatabaseService;
             _notificationService = notificationService;
             _bankAccountManager = bankAccountManager;
+            _logger = logger;
 
             Alt.On<IPlayer>("TryToOpenBankMenu", TryToOpenBankMenu);
-            AltAsync.On<IPlayer>("CreateBankAccount", async (player) => await CreateBankAccountAsync(player));
-            AltAsync.On<IPlayer, int>("DepositMoneyToBank", async (player, money) => await DepositMoneyToBankAsync(player, money));
-            AltAsync.On<IPlayer, int>("WithdrawMoneyFromBank", async (player, money) => await WithdrawMoneyFromBankAsync(player, money));
-            AltAsync.On<IPlayer, int, int>("TransferMoneyFromBankToBank", async (player, money, receiver) 
-                => await TransferMoneyFromBankToBankAsync(player, money, receiver));
-            AltAsync.On<IPlayer>("GetTransferHistoryInfo", async (player) => await GetTransferHistoryInfoAsync(player));
-
+            AltAsync.On<IPlayer, Task>("CreateBankAccount", CreateBankAccountAsync);
+            AltAsync.On<IPlayer, int, Task>("DepositMoneyToBank", DepositMoneyToBankAsync);
+            AltAsync.On<IPlayer, int, Task>("WithdrawMoneyFromBank", WithdrawMoneyFromBankAsync);
+            AltAsync.On<IPlayer, int, int, Task>("TransferMoneyFromBankToBank", TransferMoneyFromBankToBankAsync);
+            AltAsync.On<IPlayer, Task>("GetTransferHistoryInfo", GetTransferHistoryInfoAsync);
             //CreateAtmBlips();
         }
 
@@ -71,7 +72,8 @@ namespace AltVStrefaRPServer.Modules.Money
 
             if (!_bankAccountManager.AddNewBankAccount(character.BankAccount))
             {
-                AltAsync.Log($"Error occured in adding new bank account. Account number: {character.BankAccount.AccountNumber}");
+                _logger.LogWarning("Errorn occured in creating new bank account. Account number {accountNumber}", character.BankAccount.AccountNumber);
+                character.BankAccount = null;
                 await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Wystąpił błąd z tworzeniem nowego konta bankowego.", 5000);
                 return;
             }
@@ -79,7 +81,8 @@ namespace AltVStrefaRPServer.Modules.Money
             await _bankAccountDatabaseService.AddNewBankAccount(character);
             await _notificationService.ShowSuccessNotificationAsync(player, "Nowe konto bankowe",
                 $"Otworzyłeś nowe konto w banku. Twój numer konta to: {character.BankAccount.AccountNumber}.", 7000);
-            AltAsync.Log($"{character.Id} created new bank account ({character.BankAccount.AccountNumber}) in {Time.GetTimestampMs() - startTime}ms.");
+            _logger.LogInformation("Character CID({characterId}) created new bank account {@bankAccount} in {elapsedTime}", 
+                character.Id, character.BankAccount, Time.GetElapsedTime(startTime));
         }
 
         public void TryToOpenBankMenu(IPlayer player)
@@ -103,10 +106,10 @@ namespace AltVStrefaRPServer.Modules.Money
 
             if(await _moneyService.TransferMoneyFromEntityToEntityAsync(character.BankAccount, character, money, TransactionType.BankWithdraw))
             {
-                AltAsync.Log($"{character.Id} withdraw {money}$ from his bank account.");
                 await player.EmitAsync("updateBankMoneyWithNotification",
                     $"Pomyślnie wypłacono {money}$ z konta. Obecny stan konta wynosi {character.BankAccount.Money}$.",
                     character.BankAccount.Money).ConfigureAwait(false);
+                _logger.LogInformation("Character {characterName} CID({characterId}) withdraw {money}$ to his bank account", character.GetFullName(), character.Id, money);
             }
             else
             {
@@ -121,10 +124,10 @@ namespace AltVStrefaRPServer.Modules.Money
 
             if (await _moneyService.TransferMoneyFromEntityToEntityAsync(character, character.BankAccount, money, TransactionType.BankDeposit))
             {
-                AltAsync.Log($"{character.Id} deposited {money}$ to his bank account.");
                 await player.EmitAsync("updateBankMoneyWithNotification",
                     $"Pomyślnie wpłacono {money}$ na konto. Obecny stan konta wynosi {character.BankAccount.Money}$.",
-                    character.BankAccount.Money);
+                    character.BankAccount.Money).ConfigureAwait(false);
+                _logger.LogInformation("Character {characterName} CID({characterId}) deposited {money}$ to his bank account", character.GetFullName(), character.Id, money);
             }
             else
             {
@@ -149,7 +152,8 @@ namespace AltVStrefaRPServer.Modules.Money
                     $"Pomyślnie przesłano {money}$ na konto o numerze {receiverBankAccount}. <br>" +
                     $"Twój aktualny stan konta wynosi {character.BankAccount.Money}$.",
                     character.BankAccount.Money).ConfigureAwait(false);
-                AltAsync.Log($"{character.Id} transfered {money} from his bank account to {receiverBankAccount} account.");
+                _logger.LogInformation("Character {characterName} CID({characterId}) transfered {money}$ to bank account {@bankAccount}", 
+                    character.GetFullName(), character.Id, money, receiverBankAccount);
             }
             else
             {
