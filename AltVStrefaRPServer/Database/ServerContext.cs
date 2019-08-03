@@ -102,15 +102,15 @@ namespace AltVStrefaRPServer.Database
                 //.OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Character>()
-                .HasOne<Fraction>(c => c.Fraction)
+                .HasOne(c => c.Fraction)
                 .WithMany(f => f.Employees)
                 .HasForeignKey(c => c.CurrentFractionId);
                 //.OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Character>()
-                .HasOne(c => c.PlayerInventory)
+                .HasOne(c => c.Inventory)
                 .WithOne(i => i.Owner)
-                .HasForeignKey<PlayerInventoryController>(i => i.OwnerId);
+                .HasForeignKey<Character>(i => i.InventoryId);
                 //.OnDelete(DeleteBehavior.SetNull);
 
             // Vehicle
@@ -119,9 +119,9 @@ namespace AltVStrefaRPServer.Database
                 .Ignore(v => v.IsJobVehicle);
 
             modelBuilder.Entity<VehicleModel>()
-                .HasOne(v => v.VehicleInventory)
+                .HasOne(v => v.Inventory)
                 .WithOne(vI => vI.Owner)
-                .HasForeignKey<VehicleModel>(v => v.VehicleInventoryId);
+                .HasForeignKey<VehicleModel>(v => v.InventoryId);
 
             modelBuilder.Entity<MoneyTransaction>()
                 .Property(m => m.Type)

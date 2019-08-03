@@ -78,6 +78,20 @@ namespace AltVStrefaRPServer.Database.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Inventories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    MaxSlots = table.Column<int>(nullable: false),
+                    Discriminator = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Inventories", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Items",
                 columns: table => new
                 {
@@ -118,38 +132,6 @@ namespace AltVStrefaRPServer.Database.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_MoneyTransactions", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Vehicles",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Owner = table.Column<int>(nullable: false),
-                    OwnerType = table.Column<int>(nullable: false),
-                    Model = table.Column<string>(nullable: true),
-                    X = table.Column<float>(nullable: false),
-                    Y = table.Column<float>(nullable: false),
-                    Z = table.Column<float>(nullable: false),
-                    Dimension = table.Column<short>(nullable: false),
-                    Roll = table.Column<float>(nullable: false),
-                    Pitch = table.Column<float>(nullable: false),
-                    Yaw = table.Column<float>(nullable: false),
-                    MaxFuel = table.Column<float>(nullable: false),
-                    Fuel = table.Column<float>(nullable: false),
-                    MaxOil = table.Column<float>(nullable: false),
-                    Oil = table.Column<float>(nullable: false),
-                    Mileage = table.Column<float>(nullable: false),
-                    PlateNumber = table.Column<uint>(nullable: false),
-                    PlateText = table.Column<string>(nullable: true),
-                    IsSpawned = table.Column<bool>(nullable: false),
-                    IsLocked = table.Column<bool>(nullable: false),
-                    IsBlocked = table.Column<bool>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Vehicles", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -199,6 +181,28 @@ namespace AltVStrefaRPServer.Database.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "FractionRanks",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    RankName = table.Column<string>(nullable: true),
+                    Priority = table.Column<int>(nullable: false),
+                    RankType = table.Column<int>(nullable: false),
+                    FractionId = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FractionRanks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_FractionRanks_Fractions_FractionId",
+                        column: x => x.FractionId,
+                        principalTable: "Fractions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Characters",
                 columns: table => new
                 {
@@ -208,6 +212,7 @@ namespace AltVStrefaRPServer.Database.Migrations
                     IsBanned = table.Column<bool>(nullable: false),
                     IsMuted = table.Column<bool>(nullable: false),
                     CanDriveVehicles = table.Column<bool>(nullable: false),
+                    InventoryId = table.Column<int>(nullable: false),
                     ProfileImage = table.Column<string>(nullable: true),
                     X = table.Column<float>(nullable: false),
                     Y = table.Column<float>(nullable: false),
@@ -247,26 +252,49 @@ namespace AltVStrefaRPServer.Database.Migrations
                         principalTable: "Fractions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Characters_Inventories_InventoryId",
+                        column: x => x.InventoryId,
+                        principalTable: "Inventories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "FractionRanks",
+                name: "Vehicles",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    RankName = table.Column<string>(nullable: true),
-                    Priority = table.Column<int>(nullable: false),
-                    RankType = table.Column<int>(nullable: false),
-                    FractionId = table.Column<int>(nullable: true)
+                    Owner = table.Column<int>(nullable: false),
+                    OwnerType = table.Column<int>(nullable: false),
+                    Model = table.Column<string>(nullable: true),
+                    InventoryId = table.Column<int>(nullable: false),
+                    X = table.Column<float>(nullable: false),
+                    Y = table.Column<float>(nullable: false),
+                    Z = table.Column<float>(nullable: false),
+                    Dimension = table.Column<short>(nullable: false),
+                    Roll = table.Column<float>(nullable: false),
+                    Pitch = table.Column<float>(nullable: false),
+                    Yaw = table.Column<float>(nullable: false),
+                    MaxFuel = table.Column<float>(nullable: false),
+                    Fuel = table.Column<float>(nullable: false),
+                    MaxOil = table.Column<float>(nullable: false),
+                    Oil = table.Column<float>(nullable: false),
+                    Mileage = table.Column<float>(nullable: false),
+                    PlateNumber = table.Column<uint>(nullable: false),
+                    PlateText = table.Column<string>(nullable: true),
+                    IsSpawned = table.Column<bool>(nullable: false),
+                    IsLocked = table.Column<bool>(nullable: false),
+                    IsBlocked = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_FractionRanks", x => x.Id);
+                    table.PrimaryKey("PK_Vehicles", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_FractionRanks_Fractions_FractionId",
-                        column: x => x.FractionId,
-                        principalTable: "Fractions",
+                        name: "FK_Vehicles_Inventories_InventoryId",
+                        column: x => x.InventoryId,
+                        principalTable: "Inventories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -292,6 +320,41 @@ namespace AltVStrefaRPServer.Database.Migrations
                         name: "FK_DroppedItems_Items_BaseItemId",
                         column: x => x.BaseItemId,
                         principalTable: "Items",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "InventoryItems",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Quantity = table.Column<int>(nullable: false),
+                    SlotId = table.Column<int>(nullable: false),
+                    BaseItemId = table.Column<int>(nullable: false),
+                    InventoryId = table.Column<int>(nullable: false),
+                    EquippedItemsInventoryId = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InventoryItems", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_InventoryItems_Items_BaseItemId",
+                        column: x => x.BaseItemId,
+                        principalTable: "Items",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_InventoryItems_Inventories_EquippedItemsInventoryId",
+                        column: x => x.EquippedItemsInventoryId,
+                        principalTable: "Inventories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_InventoryItems_Inventories_InventoryId",
+                        column: x => x.InventoryId,
+                        principalTable: "Inventories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -344,49 +407,6 @@ namespace AltVStrefaRPServer.Database.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "BankAccounts",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Money = table.Column<float>(nullable: false),
-                    ShowNotificationOnMoneyTransfer = table.Column<bool>(nullable: false),
-                    AccountNumber = table.Column<int>(nullable: false),
-                    CharacterId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_BankAccounts", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_BankAccounts_Characters_CharacterId",
-                        column: x => x.CharacterId,
-                        principalTable: "Characters",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Inventories",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    MaxSlots = table.Column<int>(nullable: false),
-                    Discriminator = table.Column<string>(nullable: false),
-                    OwnerId = table.Column<int>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Inventories", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Inventories_Characters_OwnerId",
-                        column: x => x.OwnerId,
-                        principalTable: "Characters",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "FractionPermissions",
                 columns: table => new
                 {
@@ -410,36 +430,23 @@ namespace AltVStrefaRPServer.Database.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "InventoryItems",
+                name: "BankAccounts",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Quantity = table.Column<int>(nullable: false),
-                    SlotId = table.Column<int>(nullable: false),
-                    BaseItemId = table.Column<int>(nullable: false),
-                    InventoryId = table.Column<int>(nullable: false),
-                    EquippedItemsInventoryId = table.Column<int>(nullable: true)
+                    Money = table.Column<float>(nullable: false),
+                    ShowNotificationOnMoneyTransfer = table.Column<bool>(nullable: false),
+                    AccountNumber = table.Column<int>(nullable: false),
+                    CharacterId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_InventoryItems", x => x.Id);
+                    table.PrimaryKey("PK_BankAccounts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_InventoryItems_Items_BaseItemId",
-                        column: x => x.BaseItemId,
-                        principalTable: "Items",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_InventoryItems_Inventories_EquippedItemsInventoryId",
-                        column: x => x.EquippedItemsInventoryId,
-                        principalTable: "Inventories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_InventoryItems_Inventories_InventoryId",
-                        column: x => x.InventoryId,
-                        principalTable: "Inventories",
+                        name: "FK_BankAccounts_Characters_CharacterId",
+                        column: x => x.CharacterId,
+                        principalTable: "Characters",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -477,6 +484,12 @@ namespace AltVStrefaRPServer.Database.Migrations
                 column: "CurrentFractionId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Characters_InventoryId",
+                table: "Characters",
+                column: "InventoryId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_DroppedItems_BaseItemId",
                 table: "DroppedItems",
                 column: "BaseItemId",
@@ -491,12 +504,6 @@ namespace AltVStrefaRPServer.Database.Migrations
                 name: "IX_FractionRanks_FractionId",
                 table: "FractionRanks",
                 column: "FractionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Inventories_OwnerId",
-                table: "Inventories",
-                column: "OwnerId",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_InventoryItems_BaseItemId",
@@ -518,6 +525,12 @@ namespace AltVStrefaRPServer.Database.Migrations
                 name: "IX_VehiclePrices_VehicleShopId",
                 table: "VehiclePrices",
                 column: "VehicleShopId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Vehicles_InventoryId",
+                table: "Vehicles",
+                column: "InventoryId",
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -547,6 +560,9 @@ namespace AltVStrefaRPServer.Database.Migrations
                 name: "Vehicles");
 
             migrationBuilder.DropTable(
+                name: "Characters");
+
+            migrationBuilder.DropTable(
                 name: "BusinessesRanks");
 
             migrationBuilder.DropTable(
@@ -556,16 +572,13 @@ namespace AltVStrefaRPServer.Database.Migrations
                 name: "Items");
 
             migrationBuilder.DropTable(
-                name: "Inventories");
-
-            migrationBuilder.DropTable(
                 name: "VehicleShops");
 
             migrationBuilder.DropTable(
-                name: "Characters");
+                name: "Accounts");
 
             migrationBuilder.DropTable(
-                name: "Accounts");
+                name: "Inventories");
 
             migrationBuilder.DropTable(
                 name: "Businesses");

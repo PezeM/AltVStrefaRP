@@ -22,7 +22,7 @@ namespace AltVStrefaRPServer.Services.Vehicles
             {
                 Owner = ownerId,
                 Model = vehicleModel,
-                VehicleInventory = new VehicleInventoryController(10), // It should depend on the vehicle class. Bigger vehicle = more space in trunk
+                Inventory = new VehicleInventoryController(10), // It should depend on the vehicle class. Bigger vehicle = more space in trunk
                 X = position.X,
                 Y = position.Y,
                 Z = position.Z,

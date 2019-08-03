@@ -2,17 +2,18 @@
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Inventory;
+using AltVStrefaRPServer.Models.Inventory.Interfaces;
 
 namespace AltVStrefaRPServer.Models
 {
-    public class VehicleModel : IPosition
+    public class VehicleModel : IPosition, IHasInventory<VehicleInventoryController>
     {
         public int Id { get; set; }
         public int Owner { get; set; }
         public OwnerType OwnerType { get; set; }
         public string Model { get; set; }
-        public int VehicleInventoryId { get; set; }
-        public VehicleInventoryController VehicleInventory { get; set; }
+        public VehicleInventoryController Inventory { get; set; }
+        public int InventoryId { get; set; }
 
         public float X { get; set; }
         public float Y { get; set; }

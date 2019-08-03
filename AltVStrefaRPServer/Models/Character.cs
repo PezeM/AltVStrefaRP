@@ -6,10 +6,11 @@ using AltVStrefaRPServer.Models.Businesses;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Fractions;
 using AltVStrefaRPServer.Models.Inventory;
+using AltVStrefaRPServer.Models.Inventory.Interfaces;
 
 namespace AltVStrefaRPServer.Models
 {
-    public class Character : IMoney, IPosition
+    public class Character : IMoney, IPosition, IHasInventory<PlayerInventoryController>
     {
         public int Id { get; set; }
         public int AccountId { get; set; }
@@ -18,7 +19,8 @@ namespace AltVStrefaRPServer.Models
         public bool IsBanned {get; set; }
         public bool IsMuted { get; set; }
         public bool CanDriveVehicles { get; set; }
-        public PlayerInventoryController PlayerInventory { get; set; }
+        public PlayerInventoryController Inventory { get; set; }
+        public int InventoryId { get; set; }
         public string ProfileImage { get; set; }
 
         public float X { get; set; }

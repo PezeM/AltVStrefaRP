@@ -8,16 +8,16 @@ using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Models.Interfaces.Inventory;
 using AltVStrefaRPServer.Models.Interfaces.Items;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
+using AltVStrefaRPServer.Models.Inventory.Interfaces;
 using AltVStrefaRPServer.Models.Inventory.Items;
 using AltVStrefaRPServer.Models.Inventory.Responses;
 using AltVStrefaRPServer.Services.Inventory;
 
 namespace AltVStrefaRPServer.Models.Inventory
 {
-    public class PlayerInventoryController : InventoryController
+    public class PlayerInventoryController : InventoryController, IInventoryOwner<Character, PlayerInventoryController>
     {
-        public Character Owner { get; private set; }
-        public int OwnerId { get; private set; }
+        public Character Owner { get; set; }
 
         public IReadOnlyCollection<InventoryItem> EquippedItems => _equippedItems;
         private List<InventoryItem> _equippedItems;
@@ -112,60 +112,6 @@ namespace AltVStrefaRPServer.Models.Inventory
                 return InventoryRemoveResponse.ItemRemovedCompletly;
             }
             return InventoryRemoveResponse.ItemRemoved;
-        }
-
-        public override async Task<AddItemResponse> AddItemAsync(BaseItem itemToAdd, int amount, IInventoryDatabaseService inventoryDatabaseService, IPlayer player = null)
-        {
-            var response = new AddItemResponse(0, false);
-
-            while (amount > 0)
-            {
-                if (TryGetInventoryItemNotFullyStacked(itemToAdd, out var item))
-                {
-                    int toAdd = NumberOfItemsToAdd(itemToAdd, amount, item);
-                    item.AddToQuantity(toAdd);
-                    response.ItemsAddedCount += toAdd;
-                    amount -= toAdd;
-                    // Update item quantity
-                    if (player != null)
-                    {
-                        player.EmitLocked("updateInventoryItemQuantity", item.Id, item.Quantity);
-                    }
-                }
-                else
-                {
-                    if (!HasEmptySlots()) return response;
-
-                    int toAdd = Math.Min(amount, itemToAdd.StackSize);
-
-                    if (response.AddedNewItem)
-                    {
-                        var newBaseItem = BaseItem.ShallowClone(itemToAdd);
-                        var newInventoryItem = new InventoryItem(newBaseItem, toAdd, GetFreeSlot());
-                        response.NewItems.Add(newInventoryItem);
-                        _items.Add(newInventoryItem);
-                    }
-                    else
-                    {
-                        var newInventoryItem = new InventoryItem(itemToAdd, toAdd, GetFreeSlot());
-                        response.NewItems.Add(newInventoryItem);
-                        _items.Add(newInventoryItem);
-                    }
-
-                    amount -= toAdd;
-                    response.ItemsAddedCount += toAdd;
-                    response.AddedNewItem = true;
-                }
-            }
-            if (response.AddedNewItem)
-            {
-                await inventoryDatabaseService.UpdateInventoryAsync(this);
-                if (player != null)
-                {
-                    player.EmitLocked("inventoryAddNewItem", response.NewItems);
-                }
-            }
-            return response;
         }
 
         public bool TryToGetEquippedItemAtSlot(EquipmentSlot slot, out InventoryItem item)

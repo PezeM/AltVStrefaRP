@@ -18,20 +18,15 @@ namespace AltVStrefaRPServer.Models.Inventory
     //    // PedPosition
     //    // ShopInventory
     //}
-
-
     //public class ShopItem
     //{
-        
     //}
-
     //public class ShopInventory
     //{
     //    // Id
     //    // Shop
     //    // List<InventoryItem>
     //    protected List<ShopItem> _items;
-
     //    public void AddItem()
     //    {
     //        var item = _items[0];
@@ -40,8 +35,7 @@ namespace AltVStrefaRPServer.Models.Inventory
     //}
 
     // Inventories in Vehicles/Players/Random boxes/Fraction inventories/Business inventories/Shops etc
-    
-    public abstract class InventoryController : IInventory
+    public abstract class InventoryController : IInventoryController
     {
         public int Id { get; protected set; }
         public int MaxSlots { get; protected set; }
@@ -74,7 +68,7 @@ namespace AltVStrefaRPServer.Models.Inventory
 
         public bool HasItem<TItem>() where TItem : BaseItem
         {
-            return (_items.FirstOrDefault(i => i.Item is TItem)) != null;
+            return _items.FirstOrDefault(i => i.Item is TItem) != null;
         }
 
         public InventoryItem GetInventoryItem(int itemId)
@@ -116,8 +110,7 @@ namespace AltVStrefaRPServer.Models.Inventory
                 else
                 {
                     if (!HasEmptySlots()) return response;
-
-                    int toAdd = Math.Min(amount, itemToAdd.StackSize);
+                    int toAdd = CalculateAmountOfItemsToAdd(itemToAdd, amount);
 
                     if (response.AddedNewItem)
                     {
@@ -138,6 +131,7 @@ namespace AltVStrefaRPServer.Models.Inventory
                     response.AddedNewItem = true;
                 }
             }
+
             if (response.AddedNewItem)
             {
                 await inventoryDatabaseService.UpdateInventoryAsync(this);
@@ -146,8 +140,15 @@ namespace AltVStrefaRPServer.Models.Inventory
                     player.EmitLocked("inventoryAddNewItem", response.NewItems);
                 }
             }
+
             return response;
         }
+
+        protected virtual int CalculateAmountOfItemsToAdd(BaseItem itemToAdd, int amount)
+        {
+            return Math.Min(amount, itemToAdd.StackSize);
+        }
+
         protected int NumberOfItemsToAdd(BaseItem itemToAdd, int amount, InventoryItem item)
         {
             int maxQuantity = itemToAdd.StackSize - item.Quantity;
@@ -163,9 +164,9 @@ namespace AltVStrefaRPServer.Models.Inventory
                 if (freeSlots.Contains(_items[i].SlotId))
                 {
                     freeSlots.Remove(_items[i].SlotId);
-                }    
+                }
             }
-            return Enumerable.First(freeSlots);
+            return freeSlots.First();
         }
     }
 }

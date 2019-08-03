@@ -429,9 +429,9 @@ namespace AltVStrefaRPServer.Modules.Admin
         private void GetInventory(IPlayer player, string[] args)
         {
             if (!player.TryGetCharacter(out var character)) return;
-            var inventory = JsonConvert.SerializeObject(character.PlayerInventory.Items, Formatting.Indented);
+            var inventory = JsonConvert.SerializeObject(character.Inventory.Items, Formatting.Indented);
             Alt.Log(inventory);
-            player.Emit("testInventory", inventory, JsonConvert.SerializeObject(character.PlayerInventory.EquippedItems));
+            player.Emit("testInventory", inventory, JsonConvert.SerializeObject(character.Inventory.EquippedItems));
         }
 
         private async Task AddItemAsync(IPlayer player, string[] args)
@@ -449,7 +449,7 @@ namespace AltVStrefaRPServer.Modules.Admin
             var newItem = _itemFactory.CreateItem((ItemType)itemID);
             if (newItem == null) return;
             Alt.Log($"New item is of type {newItem.GetType()} and name {newItem.Name}");
-            var response = await character.PlayerInventory.AddItemAsync(newItem, itemAmount, _inventoryDatabaseService, player);
+            var response = await character.Inventory.AddItemAsync(newItem, itemAmount, _inventoryDatabaseService, player);
             string itemIds = string.Empty;
             foreach (var item in response.NewItems)
             {
@@ -492,9 +492,14 @@ namespace AltVStrefaRPServer.Modules.Admin
             await _inventoryHandler.InventoryRemoveItemAsync(player, itemId, amount);
         }
 
-        private void LookupInventory(IPlayer arg1, string[] arg2)
+        private void LookupInventory(IPlayer player, string[] args)
         {
-            throw new NotImplementedException();
+            if (args == null || args.Length < 1) return;
+            if (!int.TryParse(args[0].ToString(), out int vehicleId)) return;
+            if (!_vehiclesManager.TryGetVehicleModel(vehicleId, out var vehicle)) return;
+
+            var inventory = JsonConvert.SerializeObject(vehicle.Inventory.Items, Formatting.Indented);
+            Alt.Log(inventory);
         }
     }
 }
