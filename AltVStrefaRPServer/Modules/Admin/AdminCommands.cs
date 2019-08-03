@@ -104,6 +104,7 @@ namespace AltVStrefaRPServer.Modules.Admin
             _chatHandler.RegisterCommand("getInventory", GetInventory);
             _chatHandler.RegisterCommand("useItem", async (player, args) => await UseItemAsync(player, args));
             _chatHandler.RegisterCommand("removeItem", async (player, args) => await RemoveItemAsync(player, args));
+            _chatHandler.RegisterCommand("lookupInventory", LookupInventory);
         }
 
         private void OpenVehicleShop (IPlayer player, string[] arg2)
@@ -448,8 +449,14 @@ namespace AltVStrefaRPServer.Modules.Admin
             var newItem = _itemFactory.CreateItem((ItemType)itemID);
             if (newItem == null) return;
             Alt.Log($"New item is of type {newItem.GetType()} and name {newItem.Name}");
-            await character.PlayerInventory.AddItemAsync(newItem, itemAmount, _inventoryDatabaseService, player);
-            Alt.Log($"Added item id is {newItem.Id} in {Time.GetElapsedTime(startTime)}ms");
+            var response = await character.PlayerInventory.AddItemAsync(newItem, itemAmount, _inventoryDatabaseService, player);
+            string itemIds = string.Empty;
+            foreach (var item in response.NewItems)
+            {
+                itemIds += $"{item.Id},";
+            }
+
+            Alt.Log($"Added item id is {itemIds} in {Time.GetElapsedTime(startTime)}ms");
         }
 
         private async Task DropItemAsync(IPlayer player, string[] args)
@@ -458,12 +465,10 @@ namespace AltVStrefaRPServer.Modules.Admin
             if(args == null || args.Length < 2) return;
             if (!int.TryParse(args[0].ToString(), out int itemId))
             {
-                //_chat.Send(player, "{FF0000} Nie podano itemId!");
                 return;
             }
             if (!int.TryParse(args[1].ToString(), out int amount))
             {
-                //_chat.Send(player, "{FF0000} Nie podano ilości.");
                 return;
             }
             await _inventoryHandler.DropItemAsync(player, itemId, amount, new Position(player.Position.X + 1, player.Position.Y + 1, player.Position.Z));
@@ -485,6 +490,11 @@ namespace AltVStrefaRPServer.Modules.Admin
             if (!int.TryParse(args[0].ToString(), out int itemId)) return;
             if (!int.TryParse(args[1].ToString(), out int amount)) return;
             await _inventoryHandler.InventoryRemoveItemAsync(player, itemId, amount);
+        }
+
+        private void LookupInventory(IPlayer arg1, string[] arg2)
+        {
+            throw new NotImplementedException();
         }
     }
 }

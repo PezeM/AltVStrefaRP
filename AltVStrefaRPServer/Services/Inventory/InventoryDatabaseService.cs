@@ -89,6 +89,15 @@ namespace AltVStrefaRPServer.Services.Inventory
             }
         }
 
+        public async Task UpdateInventoryAsync(InventoryController inventoryController)
+        {
+            using (var context = _factory.Invoke())
+            {
+                context.Inventories.Update(inventoryController);
+                await context.SaveChangesAsync();
+            }
+        }
+
         public void AddNewItem(BaseItem item)
         {
             using (var context = _factory.Invoke())

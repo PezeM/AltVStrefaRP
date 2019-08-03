@@ -14,31 +14,6 @@ using AltVStrefaRPServer.Services.Inventory;
 
 namespace AltVStrefaRPServer.Models.Inventory
 {
-    public class SomeTestClass
-    {
-        public IInventoryTransferService InventoryService { get; set; }
-
-        public SomeTestClass()
-        {
-            
-        }
-
-        public void SomeRandomMethod(Character character)
-        {
-            var itemFactory = new ItemFactory();
-            var newItem = itemFactory.CreateBurger();
-
-            //InventoryService.AddItem(character.PlayerInventory, newItem, 20);
-
-            var newInventory = new InventoryController<VehicleModel>();
-        }
-    }
-
-    public class InventoryController<TOwner> : InventoryController where TOwner : class
-    {
-        public TOwner Owner { get; set; }
-    }
-
     public class PlayerInventoryController : InventoryController
     {
         public Character Owner { get; private set; }
@@ -139,7 +114,7 @@ namespace AltVStrefaRPServer.Models.Inventory
             return InventoryRemoveResponse.ItemRemoved;
         }
 
-        public async Task<AddItemResponse> AddItemAsync(BaseItem itemToAdd, int amount, IInventoryDatabaseService inventoryDatabaseService, IPlayer player = null)
+        public override async Task<AddItemResponse> AddItemAsync(BaseItem itemToAdd, int amount, IInventoryDatabaseService inventoryDatabaseService, IPlayer player = null)
         {
             var response = new AddItemResponse(0, false);
 

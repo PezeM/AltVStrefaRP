@@ -1,6 +1,7 @@
 ﻿using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Models.Enums;
+using AltVStrefaRPServer.Models.Inventory;
 
 namespace AltVStrefaRPServer.Models
 {
@@ -10,6 +11,8 @@ namespace AltVStrefaRPServer.Models
         public int Owner { get; set; }
         public OwnerType OwnerType { get; set; }
         public string Model { get; set; }
+        public int VehicleInventoryId { get; set; }
+        public VehicleInventoryController VehicleInventory { get; set; }
 
         public float X { get; set; }
         public float Y { get; set; }

@@ -1,5 +1,6 @@
 ﻿using AltV.Net.Data;
 using AltVStrefaRPServer.Models.Enums;
+using AltVStrefaRPServer.Models.Inventory;
 using VehicleModel = AltVStrefaRPServer.Models.VehicleModel;
 
 namespace AltVStrefaRPServer.Services.Vehicles
@@ -21,6 +22,7 @@ namespace AltVStrefaRPServer.Services.Vehicles
             {
                 Owner = ownerId,
                 Model = vehicleModel,
+                VehicleInventory = new VehicleInventoryController(10), // It should depend on the vehicle class. Bigger vehicle = more space in trunk
                 X = position.X,
                 Y = position.Y,
                 Z = position.Z,

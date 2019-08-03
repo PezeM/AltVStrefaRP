@@ -50,6 +50,7 @@ namespace AltVStrefaRPServer.Database
         // Inventory
         public DbSet<InventoryController> Inventories { get; set; }
         public DbSet<PlayerInventoryController> PlayerInventories { get; set; }
+        public DbSet<VehicleInventoryController> VehicleInventories { get; set; }
         public DbSet<BaseItem> Items { get; set; }
         public DbSet<Equipmentable> Equipmentables { get; set; }
         public DbSet<FoodItem> FoodItems { get; set; }
@@ -112,9 +113,15 @@ namespace AltVStrefaRPServer.Database
                 .HasForeignKey<PlayerInventoryController>(i => i.OwnerId);
                 //.OnDelete(DeleteBehavior.SetNull);
 
+            // Vehicle
             modelBuilder.Entity<VehicleModel>()
                 .Ignore(v => v.VehicleHandle)
                 .Ignore(v => v.IsJobVehicle);
+
+            modelBuilder.Entity<VehicleModel>()
+                .HasOne(v => v.VehicleInventory)
+                .WithOne(vI => vI.Owner)
+                .HasForeignKey<VehicleModel>(v => v.VehicleInventoryId);
 
             modelBuilder.Entity<MoneyTransaction>()
                 .Property(m => m.Type)
