@@ -77,43 +77,6 @@ namespace AltVStrefaRPServer.Models.Inventory
             return InventoryUseResponse.ItemNotFound;
         }
 
-        public async Task<InventoryDropResponse> DropItemAsync(InventoryItem item, int amount, Position position, IInventoriesManager inventoriesManager, 
-            IInventoryDatabaseService inventoryDatabaseService)
-        {
-            if (!(item.Item is IDroppable droppable)) return InventoryDropResponse.ItemNotDroppable;
-            if (await RemoveItemAsync(item, amount, inventoryDatabaseService) == InventoryRemoveResponse.NotEnoughItems) return InventoryDropResponse.NotEnoughItems;
-            var newBaseItem = BaseItem.ShallowClone(item.Item);
-            if (!await inventoriesManager.AddDroppedItemAsync(new DroppedItem(amount, droppable.Model, newBaseItem, position)))
-                return InventoryDropResponse.ItemAlreadyDropped;
-            return InventoryDropResponse.DroppedItem;
-        }
-        
-        public async Task<InventoryDropResponse> DropItemAsync(int itemId, int amount, Position position, IInventoriesManager inventoriesManager, 
-            IInventoryDatabaseService inventoryDatabaseService)
-        {
-            if (!HasItem(itemId, out var item)) return InventoryDropResponse.ItemNotFound;
-            return await DropItemAsync(item, amount, position, inventoriesManager, inventoryDatabaseService);
-        }
-
-        public async Task<InventoryRemoveResponse> RemoveItemAsync(int id, int amount, IInventoryDatabaseService inventoryDatabaseService)
-        {
-            if (!HasItem(id, out var item)) return InventoryRemoveResponse.ItemNotFound;
-            return await RemoveItemAsync(item, amount, inventoryDatabaseService);
-        }
-
-        public async Task<InventoryRemoveResponse> RemoveItemAsync(InventoryItem item, int amount, IInventoryDatabaseService inventoryDatabaseService)
-        {
-            if (item.Quantity < amount) return InventoryRemoveResponse.NotEnoughItems;
-            item.RemoveQuantity(amount);
-            if (item.Quantity <= 0)
-            {
-                _items.Remove(item);
-                await inventoryDatabaseService.RemoveItemAsync(item);
-                return InventoryRemoveResponse.ItemRemovedCompletly;
-            }
-            return InventoryRemoveResponse.ItemRemoved;
-        }
-
         public bool TryToGetEquippedItemAtSlot(EquipmentSlot slot, out InventoryItem item)
         {
             item = _equippedItems.FirstOrDefault(i => i.SlotId == (int)slot);

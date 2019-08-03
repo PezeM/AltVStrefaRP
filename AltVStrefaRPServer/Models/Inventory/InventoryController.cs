@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AltV.Net.Async;
+using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
+using AltVStrefaRPServer.Models.Interfaces.Inventory;
+using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Models.Inventory.Items;
 using AltVStrefaRPServer.Models.Inventory.Responses;
 using AltVStrefaRPServer.Services.Inventory;
@@ -144,6 +147,48 @@ namespace AltVStrefaRPServer.Models.Inventory
             return response;
         }
 
+        public virtual async Task<InventoryRemoveResponse> RemoveItemAsync(int id, int amount, IInventoryDatabaseService inventoryDatabaseService, bool saveToDatabase = true)
+        {
+            if (!HasItem(id, out var item)) return InventoryRemoveResponse.ItemNotFound;
+            return await RemoveItemAsync(item, amount, inventoryDatabaseService, saveToDatabase);
+        }
+
+        public virtual async Task<InventoryRemoveResponse> RemoveItemAsync(InventoryItem item, int amount, IInventoryDatabaseService inventoryDatabaseService, 
+            bool saveToDatabase = true)
+        {
+            if (item.Quantity < amount) return InventoryRemoveResponse.NotEnoughItems;
+            item.RemoveQuantity(amount);
+            if (item.Quantity <= 0)
+            {
+                _items.Remove(item);
+
+                if(saveToDatabase)
+                    await inventoryDatabaseService.RemoveItemAsync(item);
+
+                return InventoryRemoveResponse.ItemRemovedCompletly;
+            }
+
+            return InventoryRemoveResponse.ItemRemoved;
+        }
+
+        public virtual async Task<InventoryDropResponse> DropItemAsync(int itemId, int amount, Position position, IInventoriesManager inventoriesManager, 
+            IInventoryDatabaseService inventoryDatabaseService)
+        {
+            if (!HasItem(itemId, out var item)) return InventoryDropResponse.ItemNotFound;
+            return await DropItemAsync(item, amount, position, inventoriesManager, inventoryDatabaseService);
+        }
+
+        public virtual async Task<InventoryDropResponse> DropItemAsync(InventoryItem item, int amount, Position position, IInventoriesManager inventoriesManager, 
+            IInventoryDatabaseService inventoryDatabaseService)
+        {
+            if (!(item.Item is IDroppable droppable)) return InventoryDropResponse.ItemNotDroppable;
+            if (await RemoveItemAsync(item, amount, inventoryDatabaseService) == InventoryRemoveResponse.NotEnoughItems) return InventoryDropResponse.NotEnoughItems;
+            var newBaseItem = BaseItem.ShallowClone(item.Item);
+            if (!await inventoriesManager.AddDroppedItemAsync(new DroppedItem(amount, droppable.Model, newBaseItem, position)))
+                return InventoryDropResponse.ItemAlreadyDropped;
+            return InventoryDropResponse.DroppedItem;
+        }
+        
         protected virtual int CalculateAmountOfItemsToAdd(BaseItem itemToAdd, int amount)
         {
             return Math.Min(amount, itemToAdd.StackSize);
