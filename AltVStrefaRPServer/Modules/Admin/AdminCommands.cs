@@ -448,7 +448,7 @@ namespace AltVStrefaRPServer.Modules.Admin
             var newItem = _itemFactory.CreateItem((ItemType)itemID);
             if (newItem == null) return;
             Alt.Log($"New item is of type {newItem.GetType()} and name {newItem.Name}");
-            await character.PlayerInventory.AddItemAsync(newItem, itemAmount, _inventoryDatabaseService);
+            await character.PlayerInventory.AddItemAsync(newItem, itemAmount, _inventoryDatabaseService, player);
             Alt.Log($"Added item id is {newItem.Id} in {Time.GetElapsedTime(startTime)}ms");
         }
 

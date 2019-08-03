@@ -9,8 +9,8 @@ namespace AltVStrefaRPServer.Services.Characters
     {
         Task<Character> FindCharacterByIdAsync(int characterId);
         Task<Character> FindCharacterAsync(string firstName, string lastName);
-        Task<List<CharacterSelectDto>> GetCharacterList(int accountId);
-        Task<Character> GetCharacterById(int characterId);
+        Task<List<CharacterSelectDto>> GetCharacterListAsync(int accountId);
+        Task<Character> GetCharacterByIdAsync(int characterId);
         Task UpdateCharacterAsync(Character character);
         Task UpdateCharactersAsync(IEnumerable<Character> characters);
     }

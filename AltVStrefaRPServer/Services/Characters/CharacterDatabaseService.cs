@@ -49,7 +49,7 @@ namespace AltVStrefaRPServer.Services.Characters
             }
         }
 
-        public async Task<List<CharacterSelectDto>> GetCharacterList(int accountId)
+        public async Task<List<CharacterSelectDto>> GetCharacterListAsync(int accountId)
         {
             using (var context = _factory.Invoke())
             {
@@ -65,7 +65,7 @@ namespace AltVStrefaRPServer.Services.Characters
             }
         }
 
-        public async Task<Character> GetCharacterById(int characterId)
+        public async Task<Character> GetCharacterByIdAsync(int characterId)
         {
             using (var context = _factory.Invoke())
             {

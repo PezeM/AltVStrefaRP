@@ -47,15 +47,13 @@ namespace AltVStrefaRPServer.Models.Inventory
         public IReadOnlyCollection<InventoryItem> EquippedItems => _equippedItems;
         private List<InventoryItem> _equippedItems;
 
-        protected PlayerInventoryController()
+        protected PlayerInventoryController() : base()
         {
-            _items = new List<InventoryItem>();
             _equippedItems = new List<InventoryItem>();
         }
 
-        public PlayerInventoryController(int maxSlots)
+        public PlayerInventoryController(int maxSlots) : base()
         {
-            _items = new List<InventoryItem>();
             _equippedItems = new List<InventoryItem>();
             MaxSlots = maxSlots;
         }
@@ -143,7 +141,7 @@ namespace AltVStrefaRPServer.Models.Inventory
 
         public async Task<AddItemResponse> AddItemAsync(BaseItem itemToAdd, int amount, IInventoryDatabaseService inventoryDatabaseService, IPlayer player = null)
         {
-            var response = new AddItemResponse();
+            var response = new AddItemResponse(0, false);
 
             while (amount > 0)
             {

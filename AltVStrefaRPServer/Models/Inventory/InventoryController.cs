@@ -5,6 +5,37 @@ using AltVStrefaRPServer.Models.Inventory.Items;
 
 namespace AltVStrefaRPServer.Models.Inventory
 {
+    //public class Shop
+    //{
+    //    // Id
+    //    // Name
+    //    // Position
+    //    // PedPosition
+    //    // ShopInventory
+    //}
+
+
+    //public class ShopItem
+    //{
+        
+    //}
+
+    //public class ShopInventory
+    //{
+    //    // Id
+    //    // Shop
+    //    // List<InventoryItem>
+    //    protected List<ShopItem> _items;
+
+    //    public void AddItem()
+    //    {
+    //        var item = _items[0];
+    //        // Add to quantity which is propably infinite or something
+    //    }
+    //}
+
+    // Inventories in Vehicles/Players/Random boxes/Fraction inventories/Business inventories/Shops etc
+    
     public class InventoryController : IInventory
     {
         public int Id { get; protected set; }

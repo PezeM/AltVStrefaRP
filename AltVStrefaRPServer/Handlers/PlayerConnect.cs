@@ -49,7 +49,7 @@ namespace AltVStrefaRPServer.Handlers
         {
             try
             {
-                var character = await _characterDatabaseService.GetCharacterById(characterId);
+                var character = await _characterDatabaseService.GetCharacterByIdAsync(characterId);
                 if (character == null)
                 {
                     // TODO: Emit event to player that cound't find character with given ID
@@ -136,7 +136,7 @@ namespace AltVStrefaRPServer.Handlers
                 }
 
                 player.AccountId = account.AccountId;
-                await player.EmitAsync("loginSuccesfully", JsonConvert.SerializeObject(await _characterDatabaseService.GetCharacterList(account.AccountId)));
+                await player.EmitAsync("loginSuccesfully", JsonConvert.SerializeObject(await _characterDatabaseService.GetCharacterListAsync(account.AccountId)));
                 _logger.LogInformation("Loging in account {accountName} ID({accountId}) completed in {elapsedTime}ms", account.Username, account.AccountId,
                     Time.GetElapsedTime(startTime));
             }
