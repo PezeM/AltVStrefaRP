@@ -3,6 +3,7 @@ using System.IO;
 using AltVStrefaRPServer.Data;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Handlers;
+using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Models.Server;
 using AltVStrefaRPServer.Modules.Admin;
@@ -28,6 +29,7 @@ using AltVStrefaRPServer.Services.Vehicles;
 using AltVStrefaRPServer.Services.Vehicles.VehicleShops;
 using EFCore.DbContextFactory.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
@@ -72,7 +74,6 @@ namespace AltVStrefaRPServer
                 {
                     mysqlOptions.ServerVersion(new Version(10, 1, 37), ServerType.MariaDb);
                 }));
-
 
             AddLogging(services, appSettings.ElasticsearchOptions);
 
