@@ -18,7 +18,7 @@ namespace AltVStrefaRPServer.Services.Vehicles
         /// <returns></returns>
         public VehicleModel CreateVehicle(string vehicleModel, Position position, Rotation rotation, short dimension, int ownerId, OwnerType ownerType)
         {
-            return new VehicleModel
+            var vehicle = new VehicleModel
             {
                 Owner = ownerId,
                 Model = vehicleModel,
@@ -34,9 +34,9 @@ namespace AltVStrefaRPServer.Services.Vehicles
                 PlateNumber = 0,
                 PlateText = "BRAK", // Change it to unique plate text
                 // Temporary values
-                MaxFuel = 50.0f,
-                Fuel = 50.0f,
-                MaxOil = 10.0f,
+                MaxFuel = 50.0f, // Should depend on vehicle class  
+                Fuel = 50.0f,   
+                MaxOil = 10.0f,  // Should depend on vehicle class
                 Oil = 5.0f,
                 Mileage = 0.0f,
                 IsBlocked = false,
@@ -44,6 +44,8 @@ namespace AltVStrefaRPServer.Services.Vehicles
                 IsLocked = false,
                 IsSpawned = false
             };
+
+            return vehicle;
         }
     }
 }
