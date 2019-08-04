@@ -1,6 +1,6 @@
 ﻿using AltV.Net.Elements.Entities;
 
-namespace AltVStrefaRPServer.Models
+namespace AltVStrefaRPServer.Models.Vehicles
 {
     public interface IMyVehicle : IVehicle
     {

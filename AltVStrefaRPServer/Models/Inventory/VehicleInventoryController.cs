@@ -1,4 +1,5 @@
 ﻿using AltVStrefaRPServer.Models.Inventory.Interfaces;
+using AltVStrefaRPServer.Models.Vehicles;
 
 namespace AltVStrefaRPServer.Models.Inventory
 {

@@ -1,7 +1,7 @@
 ﻿using AltV.Net.Data;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Inventory;
-using VehicleModel = AltVStrefaRPServer.Models.VehicleModel;
+using AltVStrefaRPServer.Models.Vehicles;
 
 namespace AltVStrefaRPServer.Services.Vehicles
 {

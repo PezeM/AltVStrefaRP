@@ -11,9 +11,9 @@ using AltVStrefaRPServer.Models.Businesses;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Fractions.Permissions;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
+using AltVStrefaRPServer.Models.Vehicles;
 using AltVStrefaRPServer.Services.Vehicles;
 using Microsoft.Extensions.Logging;
-using VehicleModel = AltVStrefaRPServer.Models.VehicleModel;
 
 namespace AltVStrefaRPServer.Modules.Vehicle
 {

@@ -4,9 +4,9 @@ using AltV.Net.Data;
 using AltV.Net.Enums;
 using System;
 using System.Threading.Tasks;
-using AltVStrefaRPServer.Models;
 using Microsoft.Extensions.Logging;
-using VehicleModel = AltVStrefaRPServer.Models.VehicleModel;
+using VehicleModel = AltVStrefaRPServer.Models.Vehicles.VehicleModel;
+using AltVStrefaRPServer.Models.Vehicles;
 
 namespace AltVStrefaRPServer.Services.Vehicles
 {

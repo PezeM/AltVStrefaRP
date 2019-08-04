@@ -2,7 +2,7 @@
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 
-namespace AltVStrefaRPServer.Models
+namespace AltVStrefaRPServer.Models.Vehicles
 {
     public class MyVehicle : Vehicle, IMyVehicle
     {

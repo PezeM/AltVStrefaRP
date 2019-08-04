@@ -7,10 +7,11 @@ using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
+using AltVStrefaRPServer.Models.Vehicles;
 using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Vehicles;
 using Microsoft.Extensions.Logging;
-using VehicleModel = AltVStrefaRPServer.Models.VehicleModel;
+using VehicleModel = AltVStrefaRPServer.Models.Vehicles.VehicleModel;
 
 namespace AltVStrefaRPServer.Handlers
 {
