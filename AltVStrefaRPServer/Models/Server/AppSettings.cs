@@ -12,6 +12,7 @@
         public string ConnectionString { get; set; }
         public ElasticsearchOptions ElasticsearchOptions { get; set; }
         public ServerConfig ServerConfig { get; set; }
+        public string VehiclesDataPath { get; set; }
     }
 
     public class ServerConfig

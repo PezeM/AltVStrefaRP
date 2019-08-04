@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using AltVStrefaRPServer.Data;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Handlers;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
@@ -115,6 +116,7 @@ namespace AltVStrefaRPServer
             services.AddSingleton<IInventoriesManager, InventoriesManager>();
             services.AddSingleton<InventoryHandler>();
             services.AddSingleton<INetworkingManager, NetworkingManager>();
+            services.AddSingleton<VehiclesData>();
 
             services.AddTransient<AdminCommands>();
             services.AddTransient<CharacterCreator>();
