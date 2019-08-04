@@ -30,8 +30,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AltV.Net" Version="1.11.0-dev-preview" />
-    <PackageReference Include="AltV.Net.Async" Version="1.11.0-dev-preview" />
+    <PackageReference Include="AltV.Net" Version="1.12.0-beta" />
+    <PackageReference Include="AltV.Net.Async" Version="1.12.0-beta" />
     <PackageReference Include="AltV.Net.NetworkingEntity" Version="1.2.4-dev-preview" />
     <PackageReference Include="EFCore.DbContextFactory" Version="1.0.2" />
     <PackageReference Include="MessagePack" Version="2.0.123-beta" />
@@ -44,7 +44,7 @@
     <PackageReference Include="Serilog" Version="2.9.0-dev-01119" />
     <PackageReference Include="Serilog.Enrichers.Thread" Version="3.1.1-dev-00745" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.0-dev-10240" />
-    <PackageReference Include="Serilog.Sinks.Console" Version="3.1.2-dev-00802" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="3.1.2-dev-00806" />
     <PackageReference Include="Serilog.Sinks.Elasticsearch" Version="8.0.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="4.1.0-dev-00847" />
   </ItemGroup>
