@@ -47,7 +47,7 @@ namespace AltVStrefaRPServer.Modules.CharacterModule.Customization
             // Create character, temporary name/last name
             var playerAccount = await _accountDatabaseService.GetAccountAsync(player.AccountId);
             var character = _characterCreatorService.CreateNewCharacter(player.AccountId, player.AccountId.ToString(), player.AccountId.ToString(), 10, 0);
-            if (playerAccount != null) 
+            if (playerAccount != null)
                 character.Account = playerAccount;
 
             await _characterCreatorService.SaveNewCharacter(character).ConfigureAwait(false);

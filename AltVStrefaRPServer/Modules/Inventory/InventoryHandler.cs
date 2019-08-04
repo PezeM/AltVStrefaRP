@@ -5,9 +5,12 @@ using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Helpers;
+using AltVStrefaRPServer.Models;
+using AltVStrefaRPServer.Models.Dto;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Models.Inventory.Responses;
+using AltVStrefaRPServer.Models.Vehicles;
 using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Inventory;
 using Microsoft.Extensions.Logging;
@@ -21,22 +24,51 @@ namespace AltVStrefaRPServer.Modules.Inventory
         private readonly IInventoriesManager _inventoriesManager;
         private readonly IInventoryDatabaseService _inventoryDatabaseService;
         private readonly INotificationService _notificationService;
+        private readonly IVehiclesManager _vehiclesManager;
         private readonly ILogger<InventoryHandler> _logger;
 
         public InventoryHandler(IInventoriesManager inventoriesManager, IInventoryDatabaseService inventoryDatabaseService, INotificationService notificationService, 
-            ILogger<InventoryHandler> logger)
+            IVehiclesManager vehiclesManager, ILogger<InventoryHandler> logger)
         {
             _inventoriesManager = inventoriesManager;
             _inventoryDatabaseService = inventoryDatabaseService;
             _notificationService = notificationService;
+            _vehiclesManager = vehiclesManager;
             _logger = logger;
 
+            Alt.On<IPlayer, IMyVehicle, bool>("OpenVehicleInventory", OpenVehicleInventory);
             Alt.On<IPlayer>("GetPlayerInventory", GetPlayerInventory);
             AltAsync.On<IPlayer, int, int, Position, Task>("DropItem", DropItemAsync);
             AltAsync.On<IPlayer, int, Task>("UseInventoryItem",UseInventoryItemAsync);
             AltAsync.On<IPlayer, int, int, Task>("InventoryDropItem", InventoryDropItemAsync);
             AltAsync.On<IPlayer, int, int, Task>("InventoryRemoveItem", InventoryRemoveItemAsync);
             AltAsync.On<IPlayer, int, int, Task>("PickupDroppedItem", PickupDroppedItemAsync);
+        }
+
+        private void OpenVehicleInventory(IPlayer player, IMyVehicle vehicle, bool getOwnInventory)
+        {
+            if (!_vehiclesManager.TryGetVehicleModel(vehicle, out var vehicleModel)) return;
+
+            var inventoryContainer = new InventoryContainerDto()
+            {
+                InventoryId = vehicleModel.InventoryId,
+                InventoryName = $"Bagażnik pojazdu {vehicleModel.PlateText}",
+                InventorySlots = vehicleModel.Inventory.MaxSlots,
+                Items = vehicleModel.Inventory.Items.Select(i => new InventoryItemDto(i)).ToList()
+            };
+
+            if (!getOwnInventory)
+            {
+                player.Emit("populateAddonationalInventoryContainer", JsonConvert.SerializeObject(inventoryContainer));
+                _logger.LogDebug("Emited only vehicle inventory");
+                return;
+            }
+
+            if (!player.TryGetCharacter(out var character)) return;
+            var inventoryItems = character.Inventory.Items.Select(i => new InventoryItemDto(i));
+            player.Emit("populateAddonationalInventoryContainer", JsonConvert.SerializeObject(inventoryContainer), JsonConvert.SerializeObject(inventoryItems), 
+                JsonConvert.SerializeObject(character.Inventory.EquippedItems));
+            _logger.LogDebug("Emited vehicle inventory with player inventory");
         }
 
         private void GetPlayerInventory(IPlayer player)

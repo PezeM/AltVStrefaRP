@@ -22,8 +22,10 @@ namespace AltVStrefaRPServer.Services.Characters.Customization
         {
             using (var context = _factory.Invoke())
             {
-                return await context.Characters.AsNoTracking()
-                    .AnyAsync(c => c.FirstName.ToLower() == firstName&& c.LastName.ToLower() == lastName);
+                return await context.Characters
+                    .AsNoTracking()
+                    .AnyAsync(c => c.FirstName.ToLower() == firstName 
+                                   && c.LastName.ToLower() == lastName);
             }
         }
 
@@ -31,7 +33,8 @@ namespace AltVStrefaRPServer.Services.Characters.Customization
         {
             using (var context = _factory.Invoke())
             {
-                await context.AddAsync(character).ConfigureAwait(false);
+                context.Attach(character.Account);
+                context.Update(character);
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
         }
