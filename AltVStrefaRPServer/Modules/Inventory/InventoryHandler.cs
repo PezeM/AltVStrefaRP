@@ -1,20 +1,15 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Helpers;
-using AltVStrefaRPServer.Models;
-using AltVStrefaRPServer.Models.Dto;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
-using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Models.Inventory.Responses;
 using AltVStrefaRPServer.Models.Vehicles;
 using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Inventory;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using Position = AltV.Net.Data.Position;
 
 namespace AltVStrefaRPServer.Modules.Inventory
@@ -49,25 +44,20 @@ namespace AltVStrefaRPServer.Modules.Inventory
         {
             if (!_vehiclesManager.TryGetVehicleModel(vehicle, out var vehicleModel)) return;
 
-            var inventoryContainer = new InventoryContainerDto()
-            {
-                InventoryId = vehicleModel.InventoryId,
-                InventoryName = $"Bagażnik pojazdu {vehicleModel.PlateText}",
-                InventorySlots = vehicleModel.Inventory.MaxSlots,
-                Items = vehicleModel.Inventory.Items.Select(i => new InventoryItemDto(i)).ToList()
-            };
+            var addonationalInventoryContainer = InventoryContainerConverter.ConvertFromVehicleInventory(vehicleModel);
 
             if (!getOwnInventory)
             {
-                player.Emit("populateAddonationalInventoryContainer", JsonConvert.SerializeObject(inventoryContainer));
+                player.Emit("populateAddonationalInventoryContainer", addonationalInventoryContainer);
                 _logger.LogDebug("Emited only vehicle inventory");
                 return;
             }
 
             if (!player.TryGetCharacter(out var character)) return;
-            var inventoryItems = character.Inventory.Items.Select(i => new InventoryItemDto(i));
-            player.Emit("populateAddonationalInventoryContainer", JsonConvert.SerializeObject(inventoryContainer), JsonConvert.SerializeObject(inventoryItems), 
-                JsonConvert.SerializeObject(character.Inventory.EquippedItems));
+            var inventoryItems = InventoryContainerConverter.ConvertFromCharacterInventory(character);
+            var equippedItems = InventoryContainerConverter.ConvertFromEquippedInventory(character);
+
+            player.Emit("populateAddonationalInventoryContainer", addonationalInventoryContainer, inventoryItems, equippedItems);
             _logger.LogDebug("Emited vehicle inventory with player inventory");
         }
 
@@ -75,8 +65,8 @@ namespace AltVStrefaRPServer.Modules.Inventory
         {
             var startTime = Time.GetTimestampMs();
             if(!player.TryGetCharacter(out var character)) return;
-            var inventoryItems = character.Inventory.Items.Select(i => new InventoryItemDto(i));
-            player.Emit("populatePlayerInventory", JsonConvert.SerializeObject(inventoryItems), JsonConvert.SerializeObject(character.Inventory.EquippedItems));
+            player.Emit("populatePlayerInventory", InventoryContainerConverter.ConvertFromCharacterInventory(character), 
+                InventoryContainerConverter.ConvertFromEquippedInventory(character));
             _logger.LogDebug("Send player inventory in {elapsedTime}ms", Time.GetElapsedTime(startTime));
         }
 
