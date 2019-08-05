@@ -4,6 +4,7 @@ using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Helpers;
+using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Models.Inventory.Responses;
 using AltVStrefaRPServer.Models.Vehicles;
@@ -31,7 +32,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
             _vehiclesManager = vehiclesManager;
             _logger = logger;
 
-            Alt.On<IPlayer, IMyVehicle, bool>("OpenVehicleInventory", OpenVehicleInventory);
+            Alt.On<IStrefaPlayer, IMyVehicle, bool>("OpenVehicleInventory", OpenVehicleInventory);
             Alt.On<IPlayer>("GetPlayerInventory", GetPlayerInventory);
             AltAsync.On<IPlayer, int, int, Position, Task>("DropItem", DropItemAsync);
             AltAsync.On<IPlayer, int, Task>("UseInventoryItem",UseInventoryItemAsync);
@@ -40,11 +41,12 @@ namespace AltVStrefaRPServer.Modules.Inventory
             AltAsync.On<IPlayer, int, int, Task>("PickupDroppedItem", PickupDroppedItemAsync);
         }
 
-        private void OpenVehicleInventory(IPlayer player, IMyVehicle vehicle, bool getOwnInventory)
+        private void OpenVehicleInventory(IStrefaPlayer player, IMyVehicle vehicle, bool getOwnInventory)
         {
             if (!_vehiclesManager.TryGetVehicleModel(vehicle, out var vehicleModel)) return;
 
             var addonationalInventoryContainer = InventoryContainerConverter.ConvertFromVehicleInventory(vehicleModel);
+            player.LastOpenedInventory = vehicleModel.Inventory;
 
             if (!getOwnInventory)
             {
