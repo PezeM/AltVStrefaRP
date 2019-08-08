@@ -11,6 +11,7 @@ using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Handlers;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Enums;
+using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Models.Vehicles;
 using AltVStrefaRPServer.Modules.Admin;
 using AltVStrefaRPServer.Modules.Businesses;
@@ -32,7 +33,7 @@ namespace AltVStrefaRPServer
 {
     public class Start : AsyncResource
     {
-        private VehiclesManager _vehiclesManager;
+        private IVehiclesManager _vehiclesManager;
         private IVehicleSpawnService _vehicleSpawnService;
         private SerializatorTest _serializatorTest;
         private ILogger<Start> _logger;
@@ -61,7 +62,7 @@ namespace AltVStrefaRPServer
             var networkingTest = Startup.ServiceProvider.GetService<NetworkingManager>();
             _vehicleSpawnService = Startup.ServiceProvider.GetService<IVehicleSpawnService> ();
 
-            _vehiclesManager = Startup.ServiceProvider.GetService<VehiclesManager> ();
+            _vehiclesManager = Startup.ServiceProvider.GetService<IVehiclesManager> ();
             var vehicleShopManager = Startup.ServiceProvider.GetService<VehicleShopsManager> ();
             var businessesManager = Startup.ServiceProvider.GetService<BusinessesManager> ();
             var businessHandler = Startup.ServiceProvider.GetServices<BusinessHandler> ();
@@ -161,7 +162,11 @@ namespace AltVStrefaRPServer
 
         public void SpawnVehicleComand (int vehicleId)
         {
-            if (!_vehiclesManager.TryGetVehicleModel (vehicleId, out VehicleModel vehicle)) return;
+            if (!_vehiclesManager.TryGetVehicleModel(vehicleId, out VehicleModel vehicle))
+            {
+                Alt.Log($"Didn't found vehicle with ID {vehicleId}");
+                return;
+            }
             _vehicleSpawnService.SpawnVehicle (vehicle);
         }
 

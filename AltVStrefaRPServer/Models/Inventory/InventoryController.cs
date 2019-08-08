@@ -194,7 +194,7 @@ namespace AltVStrefaRPServer.Models.Inventory
         public virtual async Task<InventoryStackResponse> StackItemAsync(int itemToStackFromId, int itemToStackId, bool saveToDatabase = false, 
             IInventoryDatabaseService inventoryDatabaseService = null)
         {
-            var response = new InventoryStackResponse();
+            var response = new InventoryStackResponse(type: InventoryStackResponseType.ItemsNotFound);
             if (!HasItem(itemToStackFromId, out var itemToStackFrom) || !HasItem(itemToStackId, out var itemToStack))
                 return response;
 
@@ -204,7 +204,7 @@ namespace AltVStrefaRPServer.Models.Inventory
         public virtual async Task<InventoryStackResponse> StackItemAsync(InventoryItem itemToStackFrom, InventoryItem itemToStack,
             bool saveToDatabase = false, IInventoryDatabaseService inventoryDatabaseService = null)
         {
-            var response = new InventoryStackResponse();
+            var response = new InventoryStackResponse(type: InventoryStackResponseType.ItemsStacked);
             if (!InventoriesHelper.AreItemsStackable(itemToStackFrom, itemToStack))
             {
                 response.Type = InventoryStackResponseType.ItemsNotStackable;

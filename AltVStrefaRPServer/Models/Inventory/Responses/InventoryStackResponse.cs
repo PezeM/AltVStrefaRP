@@ -5,7 +5,7 @@
         public int AmountOfStackedItems { get; set; }
         public InventoryStackResponseType Type { get; set; }
 
-        public InventoryStackResponse(int amountOfStackedItems = 0, InventoryStackResponseType type = InventoryStackResponseType.ItemsNotFound)
+        public InventoryStackResponse(int amountOfStackedItems = 0, InventoryStackResponseType type = InventoryStackResponseType.ItemsStacked)
         {
             AmountOfStackedItems = amountOfStackedItems;
             Type = type;

@@ -16,7 +16,7 @@ namespace AltVStrefaRPServer.Services.Inventory
         public async Task<InventoryStackResponse> StackItemBetweenInventoriesAsync(IInventoryController source, IInventoryController receiver, 
             int itemToStackFromId, int itemToStackId, bool saveToDatabse = false)
         {
-            var response = new InventoryStackResponse();
+            var response = new InventoryStackResponse(type: InventoryStackResponseType.ItemsNotFound);
             if (!source.HasItem(itemToStackFromId, out var itemToStackFrom) || !receiver.HasItem(itemToStackId, out var itemToStack))
                 return response;
 

@@ -136,7 +136,6 @@ namespace AltVStrefaRPServer.Modules.Inventory
         private async Task InventoryTryStackItemBetweenInventoriesAsync(IStrefaPlayer player, int inventoryId, int itemToStackFromId, int itemToStackId, 
             int itemToStackInventoryId)
         {
-            _logger.LogDebug("Current thread is {currentThread}", Thread.CurrentThread.ManagedThreadId);
             if (!player.TryGetCharacter(out var character)) return;
 
             var inventory = InventoriesHelper.GetCorrectInventory(player, character, inventoryId);
