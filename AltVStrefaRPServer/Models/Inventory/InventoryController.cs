@@ -194,25 +194,40 @@ namespace AltVStrefaRPServer.Models.Inventory
         public virtual async Task<InventoryStackResponse> StackItemAsync(int itemToStackFromId, int itemToStackId, bool saveToDatabase = false, 
             IInventoryDatabaseService inventoryDatabaseService = null)
         {
+            var response = new InventoryStackResponse();
             if (!HasItem(itemToStackFromId, out var itemToStackFrom) || !HasItem(itemToStackId, out var itemToStack))
-                return InventoryStackResponse.ItemsNotFound;
+                return response;
 
             return await StackItemAsync(itemToStackFrom, itemToStack, saveToDatabase, inventoryDatabaseService);
         }
 
-        public virtual async Task<InventoryStackResponse> StackItemAsync(InventoryItem itemToStackFrom, InventoryItem itemToStack, 
+        public virtual async Task<InventoryStackResponse> StackItemAsync(InventoryItem itemToStackFrom, InventoryItem itemToStack,
             bool saveToDatabase = false, IInventoryDatabaseService inventoryDatabaseService = null)
         {
-            if (!InventoriesHelper.AreItemsStackable(itemToStackFrom, itemToStack)) return InventoryStackResponse.ItemsNotStackable;
+            var response = new InventoryStackResponse();
+            if (!InventoriesHelper.AreItemsStackable(itemToStackFrom, itemToStack))
+            {
+                response.Type = InventoryStackResponseType.ItemsNotStackable;
+                return response;
+            }
+
             var toAdd = CalculateNumberOfItemsToAdd(itemToStack.Item, itemToStackFrom.Quantity, itemToStack);
-            if (toAdd <= 0) return InventoryStackResponse.ItemsNotStackable;
+            if (toAdd <= 0)
+            {
+                response.Type = InventoryStackResponseType.ItemsNotFound;
+                return response;
+            }
 
             if (await RemoveItemAsync(itemToStackFrom, toAdd, saveToDatabase, inventoryDatabaseService) == InventoryRemoveResponse.NotEnoughItems)
-                return InventoryStackResponse.ItemsNotFound;
+            {
+                response.Type = InventoryStackResponseType.ItemsNotFound;
+                return response;
+            }
 
+            response.AmountOfStackedItems += toAdd;
             itemToStack.AddToQuantity(toAdd);
 
-            return InventoryStackResponse.ItemsStacked;
+            return response;
         }
 
         public int CalculateNumberOfItemsToAdd(BaseItem itemToAdd, int amount, InventoryItem item)

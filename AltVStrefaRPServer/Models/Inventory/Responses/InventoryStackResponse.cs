@@ -1,6 +1,18 @@
 ﻿namespace AltVStrefaRPServer.Models.Inventory.Responses
 {
-    public enum InventoryStackResponse
+    public struct InventoryStackResponse
+    {
+        public int AmountOfStackedItems { get; set; }
+        public InventoryStackResponseType Type { get; set; }
+
+        public InventoryStackResponse(int amountOfStackedItems = 0, InventoryStackResponseType type = InventoryStackResponseType.ItemsNotFound)
+        {
+            AmountOfStackedItems = amountOfStackedItems;
+            Type = type;
+        }
+    }
+
+    public enum InventoryStackResponseType
     {
         ItemsNotFound,
         ItemsStacked,
