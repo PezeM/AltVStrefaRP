@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AltVStrefaRPServer.Helpers;
+using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Services.Inventory;

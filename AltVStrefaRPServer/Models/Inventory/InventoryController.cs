@@ -140,7 +140,7 @@ namespace AltVStrefaRPServer.Models.Inventory
                 await inventoryDatabaseService.UpdateInventoryAsync(this);
                 if (player != null)
                 {
-                    player.EmitLocked("inventoryAddNewItem", response.NewItems);
+                    player.EmitLocked("inventoryAddNewItems", response.NewItems);
                 }
             }
 

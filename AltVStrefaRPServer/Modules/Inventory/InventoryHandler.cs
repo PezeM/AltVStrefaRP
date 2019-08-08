@@ -6,6 +6,7 @@ using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
+using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Models.Inventory.Responses;
 using AltVStrefaRPServer.Models.Vehicles;
 using AltVStrefaRPServer.Services;
@@ -36,7 +37,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
             Alt.On<IPlayer>("GetPlayerInventory", GetPlayerInventory);
             AltAsync.On<IPlayer, int, int, Position, Task>("DropItem", DropItemAsync);
             AltAsync.On<IPlayer, int, Task>("UseInventoryItem",UseInventoryItemAsync);
-            AltAsync.On<IPlayer, int, int, Task>("InventoryDropItem", InventoryDropItemAsync);
+            AltAsync.On<IStrefaPlayer, int, int, int, Task>("InventoryDropItem", InventoryDropItemAsync);
             AltAsync.On<IPlayer, int, int, Task>("InventoryRemoveItem", InventoryRemoveItemAsync);
             AltAsync.On<IPlayer, int, int, Task>("PickupDroppedItem", PickupDroppedItemAsync);
         }
@@ -116,10 +117,27 @@ namespace AltVStrefaRPServer.Modules.Inventory
             }
         }
 
-        private async Task InventoryDropItemAsync(IPlayer player, int itemId, int amount)
+        private async Task InventoryDropItemAsync(IStrefaPlayer player, int inventoryId, int itemId, int amount)
         {
             if (!player.TryGetCharacter(out var character)) return;
-            var response = await character.Inventory.DropItemAsync(itemId, amount, player.Position, _inventoriesManager, _inventoryDatabaseService);
+
+            var inventory = InventoriesHelper.GetCorrectInventory(player, character, inventoryId);
+            InventoryDropResponse response = InventoryDropResponse.ItemNotFound;
+            if (inventory != null)
+            {
+                response = await inventory.DropItemAsync(itemId, amount, player.Position, _inventoriesManager, _inventoryDatabaseService);
+            }
+
+            //InventoryDropResponse response = InventoryDropResponse.ItemNotFound;
+            //if (character.InventoryId == inventoryId)
+            //{
+            //    response = await character.Inventory.DropItemAsync(itemId, amount, player.Position, _inventoriesManager, _inventoryDatabaseService);
+            //} 
+            //else if (player.LastOpenedInventory.Id == inventoryId)
+            //{
+            //    response = await player.LastOpenedInventory.DropItemAsync(itemId, amount, player.Position, _inventoriesManager, _inventoryDatabaseService);
+            //}
+
             switch (response)
             {
                 case InventoryDropResponse.NotEnoughItems:
@@ -130,6 +148,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
                     break;
                 case InventoryDropResponse.DroppedItem:
                     await player.EmitAsync("inventoryItemDropResponse", true, itemId);
+                    _logger.LogInformation("Character {characterName} CID({characterId}) dropped item ID({itemId})", character.GetFullName(), character.Id, itemId);
                     break;
             }
         }
