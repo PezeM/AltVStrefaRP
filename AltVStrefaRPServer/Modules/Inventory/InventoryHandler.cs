@@ -37,7 +37,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
 
             Alt.On<IStrefaPlayer, IMyVehicle, bool>("OpenVehicleInventory", OpenVehicleInventory);
             Alt.On<IPlayer>("GetPlayerInventory", GetPlayerInventory);
-            AltAsync.On<IPlayer, int, int, Position, Task>("DropItem", DropItemAsync);
+            AltAsync.On<IStrefaPlayer, int, int, Position, Task>("DropItem", DropItemAsync);
             AltAsync.On<IPlayer, int, Task>("UseInventoryItem", UseInventoryItemAsync);
             AltAsync.On<IStrefaPlayer, int, int, int, Task>("InventoryDropItem", InventoryDropItemAsync);
             AltAsync.On<IPlayer, int, int, Task>("InventoryRemoveItem", InventoryRemoveItemAsync);
@@ -77,29 +77,12 @@ namespace AltVStrefaRPServer.Modules.Inventory
             _logger.LogDebug("Send player inventory in {elapsedTime}ms", Time.GetElapsedTime(startTime));
         }
 
-        public async Task DropItemAsync(IPlayer player, int id, int amount, Position position)
+        public async Task DropItemAsync(IStrefaPlayer player, int itemId, int amount, Position position)
         {
             if (!player.TryGetCharacter(out var character)) return;
-            var response = await character.Inventory.DropItemAsync(id, amount, position, _inventoriesManager, _inventoryDatabaseService);
-            switch (response)
-            {
-                case InventoryDropResponse.ItemNotDroppable:
-                    await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie da się wyrzucić tego przedmiotu.");
-                    break;
-                case InventoryDropResponse.ItemNotFound:
-                    await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie posiadasz tego przedmiotu.");
-                    break;
-                case InventoryDropResponse.NotEnoughItems:
-                    await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie masz wystarczającej ilości przedmiotu.");
-                    break;
-                case InventoryDropResponse.ItemAlreadyDropped:
-                    _logger.LogDebug("Character CID({characterId}) wanted to drop item that was already dropped, item ID({itemId})", character.Id, id);
-                    break;
-                case InventoryDropResponse.DroppedItem:
-                    // Propably update user inventory
-                    // Remove item with id and ammount
-                    break;
-            }
+            var response = await character.Inventory.DropItemAsync(itemId, amount, position, _inventoriesManager, _inventoryDatabaseService)
+                .ConfigureAwait(false);
+            await DropItemResponseAsync(player, itemId, character, response);
         }
 
         public async Task UseInventoryItemAsync(IPlayer player, int itemId)
@@ -129,25 +112,12 @@ namespace AltVStrefaRPServer.Modules.Inventory
             InventoryDropResponse response = InventoryDropResponse.ItemNotFound;
             if (inventory != null)
             {
-                response = await inventory.DropItemAsync(itemId, amount, player.Position, _inventoriesManager, _inventoryDatabaseService);
+                response = await inventory.DropItemAsync(itemId, amount, player.Position, _inventoriesManager, _inventoryDatabaseService).ConfigureAwait(false);
             }
 
-            switch (response)
-            {
-                case InventoryDropResponse.NotEnoughItems:
-                case InventoryDropResponse.ItemNotFound:
-                case InventoryDropResponse.ItemNotDroppable:
-                case InventoryDropResponse.ItemAlreadyDropped:
-                    await player.EmitAsync("inventoryItemDropResponse", false, itemId);
-                    break;
-                case InventoryDropResponse.DroppedItem:
-                    await player.EmitAsync("inventoryItemDropResponse", true, itemId);
-                    _logger.LogInformation("Character {characterName} CID({characterId}) dropped item ID({itemId})", character.GetFullName(), character.Id, itemId);
-                    break;
-            }
+            await DropItemResponseAsync(player, itemId, character, response).ConfigureAwait(false);
         }
-        
-        
+
         private async Task InventoryTryStackItemAsync(IStrefaPlayer player, int inventoryId, int itemToStackFromId, int itemToStackId)
         {
             if (!player.TryGetCharacter(out var character)) return;
@@ -156,24 +126,14 @@ namespace AltVStrefaRPServer.Modules.Inventory
             InventoryStackResponse response = InventoryStackResponse.ItemsNotFound;
             if (inventory != null)
             {
-                response = await inventory.StackItemAsync(itemToStackFromId, itemToStackId, false);
+                response = await inventory.StackItemAsync(itemToStackFromId, itemToStackId, false).ConfigureAwait(false);
             }
 
-            switch (response)
-            {
-                case InventoryStackResponse.ItemsStacked:
-                    await player.EmitAsync("inventoryStackItemResponse", true);
-                    break;
-                case InventoryStackResponse.ItemsNotFound:
-                    await _notificationService.ShowErrorNotificationAsync(player, "Brak przedmiotu", "Wystąpił błąd i nie znaleziono takiego przedmiotu", 5000);
-                    break;
-                case InventoryStackResponse.ItemsNotStackable:
-                    await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie można połączyć tych przedmiotów");
-                    break;
-            }
+            await StackItemResponseAsync(player, response).ConfigureAwait(false);
         }
         
-        private async Task InventoryTryStackItemBetweenInventoriesAsync(IStrefaPlayer player, int inventoryId, int itemToStackFromId, int itemToStackId, int itemToStackInventoryId)
+        private async Task InventoryTryStackItemBetweenInventoriesAsync(IStrefaPlayer player, int inventoryId, int itemToStackFromId, int itemToStackId, 
+            int itemToStackInventoryId)
         {
             _logger.LogDebug("Current thread is {currentThread}", Thread.CurrentThread.ManagedThreadId);
             if (!player.TryGetCharacter(out var character)) return;
@@ -187,21 +147,10 @@ namespace AltVStrefaRPServer.Modules.Inventory
                 return;
             }
 
-            var response = await _inventoryTransferService.StackItemBetweenInventoriesAsync(inventory, inventoryToStack, itemToStackFromId, itemToStackId, true);
-            switch (response)
-            {
-                case InventoryStackResponse.ItemsStacked:
-                    await player.EmitAsync("inventoryStackItemResponse", true);
-                    break;
-                case InventoryStackResponse.ItemsNotFound:
-                    await _notificationService.ShowErrorNotificationAsync(player, "Brak przedmiotu", "Wystąpił błąd i nie znaleziono takiego przedmiotu", 5000);
-                    break;
-                case InventoryStackResponse.ItemsNotStackable:
-                    await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie można połączyć tych przedmiotów");
-                    break;
-            }
+            var response = await _inventoryTransferService.StackItemBetweenInventoriesAsync(inventory, inventoryToStack, itemToStackFromId, itemToStackId, true)
+                .ConfigureAwait(false);
+            await StackItemResponseAsync(player, response).ConfigureAwait(false);
         }
-
 
         public async Task InventoryRemoveItemAsync(IPlayer player, int id, int amount)
         {
@@ -241,6 +190,39 @@ namespace AltVStrefaRPServer.Modules.Inventory
                 return;
             }
             await _inventoriesManager.RemoveDroppedItemAsync(droppedItem, networkItemId, response.ItemsAddedCount);
+        }
+
+        private async Task StackItemResponseAsync(IStrefaPlayer player, InventoryStackResponse response)
+        {
+            switch (response)
+            {
+                case InventoryStackResponse.ItemsStacked:
+                    await player.EmitAsync("inventoryStackItemResponse", true);
+                    break;
+                case InventoryStackResponse.ItemsNotFound:
+                    await _notificationService.ShowErrorNotificationAsync(player, "Brak przedmiotu", "Wystąpił błąd i nie znaleziono takiego przedmiotu", 5000);
+                    break;
+                case InventoryStackResponse.ItemsNotStackable:
+                    await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie można połączyć tych przedmiotów");
+                    break;
+            }
+        }
+
+        private async Task DropItemResponseAsync(IStrefaPlayer player, int itemId, Character character, InventoryDropResponse response)
+        {
+            switch (response)
+            {
+                case InventoryDropResponse.NotEnoughItems:
+                case InventoryDropResponse.ItemNotFound:
+                case InventoryDropResponse.ItemNotDroppable:
+                case InventoryDropResponse.ItemAlreadyDropped:
+                    await player.EmitAsync("inventoryItemDropResponse", false, itemId);
+                    break;
+                case InventoryDropResponse.DroppedItem:
+                    await player.EmitAsync("inventoryItemDropResponse", true, itemId);
+                    _logger.LogInformation("Character {characterName} CID({characterId}) dropped item ID({itemId})", character.GetFullName(), character.Id, itemId);
+                    break;
+            }
         }
     }
 }
