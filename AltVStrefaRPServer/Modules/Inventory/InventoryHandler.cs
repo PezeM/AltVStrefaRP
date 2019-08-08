@@ -128,16 +128,6 @@ namespace AltVStrefaRPServer.Modules.Inventory
                 response = await inventory.DropItemAsync(itemId, amount, player.Position, _inventoriesManager, _inventoryDatabaseService);
             }
 
-            //InventoryDropResponse response = InventoryDropResponse.ItemNotFound;
-            //if (character.InventoryId == inventoryId)
-            //{
-            //    response = await character.Inventory.DropItemAsync(itemId, amount, player.Position, _inventoriesManager, _inventoryDatabaseService);
-            //} 
-            //else if (player.LastOpenedInventory.Id == inventoryId)
-            //{
-            //    response = await player.LastOpenedInventory.DropItemAsync(itemId, amount, player.Position, _inventoriesManager, _inventoryDatabaseService);
-            //}
-
             switch (response)
             {
                 case InventoryDropResponse.NotEnoughItems:
