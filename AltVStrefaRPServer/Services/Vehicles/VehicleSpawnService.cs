@@ -4,6 +4,7 @@ using AltV.Net.Data;
 using AltV.Net.Enums;
 using System;
 using System.Threading.Tasks;
+using AltVStrefaRPServer.Data;
 using Microsoft.Extensions.Logging;
 using VehicleModel = AltVStrefaRPServer.Models.Vehicles.VehicleModel;
 using AltVStrefaRPServer.Models.Vehicles;
@@ -123,15 +124,15 @@ namespace AltVStrefaRPServer.Services.Vehicles
                 myVehicle.DatabaseId = vehicleModel.Id;
             }
 
-            vehicleModel.VehicleHandle.ManualEngineControl = true;
+            //vehicleModel.VehicleHandle.ManualEngineControl = true; // Set on client
             vehicleModel.VehicleHandle.Dimension = vehicleModel.Dimension;
             vehicleModel.IsLocked = false;
             vehicleModel.VehicleHandle.LockState = VehicleLockState.Unlocked;
-            vehicleModel.VehicleHandle.SetData("vehicleId", vehicleModel.Id);
-            vehicleModel.VehicleHandle.SetSyncedMetaData("vehicleId", vehicleModel.Id);
-            vehicleModel.VehicleHandle.SetSyncedMetaData("fuel", vehicleModel.Fuel);
-            vehicleModel.VehicleHandle.SetSyncedMetaData("oil", vehicleModel.Oil);
-            vehicleModel.VehicleHandle.SetSyncedMetaData("mileage", vehicleModel.Mileage);
+            vehicleModel.VehicleHandle.SetData(MetaData.VEHICLE_ID, vehicleModel.Id);
+            vehicleModel.VehicleHandle.SetSyncedMetaData(MetaData.SYNCED_VEHICLE_ID, vehicleModel.Id);
+            vehicleModel.VehicleHandle.SetSyncedMetaData(MetaData.SYNCED_VEHICLE_FUEL, vehicleModel.Fuel);
+            vehicleModel.VehicleHandle.SetSyncedMetaData(MetaData.SYNCED_VEHICLE_OIL, vehicleModel.Oil);
+            vehicleModel.VehicleHandle.SetSyncedMetaData(MetaData.SYNCED_VEHICLE_MILEAGE, vehicleModel.Mileage);
             vehicleModel.VehicleHandle.NumberplateText = vehicleModel.PlateText;
             vehicleModel.VehicleHandle.NumberplateIndex = vehicleModel.PlateNumber;
             vehicleModel.IsSpawned = true;
