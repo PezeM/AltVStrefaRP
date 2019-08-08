@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
@@ -6,7 +7,6 @@ using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
-using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Models.Inventory.Responses;
 using AltVStrefaRPServer.Models.Vehicles;
 using AltVStrefaRPServer.Services;
@@ -22,24 +22,28 @@ namespace AltVStrefaRPServer.Modules.Inventory
         private readonly IInventoryDatabaseService _inventoryDatabaseService;
         private readonly INotificationService _notificationService;
         private readonly IVehiclesManager _vehiclesManager;
+        private readonly IInventoryTransferService _inventoryTransferService;
         private readonly ILogger<InventoryHandler> _logger;
 
         public InventoryHandler(IInventoriesManager inventoriesManager, IInventoryDatabaseService inventoryDatabaseService, INotificationService notificationService, 
-            IVehiclesManager vehiclesManager, ILogger<InventoryHandler> logger)
+            IVehiclesManager vehiclesManager, IInventoryTransferService inventoryTransferService, ILogger<InventoryHandler> logger)
         {
             _inventoriesManager = inventoriesManager;
             _inventoryDatabaseService = inventoryDatabaseService;
             _notificationService = notificationService;
             _vehiclesManager = vehiclesManager;
+            _inventoryTransferService = inventoryTransferService;
             _logger = logger;
 
             Alt.On<IStrefaPlayer, IMyVehicle, bool>("OpenVehicleInventory", OpenVehicleInventory);
             Alt.On<IPlayer>("GetPlayerInventory", GetPlayerInventory);
             AltAsync.On<IPlayer, int, int, Position, Task>("DropItem", DropItemAsync);
-            AltAsync.On<IPlayer, int, Task>("UseInventoryItem",UseInventoryItemAsync);
+            AltAsync.On<IPlayer, int, Task>("UseInventoryItem", UseInventoryItemAsync);
             AltAsync.On<IStrefaPlayer, int, int, int, Task>("InventoryDropItem", InventoryDropItemAsync);
             AltAsync.On<IPlayer, int, int, Task>("InventoryRemoveItem", InventoryRemoveItemAsync);
             AltAsync.On<IPlayer, int, int, Task>("PickupDroppedItem", PickupDroppedItemAsync);
+            AltAsync.On<IStrefaPlayer, int, int,int, Task>("InventoryTryStackItem", InventoryTryStackItemAsync);
+            AltAsync.On<IStrefaPlayer, int, int, int, int, Task>("InventoryTryStackItemBetweenInventories", InventoryTryStackItemBetweenInventoriesAsync);
         }
 
         private void OpenVehicleInventory(IStrefaPlayer player, IMyVehicle vehicle, bool getOwnInventory)
@@ -143,10 +147,66 @@ namespace AltVStrefaRPServer.Modules.Inventory
             }
         }
         
+        
+        private async Task InventoryTryStackItemAsync(IStrefaPlayer player, int inventoryId, int itemToStackFromId, int itemToStackId)
+        {
+            if (!player.TryGetCharacter(out var character)) return;
+
+            var inventory = InventoriesHelper.GetCorrectInventory(player, character, inventoryId);
+            InventoryStackResponse response = InventoryStackResponse.ItemsNotFound;
+            if (inventory != null)
+            {
+                response = await inventory.StackItemAsync(itemToStackFromId, itemToStackId, false);
+            }
+
+            switch (response)
+            {
+                case InventoryStackResponse.ItemsStacked:
+                    await player.EmitAsync("inventoryStackItemResponse", true);
+                    break;
+                case InventoryStackResponse.ItemsNotFound:
+                    await _notificationService.ShowErrorNotificationAsync(player, "Brak przedmiotu", "Wystąpił błąd i nie znaleziono takiego przedmiotu", 5000);
+                    break;
+                case InventoryStackResponse.ItemsNotStackable:
+                    await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie można połączyć tych przedmiotów");
+                    break;
+            }
+        }
+        
+        private async Task InventoryTryStackItemBetweenInventoriesAsync(IStrefaPlayer player, int inventoryId, int itemToStackFromId, int itemToStackId, int itemToStackInventoryId)
+        {
+            _logger.LogDebug("Current thread is {currentThread}", Thread.CurrentThread.ManagedThreadId);
+            if (!player.TryGetCharacter(out var character)) return;
+
+            var inventory = InventoriesHelper.GetCorrectInventory(player, character, inventoryId);
+            var inventoryToStack = InventoriesHelper.GetCorrectInventory(player, character, itemToStackInventoryId);
+
+            if (inventory == null || inventoryToStack == null)
+            {
+                await player.EmitAsync("inventoryStackItemResponse", false);
+                return;
+            }
+
+            var response = await _inventoryTransferService.StackItemBetweenInventoriesAsync(inventory, inventoryToStack, itemToStackFromId, itemToStackId, true);
+            switch (response)
+            {
+                case InventoryStackResponse.ItemsStacked:
+                    await player.EmitAsync("inventoryStackItemResponse", true);
+                    break;
+                case InventoryStackResponse.ItemsNotFound:
+                    await _notificationService.ShowErrorNotificationAsync(player, "Brak przedmiotu", "Wystąpił błąd i nie znaleziono takiego przedmiotu", 5000);
+                    break;
+                case InventoryStackResponse.ItemsNotStackable:
+                    await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie można połączyć tych przedmiotów");
+                    break;
+            }
+        }
+
+
         public async Task InventoryRemoveItemAsync(IPlayer player, int id, int amount)
         {
             if (!player.TryGetCharacter(out var character)) return;
-            var response = await character.Inventory.RemoveItemAsync(id, amount, _inventoryDatabaseService);
+            var response = await character.Inventory.RemoveItemAsync(id, amount, true, _inventoryDatabaseService);
             switch (response)
             {
                 case InventoryRemoveResponse.ItemRemovedCompletly:

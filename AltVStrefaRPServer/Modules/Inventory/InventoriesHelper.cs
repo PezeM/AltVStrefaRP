@@ -18,5 +18,13 @@ namespace AltVStrefaRPServer.Modules.Inventory
             else if (player.LastOpenedInventory?.Id == inventoryId) return player.LastOpenedInventory;
             return null;
         }
+
+        /// <summary>
+        /// Checks if items are stackable
+        /// </summary>
+        /// <param name="itemToStackFrom">The item we want to stack with</param>
+        /// <param name="itemToStack">The item we want to stack</param>
+        /// <returns>True if items are stackable</returns>
+        public static bool AreItemsStackable(InventoryItem itemToStackFrom, InventoryItem itemToStack) => itemToStackFrom.Item.Name == itemToStack.Item.Name;
     }
 }
