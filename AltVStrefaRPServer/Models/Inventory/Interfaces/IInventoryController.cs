@@ -7,7 +7,7 @@ using AltVStrefaRPServer.Models.Inventory.Items;
 using AltVStrefaRPServer.Models.Inventory.Responses;
 using AltVStrefaRPServer.Services.Inventory;
 
-namespace AltVStrefaRPServer.Models.Inventory
+namespace AltVStrefaRPServer.Models.Inventory.Interfaces
 {
     public interface IInventoryController
     {
@@ -22,7 +22,7 @@ namespace AltVStrefaRPServer.Models.Inventory
         Task<AddItemResponse> AddItemAsync(BaseItem itemToAdd, int amount, IInventoryDatabaseService inventoryDatabaseService, IPlayer player = null);
 
         Task<InventoryRemoveResponse> RemoveItemAsync(int id, int amount, bool saveToDatabase = false, IInventoryDatabaseService inventoryDatabaseService = null);
-        Task<InventoryRemoveResponse> RemoveItemAsync(InventoryItem item, int amount, bool saveToDatabase = false, 
+        Task<InventoryRemoveResponse> RemoveItemAsync(InventoryItem item, int amount, bool saveToDatabase = false,
             IInventoryDatabaseService inventoryDatabaseService = null);
 
         Task<InventoryDropResponse> DropItemAsync(int itemId, int amount, Position position, IInventoriesManager inventoriesManager,

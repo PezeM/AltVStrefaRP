@@ -39,7 +39,7 @@ namespace AltVStrefaRPServer.Models.Inventory
 
         public void TestUnequip(Character character, int equippedItemId)
         {
-            if(!_equippedItems.Any(i => i.Id == equippedItemId)) return;
+            if (!_equippedItems.Any(i => i.Id == equippedItemId)) return;
             if(!HasEmptySlots()) return;
             var itemToUnequip = _equippedItems.First(i => i.Id == equippedItemId);
             _equippedItems.Remove(itemToUnequip);

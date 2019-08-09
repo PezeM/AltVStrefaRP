@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
@@ -109,7 +108,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
             if (!player.TryGetCharacter(out var character)) return;
 
             var inventory = InventoriesHelper.GetCorrectInventory(player, character, inventoryId);
-            InventoryDropResponse response = InventoryDropResponse.ItemNotFound;
+            var response = InventoryDropResponse.ItemNotFound;
             if (inventory != null)
             {
                 response = await inventory.DropItemAsync(itemId, amount, player.Position, _inventoriesManager, _inventoryDatabaseService).ConfigureAwait(false);
@@ -123,7 +122,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
             if (!player.TryGetCharacter(out var character)) return;
 
             var inventory = InventoriesHelper.GetCorrectInventory(player, character, inventoryId);
-            InventoryStackResponse response = new InventoryStackResponse();
+            var response = new InventoryStackResponse();
 
             if (inventory != null)
             {
@@ -192,7 +191,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
             await _inventoriesManager.RemoveDroppedItemAsync(droppedItem, networkItemId, response.ItemsAddedCount);
         }
 
-        private async Task StackItemResponseAsync(IStrefaPlayer player, InventoryStackResponse response)
+        private async Task StackItemResponseAsync(IPlayer player, InventoryStackResponse response)
         {
             switch (response.Type)
             {

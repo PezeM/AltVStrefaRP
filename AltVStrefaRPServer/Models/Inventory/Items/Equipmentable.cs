@@ -1,4 +1,4 @@
-﻿using AltVStrefaRPServer.Models.Interfaces.Inventory;
+﻿using AltVStrefaRPServer.Models.Inventory.Interfaces;
 
 namespace AltVStrefaRPServer.Models.Inventory.Items
 {

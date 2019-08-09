@@ -1,6 +1,6 @@
 ﻿using AltVStrefaRPServer.Models.Inventory.Items;
 
-namespace AltVStrefaRPServer.Models.Interfaces.Inventory
+namespace AltVStrefaRPServer.Models.Inventory.Interfaces
 {
     public interface IWorldItem
     {

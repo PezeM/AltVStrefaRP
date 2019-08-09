@@ -59,7 +59,7 @@ namespace AltVStrefaRPServer.Models.Inventory
         public bool HasItem(int id, out InventoryItem item)
         {
             item = null;
-            for (int i = 0; i < _items.Count; i++)
+            for (var i = 0; i < _items.Count; i++)
             {
                 if (_items[i].Id == id)
                 {
@@ -101,20 +101,17 @@ namespace AltVStrefaRPServer.Models.Inventory
             {
                 if (TryGetInventoryItemNotFullyStacked(itemToAdd, out var item))
                 {
-                    int toAdd = CalculateNumberOfItemsToAdd(itemToAdd, amount, item);
+                    var toAdd = CalculateNumberOfItemsToAdd(itemToAdd, amount, item);
                     item.AddToQuantity(toAdd);
                     response.ItemsAddedCount += toAdd;
                     amount -= toAdd;
                     // Update item quantity
-                    if (player != null)
-                    {
-                        player.EmitLocked("updateInventoryItemQuantity", item.Id, item.Quantity);
-                    }
+                    player?.EmitLocked("updateInventoryItemQuantity", item.Id, item.Quantity);
                 }
                 else
                 {
                     if (!HasEmptySlots()) return response;
-                    int toAdd = CalculateAmountOfItemsToAdd(itemToAdd, amount);
+                    var toAdd = CalculateAmountOfItemsToAdd(itemToAdd, amount);
 
                     if (response.AddedNewItem)
                     {
@@ -139,10 +136,7 @@ namespace AltVStrefaRPServer.Models.Inventory
             if (response.AddedNewItem)
             {
                 await inventoryDatabaseService.UpdateInventoryAsync(this);
-                if (player != null)
-                {
-                    player.EmitLocked("inventoryAddNewItems", response.NewItems);
-                }
+                player?.EmitLocked("inventoryAddNewItems", response.NewItems);
             }
 
             return response;
@@ -164,8 +158,11 @@ namespace AltVStrefaRPServer.Models.Inventory
             {
                 _items.Remove(item);
 
-                if(saveToDatabase)
-                    await inventoryDatabaseService?.RemoveItemAsync(item);
+                if (!saveToDatabase)
+                    return InventoryRemoveResponse.ItemRemovedCompletly;
+
+                if (inventoryDatabaseService != null)
+                    await inventoryDatabaseService.RemoveItemAsync(item);
 
                 return InventoryRemoveResponse.ItemRemovedCompletly;
             }
@@ -184,7 +181,9 @@ namespace AltVStrefaRPServer.Models.Inventory
             IInventoryDatabaseService inventoryDatabaseService)
         {
             if (!(item.Item is IDroppable droppable)) return InventoryDropResponse.ItemNotDroppable;
-            if (await RemoveItemAsync(item, amount, true, inventoryDatabaseService) == InventoryRemoveResponse.NotEnoughItems) return InventoryDropResponse.NotEnoughItems;
+            if (await RemoveItemAsync(item, amount, true, inventoryDatabaseService) == InventoryRemoveResponse.NotEnoughItems) 
+                return InventoryDropResponse.NotEnoughItems;
+
             var newBaseItem = BaseItem.ShallowClone(item.Item);
             if (!await inventoriesManager.AddDroppedItemAsync(new DroppedItem(amount, droppable.Model, newBaseItem, position)))
                 return InventoryDropResponse.ItemAlreadyDropped;
@@ -232,7 +231,7 @@ namespace AltVStrefaRPServer.Models.Inventory
 
         public int CalculateNumberOfItemsToAdd(BaseItem itemToAdd, int amount, InventoryItem item)
         {
-            int maxQuantity = itemToAdd.StackSize - item.Quantity;
+            var maxQuantity = itemToAdd.StackSize - item.Quantity;
             return Math.Min(amount, maxQuantity);
         }
 
@@ -241,7 +240,7 @@ namespace AltVStrefaRPServer.Models.Inventory
         protected int GetFreeSlot()
         {
             var freeSlots = Enumerable.Range(0, MaxSlots - 1).ToList();
-            for (int i = 0; i < _items.Count; i++)
+            for (var i = 0; i < _items.Count; i++)
             {
                 if (freeSlots.Contains(_items[i].SlotId))
                 {
