@@ -2,25 +2,28 @@
 {
     public enum EquipmentSlot
     {
-        None = 10000,
-        Mask = 10001,
-        Torsos = 10003,
-        Legs = 10004,
-        Bags = 10005,
-        Shoes= 10006,
-        Accessories = 10007,
-        Undershirts = 10008,
-        BodyArmors = 10009,
-        Decals = 10010,
-        Tops = 10011,
-        // Start of props
-        Hats = 11001,
-        Glasses = 11002,
-        Ears = 11003,
-        Watches = 11006,
-        Bracelets = 11007,
-        LeftHand = 12000,
-        RightHand = 12001,
-        ExtraSlot = 12002
+        None = 1000,
+        Torsos = 1001,
+        Undershirts = 1002,
+        Tops = 1003,
+        Legs = 1004,
+        Shoes= 1005,
+        BodyArmors = 1006,
+        Decals = 1007,
+        ExtraSlot = 1201,
+        ExtraSlot2 = 1202,
+        LeftHand = 1300,
+        RightHand = 1301,
+        Phone = 1302,
+        // Accessories
+        Mask = 1101,
+        Hats = 1102,    
+        Glasses = 1103,
+        Watches = 1104, 
+        Bracelets = 1105,
+        Ears = 1106,
+        Accessories = 1107,
+        Bags = 1108,
+        ExtraSlot3 = 1203,
     }
 }
