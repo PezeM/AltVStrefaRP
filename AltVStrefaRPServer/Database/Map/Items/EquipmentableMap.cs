@@ -1,4 +1,4 @@
-﻿using AltVStrefaRPServer.Models.Interfaces.Items;
+﻿using AltVStrefaRPServer.Models.Inventory.Items;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

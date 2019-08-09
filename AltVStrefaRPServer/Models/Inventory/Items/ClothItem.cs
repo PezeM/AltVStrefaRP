@@ -1,6 +1,4 @@
-﻿using AltVStrefaRPServer.Models.Interfaces.Inventory;
-using AltVStrefaRPServer.Models.Interfaces.Items;
-using AltVStrefaRPServer.Models.Inventory.Interfaces;
+﻿using AltVStrefaRPServer.Models.Inventory.Interfaces;
 
 namespace AltVStrefaRPServer.Models.Inventory.Items
 {
@@ -10,7 +8,7 @@ namespace AltVStrefaRPServer.Models.Inventory.Items
         public int TextureId { get; set; }
         public int PaletteId { get; set; }
         public bool IsProp { get; set; }
-        public string Model { get; set; }
+        public string Model { get; }
 
         public ClothItem(string name, EquipmentSlot equipmentSlot, int drawableId, int textureId, int paletteId, bool isProp, string model)
             : base(name, equipmentSlot)
@@ -26,6 +24,11 @@ namespace AltVStrefaRPServer.Models.Inventory.Items
         {
             character.Player.Emit("equipClothableItem", (int)EquipmentSlot, DrawableId, TextureId, PaletteId, IsProp);
             return true;
+        }
+
+        public override bool DeequipItem(Character character)
+        {
+            throw new System.NotImplementedException();
         }
 
         public override BaseItem Copy()

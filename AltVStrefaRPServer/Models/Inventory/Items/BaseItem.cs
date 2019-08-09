@@ -8,13 +8,13 @@
 
         protected BaseItem(){}
 
-        public BaseItem(string name, int stackSize)
+        protected BaseItem(string name, int stackSize)
         {
             Name = name;
             StackSize = stackSize;
         }
 
-        public BaseItem(BaseItem baseItem)
+        protected BaseItem(BaseItem baseItem)
         {
             Id = baseItem.Id;
             Name = baseItem.Name;
