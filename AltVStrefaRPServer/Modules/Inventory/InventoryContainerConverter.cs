@@ -13,7 +13,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
             {
                 InventoryId = character.InventoryId,
                 InventorySlots = character.Inventory.MaxSlots,
-                InventoryName = "Ekwipunek",
+                InventoryName = "Plecak",
                 Items = character.Inventory.Items.ToList()
             };
         }
@@ -24,7 +24,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
             {
                 InventoryId = character.InventoryId,
                 InventorySlots = character.Inventory.MaxSlots,
-                InventoryName = "Założone przedmioty",
+                InventoryName = "Ekwipunek",
                 Items = character.Inventory.EquippedItems.ToList()
             };
         }
@@ -34,7 +34,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
             return new InventoryContainerDto()
             {
                 InventoryId = vehicle.InventoryId,
-                InventoryName = $"Bagażnik pojazdu {vehicle.PlateText}",
+                InventoryName = $"Pojazd #{vehicle.PlateText}",
                 InventorySlots = vehicle.Inventory.MaxSlots,
                 Items = vehicle.Inventory.Items.ToList()
             };
