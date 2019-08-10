@@ -1,4 +1,5 @@
 ﻿using AltV.Net.Enums;
+using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Models.Inventory.Interfaces;
 
 namespace AltVStrefaRPServer.Models.Inventory.Items
@@ -10,12 +11,13 @@ namespace AltVStrefaRPServer.Models.Inventory.Items
         public WeaponModel WeaponModel { get; }
         public int Ammo { get; set; }
 
-        public WeaponItem(string name, string model, WeaponModel weaponModel, int ammo, EquipmentSlot equipmentSlot = EquipmentSlot.LeftHand) 
+        public WeaponItem(string name, string model, WeaponModel weaponModel, int ammo, EquipmentSlot equipmentSlot = EquipmentSlot.LeftHand, string description = null) 
             : base(name, equipmentSlot)
         {
             Model = model;
             Ammo = ammo;
             WeaponModel = weaponModel;
+            Description = !description.IsNullOrEmpty() ? description : $"{Name} z {ammo} amunicji";
         }
 
         public override bool UseItem(Character character)
@@ -27,7 +29,9 @@ namespace AltVStrefaRPServer.Models.Inventory.Items
 
         public override bool DeequipItem(Character character)
         {
-            throw new System.NotImplementedException();
+            // For now till ammo
+            character.Player.RemoveWeapon((uint)WeaponModel);
+            return true;
         }
 
         public override BaseItem Copy()

@@ -5,6 +5,7 @@
         public int Id { get; set; }
         public string Name { get; protected set; }
         public int StackSize { get; protected set; }
+        public string Description { get; protected set; } = "Brak opisu";
 
         protected BaseItem(){}
 
@@ -14,11 +15,19 @@
             StackSize = stackSize;
         }
 
+        protected BaseItem(string name, int stackSize, string description)
+        {
+            Name = name;
+            StackSize = stackSize;
+            Description = description;
+        }
+
         protected BaseItem(BaseItem baseItem)
         {
             Id = baseItem.Id;
             Name = baseItem.Name;
             StackSize = baseItem.StackSize;
+            Description = baseItem.Description;
         }
 
         public abstract bool UseItem(Character character);

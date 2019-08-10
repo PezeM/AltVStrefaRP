@@ -1,21 +1,12 @@
-﻿using AltVStrefaRPServer.Models.Inventory.Interfaces;
+﻿using AltVStrefaRPServer.Extensions;
 
 namespace AltVStrefaRPServer.Models.Inventory.Items
 {
-    public class FoodItem : BaseItem, IWorldItem, IDroppable
+    public class FoodItem : Consumable
     {
-        public ushort Value { get; set; }
-        public string Model { get; private set; }
-
-        public FoodItem(string name, int stackSize, string model, ushort value) : base(name, stackSize)
+        public FoodItem(string name, int stackSize, string model, ushort value, string description) : base(name, stackSize, model, value)
         {
-            Model = model;
-            Value = value;
-        }
-
-        public BaseItem GetWorldItemAsBaseItem()
-        {
-            throw new System.NotImplementedException();
+            Description = !description.IsNullOrEmpty() ? description : $"{Name} napełnia {Value} głodu";
         }
 
         public override bool UseItem(Character character)
@@ -24,9 +15,6 @@ namespace AltVStrefaRPServer.Models.Inventory.Items
             return true;
         }
 
-        public override BaseItem Copy()
-        {
-            return (FoodItem)MemberwiseClone();
-        }
+        public override BaseItem Copy() => (FoodItem)MemberwiseClone();
     }
 }

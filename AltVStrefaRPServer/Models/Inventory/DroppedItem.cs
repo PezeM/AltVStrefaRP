@@ -7,7 +7,6 @@ using Position = AltV.Net.Data.Position;
 
 namespace AltVStrefaRPServer.Models.Inventory
 {
-    // Todo save to database
     public class DroppedItem : IMValueConvertible, IPosition
     {
         public int Id { get;set; }

@@ -9,7 +9,7 @@ namespace AltVStrefaRPServer.Models.Inventory
         public static Dictionary<ItemType, BaseItem> Items { get; set; } = new Dictionary<ItemType, BaseItem>
         {
             { ItemType.Weapon_CombatPistol, new WeaponItem("Combat pistol", "w_pi_combatpistol", WeaponModel.CombatPistol, 20, EquipmentSlot.LeftHand) },
-            { ItemType.FoodItem_Burger, new FoodItem("Burger", 20, "prop_cs_burger_01", 20) },
+            { ItemType.FoodItem_Burger, new FoodItem("Burger", 20, "prop_cs_burger_01", 20, null) },
             { ItemType.Cloth_Pants, new ClothItem("Jakieś spodnie", EquipmentSlot.Legs, 4, 1, 2, false, "p_cs_shirt_01_s") }
         };
 
@@ -20,7 +20,7 @@ namespace AltVStrefaRPServer.Models.Inventory
                 case ItemType.Cloth_Pants:
                     return new ClothItem("Jakieś spodnie", EquipmentSlot.Legs, 4, 1, 2, false, "p_cs_shirt_01_s");
                 case ItemType.FoodItem_Burger:
-                    return new FoodItem("Burger", 20, "prop_bodyarmour_04", 20);
+                    return new FoodItem("Burger", 20, "prop_bodyarmour_04", 20, null);
                 case ItemType.Weapon_CombatPistol:
                     return new WeaponItem("Combat pistol", "w_pi_combatpistol", WeaponModel.CombatPistol, 20, EquipmentSlot.LeftHand);
             }

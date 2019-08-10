@@ -1,4 +1,5 @@
-﻿using AltVStrefaRPServer.Models.Inventory.Interfaces;
+﻿using AltVStrefaRPServer.Extensions;
+using AltVStrefaRPServer.Models.Inventory.Interfaces;
 
 namespace AltVStrefaRPServer.Models.Inventory.Items
 {
@@ -10,7 +11,7 @@ namespace AltVStrefaRPServer.Models.Inventory.Items
         public bool IsProp { get; set; }
         public string Model { get; }
 
-        public ClothItem(string name, EquipmentSlot equipmentSlot, int drawableId, int textureId, int paletteId, bool isProp, string model)
+        public ClothItem(string name, EquipmentSlot equipmentSlot, int drawableId, int textureId, int paletteId, bool isProp, string model, string description = null)
             : base(name, equipmentSlot)
         {
             DrawableId = drawableId;
@@ -18,6 +19,7 @@ namespace AltVStrefaRPServer.Models.Inventory.Items
             PaletteId = paletteId;
             IsProp = isProp;
             Model = model;
+            Description = !description.IsNullOrEmpty() ? description : $"{Name} Typ {DrawableId} Rodzaj {TextureId}";
         }
 
         public override bool UseItem(Character character)
