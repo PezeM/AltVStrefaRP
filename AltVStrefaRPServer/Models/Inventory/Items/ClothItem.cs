@@ -9,7 +9,7 @@ namespace AltVStrefaRPServer.Models.Inventory.Items
         public int TextureId { get; set; }
         public int PaletteId { get; set; }
         public bool IsProp { get; set; }
-        public string Model { get; }
+        public string Model { get; private set; }
 
         public ClothItem(string name, EquipmentSlot equipmentSlot, int drawableId, int textureId, int paletteId, bool isProp, string model, string description = null)
             : base(name, equipmentSlot)

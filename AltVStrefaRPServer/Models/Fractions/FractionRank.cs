@@ -10,9 +10,9 @@ namespace AltVStrefaRPServer.Models.Fractions
         public int Id { get; set; }
         public string RankName { get; set; }
         public int Priority { get; private set; } = 0;
-        public RankType RankType { get; }
-        public ICollection<FractionPermission> Permissions { get; } = new List<FractionPermission>();
-        public Fraction Fraction { get; }
+        public RankType RankType { get; private set; }
+        public ICollection<FractionPermission> Permissions { get; private set;} = new List<FractionPermission>();
+        public Fraction Fraction { get; private set; }
 
         private FractionRank(){}
 

@@ -9,7 +9,7 @@ namespace AltVStrefaRPServer.Models.Inventory
 {
     public class DroppedItem : IMValueConvertible, IPosition
     {
-        public int Id { get;set; }
+        public int Id { get; set; }
         public string Name => Item.Name;
         public int Count { get; set; }
         public string Model { get; set; }

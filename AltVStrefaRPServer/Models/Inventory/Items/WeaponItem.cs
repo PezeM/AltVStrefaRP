@@ -6,9 +6,9 @@ namespace AltVStrefaRPServer.Models.Inventory.Items
 {
     public class WeaponItem : Equipmentable, IDroppable
     {
-        public string Model { get; }
+        public string Model { get; private set; }
 
-        public WeaponModel WeaponModel { get; }
+        public WeaponModel WeaponModel { get; private set; }
         public int Ammo { get; set; }
 
         public WeaponItem(string name, string model, WeaponModel weaponModel, int ammo, EquipmentSlot equipmentSlot = EquipmentSlot.LeftHand, string description = null) 
