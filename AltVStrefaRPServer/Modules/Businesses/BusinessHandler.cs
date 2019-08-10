@@ -278,7 +278,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
             }
 
             await _businessesManager.UpdateBusinessRankAsync(businessRankToUpdate, newPermissions).ConfigureAwait(false);
-            _notificationService.ShowSuccessNotification(player, "Zaktualizowano stanowisko", "Pomyślnie zaktualizowano stanowisko.");
+            await _notificationService.ShowSuccessNotificationAsync(player, "Zaktualizowano stanowisko", "Pomyślnie zaktualizowano stanowisko.");
             _logger.LogDebug("Character {characterName} CID({characterId}) changed permissions of rank RankId({rankId}) in {elapsedTime}ms", 
                 character.GetFullName(), character.Id, businessRank.Id, Time.GetElapsedTime(startTime));
         }
@@ -487,7 +487,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
             };
         }
 
-        private static List<BusinessPermissionsDto> GetBusinessRanksInfo(Models.Businesses.Business business)
+        private static List<BusinessPermissionsDto> GetBusinessRanksInfo(Business business)
         {
             return business.BusinessRanks.Select(q => new BusinessPermissionsDto
             {

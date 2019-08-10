@@ -75,7 +75,6 @@ namespace AltVStrefaRPServer.Modules.Businesses
                 if (nearestBusiness == null)
                 {
                     nearestBusiness = business;
-                    break;
                 }
                 else
                 {
@@ -98,6 +97,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
         /// <summary>
         /// Create new business and save it to database
         /// </summary>
+        /// <param name="ownerId">Id of the character owning the business</param>
         /// <param name="businessType">Type of the business <see cref="BusinessType"/></param>
         /// <param name="position">Position where the business will be located</param>
         /// <param name="name">Name of the business</param>
@@ -213,7 +213,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
             if (!business.RemoveRank(rankId)) return false;
 
             var employeesToChange = business.GetEmployeesWithRank(rankId);
-            if (employeesToChange.Count() > 0)
+            if (employeesToChange.Any())
             {
                 foreach (var character in employeesToChange)
                 {

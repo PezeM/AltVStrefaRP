@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AltVStrefaRPServer.Helpers;
-using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Services.Inventory;
@@ -52,9 +51,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
         public bool TryGetDroppedItem(int networkingEntityId, int droppedItemId, out DroppedItem droppedItem)
         {
             droppedItem = null;
-            if (!_networkingManager.DoesNetworkingEntityExists(networkingEntityId)) return false;
-            if (!TryGetDroppedItem(droppedItemId, out droppedItem)) return false;
-            return true;
+            return _networkingManager.DoesNetworkingEntityExists(networkingEntityId) && TryGetDroppedItem(droppedItemId, out droppedItem);
         }
 
         public async Task<bool> RemoveDroppedItemAsync(DroppedItem droppedItem, int networkingItemId, int itemsAddedCount)

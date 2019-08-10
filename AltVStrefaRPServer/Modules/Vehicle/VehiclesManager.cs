@@ -44,9 +44,9 @@ namespace AltVStrefaRPServer.Modules.Vehicle
         /// <summary>
         /// Gets VehicleModel by vehicleHandle id
         /// </summary>
-        /// <param name="vehicleID">Id of vehicle handle</param>
+        /// <param name="vehicleId">Id of vehicle handle</param>
         /// <returns></returns>
-        public VehicleModel GetVehicleModel(ushort vehicleID) => _vehicles.Values.FirstOrDefault(v => v.VehicleHandle?.Id == vehicleID);
+        public VehicleModel GetVehicleModel(ushort vehicleId) => _vehicles.Values.FirstOrDefault(v => v.VehicleHandle?.Id == vehicleId);
 
         public bool TryGetVehicleModel(IMyVehicle vehicle, out VehicleModel vehicleModel) 
             => _vehicles.TryGetValue(vehicle.DatabaseId, out vehicleModel);

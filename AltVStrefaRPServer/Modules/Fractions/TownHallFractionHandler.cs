@@ -21,7 +21,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
 {
     public class TownHallFractionHandler
     {
-        private IFractionsManager _fractionsManager;
+        private readonly IFractionsManager _fractionsManager;
         private readonly INotificationService _notificationService;
         private readonly ICharacterDatabaseService _characterDatabaseService;
         private readonly IVehiclesManager _vehiclesManager;
@@ -85,7 +85,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
         {
             if (!player.TryGetCharacter(out Character character)) return;
             if(!_fractionsManager.TryToGetTownHallFraction(out TownHallFraction townHallFraction)) return;
-            if (!(townHallFraction.GetEmployeeRank(character)?.RankType == RankType.Highest))
+            if (townHallFraction.GetEmployeeRank(character)?.RankType != RankType.Highest)
             {
                 _notificationService.ShowErrorNotification(player, "Brak uprawnień",
                     "Nie posiadasz odpowiednich uprawnień do wykonania tej akcji.", 6500);
@@ -121,7 +121,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
 
         private static bool UpdateTax(int taxId, float newTax, TownHallFraction townHallFraction)
         {
-            bool result = false;
+            var result = false;
             switch (taxId)
             {
                 case 1:
@@ -149,8 +149,8 @@ namespace AltVStrefaRPServer.Modules.Fractions
                 Age = character.Age,
                 Name = character.FirstName,
                 LastName = character.LastName,
-                BankAccount = character.BankAccount != null ? character.BankAccount.AccountNumber : 0,
-                BankMoney = character.BankAccount != null ? character.BankAccount.Money : 0,
+                BankAccount = character.BankAccount?.AccountNumber ?? 0,
+                BankMoney = character.BankAccount?.Money ?? 0,
                 BusinessName = character.Business != null ? character.Business.BusinessName : "Brak",
                 FractionName = character.Fraction != null ? character.Fraction.Name : "Brak",
                 Vehicles = _vehiclesManager.GetAllPlayerVehicles(character).Select(q => new VehicleDataDto(q.Model, q.PlateText)).ToList(),

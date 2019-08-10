@@ -16,8 +16,8 @@ namespace AltVStrefaRPServer.Modules.Environment
         private readonly Random _rng;
         private readonly ILogger<TimeController> _logger;
 
-        public uint CurrentWeather { get; set; } = (uint)Weathers.ExtraSunny;
-        public GameTime GameTime { get; set; }
+        public uint CurrentWeather { get; private set; } = (uint)Weathers.ExtraSunny;
+        public GameTime GameTime { get; private set; }
 
         public TimeController(ILogger<TimeController> logger)
         {
@@ -54,11 +54,11 @@ namespace AltVStrefaRPServer.Modules.Environment
             if (Alt.GetAllPlayers().Count < 1) return;
             UpdateTime();
 
-            if (_elapsedMinutes >= AppSettings.Current.ServerConfig.ChangeWeatherInterval)
-            {
-                _elapsedMinutes = 0;
-                ChangeWeather();
-            }
+            if (_elapsedMinutes < AppSettings.Current.ServerConfig.ChangeWeatherInterval)
+                return;
+
+            _elapsedMinutes = 0;
+            ChangeWeather();
         }
 
         private void UpdateTime()
@@ -127,7 +127,7 @@ namespace AltVStrefaRPServer.Modules.Environment
 
         public int Hours
         {
-            get { return _hours; }
+            get => _hours;
             set
             {
                 _hours = value;
@@ -141,7 +141,7 @@ namespace AltVStrefaRPServer.Modules.Environment
 
         public int Minutes
         {
-            get { return _minutes; }
+            get => _minutes;
             set
             {
                 _minutes = value;

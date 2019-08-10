@@ -10,9 +10,9 @@ namespace AltVStrefaRPServer.Models.Fractions
         public int Id { get; set; }
         public string RankName { get; set; }
         public int Priority { get; private set; } = 0;
-        public RankType RankType { get; set; }
-        public ICollection<FractionPermission> Permissions { get; set; } = new List<FractionPermission>();
-        public Fraction Fraction { get; set; }
+        public RankType RankType { get; }
+        public ICollection<FractionPermission> Permissions { get; } = new List<FractionPermission>();
+        public Fraction Fraction { get; }
 
         private FractionRank(){}
 
@@ -26,15 +26,11 @@ namespace AltVStrefaRPServer.Models.Fractions
 
         public bool AddNewPermission(FractionPermission permission)
         {
-            if (!Permissions.Any(p => p.Name == permission.Name))
-            {
-                Permissions.Add(permission);
-                return true;
-            }
-            else
-            {
+            if (Permissions.Any(p => p.Name == permission.Name))
                 return false;
-            }
+
+            Permissions.Add(permission);
+            return true;
         }
 
         public bool RemovePermission(FractionPermission permission)
@@ -50,7 +46,7 @@ namespace AltVStrefaRPServer.Models.Fractions
         public bool TryToGetPermission<TPermission>(out TPermission permission) where TPermission : FractionPermission
         {
             permission = (TPermission)Permissions.FirstOrDefault(p => p is TPermission);
-            return permission == null ? false : true;
+            return permission != null;
         }
 
         public bool HasPermission<TPermission>() where TPermission : FractionPermission
@@ -61,20 +57,16 @@ namespace AltVStrefaRPServer.Models.Fractions
         public bool HasHigherPriority(FractionRank secondRank)
         {
             if (RankType ==  RankType.Highest) return true;
-            else return Priority > secondRank.Priority;
+            return Priority > secondRank.Priority;
         }
 
         public bool SetPriority(int priority)
         {
-            if (priority > 0 && priority <= 100)
-            {
-                Priority = priority;
-                return true;
-            }
-            else
-            {
+            if (priority <= 0 || priority > 100)
                 return false;
-            }
+
+            Priority = priority;
+            return true;
         }
     }
 }

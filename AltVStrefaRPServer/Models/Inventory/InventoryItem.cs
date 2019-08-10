@@ -6,10 +6,10 @@ namespace AltVStrefaRPServer.Models.Inventory
 {
     public class InventoryItem : IMValueConvertible
     {
-        public int Id { get; protected set; }
-        public int Quantity { get; protected set; }
-        public BaseItem Item { get; protected set; }
-        public int SlotId { get; protected set; }
+        public int Id { get; private set; }
+        public int Quantity { get; private set; }
+        public BaseItem Item { get; private set; }
+        public int SlotId { get; private set; }
         public int BaseItemId { get; protected set; }
         public int InventoryId { get; protected set; }
 

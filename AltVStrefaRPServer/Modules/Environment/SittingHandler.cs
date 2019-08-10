@@ -8,9 +8,9 @@ namespace AltVStrefaRPServer.Modules.Environment
 {
     public class SittingHandler
     {
-        private INotificationService _notificationService;
+        private readonly INotificationService _notificationService;
         private readonly ILogger<SittingHandler> _logger;
-        private Dictionary<int, int> _seatsTaken;
+        private readonly Dictionary<int, int> _seatsTaken;
 
         public SittingHandler(INotificationService notificationService, ILogger<SittingHandler> logger)
         {
@@ -24,11 +24,11 @@ namespace AltVStrefaRPServer.Modules.Environment
 
         private void LeaveSeat(IPlayer player, int seatId)
         {
-            if (_seatsTaken.ContainsKey(seatId))
-            {
-                _logger.LogDebug("Removing {seatId} from taken seats dictionary", seatId);
-                _seatsTaken.Remove(seatId);
-            }
+            if (!_seatsTaken.ContainsKey(seatId))
+                return;
+
+            _logger.LogDebug("Removing {seatId} from taken seats dictionary", seatId);
+            _seatsTaken.Remove(seatId);
         }
 
         private void TakeSeat(IPlayer player, int seatId)
