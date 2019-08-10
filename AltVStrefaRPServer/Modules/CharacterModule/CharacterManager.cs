@@ -78,7 +78,7 @@ namespace AltVStrefaRPServer.Modules.CharacterModule
         /// <param name="character"></param>
         public void RemoveCharacterDataFromServer(Character character)
         {
-            lock (_characters)
+            lock (character)
             {
                 _characters.Remove(character.Player.Id);
                 Log.ForContext<CharacterManager>().Information("Removed character {characterName} CID({characterId}) from server", character.GetFullName(), character.Id);

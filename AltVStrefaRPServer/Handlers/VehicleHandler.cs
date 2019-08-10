@@ -17,10 +17,10 @@ namespace AltVStrefaRPServer.Handlers
 {
     public class VehicleHandler
     {
-        private IVehicleDatabaseService _vehicleDatabaseService;
-        private IVehiclesManager _vehiclesManager;
-        private INotificationService _notificationService;
-        private IVehicleSpawnService _vehicleSpawnService;
+        private readonly IVehicleDatabaseService _vehicleDatabaseService;
+        private readonly IVehiclesManager _vehiclesManager;
+        private readonly INotificationService _notificationService;
+        private readonly IVehicleSpawnService _vehicleSpawnService;
         private readonly ILogger<VehicleHandler> _logger;
 
         public VehicleHandler(IVehiclesManager vehiclesManager, IVehicleDatabaseService vehiceVehicleDatabaseService,

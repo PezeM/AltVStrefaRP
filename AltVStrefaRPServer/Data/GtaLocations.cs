@@ -5,7 +5,7 @@ namespace AltVStrefaRPServer.Data
 {
     public static class GtaLocations
     {
-        public static IReadOnlyDictionary<int, Position> Atms = new Dictionary<int, Position>
+        public static readonly IReadOnlyDictionary<int, Position> Atms = new Dictionary<int, Position>
         { 
             { 1, new Position (-846.6537f, -341.509f, 37.6685f) },
             { 2, new Position (1153.747f, -326.7634f, 69.2050f) },

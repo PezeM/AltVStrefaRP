@@ -63,13 +63,6 @@ namespace AltVStrefaRPServer.Database
         {
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            base.OnConfiguring(optionsBuilder);
-            //optionsBuilder.EnableSensitiveDataLogging();
-            //optionsBuilder.EnableDetailedErrors();
-        }   
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

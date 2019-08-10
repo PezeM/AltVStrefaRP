@@ -5,6 +5,7 @@ using AltV.Net;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Models;
+using AltVStrefaRPServer.Models.Interfaces;
 using AltVStrefaRPServer.Services.Vehicles.VehicleShops;
 
 namespace AltVStrefaRPServer.Modules.Vehicle

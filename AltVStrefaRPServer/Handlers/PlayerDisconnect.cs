@@ -13,7 +13,7 @@ namespace AltVStrefaRPServer.Handlers
 {
     public class PlayerDisconnect
     {
-        private ICharacterDatabaseService _characterDatabaseService;
+        private readonly ICharacterDatabaseService _characterDatabaseService;
         private readonly ILogger<PlayerDisconnect> _logger;
 
         public PlayerDisconnect(ICharacterDatabaseService characterDatabaseService, ILogger<PlayerDisconnect> logger)

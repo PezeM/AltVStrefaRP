@@ -9,6 +9,7 @@ using AltVStrefaRPServer.Models.Dto;
 using AltVStrefaRPServer.Models.Dto.Fractions;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Fractions.Permissions;
+using AltVStrefaRPServer.Models.Interfaces;
 using AltVStrefaRPServer.Services.Fractions;
 
 namespace AltVStrefaRPServer.Models.Fractions

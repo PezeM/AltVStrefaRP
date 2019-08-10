@@ -10,7 +10,7 @@ namespace AltVStrefaRPServer.Data
 {
     public class VehiclesData
     {
-        public Dictionary<string, VehicleData> Data { get; set; }
+        public Dictionary<string, VehicleData> Data { get; }
         private readonly AppSettings _appSettings;
         private readonly ILogger<VehiclesData> _logger;
 
