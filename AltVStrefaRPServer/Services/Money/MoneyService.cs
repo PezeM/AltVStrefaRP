@@ -4,6 +4,7 @@ using AltV.Net;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Enums;
+using AltVStrefaRPServer.Models.Interfaces;
 
 namespace AltVStrefaRPServer.Services.Money
 {

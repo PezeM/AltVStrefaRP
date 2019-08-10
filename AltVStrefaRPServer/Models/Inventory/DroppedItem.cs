@@ -1,5 +1,6 @@
 ﻿using System;
 using AltV.Net;
+using AltVStrefaRPServer.Models.Interfaces;
 using AltVStrefaRPServer.Models.Inventory.Items;
 using AltVStrefaRPServer.Services.Inventory;
 using Position = AltV.Net.Data.Position;

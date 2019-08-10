@@ -7,6 +7,7 @@ using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Fractions;
 using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Models.Inventory.Interfaces;
+using AltVStrefaRPServer.Models.Interfaces;
 
 namespace AltVStrefaRPServer.Models
 {

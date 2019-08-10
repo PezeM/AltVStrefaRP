@@ -1,6 +1,6 @@
 ﻿using AltV.Net.Data;
 
-namespace AltVStrefaRPServer.Models
+namespace AltVStrefaRPServer.Models.Interfaces
 {
     public interface IPosition
     {

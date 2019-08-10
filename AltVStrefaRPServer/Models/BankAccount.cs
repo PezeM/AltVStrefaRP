@@ -1,4 +1,5 @@
-﻿using AltVStrefaRPServer.Services;
+﻿using AltVStrefaRPServer.Models.Interfaces;
+using AltVStrefaRPServer.Services;
 
 namespace AltVStrefaRPServer.Models
 {
