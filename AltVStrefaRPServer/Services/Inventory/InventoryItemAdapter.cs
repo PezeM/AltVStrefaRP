@@ -67,6 +67,8 @@ namespace AltVStrefaRPServer.Services.Inventory
             writer.Value((value.Item is IDroppable));
             writer.Name("equipmentSlot");
             writer.Value(value.Item is IEquipmentable equipmentable ? (int)equipmentable.EquipmentSlot : -1);
+            writer.Name("description");
+            writer.Value(value.Item.Description);
             writer.EndObject();
         }
 
