@@ -63,7 +63,7 @@ namespace AltVStrefaRPServer.Services.Vehicles
 
         private void GenerateValuesFromVehicleData(VehicleModel vehicle, VehicleData vehicleData)
         {
-            vehicle.Inventory = new VehicleInventoryController(vehicleData.InventorySlots);
+            vehicle.Inventory = new VehicleInventoryContainer(vehicleData.InventorySlots);
             vehicle.MaxFuel = vehicleData.MaxFuel;
             vehicle.Fuel = vehicleData.MaxFuel;
             vehicle.MaxOil = vehicleData.MaxOil;
@@ -72,7 +72,7 @@ namespace AltVStrefaRPServer.Services.Vehicles
 
         private void GenerateDefaultValues(VehicleModel vehicle)
         {
-            vehicle.Inventory = new VehicleInventoryController(0);
+            vehicle.Inventory = new VehicleInventoryContainer(0);
             vehicle.MaxFuel = 30f;
             vehicle.Fuel = 30f;
             vehicle.MaxOil = 5f;

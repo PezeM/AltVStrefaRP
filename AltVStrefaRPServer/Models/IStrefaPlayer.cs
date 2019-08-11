@@ -1,4 +1,5 @@
 ﻿using AltV.Net.Elements.Entities;
+using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Models.Inventory.Interfaces;
 
 namespace AltVStrefaRPServer.Models
@@ -6,6 +7,6 @@ namespace AltVStrefaRPServer.Models
     public interface IStrefaPlayer : IPlayer
     {
         int AccountId { get;set; }
-        IInventoryController LastOpenedInventory { get; set; }
+        IInventoryContainer LastOpenedInventory { get; set; }
     }
 }

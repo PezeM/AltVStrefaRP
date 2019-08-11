@@ -22,10 +22,10 @@ namespace AltVStrefaRPServer.Modules.Inventory
         {
             return new InventoryContainerDto
             {
-                InventoryId = character.InventoryId,
+                InventoryId = character.EquipmentId,
                 InventorySlots = character.Inventory.MaxSlots,
                 InventoryName = "Ekwipunek",
-                Items = character.Inventory.EquippedItemsList.ToList()
+                Items = character.Equipment.Items.ToList()
             };
         }
 

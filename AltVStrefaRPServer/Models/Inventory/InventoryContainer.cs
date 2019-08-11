@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AltV.Net.Async;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
@@ -14,60 +11,11 @@ using AltVStrefaRPServer.Services.Inventory;
 
 namespace AltVStrefaRPServer.Models.Inventory
 {
-    // Inventories in Vehicles/Players/Random boxes/Fraction inventories/Business inventories/Shops etc
-    public abstract class InventoryController : IInventoryController
+    public abstract class InventoryContainer : SlotInventory, IInventoryContainer
     {
-        public int Id { get; protected set; }
-        public int MaxSlots { get; protected set; }
+        protected InventoryContainer() {}
 
-        public IReadOnlyCollection<InventoryItem> Items => _items;
-        protected List<InventoryItem> _items;
-
-        protected InventoryController()
-        {
-            _items = new List<InventoryItem>();
-        }
-
-        public bool HasEmptySlots() => _items.Count < MaxSlots;
-
-        public bool HasItem(InventoryItem item) => _items.Contains(item);
-
-        public bool HasItem(int id, out InventoryItem item)
-        {
-            item = null;
-            for (var i = 0; i < _items.Count; i++)
-            {
-                if (_items[i].Id == id)
-                {
-                    item = _items[i];
-                    return true;
-                }
-            }
-            return item != null;
-        }
-
-        public bool HasItem<TItem>() where TItem : BaseItem
-        {
-            return _items.FirstOrDefault(i => i.Item is TItem) != null;
-        }
-
-        public InventoryItem GetInventoryItem(int itemId)
-        {
-            for (int i = 0; i < _items.Count; i++)
-            {
-                if (_items[i].Id == itemId)
-                {
-                    return _items[i];
-                }
-            }
-            return null;
-        }
-
-        public bool TryGetInventoryItemNotFullyStacked(BaseItem item, out InventoryItem inventoryItem)
-        {
-            inventoryItem = _items.FirstOrDefault(i => i.Item.GetType() == item.GetType() && i.Quantity < item.StackSize);
-            return inventoryItem != null;
-        }
+        public InventoryContainer(int maxSlots) : base(maxSlots) {}
 
         public virtual async Task<AddItemResponse> AddItemAsync(BaseItem itemToAdd, int amount, IInventoryDatabaseService inventoryDatabaseService, IPlayer player = null)
         {
@@ -146,25 +94,6 @@ namespace AltVStrefaRPServer.Models.Inventory
             return InventoryRemoveResponse.ItemRemoved;
         }
 
-        public InventoryRemoveResponse RemoveItem(int id, int amount)
-        {
-            if (!HasItem(id, out var item)) return InventoryRemoveResponse.ItemNotFound;
-            return RemoveItem(item, amount);
-        }
-
-        public InventoryRemoveResponse RemoveItem(InventoryItem item, int amount)
-        {
-            if (item.Quantity < amount) return InventoryRemoveResponse.NotEnoughItems;
-            item.RemoveQuantity(amount);
-            if (item.Quantity <= 0)
-            {
-                _items.Remove(item);
-                return InventoryRemoveResponse.ItemRemovedCompletly;
-            }
-
-            return InventoryRemoveResponse.ItemRemoved;
-        }
-
         public virtual async Task<InventoryDropResponse> DropItemAsync(int itemId, int amount, Position position, IInventoriesManager inventoriesManager, 
             IInventoryDatabaseService inventoryDatabaseService)
         {
@@ -222,27 +151,6 @@ namespace AltVStrefaRPServer.Models.Inventory
             itemToStack.AddToQuantity(toAdd);
 
             return response;
-        }
-
-        public int CalculateNumberOfItemsToAdd(BaseItem itemToAdd, int amount, InventoryItem item)
-        {
-            var maxQuantity = itemToAdd.StackSize - item.Quantity;
-            return Math.Min(amount, maxQuantity);
-        }
-
-        public int CalculateAmountOfItemsToAdd(BaseItem itemToAdd, int amount) => Math.Min(amount, itemToAdd.StackSize);
-
-        protected int GetFreeSlot()
-        {
-            var freeSlots = Enumerable.Range(0, MaxSlots - 1).ToList();
-            for (var i = 0; i < _items.Count; i++)
-            {
-                if (freeSlots.Contains(_items[i].SlotId))
-                {
-                    freeSlots.Remove(_items[i].SlotId);
-                }
-            }
-            return freeSlots.First();
         }
     }
 }

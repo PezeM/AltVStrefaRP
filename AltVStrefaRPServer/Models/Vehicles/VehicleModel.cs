@@ -7,13 +7,13 @@ using AltVStrefaRPServer.Models.Inventory.Interfaces;
 
 namespace AltVStrefaRPServer.Models.Vehicles
 {
-    public class VehicleModel : IPosition, IHasInventory<VehicleInventoryController>
+    public class VehicleModel : IPosition, IHasInventory<VehicleInventoryContainer>
     {
         public int Id { get; set; }
         public int Owner { get; set; }
         public OwnerType OwnerType { get; set; }
         public string Model { get; set; }
-        public VehicleInventoryController Inventory { get; set; }
+        public VehicleInventoryContainer Inventory { get; set; }
         public int InventoryId { get; set; }
 
         public float X { get; set; }

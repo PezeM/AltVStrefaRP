@@ -11,7 +11,7 @@ using AltVStrefaRPServer.Models.Interfaces;
 
 namespace AltVStrefaRPServer.Models
 {
-    public class Character : IMoney, IPosition, IHasInventory<PlayerInventoryController>
+    public class Character : IMoney, IPosition, IHasInventory<PlayerInventoryContainer>
     {
         public int Id { get; set; }
         public int AccountId { get; set; }
@@ -20,8 +20,10 @@ namespace AltVStrefaRPServer.Models
         public bool IsBanned {get; set; }
         public bool IsMuted { get; set; }
         public bool CanDriveVehicles { get; set; }
-        public PlayerInventoryController Inventory { get; set; }
+        public PlayerInventoryContainer Inventory { get; set; }
         public int InventoryId { get; set; }
+        public PlayerEquipment Equipment { get; set; }
+        public int EquipmentId { get; set; }
         public string ProfileImage { get; set; }
 
         public float X { get; set; }

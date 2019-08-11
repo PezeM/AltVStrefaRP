@@ -14,7 +14,7 @@ namespace AltVStrefaRPServer.Services.Inventory
             _inventoryDatabaseService = inventoryDatabaseService;
         }
 
-        public async Task<InventoryStackResponse> StackItemBetweenInventoriesAsync(IInventoryController source, IInventoryController receiver, 
+        public async Task<InventoryStackResponse> StackItemBetweenInventoriesAsync(IInventoryContainer source, IInventoryContainer receiver, 
             int itemToStackFromId, int itemToStackId, bool saveToDatabse = false)
         {
             var response = new InventoryStackResponse(type: InventoryStackResponseType.ItemsNotFound);
@@ -36,7 +36,7 @@ namespace AltVStrefaRPServer.Services.Inventory
             //return InventoryStackResponse.ItemsStacked;
         }
 
-        public async Task TransferItemAsync(PlayerInventoryController source, PlayerInventoryController receiver, InventoryItem itemToTransfer, int quantity)
+        public async Task TransferItemAsync(PlayerInventoryContainer source, PlayerInventoryContainer receiver, InventoryItem itemToTransfer, int quantity)
         {
             if (!source.HasItem(itemToTransfer) || itemToTransfer.Quantity < quantity) return;
 

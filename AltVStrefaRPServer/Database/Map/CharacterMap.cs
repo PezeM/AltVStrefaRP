@@ -32,6 +32,10 @@ namespace AltVStrefaRPServer.Database.Map
                 .WithOne(i => i.Owner)
                 .HasForeignKey<Character>(i => i.InventoryId);
             //.OnDelete(DeleteBehavior.SetNull);
+
+            builder.HasOne(c => c.Equipment)
+                .WithOne(e => e.Owner)
+                .HasForeignKey<Character>(c => c.EquipmentId);
         }
     }
 }

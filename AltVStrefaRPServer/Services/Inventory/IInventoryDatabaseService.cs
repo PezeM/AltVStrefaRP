@@ -14,8 +14,8 @@ namespace AltVStrefaRPServer.Services.Inventory
         InventoryItem GetInventoryItem(int id);
         void UpdateItem(BaseItem item);
         Task UpdateItemAsync(BaseItem item);
-        Task UpdateInventoryAsync(PlayerInventoryController playerInventoryController);
-        Task UpdateInventoryAsync(InventoryController inventoryController);
+        Task UpdateInventoryAsync(PlayerInventoryContainer playerInventoryContainer);
+        Task UpdateInventoryAsync(InventoryContainer inventoryContainer);
         void AddNewItem(BaseItem item);
         Task AddNewItemAsync(BaseItem item);
         Task AddInventoryItemAsync(InventoryItem item);

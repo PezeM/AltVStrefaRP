@@ -19,6 +19,7 @@ using AltVStrefaRPServer.Modules.Inventory;
 using AltVStrefaRPServer.Modules.Money;
 using AltVStrefaRPServer.Modules.Vehicle;
 using AltVStrefaRPServer.Services;
+using AltVStrefaRPServer.Services.Characters;
 using AltVStrefaRPServer.Services.Fractions;
 using AltVStrefaRPServer.Services.Inventory;
 using AltVStrefaRPServer.Services.Money;
@@ -46,6 +47,7 @@ namespace AltVStrefaRPServer.Modules.Admin
         private readonly IMoneyService _moneyService;
         private readonly InventoryHandler _inventoryHandler;
         private readonly IInventoryDatabaseService _inventoryDatabaseService;
+        private readonly ICharacterDatabaseService _characterDatabaseService;
         private readonly ItemFactory _itemFactory;
         private readonly ILogger<AdminCommands> _logger;
 
@@ -54,7 +56,8 @@ namespace AltVStrefaRPServer.Modules.Admin
             VehicleShopsManager vehicleShopsManager, IVehicleSpawnService vehicleSpawnService, FractionHandler fractionHandler,
             IFractionsManager fractionsManager,
             IFractionDatabaseService fractionDatabaseService, IMoneyService moneyService,
-            InventoryHandler inventoryHandler, IInventoryDatabaseService inventoryDatabaseService, ItemFactory itemFactory, ILogger<AdminCommands> logger)
+            InventoryHandler inventoryHandler, IInventoryDatabaseService inventoryDatabaseService, ICharacterDatabaseService characterDatabaseService,
+            ItemFactory itemFactory, ILogger<AdminCommands> logger)
         {
             _chatHandler = chatHandler;
             _vehiclesManager = vehiclesManager;
@@ -70,6 +73,7 @@ namespace AltVStrefaRPServer.Modules.Admin
             _moneyService = moneyService;
             _inventoryHandler = inventoryHandler;
             _inventoryDatabaseService = inventoryDatabaseService;
+            _characterDatabaseService = characterDatabaseService;
             _itemFactory = itemFactory;
             _logger = logger;
 
@@ -106,6 +110,27 @@ namespace AltVStrefaRPServer.Modules.Admin
             _chatHandler.RegisterCommand("removeItem", async (player, args) => await RemoveItemAsync(player, args));
             _chatHandler.RegisterCommand("lookupInventory", LookupInventory);
             _chatHandler.RegisterCommand("testEquipItem", TestEquipItem);
+            _chatHandler.RegisterCommand("testSave", TestSave);
+        }
+
+        private void TestSave(IPlayer player, string[] args)
+        {
+            var startTime = Time.GetTimestampMs();
+            int savedCharacters = 0;
+            _ = Task.Run(() =>
+              {
+                  foreach (var character in CharacterManager.Instance.GetAllCharacters())
+                  {
+                      lock (character)
+                      {
+                          if (character.Player != null && character.Player.Exists)
+                          {
+                              _characterDatabaseService.UpdateCharacterAsync(character);
+                          }
+                      }
+                  }
+              });
+            _logger.LogInformation("Saved {characterCount} characters to databse in {elapsedTime}", savedCharacters, Time.GetElapsedTime(startTime));
         }
 
         private void OpenVehicleShop (IPlayer player, string[] arg2)
@@ -432,7 +457,7 @@ namespace AltVStrefaRPServer.Modules.Admin
             if (!player.TryGetCharacter(out var character)) return;
             var inventory = JsonConvert.SerializeObject(character.Inventory.Items, Formatting.Indented);
             Alt.Log(inventory);
-            player.Emit("testInventory", inventory, JsonConvert.SerializeObject(character.Inventory.EquippedItems));
+            player.Emit("testInventory", inventory);
         }
 
         private async Task AddItemAsync(IPlayer player, string[] args)
@@ -509,7 +534,7 @@ namespace AltVStrefaRPServer.Modules.Admin
             if (!player.TryGetCharacter(out var charatcer)) return;
             if (!int.TryParse(args[0], out var itemId)) return;
 
-            charatcer.Inventory.TestEquipItem(charatcer, itemId);
+            charatcer.Equipment.EquipItem(itemId);
         }
     }
 }
