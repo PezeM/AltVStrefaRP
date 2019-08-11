@@ -9,8 +9,9 @@ namespace AltVStrefaRPServer.Database.Map
     {
         public void Configure(EntityTypeBuilder<Character> builder)
         {
-            builder.Ignore(c => c.Player)
-                .HasOne(c => c.BankAccount)
+            builder.Ignore(c => c.Player);
+
+            builder.HasOne(c => c.BankAccount)
                 .WithOne(b => b.Character)
                 .HasForeignKey<BankAccount>(b => b.CharacterId);
 

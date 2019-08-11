@@ -11,6 +11,6 @@ namespace AltVStrefaRPServer.Models.Inventory.Items
             EquipmentSlot = slot;
         }
 
-        public abstract bool DeequipItem(Character character);
+        public abstract bool UnequipItem(Character character);
     }
 }

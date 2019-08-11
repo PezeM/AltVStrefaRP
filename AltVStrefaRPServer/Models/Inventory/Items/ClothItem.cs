@@ -28,7 +28,7 @@ namespace AltVStrefaRPServer.Models.Inventory.Items
             return true;
         }
 
-        public override bool DeequipItem(Character character)
+        public override bool UnequipItem(Character character)
         {
             throw new System.NotImplementedException();
         }

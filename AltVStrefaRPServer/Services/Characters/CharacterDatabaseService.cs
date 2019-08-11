@@ -76,7 +76,7 @@ namespace AltVStrefaRPServer.Services.Characters
                         .ThenInclude(i => i.Items)
                             .ThenInclude(i => i.Item)
                     .Include(c => c.Inventory)
-                        .ThenInclude(i => i.EquippedItems)
+                        .ThenInclude(i => i.EquippedItemsList)
                             .ThenInclude(i => i.Item)
                     .FirstOrDefaultAsync(c => c.Id == characterId);
             }

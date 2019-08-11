@@ -14,30 +14,6 @@ using AltVStrefaRPServer.Services.Inventory;
 
 namespace AltVStrefaRPServer.Models.Inventory
 {
-    //public class Shop
-    //{
-    //    // Id
-    //    // Name
-    //    // Position
-    //    // PedPosition
-    //    // ShopInventory
-    //}
-    //public class ShopItem
-    //{
-    //}
-    //public class ShopInventory
-    //{
-    //    // Id
-    //    // Shop
-    //    // List<InventoryItem>
-    //    protected List<ShopItem> _items;
-    //    public void AddItem()
-    //    {
-    //        var item = _items[0];
-    //        // Add to quantity which is propably infinite or something
-    //    }
-    //}
-
     // Inventories in Vehicles/Players/Random boxes/Fraction inventories/Business inventories/Shops etc
     public abstract class InventoryController : IInventoryController
     {
@@ -142,14 +118,14 @@ namespace AltVStrefaRPServer.Models.Inventory
             return response;
         }
 
-        public virtual async Task<InventoryRemoveResponse> RemoveItemAsync(int id, int amount, bool saveToDatabase = false, 
+        public virtual async ValueTask<InventoryRemoveResponse> RemoveItemAsync(int id, int amount, bool saveToDatabase = false, 
             IInventoryDatabaseService inventoryDatabaseService = null)
         {
             if (!HasItem(id, out var item)) return InventoryRemoveResponse.ItemNotFound;
             return await RemoveItemAsync(item, amount, saveToDatabase, inventoryDatabaseService);
         }
 
-        public virtual async Task<InventoryRemoveResponse> RemoveItemAsync(InventoryItem item, int amount, bool saveToDatabase = false,
+        public virtual async ValueTask<InventoryRemoveResponse> RemoveItemAsync(InventoryItem item, int amount, bool saveToDatabase = false,
             IInventoryDatabaseService inventoryDatabaseService = null)
         {
             if (item.Quantity < amount) return InventoryRemoveResponse.NotEnoughItems;
@@ -164,6 +140,25 @@ namespace AltVStrefaRPServer.Models.Inventory
                 if (inventoryDatabaseService != null)
                     await inventoryDatabaseService.RemoveItemAsync(item);
 
+                return InventoryRemoveResponse.ItemRemovedCompletly;
+            }
+
+            return InventoryRemoveResponse.ItemRemoved;
+        }
+
+        public InventoryRemoveResponse RemoveItem(int id, int amount)
+        {
+            if (!HasItem(id, out var item)) return InventoryRemoveResponse.ItemNotFound;
+            return RemoveItem(item, amount);
+        }
+
+        public InventoryRemoveResponse RemoveItem(InventoryItem item, int amount)
+        {
+            if (item.Quantity < amount) return InventoryRemoveResponse.NotEnoughItems;
+            item.RemoveQuantity(amount);
+            if (item.Quantity <= 0)
+            {
+                _items.Remove(item);
                 return InventoryRemoveResponse.ItemRemovedCompletly;
             }
 

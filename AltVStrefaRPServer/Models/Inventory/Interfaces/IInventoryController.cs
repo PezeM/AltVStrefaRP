@@ -21,8 +21,10 @@ namespace AltVStrefaRPServer.Models.Inventory.Interfaces
         bool TryGetInventoryItemNotFullyStacked(BaseItem item, out InventoryItem inventoryItem);
         Task<AddItemResponse> AddItemAsync(BaseItem itemToAdd, int amount, IInventoryDatabaseService inventoryDatabaseService, IPlayer player = null);
 
-        Task<InventoryRemoveResponse> RemoveItemAsync(int id, int amount, bool saveToDatabase = false, IInventoryDatabaseService inventoryDatabaseService = null);
-        Task<InventoryRemoveResponse> RemoveItemAsync(InventoryItem item, int amount, bool saveToDatabase = false,
+        InventoryRemoveResponse RemoveItem(int id, int amount);
+        InventoryRemoveResponse RemoveItem(InventoryItem item, int amount);
+        ValueTask<InventoryRemoveResponse> RemoveItemAsync(int id, int amount, bool saveToDatabase = false, IInventoryDatabaseService inventoryDatabaseService = null);
+        ValueTask<InventoryRemoveResponse> RemoveItemAsync(InventoryItem item, int amount, bool saveToDatabase = false,
             IInventoryDatabaseService inventoryDatabaseService = null);
 
         Task<InventoryDropResponse> DropItemAsync(int itemId, int amount, Position position, IInventoriesManager inventoriesManager,

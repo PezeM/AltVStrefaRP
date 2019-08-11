@@ -25,7 +25,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
                 InventoryId = character.InventoryId,
                 InventorySlots = character.Inventory.MaxSlots,
                 InventoryName = "Ekwipunek",
-                Items = character.Inventory.EquippedItems.ToList()
+                Items = character.Inventory.EquippedItemsList.ToList()
             };
         }
 

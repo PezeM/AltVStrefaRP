@@ -105,6 +105,7 @@ namespace AltVStrefaRPServer.Modules.Admin
             _chatHandler.RegisterCommand("useItem", async (player, args) => await UseItemAsync(player, args));
             _chatHandler.RegisterCommand("removeItem", async (player, args) => await RemoveItemAsync(player, args));
             _chatHandler.RegisterCommand("lookupInventory", LookupInventory);
+            _chatHandler.RegisterCommand("testEquipItem", TestEquipItem);
         }
 
         private void OpenVehicleShop (IPlayer player, string[] arg2)
@@ -423,7 +424,7 @@ namespace AltVStrefaRPServer.Modules.Admin
         private void SetAdminLevel(IPlayer player, string[] args)
         {
             if (!player.TryGetCharacter(out Character character)) return;
-            character.Account.AdminLevel = AdminLevel.Admin;
+            character.Account.AdminLevel = AdminLevel.HeadAdmin;
         }
 
         private void GetInventory(IPlayer player, string[] args)
@@ -500,6 +501,15 @@ namespace AltVStrefaRPServer.Modules.Admin
 
             var inventory = JsonConvert.SerializeObject(vehicle.Inventory.Items, Formatting.Indented);
             Alt.Log(inventory);
+        }
+
+        private void TestEquipItem(IPlayer player, string[] args)
+        {
+            if (args == null || args.Length < 1) return;
+            if (!player.TryGetCharacter(out var charatcer)) return;
+            if (!int.TryParse(args[0], out var itemId)) return;
+
+            charatcer.Inventory.TestEquipItem(charatcer, itemId);
         }
     }
 }

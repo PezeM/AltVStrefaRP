@@ -51,7 +51,7 @@ namespace AltVStrefaRPServer.Services.Characters.Customization
                 AccountId = accountId,
                 BankAccount = null,
                 Age = age,
-                Inventory = new PlayerInventoryController(30),
+                Inventory = new PlayerInventoryController(18),
                 Gender = (Gender)gender,
                 Dimension = 0,
                 X = AppSettings.Current.ServerConfig.SpawnPosition.X,

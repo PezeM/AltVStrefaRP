@@ -27,7 +27,7 @@ namespace AltVStrefaRPServer.Models.Inventory.Items
             return true;
         }
 
-        public override bool DeequipItem(Character character)
+        public override bool UnequipItem(Character character)
         {
             // For now till ammo
             character.Player.RemoveWeapon((uint)WeaponModel);

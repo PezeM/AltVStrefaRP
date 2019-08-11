@@ -43,6 +43,12 @@ namespace AltVStrefaRPServer.Modules.Inventory
             AltAsync.On<IPlayer, int, int, Task>("PickupDroppedItem", PickupDroppedItemAsync);
             AltAsync.On<IStrefaPlayer, int, int,int, Task>("InventoryTryStackItem", InventoryTryStackItemAsync);
             AltAsync.On<IStrefaPlayer, int, int, int, int, Task>("InventoryTryStackItemBetweenInventories", InventoryTryStackItemBetweenInventoriesAsync);
+            Alt.On<IStrefaPlayer, int, int, int, int>("InventoryTryEquipItemAndUnequipItem", Test);
+        }
+
+        private void Test(IStrefaPlayer player, int inventoryId, int itemToEquipId, int equipmentInventoryId, int itemToUnequipId)
+        {
+            throw new System.NotImplementedException();
         }
 
         private void GetPlayerInventory(IPlayer player)
