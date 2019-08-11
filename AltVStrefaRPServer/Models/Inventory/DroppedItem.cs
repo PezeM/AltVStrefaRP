@@ -2,7 +2,7 @@
 using AltV.Net;
 using AltVStrefaRPServer.Models.Interfaces;
 using AltVStrefaRPServer.Models.Inventory.Items;
-using AltVStrefaRPServer.Services.Inventory;
+using AltVStrefaRPServer.Services.Inventories;
 using Position = AltV.Net.Data.Position;
 
 namespace AltVStrefaRPServer.Models.Inventory

@@ -2,7 +2,7 @@
 using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Models.Inventory.Items;
 
-namespace AltVStrefaRPServer.Services.Inventory
+namespace AltVStrefaRPServer.Services.Inventories
 {
     public class ItemFactory
     {

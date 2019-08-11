@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Models.Inventory.Items;
 
-namespace AltVStrefaRPServer.Services.Inventory
+namespace AltVStrefaRPServer.Services.Inventories
 {
     public interface IInventoryDatabaseService
     {
@@ -15,7 +15,7 @@ namespace AltVStrefaRPServer.Services.Inventory
         void UpdateItem(BaseItem item);
         Task UpdateItemAsync(BaseItem item);
         Task UpdateInventoryAsync(PlayerInventoryContainer playerInventoryContainer);
-        Task UpdateInventoryAsync(InventoryContainer inventoryContainer);
+        Task UpdateInventoryAsync<TInventory>(TInventory inventoryContainer) where TInventory : Inventory;
         void AddNewItem(BaseItem item);
         Task AddNewItemAsync(BaseItem item);
         Task AddInventoryItemAsync(InventoryItem item);

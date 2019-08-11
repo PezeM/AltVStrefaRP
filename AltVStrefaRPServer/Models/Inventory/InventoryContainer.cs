@@ -7,7 +7,7 @@ using AltVStrefaRPServer.Models.Inventory.Interfaces;
 using AltVStrefaRPServer.Models.Inventory.Items;
 using AltVStrefaRPServer.Models.Inventory.Responses;
 using AltVStrefaRPServer.Modules.Inventory;
-using AltVStrefaRPServer.Services.Inventory;
+using AltVStrefaRPServer.Services.Inventories;
 
 namespace AltVStrefaRPServer.Models.Inventory
 {

@@ -4,7 +4,7 @@ using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Models.Inventory.Items;
 using AltVStrefaRPServer.Models.Inventory.Responses;
-using AltVStrefaRPServer.Services.Inventory;
+using AltVStrefaRPServer.Services.Inventories;
 
 namespace AltVStrefaRPServer.Models.Inventory.Interfaces
 {

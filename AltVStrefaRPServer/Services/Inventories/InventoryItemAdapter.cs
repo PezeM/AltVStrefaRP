@@ -2,7 +2,7 @@
 using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Models.Inventory.Interfaces;
 
-namespace AltVStrefaRPServer.Services.Inventory
+namespace AltVStrefaRPServer.Services.Inventories
 {
     public class InventoryItemAdapter : IMValueAdapter<InventoryItem>
     {

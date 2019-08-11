@@ -4,7 +4,7 @@ using AltV.Net.Elements.Args;
 using AltVStrefaRPServer.Models.Dto;
 using AltVStrefaRPServer.Models.Inventory;
 
-namespace AltVStrefaRPServer.Services.Inventory
+namespace AltVStrefaRPServer.Services.Inventories
 {
     public class InventoryContainerAdapter : IMValueAdapter<InventoryContainerDto>
     {

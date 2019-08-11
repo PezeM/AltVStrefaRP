@@ -2,7 +2,7 @@
 using AltV.Net.Data;
 using AltVStrefaRPServer.Models.Inventory;
 
-namespace AltVStrefaRPServer.Services.Inventory
+namespace AltVStrefaRPServer.Services.Inventories
 {
     public class DroppedItemAdapter : IMValueAdapter<DroppedItem>
     {

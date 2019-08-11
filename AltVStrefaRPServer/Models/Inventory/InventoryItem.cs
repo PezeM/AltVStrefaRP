@@ -1,6 +1,6 @@
 ﻿using AltV.Net;
 using AltVStrefaRPServer.Models.Inventory.Items;
-using AltVStrefaRPServer.Services.Inventory;
+using AltVStrefaRPServer.Services.Inventories;
 
 namespace AltVStrefaRPServer.Models.Inventory
 {

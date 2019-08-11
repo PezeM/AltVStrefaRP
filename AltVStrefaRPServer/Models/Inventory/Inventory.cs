@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using AltVStrefaRPServer.Models.Inventory.Interfaces;
 using AltVStrefaRPServer.Models.Inventory.Items;
 using AltVStrefaRPServer.Models.Inventory.Responses;
+using AltVStrefaRPServer.Services.Inventories;
 
 namespace AltVStrefaRPServer.Models.Inventory
 {
@@ -70,6 +72,21 @@ namespace AltVStrefaRPServer.Models.Inventory
             }
 
             return InventoryRemoveResponse.ItemRemoved;
+        }
+
+        public async Task<InventoryRemoveResponse> RemoveItemAsync(int itemId, int amount, IInventoryDatabaseService inventoryDatabaseService)
+        {
+            if (!HasItem(itemId, out var item)) return InventoryRemoveResponse.ItemNotFound;
+            return await RemoveItemAsync(item, amount, inventoryDatabaseService);
+        }
+
+        public async Task<InventoryRemoveResponse> RemoveItemAsync(InventoryItem item, int amount, IInventoryDatabaseService inventoryDatabaseService)
+        {
+            var response = RemoveItem(item, amount);
+            if (response != InventoryRemoveResponse.ItemRemovedCompletly) return response;
+
+            await inventoryDatabaseService.UpdateInventoryAsync(this);
+            return InventoryRemoveResponse.ItemRemovedCompletly;
         }
     }
 }

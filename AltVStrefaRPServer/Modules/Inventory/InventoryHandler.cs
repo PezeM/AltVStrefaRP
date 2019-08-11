@@ -9,7 +9,7 @@ using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Models.Inventory.Responses;
 using AltVStrefaRPServer.Models.Vehicles;
 using AltVStrefaRPServer.Services;
-using AltVStrefaRPServer.Services.Inventory;
+using AltVStrefaRPServer.Services.Inventories;
 using Microsoft.Extensions.Logging;
 using Position = AltV.Net.Data.Position;
 

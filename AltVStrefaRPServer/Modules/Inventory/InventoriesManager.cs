@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Models.Inventory;
-using AltVStrefaRPServer.Services.Inventory;
+using AltVStrefaRPServer.Services.Inventories;
 using Microsoft.Extensions.Logging;
 
 namespace AltVStrefaRPServer.Modules.Inventory

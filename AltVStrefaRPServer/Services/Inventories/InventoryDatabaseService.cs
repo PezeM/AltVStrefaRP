@@ -7,7 +7,7 @@ using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Models.Inventory.Items;
 using Microsoft.EntityFrameworkCore;
 
-namespace AltVStrefaRPServer.Services.Inventory
+namespace AltVStrefaRPServer.Services.Inventories
 {
     public class InventoryDatabaseService : IInventoryDatabaseService
     {
@@ -89,7 +89,7 @@ namespace AltVStrefaRPServer.Services.Inventory
             }
         }
 
-        public async Task UpdateInventoryAsync(InventoryContainer inventoryContainer)
+        public async Task UpdateInventoryAsync<TInventory>(TInventory inventoryContainer) where TInventory : Inventory
         {
             using (var context = _factory.Invoke())
             {

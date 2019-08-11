@@ -1,6 +1,6 @@
 ﻿using AltV.Net;
 
-namespace AltVStrefaRPServer.Services.Inventory
+namespace AltVStrefaRPServer.Services.Inventories
 {
     public static class ItemAdapters
     {
