@@ -1,5 +1,4 @@
 ﻿using AltV.Net.Elements.Entities;
-using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Models.Inventory.Interfaces;
 
 namespace AltVStrefaRPServer.Models

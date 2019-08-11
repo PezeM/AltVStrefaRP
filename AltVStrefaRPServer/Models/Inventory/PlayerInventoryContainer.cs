@@ -1,14 +1,12 @@
 ﻿using System.Threading.Tasks;
-using AltVStrefaRPServer.Models.Inventory.Interfaces;
 using AltVStrefaRPServer.Models.Inventory.Responses;
 using AltVStrefaRPServer.Services.Inventories;
 
 namespace AltVStrefaRPServer.Models.Inventory
 {
-    public class PlayerInventoryContainer : InventoryContainer, IInventoryOwner<Character, PlayerInventoryContainer>
+    public class PlayerInventoryContainer : InventoryContainer
     {
         public Character Owner { get; set; }
-
         protected PlayerInventoryContainer() {}
 
         public PlayerInventoryContainer(int maxSlots) : base(maxSlots)

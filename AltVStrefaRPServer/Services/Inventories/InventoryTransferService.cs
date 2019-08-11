@@ -15,13 +15,14 @@ namespace AltVStrefaRPServer.Services.Inventories
         }
 
         public async Task<InventoryStackResponse> StackItemBetweenInventoriesAsync(IInventoryContainer source, IInventoryContainer receiver, 
-            int itemToStackFromId, int itemToStackId, bool saveToDatabse = false)
+            int itemToStackFromId, int itemToStackId)
         {
             var response = new InventoryStackResponse(type: InventoryStackResponseType.ItemsNotFound);
             if (!source.HasItem(itemToStackFromId, out var itemToStackFrom) || !receiver.HasItem(itemToStackId, out var itemToStack))
                 return response;
 
-            return await source.StackItemAsync(itemToStackFrom, itemToStack, saveToDatabse, _inventoryDatabaseService);
+            return response;
+            //return await source.StackItemAsync(itemToStackFrom, itemToStack, _inventoryDatabaseService);
 
             //if (!InventoriesHelper.AreItemsStackable(itemToStackFrom, itemToStack)) return InventoryStackResponse.ItemsNotStackable;
 
@@ -43,7 +44,7 @@ namespace AltVStrefaRPServer.Services.Inventories
             var addItemResponse = await receiver.AddItemAsync(itemToTransfer.Item, quantity, _inventoryDatabaseService).ConfigureAwait(false);
             if (addItemResponse.AnyChangesMade) return;
 
-            var removeItemResponse = await source.RemoveItemAsync(itemToTransfer, addItemResponse.ItemsAddedCount, true, _inventoryDatabaseService).ConfigureAwait(false);
+            var removeItemResponse = await source.RemoveItemAsync(itemToTransfer, addItemResponse.ItemsAddedCount, _inventoryDatabaseService).ConfigureAwait(false);
         }
     }
 }

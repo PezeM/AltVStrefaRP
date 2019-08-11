@@ -132,7 +132,8 @@ namespace AltVStrefaRPServer.Modules.Inventory
 
             if (inventory != null)
             {
-                response = await inventory.StackItemAsync(itemToStackFromId, itemToStackId, false).ConfigureAwait(false);
+                // Temporary no stacking
+                //response = await inventory.StackItemAsync(itemToStackFromId, itemToStackId, _inventoryDatabaseService).ConfigureAwait(false);
             }
 
             await StackItemResponseAsync(player, response).ConfigureAwait(false);
@@ -152,7 +153,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
                 return;
             }
 
-            var response = await _inventoryTransferService.StackItemBetweenInventoriesAsync(inventory, inventoryToStack, itemToStackFromId, itemToStackId, true)
+            var response = await _inventoryTransferService.StackItemBetweenInventoriesAsync(inventory, inventoryToStack, itemToStackFromId, itemToStackId)
                 .ConfigureAwait(false);
             await StackItemResponseAsync(player, response).ConfigureAwait(false);
         }
@@ -160,7 +161,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
         public async Task InventoryRemoveItemAsync(IPlayer player, int id, int amount)
         {
             if (!player.TryGetCharacter(out var character)) return;
-            var response = await character.Inventory.RemoveItemAsync(id, amount, true, _inventoryDatabaseService);
+            var response = await character.Inventory.RemoveItemAsync(id, amount, _inventoryDatabaseService);
             switch (response)
             {
                 case InventoryRemoveResponse.ItemRemovedCompletly:
@@ -188,7 +189,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
             // Make it possible to decrease dropped item quantity - also decrease networking entity count
             if (!player.TryGetCharacter(out var character)) return;
             if (!_inventoriesManager.TryGetDroppedItem(networkItemId, droppedItemId, out var droppedItem)) return;
-            var response = await character.Inventory.AddItemAsync(droppedItem.Item, droppedItem.Count, _inventoryDatabaseService, player);
+            var response = await character.Inventory.AddItemAsync(droppedItem.Item, droppedItem.Count, _inventoryDatabaseService);
             if (!response.AnyChangesMade)
             {
                 await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie udało się podnieść przedmiotu");

@@ -1,23 +1,41 @@
-﻿using System.Threading.Tasks;
-using AltV.Net.Async;
-using AltV.Net.Data;
-using AltV.Net.Elements.Entities;
-using AltVStrefaRPServer.Models.Interfaces.Managers;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
 using AltVStrefaRPServer.Models.Inventory.Interfaces;
 using AltVStrefaRPServer.Models.Inventory.Items;
 using AltVStrefaRPServer.Models.Inventory.Responses;
-using AltVStrefaRPServer.Modules.Inventory;
 using AltVStrefaRPServer.Services.Inventories;
 
 namespace AltVStrefaRPServer.Models.Inventory
 {
-    public abstract class InventoryContainer : SlotInventory, IInventoryContainer
+    public abstract class InventoryContainer: Inventory, IInventoryContainer
     {
-        protected InventoryContainer() {}
+        public int MaxSlots { get; protected set; }
 
-        public InventoryContainer(int maxSlots) : base(maxSlots) {}
+        public bool HasEmptySlots() => _items.Count < MaxSlots;
 
-        public virtual async Task<AddItemResponse> AddItemAsync(BaseItem itemToAdd, int amount, IInventoryDatabaseService inventoryDatabaseService, IPlayer player = null)
+        protected InventoryContainer(){}
+
+        public InventoryContainer(int maxSlots) : base()
+        {
+            MaxSlots = maxSlots;
+        }
+
+        public bool TryGetInventoryItemNotFullyStacked(BaseItem item, out InventoryItem inventoryItem)
+        {
+            inventoryItem = _items.FirstOrDefault(i => i.Item.GetType() == item.GetType() && i.Quantity < item.StackSize);
+            return inventoryItem != null;
+        }
+
+        public int CalculateNumberOfItemsToAdd(BaseItem itemToAdd, int amount, InventoryItem item)
+        {
+            var maxQuantity = itemToAdd.StackSize - item.Quantity;
+            return Math.Min(amount, maxQuantity);
+        }
+
+        public int CalculateAmountOfItemsToAdd(BaseItem itemToAdd, int amount) => Math.Min(amount, itemToAdd.StackSize);
+
+        public virtual async Task<AddItemResponse> AddItemAsync(BaseItem itemToAdd, int amount, IInventoryDatabaseService inventoryDatabaseService)
         {
             var response = new AddItemResponse(0, false);
 
@@ -29,8 +47,6 @@ namespace AltVStrefaRPServer.Models.Inventory
                     item.AddToQuantity(toAdd);
                     response.ItemsAddedCount += toAdd;
                     amount -= toAdd;
-                    // Update item quantity
-                    player?.EmitLocked("updateInventoryItemQuantity", item.Id, item.Quantity);
                 }
                 else
                 {
@@ -60,97 +76,22 @@ namespace AltVStrefaRPServer.Models.Inventory
             if (response.AddedNewItem)
             {
                 await inventoryDatabaseService.UpdateInventoryAsync(this);
-                player?.EmitLocked("inventoryAddNewItems", response.NewItems);
             }
 
             return response;
         }
 
-        public virtual async ValueTask<InventoryRemoveResponse> RemoveItemAsync(int id, int amount, bool saveToDatabase = false, 
-            IInventoryDatabaseService inventoryDatabaseService = null)
+        protected int GetFreeSlot()
         {
-            if (!HasItem(id, out var item)) return InventoryRemoveResponse.ItemNotFound;
-            return await RemoveItemAsync(item, amount, saveToDatabase, inventoryDatabaseService);
-        }
-
-        public virtual async ValueTask<InventoryRemoveResponse> RemoveItemAsync(InventoryItem item, int amount, bool saveToDatabase = false,
-            IInventoryDatabaseService inventoryDatabaseService = null)
-        {
-            if (item.Quantity < amount) return InventoryRemoveResponse.NotEnoughItems;
-            item.RemoveQuantity(amount);
-            if (item.Quantity <= 0)
+            var freeSlots = Enumerable.Range(0, MaxSlots - 1).ToList();
+            for (var i = 0; i < _items.Count; i++)
             {
-                _items.Remove(item);
-
-                if (!saveToDatabase)
-                    return InventoryRemoveResponse.ItemRemovedCompletly;
-
-                if (inventoryDatabaseService != null)
-                    await inventoryDatabaseService.RemoveItemAsync(item);
-
-                return InventoryRemoveResponse.ItemRemovedCompletly;
+                if (freeSlots.Contains(_items[i].SlotId))
+                {
+                    freeSlots.Remove(_items[i].SlotId);
+                }
             }
-
-            return InventoryRemoveResponse.ItemRemoved;
-        }
-
-        public virtual async Task<InventoryDropResponse> DropItemAsync(int itemId, int amount, Position position, IInventoriesManager inventoriesManager, 
-            IInventoryDatabaseService inventoryDatabaseService)
-        {
-            if (!HasItem(itemId, out var item)) return InventoryDropResponse.ItemNotFound;
-            return await DropItemAsync(item, amount, position, inventoriesManager, inventoryDatabaseService);
-        }
-
-        public virtual async Task<InventoryDropResponse> DropItemAsync(InventoryItem item, int amount, Position position, IInventoriesManager inventoriesManager, 
-            IInventoryDatabaseService inventoryDatabaseService)
-        {
-            if (!(item.Item is IDroppable droppable)) return InventoryDropResponse.ItemNotDroppable;
-            if (await RemoveItemAsync(item, amount, true, inventoryDatabaseService) == InventoryRemoveResponse.NotEnoughItems) 
-                return InventoryDropResponse.NotEnoughItems;
-
-            var newBaseItem = BaseItem.ShallowClone(item.Item);
-            if (!await inventoriesManager.AddDroppedItemAsync(new DroppedItem(amount, droppable.Model, newBaseItem, position)))
-                return InventoryDropResponse.ItemAlreadyDropped;
-            return InventoryDropResponse.DroppedItem;
-        }
-
-        public virtual async Task<InventoryStackResponse> StackItemAsync(int itemToStackFromId, int itemToStackId, bool saveToDatabase = false, 
-            IInventoryDatabaseService inventoryDatabaseService = null)
-        {
-            var response = new InventoryStackResponse(type: InventoryStackResponseType.ItemsNotFound);
-            if (!HasItem(itemToStackFromId, out var itemToStackFrom) || !HasItem(itemToStackId, out var itemToStack))
-                return response;
-
-            return await StackItemAsync(itemToStackFrom, itemToStack, saveToDatabase, inventoryDatabaseService);
-        }
-
-        public virtual async Task<InventoryStackResponse> StackItemAsync(InventoryItem itemToStackFrom, InventoryItem itemToStack,
-            bool saveToDatabase = false, IInventoryDatabaseService inventoryDatabaseService = null)
-        {
-            var response = new InventoryStackResponse(type: InventoryStackResponseType.ItemsStacked);
-            if (!InventoriesHelper.AreItemsStackable(itemToStackFrom, itemToStack))
-            {
-                response.Type = InventoryStackResponseType.ItemsNotStackable;
-                return response;
-            }
-
-            var toAdd = CalculateNumberOfItemsToAdd(itemToStack.Item, itemToStackFrom.Quantity, itemToStack);
-            if (toAdd <= 0)
-            {
-                response.Type = InventoryStackResponseType.ItemsNotFound;
-                return response;
-            }
-
-            if (await RemoveItemAsync(itemToStackFrom, toAdd, saveToDatabase, inventoryDatabaseService) == InventoryRemoveResponse.NotEnoughItems)
-            {
-                response.Type = InventoryStackResponseType.ItemsNotFound;
-                return response;
-            }
-
-            response.AmountOfStackedItems += toAdd;
-            itemToStack.AddToQuantity(toAdd);
-
-            return response;
+            return freeSlots.First();
         }
     }
 }

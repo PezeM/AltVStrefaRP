@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AltV.Net.Data;
+using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Models.Inventory.Interfaces;
 using AltVStrefaRPServer.Models.Inventory.Items;
 using AltVStrefaRPServer.Models.Inventory.Responses;
@@ -10,7 +12,7 @@ namespace AltVStrefaRPServer.Models.Inventory
 {
     public abstract class Inventory : IInventory
     {
-        public int Id { get; set; }
+        public int Id { get; protected set; }
 
         public IReadOnlyCollection<InventoryItem> Items => _items;
         protected List<InventoryItem> _items;
@@ -53,8 +55,11 @@ namespace AltVStrefaRPServer.Models.Inventory
             return _items.FirstOrDefault(i => i.Item is TItem) != null;
         }
 
-        // I don't know if it should be there. Propably yes but not sure yet.
-        // Maybe make this as low level function and create higher function in inventory container or some shit
+        public void AddItem(InventoryItem item)
+        {
+            _items.Add(item);
+        }
+
         public InventoryRemoveResponse RemoveItem(int id, int amount)
         {
             if (!HasItem(id, out var item)) return InventoryRemoveResponse.ItemNotFound;
@@ -87,6 +92,26 @@ namespace AltVStrefaRPServer.Models.Inventory
 
             await inventoryDatabaseService.UpdateInventoryAsync(this);
             return InventoryRemoveResponse.ItemRemovedCompletly;
+        }
+
+        public async Task<InventoryDropResponse> DropItemAsync(int itemId, int amount, Position position, IInventoriesManager inventoriesManager,
+            IInventoryDatabaseService inventoryDatabaseService)
+        {
+            if (!HasItem(itemId, out var item)) return InventoryDropResponse.ItemNotFound;
+            return await DropItemAsync(item, amount, position, inventoriesManager, inventoryDatabaseService);
+        }
+
+        public async Task<InventoryDropResponse> DropItemAsync(InventoryItem item, int amount, Position position, IInventoriesManager inventoriesManager, 
+            IInventoryDatabaseService inventoryDatabaseService)
+        {
+            if (!(item.Item is IDroppable droppable)) return InventoryDropResponse.ItemNotDroppable;
+            if (await RemoveItemAsync(item, amount, inventoryDatabaseService) == InventoryRemoveResponse.NotEnoughItems) 
+                return InventoryDropResponse.NotEnoughItems;
+
+            var newBaseItem = BaseItem.ShallowClone(item.Item);
+            if (!await inventoriesManager.AddDroppedItemAsync(new DroppedItem(amount, droppable.Model, newBaseItem, position)))
+                return InventoryDropResponse.ItemAlreadyDropped;
+            return InventoryDropResponse.DroppedItem;
         }
     }
 }

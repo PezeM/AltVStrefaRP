@@ -52,6 +52,7 @@ namespace AltVStrefaRPServer.Services.Characters.Customization
                 BankAccount = null,
                 Age = age,
                 Inventory = new PlayerInventoryContainer(18),
+                Equipment = new PlayerEquipment(),
                 Gender = (Gender)gender,
                 Dimension = 0,
                 X = AppSettings.Current.ServerConfig.SpawnPosition.X,

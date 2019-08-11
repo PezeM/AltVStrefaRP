@@ -3,11 +3,10 @@ using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Interfaces;
 using AltVStrefaRPServer.Models.Inventory;
-using AltVStrefaRPServer.Models.Inventory.Interfaces;
 
 namespace AltVStrefaRPServer.Models.Vehicles
 {
-    public class VehicleModel : IPosition, IHasInventory<VehicleInventoryContainer>
+    public class VehicleModel : IPosition
     {
         public int Id { get; set; }
         public int Owner { get; set; }

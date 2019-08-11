@@ -6,12 +6,11 @@ using AltVStrefaRPServer.Models.Businesses;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Fractions;
 using AltVStrefaRPServer.Models.Inventory;
-using AltVStrefaRPServer.Models.Inventory.Interfaces;
 using AltVStrefaRPServer.Models.Interfaces;
 
 namespace AltVStrefaRPServer.Models
 {
-    public class Character : IMoney, IPosition, IHasInventory<PlayerInventoryContainer>
+    public class Character : IMoney, IPosition
     {
         public int Id { get; set; }
         public int AccountId { get; set; }
