@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using AltV.Net.Async;
 using AltVStrefaRPServer.Models.Inventory.Responses;
 using AltVStrefaRPServer.Services.Inventories;
 
@@ -39,6 +40,17 @@ namespace AltVStrefaRPServer.Models.Inventory
         {
             if (!HasItem(itemId, out var item)) return InventoryUseResponse.ItemNotFound;
             return await UseItemAsync(character, item, inventoryDatabaseService);
+        }
+
+        protected override void OnNewItemStacked(int itemId, int quantity)
+        {
+            Owner?.Player?.EmitLocked("updateInventoryItemQuantity", itemId, quantity);
+        }
+
+        protected override Task OnAddedNewItemsAsync(IInventoryDatabaseService inventoryDatabaseService, AddItemResponse response)
+        {
+            Owner?.Player?.EmitLocked("inventoryAddNewItems", response.NewItems);
+            return base.OnAddedNewItemsAsync(inventoryDatabaseService, response);
         }
     }
 }
