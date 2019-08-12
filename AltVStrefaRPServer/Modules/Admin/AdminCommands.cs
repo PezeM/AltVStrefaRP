@@ -109,7 +109,6 @@ namespace AltVStrefaRPServer.Modules.Admin
             _chatHandler.RegisterCommand("useItem", async (player, args) => await UseItemAsync(player, args));
             _chatHandler.RegisterCommand("removeItem", async (player, args) => await RemoveItemAsync(player, args));
             _chatHandler.RegisterCommand("lookupInventory", LookupInventory);
-            _chatHandler.RegisterCommand("testEquipItem", TestEquipItem);
             _chatHandler.RegisterCommand("testSave", TestSave);
         }
 
@@ -125,7 +124,7 @@ namespace AltVStrefaRPServer.Modules.Admin
                       {
                           if (character.Player != null && character.Player.Exists)
                           {
-                              _characterDatabaseService.UpdateCharacterAsync(character);
+                              _ = _characterDatabaseService.UpdateCharacterAsync(character);
                           }
                       }
                   }
@@ -526,15 +525,6 @@ namespace AltVStrefaRPServer.Modules.Admin
 
             var inventory = JsonConvert.SerializeObject(vehicle.Inventory.Items, Formatting.Indented);
             Alt.Log(inventory);
-        }
-
-        private void TestEquipItem(IPlayer player, string[] args)
-        {
-            if (args == null || args.Length < 1) return;
-            if (!player.TryGetCharacter(out var charatcer)) return;
-            if (!int.TryParse(args[0], out var itemId)) return;
-
-            charatcer.Equipment.EquipItem(itemId);
         }
     }
 }
