@@ -2,6 +2,7 @@
 using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Models.Inventory.Interfaces;
 using AltVStrefaRPServer.Models.Inventory.Responses;
+using AltVStrefaRPServer.Modules.Inventory;
 
 namespace AltVStrefaRPServer.Services.Inventories
 {
@@ -14,13 +15,23 @@ namespace AltVStrefaRPServer.Services.Inventories
             _inventoryDatabaseService = inventoryDatabaseService;
         }
 
+        public InventoryStackResponse StackItemBetweenInventories(IInventoryContainer source, IInventoryContainer receiver,
+            int itemToStackFromId, int itemToStackId)
+        {
+            var response = new InventoryStackResponse(type: InventoryStackResponseType.ItemsNotFound);
+            if (!source.HasItem(itemToStackFromId, out var itemToStackFrom) || !receiver.HasItem(itemToStackId, out var itemToStack))
+                return response;
+            
+            return source.StackItem(itemToStackFrom, itemToStack);
+        }
+
         public async Task<InventoryStackResponse> StackItemBetweenInventoriesAsync(IInventoryContainer source, IInventoryContainer receiver, 
             int itemToStackFromId, int itemToStackId)
         {
             var response = new InventoryStackResponse(type: InventoryStackResponseType.ItemsNotFound);
             if (!source.HasItem(itemToStackFromId, out var itemToStackFrom) || !receiver.HasItem(itemToStackId, out var itemToStack))
                 return response;
-
+            
             return await source.StackItemAsync(itemToStackFrom, itemToStack, _inventoryDatabaseService);
         }
 

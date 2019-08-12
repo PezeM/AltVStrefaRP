@@ -15,6 +15,7 @@
     public enum InventoryStackResponseType
     {
         ItemsNotFound,
+        NotEnoughItems,
         ItemsStacked,
         ItemsNotStackable,
     }

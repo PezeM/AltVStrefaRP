@@ -22,16 +22,19 @@ namespace AltVStrefaRPServer.Modules.Inventory
         private readonly INotificationService _notificationService;
         private readonly IVehiclesManager _vehiclesManager;
         private readonly IInventoryTransferService _inventoryTransferService;
+        private readonly IInventoryEquipService _inventoryEquipService;
         private readonly ILogger<InventoryHandler> _logger;
 
         public InventoryHandler(IInventoriesManager inventoriesManager, IInventoryDatabaseService inventoryDatabaseService, INotificationService notificationService, 
-            IVehiclesManager vehiclesManager, IInventoryTransferService inventoryTransferService, ILogger<InventoryHandler> logger)
+            IVehiclesManager vehiclesManager, IInventoryTransferService inventoryTransferService, IInventoryEquipService inventoryEquipService,
+            ILogger<InventoryHandler> logger)
         {
             _inventoriesManager = inventoriesManager;
             _inventoryDatabaseService = inventoryDatabaseService;
             _notificationService = notificationService;
             _vehiclesManager = vehiclesManager;
             _inventoryTransferService = inventoryTransferService;
+            _inventoryEquipService = inventoryEquipService;
             _logger = logger;
 
             Alt.On<IStrefaPlayer, IMyVehicle, bool>("OpenVehicleInventory", OpenVehicleInventory);
@@ -43,17 +46,33 @@ namespace AltVStrefaRPServer.Modules.Inventory
             AltAsync.On<IPlayer, int, int, Task>("PickupDroppedItem", PickupDroppedItemAsync);
             Alt.On<IStrefaPlayer, int, int, int>("InventoryTryStackItem", InventoryTryStackItem);
             AltAsync.On<IStrefaPlayer, int, int, int, int, Task>("InventoryTryStackItemBetweenInventories", InventoryTryStackItemBetweenInventoriesAsync);
-            Alt.On<IStrefaPlayer, int, int, int, int>("InventoryTryEquipItemAndUnequipItem", Test);
+            AltAsync.On<IStrefaPlayer, int, int, int, Task>("InventoryTryEquipItem", InventoryTryEquipItemAsync);
         }
 
-        private void Test(IStrefaPlayer player, int inventoryId, int itemToEquipId, int equipmentInventoryId, int itemToUnequipId)
+        private async Task InventoryTryEquipItemAsync(IStrefaPlayer player, int selectedInventoryId, int playerEquipmentId, int itemToEquipId)
         {
             if (!player.TryGetCharacter(out var character)) return;
 
-            // Equipping items should be async propably called from some service 
-            var inventory = InventoriesHelper.GetCorrectInventory(player, character, inventoryId);
-            character.Equipment.EquipItem(itemToEquipId);
-            character.Equipment.UnequipItem(itemToUnequipId);
+            var inventory = InventoriesHelper.GetCorrectInventory(player, character, selectedInventoryId);
+            var response = await _inventoryEquipService.EquipItemAsync(character, inventory, playerEquipmentId, itemToEquipId);
+
+            switch (response)
+            {
+                case InventoryEquipItemResponse.EquipmentInventoryNotFound:
+                    player.EmitLocked("inventoryTryEquipItemResponse", false);
+                    _logger.LogError("Not found player equipment inventory with ID({playerEquipmentInventoryId}) for character {characterName} CID({characterId})",
+                                        playerEquipmentId,character.GetFullName(), character.Id);
+                    break;
+                case InventoryEquipItemResponse.CouldntEquipItem:
+                case InventoryEquipItemResponse.ItemNotEquipmentable:
+                case InventoryEquipItemResponse.ItemAlreadyEquippedAtThatSlot:
+                case InventoryEquipItemResponse.ItemNotFound:
+                    player.EmitLocked("inventoryTryEquipItemResponse", false);
+                    break;
+                case InventoryEquipItemResponse.ItemEquipped:
+                    player.EmitLocked("inventoryTryEquipItemResponse", true);
+                    break;
+            }
         }
 
         private void GetPlayerInventory(IPlayer player)

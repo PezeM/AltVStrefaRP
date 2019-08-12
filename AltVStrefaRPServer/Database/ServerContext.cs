@@ -49,6 +49,7 @@ namespace AltVStrefaRPServer.Database
 
         // Inventory
         public DbSet<Inventory> Inventories { get; set; }
+        public DbSet<PlayerEquipment> PlayerEquipments { get; set; }
         public DbSet<PlayerInventoryContainer> PlayerInventories { get; set; }
         public DbSet<VehicleInventoryContainer> VehicleInventories { get; set; }
         public DbSet<BaseItem> Items { get; set; }
