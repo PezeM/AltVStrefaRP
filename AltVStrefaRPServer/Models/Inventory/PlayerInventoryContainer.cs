@@ -23,23 +23,15 @@ namespace AltVStrefaRPServer.Models.Inventory
         public InventoryUseResponse UseItem(Character character, InventoryItem item, int quantity = 1)
         {
             if (!item.Item.UseItem(character)) return InventoryUseResponse.ItemNotUsed;
-            item.RemoveQuantity(quantity);
-            if (item.Quantity <= 0)
-            {
-                _items.Remove(item);
-            }
+            RemoveItem(item, quantity);
             return InventoryUseResponse.ItemUsed;
         }
 
-        public async Task<InventoryUseResponse> UseItemAsync(Character character, InventoryItem item, IInventoryDatabaseService inventoryDatabaseService)
+        public async Task<InventoryUseResponse> UseItemAsync(Character character, InventoryItem item, IInventoryDatabaseService inventoryDatabaseService, 
+            int quantity = 1)
         {
             if (!item.Item.UseItem(character)) return InventoryUseResponse.ItemNotUsed;
-            item.RemoveQuantity(1);
-            if (item.Quantity <= 0)
-            {
-                _items.Remove(item);
-                await inventoryDatabaseService.RemoveItemAsync(item);
-            }
+            await RemoveItemAsync(item, quantity, inventoryDatabaseService).ConfigureAwait(false);
             return InventoryUseResponse.ItemUsed;
         }
 

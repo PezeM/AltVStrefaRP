@@ -9,6 +9,6 @@ namespace AltVStrefaRPServer.Services.Inventories
     {
         Task<InventoryStackResponse> StackItemBetweenInventoriesAsync(IInventoryContainer source, IInventoryContainer receiver,
             int itemToStackFromId, int itemToStackId);
-        Task TransferItemAsync(PlayerInventoryContainer source, PlayerInventoryContainer receiver, InventoryItem itemToTransfer, int quantity);
+        Task<InventoryTransferItemResponse> TransferItemAsync(IInventoryContainer source, IInventoryContainer receiver, InventoryItem itemToTransfer, int quantity);
     }
 }

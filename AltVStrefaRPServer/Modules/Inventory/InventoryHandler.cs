@@ -41,14 +41,19 @@ namespace AltVStrefaRPServer.Modules.Inventory
             AltAsync.On<IStrefaPlayer, int, int, int, Task>("InventoryDropItem", InventoryDropItemAsync);
             AltAsync.On<IPlayer, int, int, Task>("InventoryRemoveItem", InventoryRemoveItemAsync);
             AltAsync.On<IPlayer, int, int, Task>("PickupDroppedItem", PickupDroppedItemAsync);
-            AltAsync.On<IStrefaPlayer, int, int,int, Task>("InventoryTryStackItem", InventoryTryStackItemAsync);
+            Alt.On<IStrefaPlayer, int, int, int>("InventoryTryStackItem", InventoryTryStackItem);
             AltAsync.On<IStrefaPlayer, int, int, int, int, Task>("InventoryTryStackItemBetweenInventories", InventoryTryStackItemBetweenInventoriesAsync);
             Alt.On<IStrefaPlayer, int, int, int, int>("InventoryTryEquipItemAndUnequipItem", Test);
         }
 
         private void Test(IStrefaPlayer player, int inventoryId, int itemToEquipId, int equipmentInventoryId, int itemToUnequipId)
         {
-            throw new System.NotImplementedException();
+            if (!player.TryGetCharacter(out var character)) return;
+
+            // Equipping items should be async propably called from some service 
+            var inventory = InventoriesHelper.GetCorrectInventory(player, character, inventoryId);
+            character.Equipment.EquipItem(itemToEquipId);
+            character.Equipment.UnequipItem(itemToUnequipId);
         }
 
         private void GetPlayerInventory(IPlayer player)
@@ -123,7 +128,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
             await DropItemResponseAsync(player, itemId, character, response).ConfigureAwait(false);
         }
 
-        private async Task InventoryTryStackItemAsync(IStrefaPlayer player, int inventoryId, int itemToStackFromId, int itemToStackId)
+        private void InventoryTryStackItem(IStrefaPlayer player, int inventoryId, int itemToStackFromId, int itemToStackId)
         {
             if (!player.TryGetCharacter(out var character)) return;
 
@@ -132,11 +137,10 @@ namespace AltVStrefaRPServer.Modules.Inventory
 
             if (inventory != null)
             {
-                // Temporary no stacking
-                //response = await inventory.StackItemAsync(itemToStackFromId, itemToStackId, _inventoryDatabaseService).ConfigureAwait(false);
+                response = inventory.StackItem(itemToStackFromId, itemToStackId);
             }
 
-            await StackItemResponseAsync(player, response).ConfigureAwait(false);
+            StackItemResponse(player, response);
         }
         
         private async Task InventoryTryStackItemBetweenInventoriesAsync(IStrefaPlayer player, int inventoryId, int itemToStackFromId, int itemToStackId, 
@@ -210,6 +214,22 @@ namespace AltVStrefaRPServer.Modules.Inventory
                     break;
                 case InventoryStackResponseType.ItemsNotStackable:
                     await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie można połączyć tych przedmiotów");
+                    break;
+            }
+        }
+
+        private void StackItemResponse(IPlayer player, InventoryStackResponse response)
+        {
+            switch (response.Type)
+            {
+                case InventoryStackResponseType.ItemsStacked:
+                    player.Emit("inventoryStackItemResponse", true, response.AmountOfStackedItems);
+                    break;
+                case InventoryStackResponseType.ItemsNotFound:
+                    _notificationService.ShowErrorNotification(player, "Brak przedmiotu", "Wystąpił błąd i nie znaleziono takiego przedmiotu", 5000);
+                    break;
+                case InventoryStackResponseType.ItemsNotStackable:
+                    _notificationService.ShowErrorNotification(player, "Błąd", "Nie można połączyć tych przedmiotów");
                     break;
             }
         }

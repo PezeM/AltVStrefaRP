@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AltVStrefaRPServer.Models.Inventory.Interfaces;
 using AltVStrefaRPServer.Models.Inventory.Items;
 using AltVStrefaRPServer.Models.Inventory.Responses;
+using AltVStrefaRPServer.Modules.Inventory;
 using AltVStrefaRPServer.Services.Inventories;
 
 namespace AltVStrefaRPServer.Models.Inventory
@@ -35,7 +36,7 @@ namespace AltVStrefaRPServer.Models.Inventory
 
         public int CalculateAmountOfItemsToAdd(BaseItem itemToAdd, int amount) => Math.Min(amount, itemToAdd.StackSize);
 
-        public virtual async Task<AddItemResponse> AddItemAsync(BaseItem itemToAdd, int amount, IInventoryDatabaseService inventoryDatabaseService)
+        public virtual AddItemResponse AddItem(BaseItem itemToAdd, int amount)
         {
             var response = new AddItemResponse(0, false);
 
@@ -47,6 +48,7 @@ namespace AltVStrefaRPServer.Models.Inventory
                     item.AddToQuantity(toAdd);
                     response.ItemsAddedCount += toAdd;
                     amount -= toAdd;
+                    OnNewItemStacked();
                 }
                 else
                 {
@@ -58,13 +60,13 @@ namespace AltVStrefaRPServer.Models.Inventory
                         var newBaseItem = BaseItem.ShallowClone(itemToAdd);
                         var newInventoryItem = new InventoryItem(newBaseItem, toAdd, GetFreeSlot());
                         response.NewItems.Add(newInventoryItem);
-                        _items.Add(newInventoryItem);
+                        AddItem(newInventoryItem);
                     }
                     else
                     {
                         var newInventoryItem = new InventoryItem(itemToAdd, toAdd, GetFreeSlot());
                         response.NewItems.Add(newInventoryItem);
-                        _items.Add(newInventoryItem);
+                        AddItem(newInventoryItem);
                     }
 
                     amount -= toAdd;
@@ -72,11 +74,98 @@ namespace AltVStrefaRPServer.Models.Inventory
                     response.AddedNewItem = true;
                 }
             }
+            return response;
+        }
 
+        public virtual async Task<AddItemResponse> AddItemAsync(BaseItem itemToAdd, int amount, IInventoryDatabaseService inventoryDatabaseService)
+        {
+            var response = AddItem(itemToAdd, amount);
             if (response.AddedNewItem)
             {
-                await inventoryDatabaseService.UpdateInventoryAsync(this);
+                await OnAddedNewItemsAsync(inventoryDatabaseService);
             }
+
+            return response;
+        }
+
+        protected virtual async Task OnAddedNewItemsAsync(IInventoryDatabaseService inventoryDatabaseService)
+        {
+            await inventoryDatabaseService.UpdateInventoryAsync(this);
+        }
+        
+        protected virtual void OnNewItemStacked() {}
+
+        public InventoryStackResponse StackItem(int itemToStackFromId, int itemToStackId)
+        {
+            var response = new InventoryStackResponse(type: InventoryStackResponseType.ItemsNotFound);
+            if (!HasItem(itemToStackFromId, out var itemToStackFrom) || !HasItem(itemToStackId, out var itemToStack))
+                return response;
+
+            return StackItem(itemToStackFrom, itemToStack);
+        }
+
+        public InventoryStackResponse StackItem(InventoryItem itemToStackFrom, InventoryItem itemToStack)
+        {
+            var response = new InventoryStackResponse(type: InventoryStackResponseType.ItemsStacked);
+            if (!InventoriesHelper.AreItemsStackable(itemToStackFrom, itemToStack))
+            {
+                response.Type = InventoryStackResponseType.ItemsNotStackable;
+                return response;
+            }
+
+            var toAdd = CalculateNumberOfItemsToAdd(itemToStack.Item, itemToStackFrom.Quantity, itemToStack);
+            if (toAdd <= 0)
+            {
+                response.Type = InventoryStackResponseType.ItemsNotFound;
+                return response;
+            }
+
+            if (RemoveItem(itemToStackFrom, toAdd) == InventoryRemoveResponse.NotEnoughItems)
+            {
+                response.Type = InventoryStackResponseType.ItemsNotFound;
+                return response;
+            }
+
+            response.AmountOfStackedItems += toAdd;
+            itemToStack.AddToQuantity(toAdd);
+
+            return response;
+        }
+
+        public virtual async Task<InventoryStackResponse> StackItemAsync(int itemToStackFromId, int itemToStackId, IInventoryDatabaseService inventoryDatabaseService)
+        {
+            var response = new InventoryStackResponse(type: InventoryStackResponseType.ItemsNotFound);
+            if (!HasItem(itemToStackFromId, out var itemToStackFrom) || !HasItem(itemToStackId, out var itemToStack))
+                return response;
+
+            return await StackItemAsync(itemToStackFrom, itemToStack, inventoryDatabaseService);
+        }
+
+        public virtual async Task<InventoryStackResponse> StackItemAsync(InventoryItem itemToStackFrom, InventoryItem itemToStack,
+            IInventoryDatabaseService inventoryDatabaseService)
+        {
+            var response = new InventoryStackResponse(type: InventoryStackResponseType.ItemsStacked);
+            if (!InventoriesHelper.AreItemsStackable(itemToStackFrom, itemToStack))
+            {
+                response.Type = InventoryStackResponseType.ItemsNotStackable;
+                return response;
+            }
+
+            var toAdd = CalculateNumberOfItemsToAdd(itemToStack.Item, itemToStackFrom.Quantity, itemToStack);
+            if (toAdd <= 0)
+            {
+                response.Type = InventoryStackResponseType.ItemsNotFound;
+                return response;
+            }
+
+            if (await RemoveItemAsync(itemToStackFrom, toAdd, inventoryDatabaseService) == InventoryRemoveResponse.NotEnoughItems)
+            {
+                response.Type = InventoryStackResponseType.ItemsNotFound;
+                return response;
+            }
+
+            response.AmountOfStackedItems += toAdd;
+            itemToStack.AddToQuantity(toAdd);
 
             return response;
         }
