@@ -3,6 +3,7 @@ using AltVStrefaRPServer.Models.Businesses;
 using AltVStrefaRPServer.Models.Fractions;
 using AltVStrefaRPServer.Models.Fractions.Permissions;
 using AltVStrefaRPServer.Models.Inventory;
+using AltVStrefaRPServer.Models.Inventory.Interfaces;
 using AltVStrefaRPServer.Models.Inventory.Items;
 using AltVStrefaRPServer.Models.Vehicles;
 using AltVStrefaRPServer.Modules.Vehicle;
@@ -50,10 +51,13 @@ namespace AltVStrefaRPServer.Database
         // Inventory
         public DbSet<Inventory> Inventories { get; set; }
         public DbSet<PlayerEquipment> PlayerEquipments { get; set; }
+        public DbSet<InventoryContainer> InventoryContainers { get; set; }
         public DbSet<PlayerInventoryContainer> PlayerInventories { get; set; }
         public DbSet<VehicleInventoryContainer> VehicleInventories { get; set; }
         public DbSet<BaseItem> Items { get; set; }
-        public DbSet<Equipmentable> Equipmentables { get; set; }
+        public DbSet<Equipmentable> EquipmentableItems { get; set; }
+        public DbSet<Consumable> ConsumableItems { get; set; }
+        public DbSet<DrinkItem> DrinkItems { get; set; }
         public DbSet<FoodItem> FoodItems { get; set; }
         public DbSet<WeaponItem> WeaponItems { get; set; }
         public DbSet<ClothItem> Clothes { get; set; }

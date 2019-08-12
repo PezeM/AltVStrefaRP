@@ -96,6 +96,7 @@ namespace AltVStrefaRPServer
             services.AddTransient<IFractionFactoryService, FractionFactoryService>();
             services.AddTransient<IInventoryDatabaseService, InventoryDatabaseService>();
             services.AddTransient<IInventoryTransferService, InventoryTransferService>();
+            services.AddTransient<IInventoryEquipService, InventoryEquipService>();
 
             services.AddTransient<PlayerConnect>();
             services.AddTransient<PlayerDisconnect>();
@@ -132,7 +133,7 @@ namespace AltVStrefaRPServer
             ServiceProvider = services.BuildServiceProvider();
         }
 
-        private static void AddLogging(ServiceCollection services, ElasticsearchOptions options)
+        private void AddLogging(ServiceCollection services, ElasticsearchOptions options)
         {
             services.AddLogging(builder =>
             {

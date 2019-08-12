@@ -116,8 +116,8 @@ namespace AltVStrefaRPServer.Modules.Admin
         {
             var startTime = Time.GetTimestampMs();
             int savedCharacters = 0;
-            _ = Task.Run(() =>
-              {
+            Task.Run(() =>
+             {
                   foreach (var character in CharacterManager.Instance.GetAllCharacters())
                   {
                       lock (character)

@@ -6,6 +6,7 @@ using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
+using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Models.Inventory.Responses;
 using AltVStrefaRPServer.Models.Vehicles;
 using AltVStrefaRPServer.Services;
@@ -54,7 +55,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
             if (!player.TryGetCharacter(out var character)) return;
 
             var inventory = InventoriesHelper.GetCorrectInventory(player, character, selectedInventoryId);
-            var response = await _inventoryEquipService.EquipItemAsync(character, inventory, playerEquipmentId, itemToEquipId);
+            var response = await _inventoryEquipService.EquipItemAsync(character, (InventoryContainer)inventory, playerEquipmentId, itemToEquipId);
 
             switch (response)
             {

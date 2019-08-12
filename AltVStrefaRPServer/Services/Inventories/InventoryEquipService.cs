@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
+using AltV.Net;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models;
+using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Models.Inventory.Interfaces;
 using AltVStrefaRPServer.Models.Inventory.Responses;
 
@@ -16,7 +19,7 @@ namespace AltVStrefaRPServer.Services.Inventories
             _factory = factory;
         }
 
-        public async Task<InventoryEquipItemResponse> EquipItemAsync(Character character, IInventoryContainer inventory, int playerEquipmentId, int itemToEquip)
+        public async Task<InventoryEquipItemResponse> EquipItemAsync(Character character, InventoryContainer inventory, int playerEquipmentId, int itemToEquip)
         {
             if (character.Equipment?.Id != playerEquipmentId)
                 return InventoryEquipItemResponse.EquipmentInventoryNotFound;
@@ -24,7 +27,7 @@ namespace AltVStrefaRPServer.Services.Inventories
             return await EquipItemAsync(inventory, character.Equipment, itemToEquip);
         }
 
-        public async Task<InventoryEquipItemResponse> EquipItemAsync(IInventoryContainer inventory, IPlayerEquipment playerEquipment, int itemToEquipId)
+        public async Task<InventoryEquipItemResponse> EquipItemAsync(InventoryContainer inventory, PlayerEquipment playerEquipment, int itemToEquipId)
         {
             using (var context = _factory.Invoke())
             {
@@ -35,14 +38,14 @@ namespace AltVStrefaRPServer.Services.Inventories
                     var response = playerEquipment.EquipItem(itemToEquip);
                     if (response != InventoryEquipItemResponse.ItemEquipped) return response;
 
-                    context.Update(playerEquipment);
-                    await context.SaveChangesAsync();
-
                     if (inventory.RemoveItem(itemToEquip, 1) == InventoryRemoveResponse.ItemRemovedCompletly)
                     {
-                        context.Update(inventory);
+                        context.InventoryContainers.Update(inventory);
                         await context.SaveChangesAsync();
                     }
+
+                    context.PlayerEquipments.Update(playerEquipment);
+                    await context.SaveChangesAsync();
 
                     transaction.Commit();
                     return InventoryEquipItemResponse.ItemEquipped;
