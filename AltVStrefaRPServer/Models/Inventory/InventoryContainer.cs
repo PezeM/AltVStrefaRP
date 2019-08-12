@@ -48,7 +48,7 @@ namespace AltVStrefaRPServer.Models.Inventory
                     item.AddToQuantity(toAdd);
                     response.ItemsAddedCount += toAdd;
                     amount -= toAdd;
-                    OnNewItemStacked();
+                    OnNewItemStacked(item.Id, item.Quantity);
                 }
                 else
                 {
@@ -82,18 +82,18 @@ namespace AltVStrefaRPServer.Models.Inventory
             var response = AddItem(itemToAdd, amount);
             if (response.AddedNewItem)
             {
-                await OnAddedNewItemsAsync(inventoryDatabaseService);
+                await OnAddedNewItemsAsync(inventoryDatabaseService, response);
             }
 
             return response;
         }
 
-        protected virtual async Task OnAddedNewItemsAsync(IInventoryDatabaseService inventoryDatabaseService)
+        protected virtual async Task OnAddedNewItemsAsync(IInventoryDatabaseService inventoryDatabaseService, AddItemResponse response)
         {
             await inventoryDatabaseService.UpdateInventoryAsync(this);
         }
         
-        protected virtual void OnNewItemStacked() {}
+        protected virtual void OnNewItemStacked(int itemId, int quantity) {}
 
         public InventoryStackResponse StackItem(int itemToStackFromId, int itemToStackId)
         {
