@@ -64,7 +64,7 @@ namespace StrefaRPServer.UnitTests.Modules.Inventory
             await _inventoryContainer.AddNewInventoryItemAsync(_itemToEquip, _inventoryDatabaseService);
 
             var response = await _inventoryEquipService.EquipItemAsync(_inventoryContainer, _playerEquipment, _itemToEquip.Id);
-            
+
             Assert.That(response, Is.EqualTo(InventoryEquipItemResponse.ItemEquipped));
             Assert.That(_inventoryContainer.Items.Contains(_itemToEquip), Is.False);
         }
@@ -98,6 +98,74 @@ namespace StrefaRPServer.UnitTests.Modules.Inventory
             var response = await _inventoryEquipService.EquipItemAsync(_character, _inventoryContainer, wrongCharacterEquipmentId, _itemToEquip.Id);
 
             Assert.That(response, Is.EqualTo(InventoryEquipItemResponse.EquipmentInventoryNotFound));
+        }
+
+        [Test]
+        public async Task UnequipingItemUnequipItem()
+        {
+            await _inventoryContainer.AddNewInventoryItemAsync(_itemToEquip, _inventoryDatabaseService);
+            await _inventoryEquipService.EquipItemAsync(_inventoryContainer, _playerEquipment, _itemToEquip.Id);
+
+            var response = await _inventoryEquipService.UnequipItemAsync(_inventoryContainer, _playerEquipment, _itemToEquip.Id);
+
+            Assert.That(response, Is.EqualTo(InventoryUnequipItemResponse.ItemUnequipped));
+        }
+
+        [Test]
+        public async Task UnequipingItemRemovesItFromEquippedItems()
+        {
+            await _inventoryContainer.AddNewInventoryItemAsync(_itemToEquip, _inventoryDatabaseService);
+            await _inventoryEquipService.EquipItemAsync(_inventoryContainer, _playerEquipment, _itemToEquip.Id);
+
+            await _inventoryEquipService.UnequipItemAsync(_inventoryContainer, _playerEquipment, _itemToEquip.Id);
+
+            Assert.That(_playerEquipment.HasItem(_itemToEquip), Is.False);
+            Assert.That(_playerEquipment.EquippedItems.ContainsValue(_itemToEquip), Is.False);
+        }
+
+        [Test]
+        public async Task UnequipingItemAddItemToInventoryContainer()
+        {
+            await _inventoryContainer.AddNewInventoryItemAsync(_itemToEquip, _inventoryDatabaseService);
+            await _inventoryEquipService.EquipItemAsync(_inventoryContainer, _playerEquipment, _itemToEquip.Id);
+
+            await _inventoryEquipService.UnequipItemAsync(_inventoryContainer, _playerEquipment, _itemToEquip.Id);
+
+            Assert.That(_inventoryContainer.HasItem(_itemToEquip));
+        }
+
+        [Test]
+        public async Task UnequipingItemChangesItemSlot()
+        {
+            await _inventoryContainer.AddNewInventoryItemAsync(_itemToEquip, _inventoryDatabaseService);
+            await _inventoryEquipService.EquipItemAsync(_inventoryContainer, _playerEquipment, _itemToEquip.Id);
+            var currentSlot = _itemToEquip.SlotId;
+
+            await _inventoryEquipService.UnequipItemAsync(_inventoryContainer, _playerEquipment, _itemToEquip.Id);
+
+            Assert.AreNotEqual(currentSlot, _itemToEquip.SlotId);
+        }
+
+        [Test]
+        public async Task CantUnequipItemNotFromPlayerEquipment()
+        {
+            var wrongCharacterEquipmentId = _character.Equipment.Id + 1;
+            await _inventoryContainer.AddNewInventoryItemAsync(_itemToEquip, _inventoryDatabaseService);
+            await _inventoryEquipService.EquipItemAsync(_inventoryContainer, _playerEquipment, _itemToEquip.Id);
+
+            await _inventoryEquipService.UnequipItemAsync(_character, _inventoryContainer, wrongCharacterEquipmentId, _itemToEquip.Id);
+        }
+
+        [Test]
+        public async Task UnequipingItemRemovesItemEquipmentInDatabase()
+        {
+            await _inventoryContainer.AddNewInventoryItemAsync(_itemToEquip, _inventoryDatabaseService);
+            await _inventoryEquipService.EquipItemAsync(_inventoryContainer, _playerEquipment, _itemToEquip.Id);
+
+            await _inventoryEquipService.UnequipItemAsync(_inventoryContainer, _playerEquipment, _itemToEquip.Id);
+
+            var actual = (await _context.PlayerEquipments.FindAsync(_playerEquipment.Id)).Items.Contains(_itemToEquip);
+            Assert.That(actual, Is.False);
         }
     }
 }

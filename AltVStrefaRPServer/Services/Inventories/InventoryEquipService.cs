@@ -51,12 +51,12 @@ namespace AltVStrefaRPServer.Services.Inventories
         }
 
         public async Task<InventoryUnequipItemResponse> UnequipItemAsync(Character character, InventoryContainer inventory, int playerEquipmentId,
-            int itemToEquip)
+            int itemToEquipId)
         {
             if (character.Equipment?.Id != playerEquipmentId)
                 return InventoryUnequipItemResponse.EquipmentInventoryNotFound;
 
-            return await UnequipItemAsync(inventory, character.Equipment, itemToEquip);
+            return await UnequipItemAsync(inventory, character.Equipment, itemToEquipId);
         }
 
         public async Task<InventoryUnequipItemResponse> UnequipItemAsync(InventoryContainer inventory, PlayerEquipment playerEquipment, int itemToUnequipId)
