@@ -35,14 +35,14 @@ namespace AltVStrefaRPServer.Services.Inventories
                     var response = playerEquipment.EquipItem(itemToEquip);
                     if (response != InventoryEquipItemResponse.ItemEquipped) return response;
 
+                    context.PlayerEquipments.Update(playerEquipment);
+                    await context.SaveChangesAsync();
+
                     if (inventory.RemoveItem(itemToEquip))
                     {
                         context.InventoryContainers.Update(inventory);
                         await context.SaveChangesAsync();
                     }
-
-                    context.PlayerEquipments.Update(playerEquipment);
-                    await context.SaveChangesAsync();
 
                     transaction.Commit();
                     return InventoryEquipItemResponse.ItemEquipped;
@@ -59,7 +59,7 @@ namespace AltVStrefaRPServer.Services.Inventories
             return await UnequipItemAsync(inventory, character.Equipment, itemToEquip);
         }
 
-        private async Task<InventoryUnequipItemResponse> UnequipItemAsync(InventoryContainer inventory, PlayerEquipment playerEquipment, int itemToUnequipId)
+        public async Task<InventoryUnequipItemResponse> UnequipItemAsync(InventoryContainer inventory, PlayerEquipment playerEquipment, int itemToUnequipId)
         {
             using (var context = _factory.Invoke())
             {

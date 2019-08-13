@@ -68,5 +68,36 @@ namespace StrefaRPServer.UnitTests.Modules.Inventory
             Assert.That(response, Is.EqualTo(InventoryEquipItemResponse.ItemEquipped));
             Assert.That(_inventoryContainer.Items.Contains(_itemToEquip), Is.False);
         }
+
+        [Test]
+        public async Task EquipItemRemovesItemFromInventoryInDatabase()
+        {
+            await _inventoryContainer.AddNewInventoryItemAsync(_itemToEquip, _inventoryDatabaseService);
+
+            await _inventoryEquipService.EquipItemAsync(_inventoryContainer, _playerEquipment, _itemToEquip.Id);
+
+            bool actual = (await _context.Inventories.FindAsync(_inventoryContainer.Id)).Items.Contains(_itemToEquip);
+            Assert.That(actual, Is.False);
+        }
+
+        [Test]
+        public async Task EquipItemChangesItemInvetoryId()
+        {
+            await _inventoryContainer.AddNewInventoryItemAsync(_itemToEquip, _inventoryDatabaseService);
+
+            await _inventoryEquipService.EquipItemAsync(_inventoryContainer, _playerEquipment, _itemToEquip.Id);
+
+            Assert.That(_itemToEquip.InventoryId, Is.EqualTo(_playerEquipment.Id));
+        }
+
+        [Test]
+        public async Task CantEquipItemInNotCharacterEquipment()
+        {
+            var wrongCharacterEquipmentId = _character.Equipment.Id + 1;
+
+            var response = await _inventoryEquipService.EquipItemAsync(_character, _inventoryContainer, wrongCharacterEquipmentId, _itemToEquip.Id);
+
+            Assert.That(response, Is.EqualTo(InventoryEquipItemResponse.EquipmentInventoryNotFound));
+        }
     }
 }
