@@ -1,6 +1,5 @@
 ﻿using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Inventory;
-using AltVStrefaRPServer.Models.Inventory.Interfaces;
 using IInventoryContainer = AltVStrefaRPServer.Models.Inventory.Interfaces.IInventoryContainer;
 
 namespace AltVStrefaRPServer.Modules.Inventory

@@ -51,25 +51,6 @@ namespace AltVStrefaRPServer.Modules.Inventory
             AltAsync.On<IStrefaPlayer, int, int, int, int, Task>("InventoryTryUnequipItem", InventoryTryUnequipItemAsync);
         }
 
-        private async Task InventoryTryUnequipItemAsync(IStrefaPlayer player, int playerEquipmentId, int inventoryId, int equippedItemId, int newSlotId)
-        {
-            if (!player.TryGetCharacter(out var character)) return;
-            var inventory = InventoriesHelper.GetCorrectInventory(player, character, inventoryId);
-
-            var response = await _inventoryEquipService.UnequipItemAsync((InventoryContainer)inventory, character, playerEquipmentId, equippedItemId, newSlotId);
-            TryUnequipResponse(player, response);
-        }
-
-        private async Task InventoryTryEquipItemAsync(IStrefaPlayer player, int selectedInventoryId, int playerEquipmentId, int itemToEquipId)
-        {
-            if (!player.TryGetCharacter(out var character)) return;
-
-            var inventory = InventoriesHelper.GetCorrectInventory(player, character, selectedInventoryId);
-            var response = await _inventoryEquipService.EquipItemAsync(character, (InventoryContainer)inventory, playerEquipmentId, itemToEquipId);
-
-            TryEquipResponse(player, playerEquipmentId, character, response);
-        }
-
         private void GetPlayerInventory(IPlayer player)
         {
             var startTime = Time.GetTimestampMs();
@@ -142,6 +123,40 @@ namespace AltVStrefaRPServer.Modules.Inventory
             await DropItemResponseAsync(player, itemId, character, response).ConfigureAwait(false);
         }
 
+        public async Task InventoryRemoveItemAsync(IPlayer player, int id, int amount)
+        {
+            if (!player.TryGetCharacter(out var character)) return;
+            var response = await character.Inventory.RemoveItemAsync(id, amount, _inventoryDatabaseService);
+            switch (response)
+            {
+                case InventoryRemoveResponse.ItemRemovedCompletly:
+                    _logger.LogDebug("Item ID {itemId} should be removed from database", id);
+                    break;
+                case InventoryRemoveResponse.NotEnoughItems:
+                    await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Posiadasz za mało przedmiotów");
+                    break;
+                case InventoryRemoveResponse.ItemNotFound:
+                    await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie posiadasz takiego przedmiotu.", 5500);
+                    break;
+                case InventoryRemoveResponse.ItemRemoved:
+                    await _notificationService.ShowSuccessNotificationAsync(player, "Usunięto przedmiot", "Pomyślnie usunięto przedmiot.");
+                    break;
+            }
+        }
+
+        private async Task PickupDroppedItemAsync(IPlayer player, int networkItemId, int droppedItemId)
+        {
+            if (!player.TryGetCharacter(out var character)) return;
+            if (!_inventoriesManager.TryGetDroppedItem(networkItemId, droppedItemId, out var droppedItem)) return;
+            var response = await character.Inventory.AddItemAsync(droppedItem.Item, droppedItem.Count, _inventoryDatabaseService);
+            if (!response.AnyChangesMade)
+            {
+                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie udało się podnieść przedmiotu");
+                return;
+            }
+            await _inventoriesManager.RemoveDroppedItemAsync(droppedItem, networkItemId, response.ItemsAddedCount);
+        }
+
         private void InventoryTryStackItem(IStrefaPlayer player, int inventoryId, int itemToStackFromId, int itemToStackId)
         {
             if (!player.TryGetCharacter(out var character)) return;
@@ -176,44 +191,24 @@ namespace AltVStrefaRPServer.Modules.Inventory
             await StackItemResponseAsync(player, response).ConfigureAwait(false);
         }
 
-        public async Task InventoryRemoveItemAsync(IPlayer player, int id, int amount)
+        private async Task InventoryTryUnequipItemAsync(IStrefaPlayer player, int playerEquipmentId, int inventoryId, int equippedItemId, int newSlotId)
         {
             if (!player.TryGetCharacter(out var character)) return;
-            var response = await character.Inventory.RemoveItemAsync(id, amount, _inventoryDatabaseService);
-            switch (response)
-            {
-                case InventoryRemoveResponse.ItemRemovedCompletly:
-                    _logger.LogDebug("Item ID {itemId} should be removed from database", id);
-                    break;
-                case InventoryRemoveResponse.NotEnoughItems:
-                    await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Posiadasz za mało przedmiotów");
-                    break;
-                case InventoryRemoveResponse.ItemNotFound:
-                    await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie posiadasz takiego przedmiotu.", 5500);
-                    break;
-                case InventoryRemoveResponse.ItemRemoved:
-                    await _notificationService.ShowSuccessNotificationAsync(player, "Usunięto przedmiot", "Pomyślnie usunięto przedmiot.");
-                    break;
-            }
+            
+            var inventory = InventoriesHelper.GetCorrectInventory(player, character, inventoryId);
+            var response = await _inventoryEquipService.UnequipItemAsync((InventoryContainer)inventory, character, playerEquipmentId, equippedItemId, newSlotId);
+            
+            TryUnequipResponse(player, response);
         }
 
-        private async Task PickupDroppedItemAsync(IPlayer player, int networkItemId, int droppedItemId)
+        private async Task InventoryTryEquipItemAsync(IStrefaPlayer player, int selectedInventoryId, int playerEquipmentId, int itemToEquipId)
         {
-            // Check if networking entity exists and there is dropped item with given id
-            // Add items to inventory
-            // If items were added to inventory remove them from dropped item list and remove networking entity
-
-            // Make it possible to take only few quantity of item till full inventory.
-            // Make it possible to decrease dropped item quantity - also decrease networking entity count
             if (!player.TryGetCharacter(out var character)) return;
-            if (!_inventoriesManager.TryGetDroppedItem(networkItemId, droppedItemId, out var droppedItem)) return;
-            var response = await character.Inventory.AddItemAsync(droppedItem.Item, droppedItem.Count, _inventoryDatabaseService);
-            if (!response.AnyChangesMade)
-            {
-                await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie udało się podnieść przedmiotu");
-                return;
-            }
-            await _inventoriesManager.RemoveDroppedItemAsync(droppedItem, networkItemId, response.ItemsAddedCount);
+
+            var inventory = InventoriesHelper.GetCorrectInventory(player, character, selectedInventoryId);
+            var response = await _inventoryEquipService.EquipItemAsync(character, (InventoryContainer)inventory, playerEquipmentId, itemToEquipId);
+
+            TryEquipResponse(player, playerEquipmentId, character, response);
         }
 
         private async Task StackItemResponseAsync(IPlayer player, InventoryStackResponse response)
