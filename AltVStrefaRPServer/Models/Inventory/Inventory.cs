@@ -55,9 +55,14 @@ namespace AltVStrefaRPServer.Models.Inventory
             return _items.FirstOrDefault(i => i.Item is TItem) != null;
         }
 
-        public void AddItem(InventoryItem item)
+        public virtual AddItemResponse AddInventoryItem(InventoryItem item)
         {
+            var response = new AddItemResponse(0);
             _items.Add(item);
+            response.ItemsAddedCount += item.Quantity;
+            response.NewItems.Add(item);
+
+            return response;
         }
 
         public InventoryRemoveResponse RemoveItem(int id, int amount)

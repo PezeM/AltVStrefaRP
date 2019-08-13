@@ -36,24 +36,27 @@ namespace AltVStrefaRPServer.Models.Inventory
 
         public int CalculateAmountOfItemsToAdd(BaseItem itemToAdd, int amount) => Math.Min(amount, itemToAdd.StackSize);
 
-        public virtual AddItemResponse AddInventoryItem(InventoryItem item)
+        public override AddItemResponse AddInventoryItem(InventoryItem item)
         {
-            var response = new AddItemResponse(0, false);
-            if (!HasEmptySlots()) return response;
-
+            if(!HasEmptySlots()) return new AddItemResponse(0);
             var freeSlot = GetFreeSlot();
             item.SetSlot(freeSlot);
-            AddItem(item);
-            response.AddedNewItem = true;
-            response.NewItems.Add(item);
-            response.ItemsAddedCount += item.Quantity;
+            return base.AddInventoryItem(item);
+        }
 
+        public virtual async Task<AddItemResponse> AddNewInventoryItemAsync(InventoryItem item, IInventoryDatabaseService inventoryDatabaseService)
+        {
+            var response = AddInventoryItem(item);
+            if (response.AnyChangesMade)
+            {
+                await inventoryDatabaseService.UpdateInventoryAsync(this);
+            }
             return response;
         }
 
         public virtual AddItemResponse AddItem(BaseItem itemToAdd, int amount)
         {
-            var response = new AddItemResponse(0, false);
+            var response = new AddItemResponse(0);
 
             while (amount > 0)
             {
@@ -70,23 +73,22 @@ namespace AltVStrefaRPServer.Models.Inventory
                     if (!HasEmptySlots()) return response;
                     var toAdd = CalculateAmountOfItemsToAdd(itemToAdd, amount);
 
-                    if (response.AddedNewItem)
+                    if (response.AnyChangesMade)
                     {
                         var newBaseItem = BaseItem.ShallowClone(itemToAdd);
                         var newInventoryItem = new InventoryItem(newBaseItem, toAdd, GetFreeSlot());
                         response.NewItems.Add(newInventoryItem);
-                        AddItem(newInventoryItem);
+                        base.AddInventoryItem(newInventoryItem);
                     }
                     else
                     {
                         var newInventoryItem = new InventoryItem(itemToAdd, toAdd, GetFreeSlot());
                         response.NewItems.Add(newInventoryItem);
-                        AddItem(newInventoryItem);
+                        base.AddInventoryItem(newInventoryItem);
                     }
 
                     amount -= toAdd;
                     response.ItemsAddedCount += toAdd;
-                    response.AddedNewItem = true;
                 }
             }
             return response;
@@ -95,7 +97,7 @@ namespace AltVStrefaRPServer.Models.Inventory
         public virtual async Task<AddItemResponse> AddItemAsync(BaseItem itemToAdd, int amount, IInventoryDatabaseService inventoryDatabaseService)
         {
             var response = AddItem(itemToAdd, amount);
-            if (response.AddedNewItem)
+            if (response.AnyChangesMade)
             {
                 await OnAddedNewItemsAsync(inventoryDatabaseService, response);
             }

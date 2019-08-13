@@ -5,6 +5,7 @@ using AltV.Net.Mock;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Models.Inventory.Items;
+using AltVStrefaRPServer.Models.Inventory.Responses;
 using AltVStrefaRPServer.Services.Inventories;
 using NUnit.Framework;
 using StrefaRPServer.UnitTests.Core;
@@ -19,6 +20,7 @@ namespace StrefaRPServer.UnitTests.Modules.Inventory
         private InventoryContainer _inventoryContainer;
         private Equipmentable _equipmentableItem;
         private InventoryItem _itemToEquip;
+        private InventoryDatabaseService _inventoryDatabaseService;
         private InventoryEquipService _inventoryEquipService;
 
         [OneTimeSetUp]
@@ -30,6 +32,7 @@ namespace StrefaRPServer.UnitTests.Modules.Inventory
         [SetUp]
         public void Setups()
         {
+            _inventoryDatabaseService = new InventoryDatabaseService(_mockFactory.Object);
             _inventoryEquipService = new InventoryEquipService(_mockFactory.Object);
 
             var mockPlayer = new MockPlayer(IntPtr.Zero, 0);
@@ -58,10 +61,11 @@ namespace StrefaRPServer.UnitTests.Modules.Inventory
         [Test]
         public async Task EquipItemRemovesItemFromInventory()
         {
-            _inventoryContainer.AddInventoryItem(_itemToEquip);
+            await _inventoryContainer.AddNewInventoryItemAsync(_itemToEquip, _inventoryDatabaseService);
 
-            await _inventoryEquipService.EquipItemAsync(_inventoryContainer, _playerEquipment, _itemToEquip.Id);
-
+            var response = await _inventoryEquipService.EquipItemAsync(_inventoryContainer, _playerEquipment, _itemToEquip.Id);
+            
+            Assert.That(response, Is.EqualTo(InventoryEquipItemResponse.ItemEquipped));
             Assert.That(_inventoryContainer.Items.Contains(_itemToEquip), Is.False);
         }
     }

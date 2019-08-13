@@ -35,7 +35,7 @@ namespace AltVStrefaRPServer.Models.Inventory
             }
 
             inventoryItem.SetSlot((int)equipmentableItem.EquipmentSlot);
-            AddItem(inventoryItem);
+            AddInventoryItem(inventoryItem);
             EquippedItems[equipmentableItem.EquipmentSlot] = inventoryItem;
             return InventoryEquipItemResponse.ItemEquipped;
         }
