@@ -3,6 +3,8 @@ using System.Linq;
 using AltV.Net.Mock;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Inventory;
+using AltVStrefaRPServer.Models.Inventory.Items;
+using AltVStrefaRPServer.Models.Inventory.Responses;
 using AltVStrefaRPServer.Services.Inventories;
 using NUnit.Framework;
 
@@ -13,6 +15,8 @@ namespace StrefaRPServer.UnitTests.Modules.Inventory
     {
         private PlayerEquipment _playerEquipment;
         private ItemFactory _itemFactory;
+        private Equipmentable _equipmentableItem;
+        private InventoryItem _itemToEquip;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
@@ -33,17 +37,42 @@ namespace StrefaRPServer.UnitTests.Modules.Inventory
             {
                 Owner = character
             };
+
+            _equipmentableItem = _itemFactory.CreateCombatPistol();
+            _itemToEquip = new InventoryItem(_equipmentableItem, 1, 1);
         }
 
         [Test]
         public void CanEquipEquipmentableItem()
         {
-            var combatPistol = _itemFactory.CreateCombatPistol();
-            var equipmentableItem = new InventoryItem(combatPistol, 1, 1);
+            var response = _playerEquipment.EquipItem(_itemToEquip);
 
-            _playerEquipment.EquipItem(equipmentableItem);
+            Assert.That(response, Is.EqualTo(InventoryEquipItemResponse.ItemEquipped));
+        }
 
-            Assert.That(_playerEquipment.Items.Contains(equipmentableItem));
+        [Test]
+        public void EquippedItemsAreAddedToListOfItems()
+        {
+            _playerEquipment.EquipItem(_itemToEquip);
+
+            Assert.That(_playerEquipment.Items.Contains(_itemToEquip));
+        }
+
+        [Test]
+        public void EquippedItemsAreAddedToDictionaryOfItems()
+        {
+            _playerEquipment.EquipItem(_itemToEquip);
+
+            Assert.That(_playerEquipment.EquippedItems.ContainsValue(_itemToEquip));
+            Assert.That(_playerEquipment.EquippedItems.ContainsKey((EquipmentSlot)_itemToEquip.SlotId));
+        }
+
+        [Test]
+        public void EquippedItemsArePutOnCorrectSlot()
+        {
+            _playerEquipment.EquipItem(_itemToEquip);
+
+            Assert.That(_itemToEquip.SlotId, Is.EqualTo((int)_equipmentableItem.EquipmentSlot));
         }
     }
 }

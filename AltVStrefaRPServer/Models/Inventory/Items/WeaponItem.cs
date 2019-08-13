@@ -23,14 +23,14 @@ namespace AltVStrefaRPServer.Models.Inventory.Items
         public override bool UseItem(Character character)
         {
             // Equip on slot
-            character.Player.GiveWeapon((uint)WeaponModel, Ammo, false);
+            character.Player?.GiveWeapon((uint)WeaponModel, Ammo, false);
             return true;
         }
 
         public override bool UnequipItem(Character character)
         {
             // For now till ammo
-            character.Player.RemoveWeapon((uint)WeaponModel);
+            character.Player?.RemoveWeapon((uint)WeaponModel);
             return true;
         }
 
