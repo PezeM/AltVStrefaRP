@@ -41,14 +41,25 @@ namespace AltVStrefaRPServer.Models.Inventory
             return InventoryEquipItemResponse.ItemEquipped;
         }
 
-        public void UnequipItem(int itemId)
+        public InventoryUnequipItemResponse UnequipItem(EquipmentSlot slot)
         {
-            throw new System.NotImplementedException();
+            if (!EquippedItems.TryGetValue(slot, out var inventoryItem)) return InventoryUnequipItemResponse.NoItemAtThatSlot;
+            return UnequipItem(inventoryItem);
         }
 
-        public void UnequipItem(InventoryItem item)
+        public InventoryUnequipItemResponse UnequipItem(InventoryItem inventoryItem)
         {
-            throw new System.NotImplementedException();
+            if (!(inventoryItem.Item is Equipmentable equipmentableItem)) return InventoryUnequipItemResponse.ItemNotEquipmentable;
+            if (!EquippedItems.ContainsKey(equipmentableItem.EquipmentSlot)) 
+            {
+                Alt.Log("Nie ma itema na tym slocie");
+                return InventoryUnequipItemResponse.NoItemAtThatSlot;
+            }
+
+            EquippedItems.Remove(equipmentableItem.EquipmentSlot);
+            RemoveItem(inventoryItem, inventoryItem.Quantity);
+
+            return InventoryUnequipItemResponse.ItemUnequipped;
         }
     }
 }

@@ -52,5 +52,38 @@ namespace AltVStrefaRPServer.Services.Inventories
                 }
             }
         }
+
+        public async Task<InventoryUnequipItemResponse> UnequipItemAsync(Character character, InventoryContainer inventory, int playerEquipmentId,
+            int itemToEquip)
+        {
+            if (character.Equipment?.Id != playerEquipmentId)
+                return InventoryUnequipItemResponse.EquipmentInventoryNotFound;
+
+            return await UnequipItemAsync(inventory, character.Equipment, itemToEquip);
+        }
+
+        private async Task<InventoryUnequipItemResponse> UnequipItemAsync(InventoryContainer inventory, PlayerEquipment playerEquipment, int itemToUnequipId)
+        {
+            using (var context = _factory.Invoke())
+            {
+                using (var transaction = await context.Database.BeginTransactionAsync())
+                {
+                    if (!playerEquipment.HasItem(itemToUnequipId, out var itemToUnequip)) return InventoryUnequipItemResponse.ItemNotFound;
+                    if (!inventory.HasEmptySlots()) return InventoryUnequipItemResponse.InventoryIsFull;
+
+                    var unequipItemResponse = playerEquipment.UnequipItem(itemToUnequip);
+                    if (unequipItemResponse != InventoryUnequipItemResponse.ItemUnequipped) return unequipItemResponse;
+
+                    inventory.AddInventoryItem(itemToUnequip);
+
+                    context.PlayerEquipments.Update(playerEquipment);
+                    context.InventoryContainers.Update(inventory);
+                    await context.SaveChangesAsync();
+
+                    transaction.Commit();
+                    return InventoryUnequipItemResponse.ItemUnequipped;
+                }
+            }
+        }
     }
 }

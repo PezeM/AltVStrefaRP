@@ -13,6 +13,7 @@ namespace AltVStrefaRPServer.Models.Inventory.Interfaces
         int CalculateNumberOfItemsToAdd(BaseItem itemToAdd, int amount, InventoryItem item);
         int CalculateAmountOfItemsToAdd(BaseItem itemToAdd, int amount);
 
+        AddItemResponse AddInventoryItem(InventoryItem item);
         AddItemResponse AddItem(BaseItem itemToAdd, int amount);
         Task<AddItemResponse> AddItemAsync(BaseItem itemToAdd, int amount, IInventoryDatabaseService inventoryDatabaseService);
 

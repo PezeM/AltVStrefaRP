@@ -36,6 +36,20 @@ namespace AltVStrefaRPServer.Models.Inventory
 
         public int CalculateAmountOfItemsToAdd(BaseItem itemToAdd, int amount) => Math.Min(amount, itemToAdd.StackSize);
 
+        public virtual AddItemResponse AddInventoryItem(InventoryItem item)
+        {
+            var response = new AddItemResponse(0, false);
+            if (!HasEmptySlots()) return response;
+
+            var freeSlot = GetFreeSlot();
+            item.SetSlot(freeSlot);
+            response.AddedNewItem = true;
+            response.NewItems.Add(item);
+            response.ItemsAddedCount += item.Quantity;
+
+            return response;
+        }
+
         public virtual AddItemResponse AddItem(BaseItem itemToAdd, int amount)
         {
             var response = new AddItemResponse(0, false);
