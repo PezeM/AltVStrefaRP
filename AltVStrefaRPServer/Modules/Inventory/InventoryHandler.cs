@@ -48,6 +48,16 @@ namespace AltVStrefaRPServer.Modules.Inventory
             Alt.On<IStrefaPlayer, int, int, int>("InventoryTryStackItem", InventoryTryStackItem);
             AltAsync.On<IStrefaPlayer, int, int, int, int, Task>("InventoryTryStackItemBetweenInventories", InventoryTryStackItemBetweenInventoriesAsync);
             AltAsync.On<IStrefaPlayer, int, int, int, Task>("InventoryTryEquipItem", InventoryTryEquipItemAsync);
+            AltAsync.On<IStrefaPlayer, int, int, int, int, Task>("InventoryTryUnequipItem", InventoryTryUnequipItemAsync);
+        }
+
+        private async Task InventoryTryUnequipItemAsync(IStrefaPlayer player, int playerEquipmentId, int inventoryId, int equippedItemId, int newSlotId)
+        {
+            if (!player.TryGetCharacter(out var character)) return;
+            var inventory = InventoriesHelper.GetCorrectInventory(player, character, inventoryId);
+
+            var response = await _inventoryEquipService.UnequipItemAsync((InventoryContainer)inventory, character, playerEquipmentId, equippedItemId, newSlotId);
+            TryUnequipResponse(player, response);
         }
 
         private async Task InventoryTryEquipItemAsync(IStrefaPlayer player, int selectedInventoryId, int playerEquipmentId, int itemToEquipId)
@@ -57,23 +67,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
             var inventory = InventoriesHelper.GetCorrectInventory(player, character, selectedInventoryId);
             var response = await _inventoryEquipService.EquipItemAsync(character, (InventoryContainer)inventory, playerEquipmentId, itemToEquipId);
 
-            switch (response)
-            {
-                case InventoryEquipItemResponse.EquipmentInventoryNotFound:
-                    player.EmitLocked("inventoryTryEquipItemResponse", false);
-                    _logger.LogError("Not found player equipment inventory with ID({playerEquipmentInventoryId}) for character {characterName} CID({characterId})",
-                                        playerEquipmentId,character.GetFullName(), character.Id);
-                    break;
-                case InventoryEquipItemResponse.CouldntEquipItem:
-                case InventoryEquipItemResponse.ItemNotEquipmentable:
-                case InventoryEquipItemResponse.ItemAlreadyEquippedAtThatSlot:
-                case InventoryEquipItemResponse.ItemNotFound:
-                    player.EmitLocked("inventoryTryEquipItemResponse", false);
-                    break;
-                case InventoryEquipItemResponse.ItemEquipped:
-                    player.EmitLocked("inventoryTryEquipItemResponse", true);
-                    break;
-            }
+            TryEquipResponse(player, playerEquipmentId, character, response);
         }
 
         private void GetPlayerInventory(IPlayer player)
@@ -267,6 +261,46 @@ namespace AltVStrefaRPServer.Modules.Inventory
                 case InventoryDropResponse.DroppedItem:
                     await player.EmitAsync("inventoryItemDropResponse", true, itemId);
                     _logger.LogInformation("Character {characterName} CID({characterId}) dropped item ID({itemId})", character.GetFullName(), character.Id, itemId);
+                    break;
+            }
+        }
+
+        private void TryEquipResponse(IStrefaPlayer player, int playerEquipmentId, Character character, InventoryEquipItemResponse response)
+        {
+            switch (response)
+            {
+                case InventoryEquipItemResponse.EquipmentInventoryNotFound:
+                    player.EmitLocked("inventoryTryEquipItemResponse", false);
+                    _logger.LogError("Not found player equipment inventory with ID({playerEquipmentInventoryId}) for character {characterName} CID({characterId})",
+                        playerEquipmentId, character.GetFullName(), character.Id);
+                    break;
+                case InventoryEquipItemResponse.CouldntEquipItem:
+                case InventoryEquipItemResponse.ItemNotEquipmentable:
+                case InventoryEquipItemResponse.ItemAlreadyEquippedAtThatSlot:
+                case InventoryEquipItemResponse.ItemNotFound:
+                    player.EmitLocked("inventoryTryEquipItemResponse", false);
+                    break;
+                case InventoryEquipItemResponse.ItemEquipped:
+                    player.EmitLocked("inventoryTryEquipItemResponse", true);
+                    break;
+            }
+        }
+
+        
+        private void TryUnequipResponse(IStrefaPlayer player, InventoryUnequipItemResponse response)
+        {
+            switch (response)
+            {
+                case InventoryUnequipItemResponse.EquipmentInventoryNotFound:
+                    break;
+                case InventoryUnequipItemResponse.ItemNotFound:
+                case InventoryUnequipItemResponse.ItemNotEquipmentable:
+                case InventoryUnequipItemResponse.NoItemAtThatSlot:
+                case InventoryUnequipItemResponse.InventoryIsFull:
+                    player.EmitLocked("inventoryTryUnequipItemResponse", false);
+                    break;
+                case InventoryUnequipItemResponse.ItemUnequipped:
+                    player.EmitLocked("inventoryTryUnequipItemResponse", true);
                     break;
             }
         }

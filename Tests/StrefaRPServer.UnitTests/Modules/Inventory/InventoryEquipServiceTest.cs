@@ -153,7 +153,7 @@ namespace StrefaRPServer.UnitTests.Modules.Inventory
             await _inventoryContainer.AddNewInventoryItemAsync(_itemToEquip, _inventoryDatabaseService);
             await _inventoryEquipService.EquipItemAsync(_inventoryContainer, _playerEquipment, _itemToEquip.Id);
 
-            await _inventoryEquipService.UnequipItemAsync(_inventoryContainer, _character, wrongCharacterEquipmentId, _itemToEquip.Id);
+            await _inventoryEquipService.UnequipItemAsync(_inventoryContainer, _character, wrongCharacterEquipmentId, _itemToEquip.Id, 10);
         }
 
         [Test]

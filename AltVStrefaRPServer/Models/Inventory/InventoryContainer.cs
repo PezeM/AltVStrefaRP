@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Models.Inventory.Interfaces;
 using AltVStrefaRPServer.Models.Inventory.Items;
 using AltVStrefaRPServer.Models.Inventory.Responses;
@@ -9,11 +10,9 @@ using AltVStrefaRPServer.Services.Inventories;
 
 namespace AltVStrefaRPServer.Models.Inventory
 {
-    public abstract class InventoryContainer: Inventory, IInventoryContainer
+    public class InventoryContainer: Inventory, IInventoryContainer
     {
         public int MaxSlots { get; protected set; }
-
-        public bool HasEmptySlots() => _items.Count < MaxSlots;
 
         protected InventoryContainer(){}
 
@@ -21,6 +20,10 @@ namespace AltVStrefaRPServer.Models.Inventory
         {
             MaxSlots = maxSlots;
         }
+
+        public bool HasEmptySlots() => _items.Count < MaxSlots;
+
+        public bool IsSlotEmpty(int slotId) => _items.None(i => i.SlotId == slotId);
 
         public bool TryGetInventoryItemNotFullyStacked(BaseItem item, out InventoryItem inventoryItem)
         {
@@ -41,6 +44,13 @@ namespace AltVStrefaRPServer.Models.Inventory
             if(!HasEmptySlots()) return new AddItemResponse(0);
             var freeSlot = GetFreeSlot();
             item.SetSlot(freeSlot);
+            return base.AddInventoryItem(item);
+        }
+
+        public AddItemResponse AddInventoryItem(InventoryItem item, int slotId)
+        {
+            if(!IsSlotEmpty(slotId)) return new AddItemResponse(0);
+            item.SetSlot(slotId);
             return base.AddInventoryItem(item);
         }
 

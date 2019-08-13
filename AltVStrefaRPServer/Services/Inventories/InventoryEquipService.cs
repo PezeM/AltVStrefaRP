@@ -40,7 +40,7 @@ namespace AltVStrefaRPServer.Services.Inventories
 
                     if (inventory.RemoveItem(itemToEquip))
                     {
-                        context.InventoryContainers.Update(inventory);
+                        context.Inventories.Update(inventory);
                         await context.SaveChangesAsync();
                     }
 
@@ -57,21 +57,23 @@ namespace AltVStrefaRPServer.Services.Inventories
         }
 
         public async Task<InventoryUnequipItemResponse> UnequipItemAsync(InventoryContainer inventory, Character character, int playerEquipmentId,
-            int itemToEquipId)
+            int itemToEquipId, int newSlotId)
         {
             if (character.Equipment?.Id != playerEquipmentId)
                 return InventoryUnequipItemResponse.EquipmentInventoryNotFound;
 
-            return await UnequipItemAsync(inventory, character.Equipment, itemToEquipId);
+            return await UnequipItemAsync(inventory, character.Equipment, itemToEquipId, newSlotId);
         }
 
-        public async Task<InventoryUnequipItemResponse> UnequipItemAsync(InventoryContainer inventory, PlayerEquipment playerEquipment, int itemToUnequipId)
+        public async Task<InventoryUnequipItemResponse> UnequipItemAsync(InventoryContainer inventory, PlayerEquipment playerEquipment, int itemToUnequipId, 
+            int newSlotId = -1)
         {
             if (!playerEquipment.HasItem(itemToUnequipId, out var itemToUnequip)) return InventoryUnequipItemResponse.ItemNotFound;
-            return await UnequipItemAsync(inventory, playerEquipment, itemToUnequip);
+            return await UnequipItemAsync(inventory, playerEquipment, itemToUnequip, newSlotId);
         }
 
-        public async Task<InventoryUnequipItemResponse> UnequipItemAsync(InventoryContainer inventory, PlayerEquipment playerEquipment, InventoryItem itemToUnequip)
+        public async Task<InventoryUnequipItemResponse> UnequipItemAsync(InventoryContainer inventory, PlayerEquipment playerEquipment, InventoryItem itemToUnequip, 
+            int newSlotId = -1)
         {
             using (var context = _factory.Invoke())
             {
@@ -80,11 +82,15 @@ namespace AltVStrefaRPServer.Services.Inventories
                     // If called by method with item id it's called multiple times, but we still have to make check if inventory contains item.. 
                     if (!playerEquipment.HasItem(itemToUnequip)) return InventoryUnequipItemResponse.ItemNotFound;
                     if (!inventory.HasEmptySlots()) return InventoryUnequipItemResponse.InventoryIsFull;
+                    if (newSlotId > -1 && !inventory.IsSlotEmpty(newSlotId)) return InventoryUnequipItemResponse.InventoryIsFull;
 
                     var unequipItemResponse = playerEquipment.UnequipItem(itemToUnequip);
                     if (unequipItemResponse != InventoryUnequipItemResponse.ItemUnequipped) return unequipItemResponse;
 
-                    inventory.AddInventoryItem(itemToUnequip);
+                    if (newSlotId > -1)
+                        inventory.AddInventoryItem(itemToUnequip, newSlotId);
+                    else
+                        inventory.AddInventoryItem(itemToUnequip);
 
                     context.PlayerEquipments.Update(playerEquipment);
                     context.InventoryContainers.Update(inventory);

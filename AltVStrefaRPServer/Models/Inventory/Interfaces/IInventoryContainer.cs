@@ -9,11 +9,13 @@ namespace AltVStrefaRPServer.Models.Inventory.Interfaces
     {
         int MaxSlots { get; }
         bool HasEmptySlots();
+        bool IsSlotEmpty(int slotId);
         bool TryGetInventoryItemNotFullyStacked(BaseItem item, out InventoryItem inventoryItem);
         int CalculateNumberOfItemsToAdd(BaseItem itemToAdd, int amount, InventoryItem item);
         int CalculateAmountOfItemsToAdd(BaseItem itemToAdd, int amount);
 
         AddItemResponse AddItem(BaseItem itemToAdd, int amount);
+        AddItemResponse AddInventoryItem(InventoryItem item, int slotId);
         Task<AddItemResponse> AddItemAsync(BaseItem itemToAdd, int amount, IInventoryDatabaseService inventoryDatabaseService);
         Task<AddItemResponse> AddNewInventoryItemAsync(InventoryItem item, IInventoryDatabaseService inventoryDatabaseService);
 
