@@ -50,7 +50,13 @@ namespace AltVStrefaRPServer.Services.Inventories
             }
         }
 
-        public async Task<InventoryUnequipItemResponse> UnequipItemAsync(Character character, InventoryContainer inventory, int playerEquipmentId,
+        public async Task<InventoryUnequipItemResponse> UnequipItemAsync(InventoryContainer inventory, PlayerEquipment playerEquipment, EquipmentSlot slotId)
+        {
+            if (!playerEquipment.EquippedItems.TryGetValue(slotId, out var itemToUnequip)) return InventoryUnequipItemResponse.ItemNotFound;
+            return await UnequipItemAsync(inventory, playerEquipment, itemToUnequip.Id);
+        }
+
+        public async Task<InventoryUnequipItemResponse> UnequipItemAsync(InventoryContainer inventory, Character character, int playerEquipmentId,
             int itemToEquipId)
         {
             if (character.Equipment?.Id != playerEquipmentId)
@@ -61,11 +67,18 @@ namespace AltVStrefaRPServer.Services.Inventories
 
         public async Task<InventoryUnequipItemResponse> UnequipItemAsync(InventoryContainer inventory, PlayerEquipment playerEquipment, int itemToUnequipId)
         {
+            if (!playerEquipment.HasItem(itemToUnequipId, out var itemToUnequip)) return InventoryUnequipItemResponse.ItemNotFound;
+            return await UnequipItemAsync(inventory, playerEquipment, itemToUnequip);
+        }
+
+        public async Task<InventoryUnequipItemResponse> UnequipItemAsync(InventoryContainer inventory, PlayerEquipment playerEquipment, InventoryItem itemToUnequip)
+        {
             using (var context = _factory.Invoke())
             {
                 using (var transaction = await context.Database.BeginTransactionAsync())
                 {
-                    if (!playerEquipment.HasItem(itemToUnequipId, out var itemToUnequip)) return InventoryUnequipItemResponse.ItemNotFound;
+                    // If called by method with item id it's called multiple times, but we still have to make check if inventory contains item.. 
+                    if (!playerEquipment.HasItem(itemToUnequip)) return InventoryUnequipItemResponse.ItemNotFound;
                     if (!inventory.HasEmptySlots()) return InventoryUnequipItemResponse.InventoryIsFull;
 
                     var unequipItemResponse = playerEquipment.UnequipItem(itemToUnequip);

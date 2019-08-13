@@ -153,7 +153,7 @@ namespace StrefaRPServer.UnitTests.Modules.Inventory
             await _inventoryContainer.AddNewInventoryItemAsync(_itemToEquip, _inventoryDatabaseService);
             await _inventoryEquipService.EquipItemAsync(_inventoryContainer, _playerEquipment, _itemToEquip.Id);
 
-            await _inventoryEquipService.UnequipItemAsync(_character, _inventoryContainer, wrongCharacterEquipmentId, _itemToEquip.Id);
+            await _inventoryEquipService.UnequipItemAsync(_inventoryContainer, _character, wrongCharacterEquipmentId, _itemToEquip.Id);
         }
 
         [Test]
@@ -166,6 +166,18 @@ namespace StrefaRPServer.UnitTests.Modules.Inventory
 
             var actual = (await _context.PlayerEquipments.FindAsync(_playerEquipment.Id)).Items.Contains(_itemToEquip);
             Assert.That(actual, Is.False);
+        }
+
+        [Test]
+        public async Task CanUnequipItemByEquipmentSlot()
+        {
+            await _inventoryContainer.AddNewInventoryItemAsync(_itemToEquip, _inventoryDatabaseService);
+            await _inventoryEquipService.EquipItemAsync(_inventoryContainer, _playerEquipment, _itemToEquip.Id);
+            var equipmentSlot = (EquipmentSlot)_itemToEquip.SlotId;
+
+            var response = await _inventoryEquipService.UnequipItemAsync(_inventoryContainer, _playerEquipment, equipmentSlot);
+
+            Assert.That(response, Is.EqualTo(InventoryUnequipItemResponse.ItemUnequipped));
         }
     }
 }
