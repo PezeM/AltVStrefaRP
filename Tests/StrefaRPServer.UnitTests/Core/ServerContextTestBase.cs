@@ -1,6 +1,7 @@
 ﻿using System;
 using AltVStrefaRPServer.Database;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Moq;
 using NUnit.Framework;
 
@@ -17,6 +18,7 @@ namespace StrefaRPServer.UnitTests.Core
         {
             var options = new DbContextOptionsBuilder<ServerContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .ConfigureWarnings(builder => builder.Ignore(InMemoryEventId.TransactionIgnoredWarning))
                 .Options;
             _context = new ServerContext(options);
             _context.Database.EnsureCreated();

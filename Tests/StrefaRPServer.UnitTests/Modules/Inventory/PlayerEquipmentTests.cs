@@ -74,5 +74,68 @@ namespace StrefaRPServer.UnitTests.Modules.Inventory
 
             Assert.That(_itemToEquip.SlotId, Is.EqualTo((int)_equipmentableItem.EquipmentSlot));
         }
+
+        [Test]
+        public void CantEquipItemIfItemIsAlreadyEquippedAtTheSameSlot()
+        {
+            var secondItem = new InventoryItem(_itemFactory.CreateCombatPistol(), 1, 1);
+
+            _playerEquipment.EquipItem(_itemToEquip);
+            var response = _playerEquipment.EquipItem(secondItem);
+
+
+            Assert.That(response, Is.EqualTo(InventoryEquipItemResponse.ItemAlreadyEquippedAtThatSlot));
+            Assert.That(_playerEquipment.Items.Contains(secondItem), Is.False);
+        }
+
+        [Test]
+        public void CanUnequipEquipedItem()
+        {
+            _playerEquipment.EquipItem(_itemToEquip);
+
+            var response = _playerEquipment.UnequipItem(_itemToEquip);
+
+            Assert.That(response, Is.EqualTo(InventoryUnequipItemResponse.ItemUnequipped));
+        }
+
+        [Test]
+        public void UnequippingItemsRemovesItemFromInventory()
+        {
+            _playerEquipment.EquipItem(_itemToEquip);
+
+            _playerEquipment.UnequipItem(_itemToEquip);
+
+            Assert.That(_playerEquipment.Items.Contains(_itemToEquip), Is.False);
+        }
+
+        [Test]
+        public void UnequippingItemsRemovesItemFromDictionary()
+        {
+            _playerEquipment.EquipItem(_itemToEquip);
+
+            _playerEquipment.UnequipItem(_itemToEquip);
+
+            Assert.That(_playerEquipment.EquippedItems.ContainsValue(_itemToEquip), Is.False);
+            Assert.That(_playerEquipment.EquippedItems.ContainsKey((EquipmentSlot)_itemToEquip.SlotId), Is.False);
+        }
+
+        [Test]
+        public void WontUnequipItemsThatAreNotEquiped()
+        {
+            var response = _playerEquipment.UnequipItem(_itemToEquip);
+
+            Assert.That(response, Is.EqualTo(InventoryUnequipItemResponse.NoItemAtThatSlot));
+        }
+
+        [Test]
+        public void UnequipsItemAtGivenSlot()
+        {
+            _playerEquipment.EquipItem(_itemToEquip);
+            var itemSlot = _equipmentableItem.EquipmentSlot;
+
+            var response = _playerEquipment.UnequipItem(itemSlot);
+
+            Assert.That(response, Is.EqualTo(InventoryUnequipItemResponse.ItemUnequipped));
+        }
     }
 }

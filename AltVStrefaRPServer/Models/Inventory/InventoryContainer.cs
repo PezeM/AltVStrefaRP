@@ -43,6 +43,7 @@ namespace AltVStrefaRPServer.Models.Inventory
 
             var freeSlot = GetFreeSlot();
             item.SetSlot(freeSlot);
+            AddItem(item);
             response.AddedNewItem = true;
             response.NewItems.Add(item);
             response.ItemsAddedCount += item.Quantity;

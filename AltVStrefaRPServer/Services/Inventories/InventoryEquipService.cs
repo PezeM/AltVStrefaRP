@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
-using AltV.Net;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Inventory;
-using AltVStrefaRPServer.Models.Inventory.Interfaces;
 using AltVStrefaRPServer.Models.Inventory.Responses;
 
 namespace AltVStrefaRPServer.Services.Inventories
@@ -33,7 +30,7 @@ namespace AltVStrefaRPServer.Services.Inventories
             {
                 using (var transaction = await context.Database.BeginTransactionAsync())
                 {
-                    if (!inventory.HasItem(itemToEquipId, out var itemToEquip) && itemToEquip.Quantity < 1) return InventoryEquipItemResponse.ItemNotFound;
+                    if (!inventory.HasItem(itemToEquipId, out var itemToEquip) || itemToEquip?.Quantity < 1) return InventoryEquipItemResponse.ItemNotFound;
                     
                     var response = playerEquipment.EquipItem(itemToEquip);
                     if (response != InventoryEquipItemResponse.ItemEquipped) return response;

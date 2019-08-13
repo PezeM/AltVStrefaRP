@@ -26,7 +26,6 @@ namespace AltVStrefaRPServer.Models.Inventory
             if (!(inventoryItem.Item is Equipmentable equipmentableItem)) return InventoryEquipItemResponse.ItemNotEquipmentable;
             if (EquippedItems.ContainsKey(equipmentableItem.EquipmentSlot)) 
             {
-                Alt.Log("Jest juz item na tym slocie");
                 return InventoryEquipItemResponse.ItemAlreadyEquippedAtThatSlot;
             }
 
@@ -52,7 +51,6 @@ namespace AltVStrefaRPServer.Models.Inventory
             if (!(inventoryItem.Item is Equipmentable equipmentableItem)) return InventoryUnequipItemResponse.ItemNotEquipmentable;
             if (!EquippedItems.ContainsKey(equipmentableItem.EquipmentSlot)) 
             {
-                Alt.Log("Nie ma itema na tym slocie");
                 return InventoryUnequipItemResponse.NoItemAtThatSlot;
             }
 
