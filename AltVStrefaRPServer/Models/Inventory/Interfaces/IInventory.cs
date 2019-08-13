@@ -18,6 +18,7 @@ namespace AltVStrefaRPServer.Models.Inventory.Interfaces
         InventoryItem GetInventoryItem(int itemId);
 
         AddItemResponse AddInventoryItem(InventoryItem item);
+        bool RemoveItem(InventoryItem item);
         InventoryRemoveResponse RemoveItem(int id, int amount);
         InventoryRemoveResponse RemoveItem(InventoryItem item, int amount);
         Task<InventoryRemoveResponse> RemoveItemAsync(int itemId, int amount, IInventoryDatabaseService inventoryDatabaseService);

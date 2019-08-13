@@ -30,12 +30,12 @@ namespace AltVStrefaRPServer.Services.Inventories
             {
                 using (var transaction = await context.Database.BeginTransactionAsync())
                 {
-                    if (!inventory.HasItem(itemToEquipId, out var itemToEquip) || itemToEquip?.Quantity < 1) return InventoryEquipItemResponse.ItemNotFound;
+                    if (!inventory.HasItem(itemToEquipId, out var itemToEquip) || itemToEquip.Quantity < 1) return InventoryEquipItemResponse.ItemNotFound;
                     
                     var response = playerEquipment.EquipItem(itemToEquip);
                     if (response != InventoryEquipItemResponse.ItemEquipped) return response;
 
-                    if (inventory.RemoveItem(itemToEquip, 1) == InventoryRemoveResponse.ItemRemovedCompletly)
+                    if (inventory.RemoveItem(itemToEquip))
                     {
                         context.InventoryContainers.Update(inventory);
                         await context.SaveChangesAsync();

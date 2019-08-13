@@ -55,7 +55,7 @@ namespace AltVStrefaRPServer.Models.Inventory
             }
 
             EquippedItems.Remove(equipmentableItem.EquipmentSlot);
-            RemoveItem(inventoryItem, inventoryItem.Quantity);
+            RemoveItem(inventoryItem);
 
             return InventoryUnequipItemResponse.ItemUnequipped;
         }

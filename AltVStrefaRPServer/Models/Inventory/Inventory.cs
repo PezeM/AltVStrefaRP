@@ -65,6 +65,11 @@ namespace AltVStrefaRPServer.Models.Inventory
             return response;
         }
 
+        public bool RemoveItem(InventoryItem item)
+        {
+            return _items.Remove(item);
+        }
+
         public InventoryRemoveResponse RemoveItem(int id, int amount)
         {
             if (!HasItem(id, out var item)) return InventoryRemoveResponse.ItemNotFound;
@@ -77,7 +82,7 @@ namespace AltVStrefaRPServer.Models.Inventory
             item.RemoveQuantity(amount);
             if (item.Quantity <= 0)
             {
-                _items.Remove(item);
+                RemoveItem(item);
                 return InventoryRemoveResponse.ItemRemovedCompletly;
             }
 
