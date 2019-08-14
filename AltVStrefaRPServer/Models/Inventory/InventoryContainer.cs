@@ -122,6 +122,19 @@ namespace AltVStrefaRPServer.Models.Inventory
         
         protected virtual void OnNewItemStacked(int itemId, int quantity) {}
 
+        public InventoryMoveItemResponse MoveItemToSlot(int itemId, int newSlot)
+        {
+            if (!HasItem(itemId, out var itemToMove)) return InventoryMoveItemResponse.ItemNotFound;
+            return MoveItemToSlot(itemToMove, newSlot);
+        }
+
+        public InventoryMoveItemResponse MoveItemToSlot(InventoryItem item, int newSlot)
+        {
+            if (!IsSlotEmpty(newSlot)) return InventoryMoveItemResponse.SlotOccupied;
+            item.SetSlot(newSlot);
+            return InventoryMoveItemResponse.ItemMoved;
+        }
+
         public InventoryStackResponse StackItem(int itemToStackFromId, int itemToStackId)
         {
             var response = new InventoryStackResponse(type: InventoryStackResponseType.ItemsNotFound);
