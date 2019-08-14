@@ -70,6 +70,16 @@ namespace StrefaRPServer.UnitTests.Modules.Inventory
         }
 
         [Test]
+        public async Task EquipItemAddItemToItemList()
+        {
+            await _inventoryContainer.AddNewInventoryItemAsync(_itemToEquip, _inventoryDatabaseService);
+
+            await _inventoryEquipService.EquipItemAsync(_inventoryContainer, _playerEquipment, _itemToEquip.Id);
+
+            Assert.That(_playerEquipment.Items.Contains(_itemToEquip));
+        }
+
+        [Test]
         public async Task EquipItemRemovesItemFromInventoryInDatabase()
         {
             await _inventoryContainer.AddNewInventoryItemAsync(_itemToEquip, _inventoryDatabaseService);

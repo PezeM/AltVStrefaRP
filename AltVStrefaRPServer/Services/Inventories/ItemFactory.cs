@@ -17,7 +17,8 @@ namespace AltVStrefaRPServer.Services.Inventories
         public BaseItem CreateWater(int stackSize = 10, ushort thirstValue = 10, string description = null) 
             => new DrinkItem("Woda", stackSize, "ng_proc_brkbottle_02a", thirstValue, description);
         public BaseItem CreateSprunk(int stackSize = 10, ushort thirstvalue = 13, string description = null) 
-            => new DrinkItem("Sprunk", stackSize, "ng_proc_sodacan_01b", thirstvalue, description);
+            => new DrinkItem("Sprunk", stackSize, "prop_ld_can_01", thirstvalue, description);
+        // prop_ld_can_01 - sprunk can
 
         public WeaponItem CreatePistol(int ammo = 20) => new WeaponItem("Pistolet", "w_pi_pistol", WeaponModel.Pistol, ammo, EquipmentSlot.LeftHand);
         public WeaponItem CreateCombatPistol(int ammo = 40) => new WeaponItem("Pistolet bojowy", "w_pi_combatpistol", WeaponModel.CombatPistol, ammo, EquipmentSlot.LeftHand);

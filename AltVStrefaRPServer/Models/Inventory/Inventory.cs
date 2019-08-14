@@ -58,6 +58,7 @@ namespace AltVStrefaRPServer.Models.Inventory
         public virtual AddItemResponse AddInventoryItem(InventoryItem item)
         {
             var response = new AddItemResponse(0);
+            item.InventoryId = Id;
             _items.Add(item);
             response.ItemsAddedCount += item.Quantity;
             response.NewItems.Add(item);

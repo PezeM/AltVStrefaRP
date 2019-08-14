@@ -36,14 +36,14 @@ namespace AltVStrefaRPServer.Services.Inventories
                     var response = playerEquipment.EquipItem(itemToEquip);
                     if (response != InventoryEquipItemResponse.ItemEquipped) return response;
 
-                    context.PlayerEquipments.Update(playerEquipment);
-                    await context.SaveChangesAsync();
-
                     if (inventory.RemoveItem(itemToEquip))
                     {
-                        context.Inventories.Update(inventory);
+                        context.InventoryContainers.Update(inventory);
                         await context.SaveChangesAsync();
                     }
+
+                    context.PlayerEquipments.Update(playerEquipment);
+                    await context.SaveChangesAsync();
 
                     transaction.Commit();
                     return InventoryEquipItemResponse.ItemEquipped;
