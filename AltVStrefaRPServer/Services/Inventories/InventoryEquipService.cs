@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Inventory;
-using AltVStrefaRPServer.Models.Inventory.Interfaces;
 using AltVStrefaRPServer.Models.Inventory.Responses;
 
 namespace AltVStrefaRPServer.Services.Inventories

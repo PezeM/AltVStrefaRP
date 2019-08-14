@@ -1,7 +1,9 @@
 ﻿namespace AltVStrefaRPServer.Models.Inventory.Responses
 {
-    public struct InventoryTransferItemResponse
+    public enum InventoryTransferItemResponse
     {
-        public int AmountOfItemsTranfered { get; set; }
+        ItemNotFound,
+        SlotOccupied,
+        ItemTransfered,
     }
 }

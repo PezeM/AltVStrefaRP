@@ -70,6 +70,15 @@ namespace AltVStrefaRPServer.Models.Inventory
             return _items.Remove(item);
         }
 
+        public async Task<bool> RemoveItemAsync(InventoryItem item, IInventoryDatabaseService inventoryDatabaseService)
+        {
+            if (!RemoveItem(item))
+                return false;
+
+            await inventoryDatabaseService.UpdateInventoryAsync(this);
+            return true;
+        }
+
         public InventoryRemoveResponse RemoveItem(int id, int amount)
         {
             if (!HasItem(id, out var item)) return InventoryRemoveResponse.ItemNotFound;

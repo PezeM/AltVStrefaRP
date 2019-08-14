@@ -53,38 +53,6 @@ namespace AltVStrefaRPServer.Modules.Inventory
             AltAsync.On<IStrefaPlayer, int, int, int, int, Task>("InventoryTryUnequipItem", InventoryTryUnequipItemAsync);
         }
 
-        private async Task InventoryTryTransferItemAsync(IStrefaPlayer player, int sourceInventoryId, int receiverInventoryId, int itemId, int newSlot)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        private void InventoryMoveItem(IStrefaPlayer player, int inventoryId, int itemId, int newSlot)
-        {
-            if(!player.TryGetCharacter(out var character)) return;
-            var inventory = InventoriesHelper.GetCorrectInventory(player, character, inventoryId);
-
-            var response = InventoryMoveItemResponse.InventoryNotFound;
-            if(inventory != null)
-            {
-                response = inventory.MoveItemToSlot(itemId, newSlot);
-            }
-
-            switch (response)
-            {
-                case InventoryMoveItemResponse.InventoryNotFound:
-                case InventoryMoveItemResponse.ItemNotFound:
-                    player.Emit("inventoryMoveItemResponse", false);
-                    break;
-                case InventoryMoveItemResponse.SlotOccupied:
-                    _notificationService.ShowErrorNotification(player, "Błąd", "Jakiś przedmiot znajduję się już w tym miejscu");
-                    player.Emit("inventoryMoveItemResponse", false);
-                    break;
-                case InventoryMoveItemResponse.ItemMoved:
-                    player.Emit("inventoryMoveItemResponse", true);
-                    break;
-            }
-        }
-
         private void GetPlayerInventory(IPlayer player)
         {
             var startTime = Time.GetTimestampMs();
@@ -210,19 +178,18 @@ namespace AltVStrefaRPServer.Modules.Inventory
             int itemToStackInventoryId)
         {
             if (!player.TryGetCharacter(out var character)) return;
-
             var inventory = InventoriesHelper.GetCorrectInventory(player, character, inventoryId);
             var inventoryToStack = InventoriesHelper.GetCorrectInventory(player, character, itemToStackInventoryId);
 
             if (inventory == null || inventoryToStack == null)
             {
-                await player.EmitAsync("inventoryStackItemResponse", false);
+                player.EmitLocked("inventoryStackItemResponse", false);
                 return;
             }
 
             var response = await _inventoryTransferService.StackItemBetweenInventoriesAsync(inventory, inventoryToStack, itemToStackFromId, itemToStackId)
                 .ConfigureAwait(false);
-            await StackItemResponseAsync(player, response).ConfigureAwait(false);
+            InventoryTryStackItemBetweenInventoriesResponse(player, response);
         }
 
         private async Task InventoryTryUnequipItemAsync(IStrefaPlayer player, int playerEquipmentId, int inventoryId, int equippedItemId, int newSlotId)
@@ -245,18 +212,48 @@ namespace AltVStrefaRPServer.Modules.Inventory
             TryEquipResponse(player, playerEquipmentId, character, response);
         }
 
-        private async Task StackItemResponseAsync(IPlayer player, InventoryStackResponse response)
+        private async Task InventoryTryTransferItemAsync(IStrefaPlayer player, int sourceInventoryId, int receiverInventoryId, int itemId, int newSlot)
+        {
+            if (!player.TryGetCharacter(out var character)) return;
+            var sourceInventory = InventoriesHelper.GetCorrectInventory(player, character, sourceInventoryId);
+            var receiverInventory = InventoriesHelper.GetCorrectInventory(player, character, receiverInventoryId);
+
+            if (sourceInventory == null || receiverInventory == null)
+            {
+                player.EmitLocked("inventoryTryTransferItemResponse", false);
+                return;
+            }
+
+            var response = await _inventoryTransferService.TransferItemAsync(sourceInventory, receiverInventory, itemId, newSlot);
+            InventoryTryTranferItemResponse(player, response);
+        }
+
+        private void InventoryMoveItem(IStrefaPlayer player, int inventoryId, int itemId, int newSlot)
+        {
+            if (!player.TryGetCharacter(out var character)) return;
+            var inventory = InventoriesHelper.GetCorrectInventory(player, character, inventoryId);
+
+            var response = InventoryMoveItemResponse.InventoryNotFound;
+            if (inventory != null)
+            {
+                response = inventory.MoveItemToSlot(itemId, newSlot);
+            }
+
+            InventoryTryMoveItemResponse(player, response);
+        }
+
+        private void InventoryTryStackItemBetweenInventoriesResponse(IPlayer player, InventoryStackResponse response)
         {
             switch (response.Type)
             {
                 case InventoryStackResponseType.ItemsStacked:
-                    await player.EmitAsync("inventoryStackItemResponse", true, response.AmountOfStackedItems);
+                    player.EmitLocked("inventoryStackItemResponse", true, response.AmountOfStackedItems);
                     break;
                 case InventoryStackResponseType.ItemsNotFound:
-                    await _notificationService.ShowErrorNotificationAsync(player, "Brak przedmiotu", "Wystąpił błąd i nie znaleziono takiego przedmiotu", 5000);
+                    _notificationService.ShowErrorNotificationLocked(player, "Brak przedmiotu", "Wystąpił błąd i nie znaleziono takiego przedmiotu", 5000);
                     break;
                 case InventoryStackResponseType.ItemsNotStackable:
-                    await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie można połączyć tych przedmiotów");
+                    _notificationService.ShowErrorNotificationLocked(player, "Błąd", "Nie można połączyć tych przedmiotów");
                     break;
             }
         }
@@ -318,7 +315,6 @@ namespace AltVStrefaRPServer.Modules.Inventory
             }
         }
 
-        
         private void TryUnequipResponse(IStrefaPlayer player, InventoryUnequipItemResponse response)
         {
             switch (response)
@@ -335,6 +331,38 @@ namespace AltVStrefaRPServer.Modules.Inventory
                     break;
                 case InventoryUnequipItemResponse.ItemUnequipped:
                     player.EmitLocked("inventoryTryUnequipItemResponse", true);
+                    break;
+            }
+        }
+
+        private void InventoryTryTranferItemResponse(IStrefaPlayer player, InventoryTransferItemResponse response)
+        {
+            switch (response)
+            {
+                case InventoryTransferItemResponse.ItemNotFound:
+                case InventoryTransferItemResponse.SlotOccupied:
+                    player.EmitLocked("inventoryTryTransferItemResponse", false);
+                    break;
+                case InventoryTransferItemResponse.ItemTransfered:
+                    player.EmitLocked("inventoryTryTransferItemResponse", true);
+                    break;
+            }
+        }
+
+        private void InventoryTryMoveItemResponse(IStrefaPlayer player, InventoryMoveItemResponse response)
+        {
+            switch (response)
+            {
+                case InventoryMoveItemResponse.InventoryNotFound:
+                case InventoryMoveItemResponse.ItemNotFound:
+                    player.Emit("inventoryMoveItemResponse", false);
+                    break;
+                case InventoryMoveItemResponse.SlotOccupied:
+                    _notificationService.ShowErrorNotification(player, "Błąd", "Jakiś przedmiot znajduję się już w tym miejscu");
+                    player.Emit("inventoryMoveItemResponse", false);
+                    break;
+                case InventoryMoveItemResponse.ItemMoved:
+                    player.Emit("inventoryMoveItemResponse", true);
                     break;
             }
         }

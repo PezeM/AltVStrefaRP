@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using AltVStrefaRPServer.Models.Inventory;
-using AltVStrefaRPServer.Models.Inventory.Interfaces;
 using AltVStrefaRPServer.Models.Inventory.Responses;
 using IInventoryContainer = AltVStrefaRPServer.Models.Inventory.Interfaces.IInventoryContainer;
 
@@ -35,21 +34,24 @@ namespace AltVStrefaRPServer.Services.Inventories
             return await source.StackItemAsync(itemToStackFrom, itemToStack, _inventoryDatabaseService);
         }
 
-        public async Task<InventoryTransferItemResponse> TransferItemAsync(IInventoryContainer source, IInventoryContainer receiver, 
-            InventoryItem itemToTransfer, int quantity)
+        public async Task<InventoryTransferItemResponse> TransferItemAsync(IInventoryContainer sourceInventory, IInventoryContainer receiverInventory, 
+            InventoryItem itemToTransfer, int newSlot)
         {
-            var response = new InventoryTransferItemResponse();
-            if (!source.HasItem(itemToTransfer) || itemToTransfer.Quantity < quantity) return response;
+            if (!sourceInventory.HasItem(itemToTransfer)) return InventoryTransferItemResponse.ItemNotFound;
 
-            var addItemResponse = await receiver.AddItemAsync(itemToTransfer.Item, quantity, _inventoryDatabaseService).ConfigureAwait(false);
-            if (addItemResponse.AnyChangesMade) return response;
+            if (!(await sourceInventory.AddInventoryItemAsync(itemToTransfer, newSlot, _inventoryDatabaseService)).AnyChangesMade)
+                return InventoryTransferItemResponse.SlotOccupied;
 
-            var removeItemResponse = await source.RemoveItemAsync(itemToTransfer, addItemResponse.ItemsAddedCount, _inventoryDatabaseService).ConfigureAwait(false);
-            if (removeItemResponse == InventoryRemoveResponse.ItemNotFound || removeItemResponse == InventoryRemoveResponse.NotEnoughItems)
-                return response;
+            await receiverInventory.RemoveItemAsync(itemToTransfer, _inventoryDatabaseService);
 
-            response.AmountOfItemsTranfered = addItemResponse.ItemsAddedCount;
-            return response;
+            return InventoryTransferItemResponse.ItemTransfered;
+        }
+
+        public async Task<InventoryTransferItemResponse> TransferItemAsync(IInventoryContainer sourceInventory, IInventoryContainer receiverInventory, 
+            int itemId, int newSlot)
+        {
+            if (!sourceInventory.HasItem(itemId, out var itemToTransfer)) return InventoryTransferItemResponse.ItemNotFound;
+            return await TransferItemAsync(sourceInventory, receiverInventory, itemToTransfer, newSlot);
         }
     }
 }

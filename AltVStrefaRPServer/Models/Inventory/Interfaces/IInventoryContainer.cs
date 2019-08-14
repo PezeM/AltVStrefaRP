@@ -16,6 +16,7 @@ namespace AltVStrefaRPServer.Models.Inventory.Interfaces
 
         AddItemResponse AddItem(BaseItem itemToAdd, int amount);
         AddItemResponse AddInventoryItem(InventoryItem item, int slotId);
+        Task<AddItemResponse> AddInventoryItemAsync(InventoryItem item, int newSlot, IInventoryDatabaseService inventoryDatabaseService);
         Task<AddItemResponse> AddItemAsync(BaseItem itemToAdd, int amount, IInventoryDatabaseService inventoryDatabaseService);
         Task<AddItemResponse> AddNewInventoryItemAsync(InventoryItem item, IInventoryDatabaseService inventoryDatabaseService);
 

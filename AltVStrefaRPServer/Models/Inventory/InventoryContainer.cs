@@ -54,6 +54,16 @@ namespace AltVStrefaRPServer.Models.Inventory
             return base.AddInventoryItem(item);
         }
 
+        public async Task<AddItemResponse> AddInventoryItemAsync(InventoryItem item, int newSlot, IInventoryDatabaseService inventoryDatabaseService)
+        {
+            var response = AddInventoryItem(item, newSlot);
+            if (response.AnyChangesMade)
+            {
+                await inventoryDatabaseService.UpdateInventoryAsync(this);
+            }
+            return response;
+        }
+
         public virtual async Task<AddItemResponse> AddNewInventoryItemAsync(InventoryItem item, IInventoryDatabaseService inventoryDatabaseService)
         {
             var response = AddInventoryItem(item);
