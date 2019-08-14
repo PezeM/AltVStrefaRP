@@ -23,6 +23,8 @@ namespace AltVStrefaRPServer.Services.Vehicles
             {
                 return context.Vehicles
                     .Include(v => v.Inventory)
+                        .ThenInclude(i => i.Items)
+                            .ThenInclude(i => i.Item)
                     .ToList();
             }
         }

@@ -14,6 +14,10 @@ namespace AltVStrefaRPServer.Models.Inventory
         public PlayerEquipment()
         {
             EquippedItems = new Dictionary<EquipmentSlot, InventoryItem>();
+        }
+
+        public void InitializeEquipment()
+        {
             foreach (InventoryItem item in _items)
             {
                 EquippedItems.Add((EquipmentSlot)item.SlotId, item);

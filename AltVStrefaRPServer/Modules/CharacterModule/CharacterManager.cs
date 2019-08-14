@@ -57,6 +57,7 @@ namespace AltVStrefaRPServer.Modules.CharacterModule
                 character.Player = player;
                 player.SetSyncedMetaData(MetaData.PLAYER_NAME, character.GetFullName());
                 player.SetSyncedMetaData(MetaData.REMOTE_ID, character.Id);
+                character.Equipment.InitializeEquipment();    
 
                 // TODO: Setting skin and shared data
                 player.SetPosition(character.X, character.Y, character.Z);

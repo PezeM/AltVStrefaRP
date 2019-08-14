@@ -47,10 +47,10 @@ namespace AltVStrefaRPServer.Models.Inventory
             Owner?.Player?.EmitLocked("updateInventoryItemQuantity", itemId, quantity);
         }
 
-        protected override Task OnAddedNewItemsAsync(IInventoryDatabaseService inventoryDatabaseService, AddItemResponse response)
+        protected override async Task OnAddedNewItemsAsync(IInventoryDatabaseService inventoryDatabaseService, AddItemResponse response)
         {
+            await base.OnAddedNewItemsAsync(inventoryDatabaseService, response).ConfigureAwait(false);
             Owner?.Player?.EmitLocked("inventoryAddNewItems", response.NewItems);
-            return base.OnAddedNewItemsAsync(inventoryDatabaseService, response);
         }
     }
 }
