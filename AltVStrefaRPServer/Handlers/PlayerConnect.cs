@@ -40,9 +40,9 @@ namespace AltVStrefaRPServer.Handlers
             _logger = logger;
 
             Alt.OnPlayerConnect += OnPlayerConnect;
-            AltAsync.On<IStrefaPlayer, string, string, Task>("loginAccount", LoginAccountAsync);
-            AltAsync.On<IStrefaPlayer, string, string, Task>("registerAccount", RegisterAccountAsync);
-            AltAsync.On<IStrefaPlayer, int, Task>("tryToLoadCharacter", TryToLoadCharacterAsync);
+            AltAsync.On<IStrefaPlayer, string, string, Task>("LoginAccount", LoginAccountAsync);
+            AltAsync.On<IStrefaPlayer, string, string, Task>("RegisterAccount", RegisterAccountAsync);
+            AltAsync.On<IStrefaPlayer, int, Task>("TryToLoadCharacter", TryToLoadCharacterAsync);
         }
 
         private async Task TryToLoadCharacterAsync(IStrefaPlayer player, int characterId)
@@ -136,8 +136,8 @@ namespace AltVStrefaRPServer.Handlers
                 }
 
                 player.AccountId = account.AccountId;
-                await player.EmitAsync("loginSuccesfully", JsonConvert.SerializeObject(await _characterDatabaseService.GetCharacterListAsync(account.AccountId)));
-                _logger.LogInformation("Loging in account {accountName} ID({accountId}) completed in {elapsedTime}ms", account.Username, account.AccountId,
+                await player.EmitAsync("loggedInSuccesfully", JsonConvert.SerializeObject(await _characterDatabaseService.GetCharacterListAsync(account.AccountId)));
+                _logger.LogInformation("Account {accountName} ID({accountId}) logged in successfully in completed in {elapsedTime}ms", account.Username, account.AccountId,
                     Time.GetElapsedTime(startTime));
             }
             catch (Exception e)
@@ -156,7 +156,7 @@ namespace AltVStrefaRPServer.Handlers
 
             player.SetDateTime(_timeController.GameTime.Days, 0, 0, _timeController.GameTime.Hours, _timeController.GameTime.Minutes, 0);
             player.SetWeather(_timeController.CurrentWeather);
-            player.Emit("showAuthenticateWindow");
+            //player.Emit("showAuthenticateWindow");
         }
     }
 }

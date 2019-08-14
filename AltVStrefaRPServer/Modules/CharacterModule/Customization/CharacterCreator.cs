@@ -21,7 +21,7 @@ namespace AltVStrefaRPServer.Modules.CharacterModule.Customization
             _accountDatabaseService = accountDatabaseService;
             _logger = logger;
 
-            AltAsync.On<IStrefaPlayer, Task>("tryToCreateNewCharacter", TryToCreateNewCharacterAsync);
+            AltAsync.On<IStrefaPlayer, Task>("TryToCreateNewCharacter", TryToCreateNewCharacterAsync);
         }
 
         private async Task TryToCreateNewCharacterAsync(IStrefaPlayer player)
@@ -53,7 +53,7 @@ namespace AltVStrefaRPServer.Modules.CharacterModule.Customization
             await _characterCreatorService.SaveNewCharacter(character).ConfigureAwait(false);
             if (CharacterManager.Instance.IntializeCharacter(player, character))
             {
-                await player.EmitAsync("CharacterCreatedSuccessfully");
+                await player.EmitAsync("characterCreatedSuccessfully");
             }
             else
             {
