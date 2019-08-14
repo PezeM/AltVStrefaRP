@@ -23,7 +23,7 @@ namespace AltVStrefaRPServer.Models.Inventory
 
         public bool HasEmptySlots() => _items.Count < MaxSlots;
 
-        public bool IsSlotEmpty(int slotId) => _items.None(i => i.SlotId == slotId);
+        public bool IsSlotEmpty(int slotId) => _items.None(i => i.SlotId == slotId) && slotId < MaxSlots;
 
         public bool TryGetInventoryItemNotFullyStacked(BaseItem item, out InventoryItem inventoryItem)
         {
