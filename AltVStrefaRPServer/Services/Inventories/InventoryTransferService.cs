@@ -39,10 +39,10 @@ namespace AltVStrefaRPServer.Services.Inventories
         {
             if (!sourceInventory.HasItem(itemToTransfer)) return InventoryTransferItemResponse.ItemNotFound;
 
-            if (!(await sourceInventory.AddInventoryItemAsync(itemToTransfer, newSlot, _inventoryDatabaseService)).AnyChangesMade)
+            if (!(await receiverInventory.AddInventoryItemAsync(itemToTransfer, newSlot, _inventoryDatabaseService)).AnyChangesMade)
                 return InventoryTransferItemResponse.SlotOccupied;
 
-            await receiverInventory.RemoveItemAsync(itemToTransfer, _inventoryDatabaseService);
+            await sourceInventory.RemoveItemAsync(itemToTransfer, _inventoryDatabaseService);
 
             return InventoryTransferItemResponse.ItemTransfered;
         }
