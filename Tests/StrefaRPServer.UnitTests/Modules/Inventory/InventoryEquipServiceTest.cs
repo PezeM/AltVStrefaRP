@@ -61,7 +61,7 @@ namespace StrefaRPServer.UnitTests.Modules.Inventory
         [Test]
         public async Task EquipItemRemovesItemFromInventory()
         {
-            await _inventoryContainer.AddNewInventoryItemAsync(_itemToEquip, _inventoryDatabaseService);
+            await _inventoryContainer.AddInventoryItemAsync(_itemToEquip, _inventoryDatabaseService);
 
             var response = await _inventoryEquipService.EquipItemAsync(_inventoryContainer, _playerEquipment, _itemToEquip.Id);
 
@@ -72,7 +72,7 @@ namespace StrefaRPServer.UnitTests.Modules.Inventory
         [Test]
         public async Task EquipItemAddItemToItemList()
         {
-            await _inventoryContainer.AddNewInventoryItemAsync(_itemToEquip, _inventoryDatabaseService);
+            await _inventoryContainer.AddInventoryItemAsync(_itemToEquip, _inventoryDatabaseService);
 
             await _inventoryEquipService.EquipItemAsync(_inventoryContainer, _playerEquipment, _itemToEquip.Id);
 
@@ -82,7 +82,7 @@ namespace StrefaRPServer.UnitTests.Modules.Inventory
         [Test]
         public async Task EquipItemRemovesItemFromInventoryInDatabase()
         {
-            await _inventoryContainer.AddNewInventoryItemAsync(_itemToEquip, _inventoryDatabaseService);
+            await _inventoryContainer.AddInventoryItemAsync(_itemToEquip, _inventoryDatabaseService);
 
             await _inventoryEquipService.EquipItemAsync(_inventoryContainer, _playerEquipment, _itemToEquip.Id);
 
@@ -93,7 +93,7 @@ namespace StrefaRPServer.UnitTests.Modules.Inventory
         [Test]
         public async Task EquipItemChangesItemInvetoryId()
         {
-            await _inventoryContainer.AddNewInventoryItemAsync(_itemToEquip, _inventoryDatabaseService);
+            await _inventoryContainer.AddInventoryItemAsync(_itemToEquip, _inventoryDatabaseService);
 
             await _inventoryEquipService.EquipItemAsync(_inventoryContainer, _playerEquipment, _itemToEquip.Id);
 
@@ -113,7 +113,7 @@ namespace StrefaRPServer.UnitTests.Modules.Inventory
         [Test]
         public async Task UnequipingItemUnequipItem()
         {
-            await _inventoryContainer.AddNewInventoryItemAsync(_itemToEquip, _inventoryDatabaseService);
+            await _inventoryContainer.AddInventoryItemAsync(_itemToEquip, _inventoryDatabaseService);
             await _inventoryEquipService.EquipItemAsync(_inventoryContainer, _playerEquipment, _itemToEquip.Id);
 
             var response = await _inventoryEquipService.UnequipItemAsync(_inventoryContainer, _playerEquipment, _itemToEquip.Id);
@@ -124,7 +124,7 @@ namespace StrefaRPServer.UnitTests.Modules.Inventory
         [Test]
         public async Task UnequipingItemRemovesItFromEquippedItems()
         {
-            await _inventoryContainer.AddNewInventoryItemAsync(_itemToEquip, _inventoryDatabaseService);
+            await _inventoryContainer.AddInventoryItemAsync(_itemToEquip, _inventoryDatabaseService);
             await _inventoryEquipService.EquipItemAsync(_inventoryContainer, _playerEquipment, _itemToEquip.Id);
 
             await _inventoryEquipService.UnequipItemAsync(_inventoryContainer, _playerEquipment, _itemToEquip.Id);
@@ -136,7 +136,7 @@ namespace StrefaRPServer.UnitTests.Modules.Inventory
         [Test]
         public async Task UnequipingItemAddItemToInventoryContainer()
         {
-            await _inventoryContainer.AddNewInventoryItemAsync(_itemToEquip, _inventoryDatabaseService);
+            await _inventoryContainer.AddInventoryItemAsync(_itemToEquip, _inventoryDatabaseService);
             await _inventoryEquipService.EquipItemAsync(_inventoryContainer, _playerEquipment, _itemToEquip.Id);
 
             await _inventoryEquipService.UnequipItemAsync(_inventoryContainer, _playerEquipment, _itemToEquip.Id);
@@ -147,7 +147,7 @@ namespace StrefaRPServer.UnitTests.Modules.Inventory
         [Test]
         public async Task UnequipingItemChangesItemSlot()
         {
-            await _inventoryContainer.AddNewInventoryItemAsync(_itemToEquip, _inventoryDatabaseService);
+            await _inventoryContainer.AddInventoryItemAsync(_itemToEquip, _inventoryDatabaseService);
             await _inventoryEquipService.EquipItemAsync(_inventoryContainer, _playerEquipment, _itemToEquip.Id);
             var currentSlot = _itemToEquip.SlotId;
 
@@ -160,7 +160,7 @@ namespace StrefaRPServer.UnitTests.Modules.Inventory
         public async Task CantUnequipItemNotFromPlayerEquipment()
         {
             var wrongCharacterEquipmentId = _character.Equipment.Id + 1;
-            await _inventoryContainer.AddNewInventoryItemAsync(_itemToEquip, _inventoryDatabaseService);
+            await _inventoryContainer.AddInventoryItemAsync(_itemToEquip, _inventoryDatabaseService);
             await _inventoryEquipService.EquipItemAsync(_inventoryContainer, _playerEquipment, _itemToEquip.Id);
 
             await _inventoryEquipService.UnequipItemAsync(_inventoryContainer, _character, wrongCharacterEquipmentId, _itemToEquip.Id, 10);
@@ -169,7 +169,7 @@ namespace StrefaRPServer.UnitTests.Modules.Inventory
         [Test]
         public async Task UnequipingItemRemovesItemEquipmentInDatabase()
         {
-            await _inventoryContainer.AddNewInventoryItemAsync(_itemToEquip, _inventoryDatabaseService);
+            await _inventoryContainer.AddInventoryItemAsync(_itemToEquip, _inventoryDatabaseService);
             await _inventoryEquipService.EquipItemAsync(_inventoryContainer, _playerEquipment, _itemToEquip.Id);
 
             await _inventoryEquipService.UnequipItemAsync(_inventoryContainer, _playerEquipment, _itemToEquip.Id);
@@ -181,7 +181,7 @@ namespace StrefaRPServer.UnitTests.Modules.Inventory
         [Test]
         public async Task CanUnequipItemByEquipmentSlot()
         {
-            await _inventoryContainer.AddNewInventoryItemAsync(_itemToEquip, _inventoryDatabaseService);
+            await _inventoryContainer.AddInventoryItemAsync(_itemToEquip, _inventoryDatabaseService);
             await _inventoryEquipService.EquipItemAsync(_inventoryContainer, _playerEquipment, _itemToEquip.Id);
             var equipmentSlot = (EquipmentSlot)_itemToEquip.SlotId;
 

@@ -110,8 +110,8 @@ namespace AltVStrefaRPServer.Services.Inventories
                     return response;
                 }
 
-                inventory.AddInventoryItem(itemToSwap, itemToSwapSlotId);
-                inventoryToSwap.AddInventoryItem(selectedItem, selectedItemSlotId);
+                inventory.AddInventoryItem(itemToSwap, selectedItemSlotId);
+                inventoryToSwap.AddInventoryItem(selectedItem, itemToSwapSlotId);
 
                 context.Inventories.Update(inventory as Inventory);
                 context.Inventories.Update(inventoryToSwap as Inventory);
@@ -119,6 +119,7 @@ namespace AltVStrefaRPServer.Services.Inventories
 
                 response.SelectedItemNewSlotId = selectedItem.SlotId;
                 response.SwappedItemNewSlotId = itemToSwap.SlotId;
+                response.Type = InventorySwapItemResponseType.ItemsSwapped;
                 return response;
             }
         }
@@ -135,6 +136,7 @@ namespace AltVStrefaRPServer.Services.Inventories
             await inventory.UpdateInventoryAsync(_inventoryDatabaseService);
             response.SelectedItemNewSlotId = selectedItem.SlotId;
             response.SwappedItemNewSlotId = itemToSwap.SlotId;
+            response.Type = InventorySwapItemResponseType.ItemsSwapped;
             return response;
         }
     }

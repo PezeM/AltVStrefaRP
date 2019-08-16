@@ -38,7 +38,7 @@ namespace StrefaRPServer.UnitTests.Modules.Inventory
         public async Task ItemTransferReturnsItemTransferedResponse()
         {
             var receiverInventory = new InventoryContainer(_inventoriesSlotsCount);
-            await _inventoryContainer.AddNewInventoryItemAsync(_item, _inventoryDatabaseService);
+            await _inventoryContainer.AddInventoryItemAsync(_item, _inventoryDatabaseService);
 
             var response = await _inventoryTransferService.TransferItemAsync(_inventoryContainer, receiverInventory, _item, 1);
 
@@ -49,7 +49,7 @@ namespace StrefaRPServer.UnitTests.Modules.Inventory
         public async Task ItemTransferRemovesItemFromSourceInventory()
         {
             var receiverInventory = new InventoryContainer(_inventoriesSlotsCount);
-            await _inventoryContainer.AddNewInventoryItemAsync(_item, _inventoryDatabaseService);
+            await _inventoryContainer.AddInventoryItemAsync(_item, _inventoryDatabaseService);
 
             await _inventoryTransferService.TransferItemAsync(_inventoryContainer, receiverInventory, _item, 1);
 
@@ -60,7 +60,7 @@ namespace StrefaRPServer.UnitTests.Modules.Inventory
         public async Task ItemTransferAddsItemToReceiverInventory()
         {
             var receiverInventory = new InventoryContainer(_inventoriesSlotsCount);
-            await _inventoryContainer.AddNewInventoryItemAsync(_item, _inventoryDatabaseService);
+            await _inventoryContainer.AddInventoryItemAsync(_item, _inventoryDatabaseService);
 
             await _inventoryTransferService.TransferItemAsync(_inventoryContainer, receiverInventory, _item, 1);
 
@@ -72,7 +72,7 @@ namespace StrefaRPServer.UnitTests.Modules.Inventory
         {
             var newSlot = 5;
             var receiverInventory = new InventoryContainer(_inventoriesSlotsCount);
-            await _inventoryContainer.AddNewInventoryItemAsync(_item, _inventoryDatabaseService);
+            await _inventoryContainer.AddInventoryItemAsync(_item, _inventoryDatabaseService);
 
             await _inventoryTransferService.TransferItemAsync(_inventoryContainer, receiverInventory, _item, newSlot);
 
@@ -83,7 +83,7 @@ namespace StrefaRPServer.UnitTests.Modules.Inventory
         public async Task ItemTransferChangesItemInventoryId()
         {
             var receiverInventory = new InventoryContainer(_inventoriesSlotsCount);
-            await _inventoryContainer.AddNewInventoryItemAsync(_item, _inventoryDatabaseService);
+            await _inventoryContainer.AddInventoryItemAsync(_item, _inventoryDatabaseService);
 
             await _inventoryTransferService.TransferItemAsync(_inventoryContainer, receiverInventory, _item, 1);
 
@@ -94,7 +94,7 @@ namespace StrefaRPServer.UnitTests.Modules.Inventory
         public async Task ItemTransferSavesChangesToDatabase()
         {
             var receiverInventory = new InventoryContainer(_inventoriesSlotsCount);
-            await _inventoryContainer.AddNewInventoryItemAsync(_item, _inventoryDatabaseService);
+            await _inventoryContainer.AddInventoryItemAsync(_item, _inventoryDatabaseService);
 
             await _inventoryTransferService.TransferItemAsync(_inventoryContainer, receiverInventory, _item, 1);
 
