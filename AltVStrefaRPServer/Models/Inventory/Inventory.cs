@@ -132,5 +132,10 @@ namespace AltVStrefaRPServer.Models.Inventory
                 return InventoryDropResponse.ItemAlreadyDropped;
             return InventoryDropResponse.DroppedItem;
         }
+
+        public async Task UpdateInventoryAsync(IInventoryDatabaseService inventoryDatabaseService)
+        {
+            await inventoryDatabaseService.UpdateInventoryAsync(this);
+        }
     }
 }

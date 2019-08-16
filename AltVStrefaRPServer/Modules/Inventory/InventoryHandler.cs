@@ -51,17 +51,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
             AltAsync.On<IStrefaPlayer, int, int, int, int, Task>("InventoryTryStackItemBetweenInventories", InventoryTryStackItemBetweenInventoriesAsync);
             AltAsync.On<IStrefaPlayer, int, int, int, Task>("InventoryTryEquipItem", InventoryTryEquipItemAsync);
             AltAsync.On<IStrefaPlayer, int, int, int, int, Task>("InventoryTryUnequipItem", InventoryTryUnequipItemAsync);
-            AltAsync.On<IStrefaPlayer, int, int, int, int, int, int, Task>("InventoryTrySwapItem", InventoryTrySwapItem);
-        }
-
-        private async Task InventoryTrySwapItem(IStrefaPlayer player, int inventoryId, int selectedItemId, int selectedItemSlotId, int itemToSwapId, 
-            int itemToSwapSlotId, int itemToSwapInventoryId)
-        {
-            if(!player.TryGetCharacter(out var character)) return;
-            var inventory = InventoriesHelper.GetCorrectInventory(player, character, inventoryId);
-            var inventoryToSwap = InventoriesHelper.GetCorrectInventory(player, character, itemToSwapInventoryId);
-
-            _inventoryTransferService.SwapItemAsync(inventory, selectedItemId, selectedItemSlotId, itemToSwapId, itemToSwapSlotId, inventoryToSwap);
+            AltAsync.On<IStrefaPlayer, int, int, int, int, int, int, Task>("InventoryTrySwapItems", InventoryTrySwapItemsAsync);
         }
 
         private void GetPlayerInventory(IPlayer player)
@@ -253,6 +243,17 @@ namespace AltVStrefaRPServer.Modules.Inventory
             InventoryTryMoveItemResponse(player, response);
         }
 
+        private async Task InventoryTrySwapItemsAsync(IStrefaPlayer player, int inventoryId, int selectedItemId, int selectedItemSlotId, int itemToSwapId, 
+            int itemToSwapSlotId, int itemToSwapInventoryId)
+        {
+            if (!player.TryGetCharacter(out var character)) return;
+            var inventory = InventoriesHelper.GetCorrectInventory(player, character, inventoryId);
+            var inventoryToSwap = InventoriesHelper.GetCorrectInventory(player, character, itemToSwapInventoryId);
+
+            var response = await _inventoryTransferService.SwapItemAsync(inventory, selectedItemId, selectedItemSlotId, itemToSwapId, itemToSwapSlotId, inventoryToSwap);
+            InventorySwapItemRespone(player, response);
+        }
+
         private void InventoryTryStackItemBetweenInventoriesResponse(IPlayer player, InventoryStackResponse response)
         {
             switch (response.Type)
@@ -374,6 +375,20 @@ namespace AltVStrefaRPServer.Modules.Inventory
                     break;
                 case InventoryMoveItemResponse.ItemMoved:
                     player.Emit("inventoryMoveItemResponse", true);
+                    break;
+            }
+        }
+        
+        private static void InventorySwapItemRespone(IStrefaPlayer player, InventorySwapItemResponse response)
+        {
+            switch (response.Type)
+            {
+                case InventorySwapItemResponseType.ItemsNotFound:
+                case InventorySwapItemResponseType.CouldntRemoveItem:
+                    player.EmitLocked("inventorySwapItemsResponse", false);
+                    break;
+                case InventorySwapItemResponseType.ItemsSwapped:
+                    player.EmitLocked("inventorySwapItemsResponse", true, response.SelectedItemNewSlotId, response.SwappedItemNewSlotId);
                     break;
             }
         }

@@ -29,5 +29,7 @@ namespace AltVStrefaRPServer.Models.Inventory.Interfaces
             IInventoryDatabaseService inventoryDatabaseService);
         Task<InventoryDropResponse> DropItemAsync(InventoryItem item, int amount, Position position, IInventoriesManager inventoriesManager,
              IInventoryDatabaseService inventoryDatabaseService);
+
+        Task UpdateInventoryAsync(IInventoryDatabaseService inventoryDatabaseService);
     }
 }

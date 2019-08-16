@@ -16,7 +16,6 @@ namespace StrefaRPServer.UnitTests.Modules.Inventory
         private InventoryTransferService _inventoryTransferService;
         private InventoryContainer _inventoryContainer;
         private InventoryItem _item;
-        private InventoryItem _secondItem;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
@@ -28,12 +27,11 @@ namespace StrefaRPServer.UnitTests.Modules.Inventory
         public void Setups()
         {
             _inventoryDatabaseService = new InventoryDatabaseService(_mockFactory.Object);
-            _inventoryTransferService = new InventoryTransferService(_inventoryDatabaseService);
+            _inventoryTransferService = new InventoryTransferService(_inventoryDatabaseService, _mockFactory.Object);
 
             _inventoryContainer = new InventoryContainer(_inventoriesSlotsCount);
 
             _item = new InventoryItem(_itemFactory.CreateBurger(), 1, 0);
-            _secondItem = new InventoryItem(_itemFactory.CreatePistol(), 1, 0);
         }
 
         [Test]
