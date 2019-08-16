@@ -51,6 +51,17 @@ namespace AltVStrefaRPServer.Modules.Inventory
             AltAsync.On<IStrefaPlayer, int, int, int, int, Task>("InventoryTryStackItemBetweenInventories", InventoryTryStackItemBetweenInventoriesAsync);
             AltAsync.On<IStrefaPlayer, int, int, int, Task>("InventoryTryEquipItem", InventoryTryEquipItemAsync);
             AltAsync.On<IStrefaPlayer, int, int, int, int, Task>("InventoryTryUnequipItem", InventoryTryUnequipItemAsync);
+            AltAsync.On<IStrefaPlayer, int, int, int, int, int, int, Task>("InventoryTrySwapItem", InventoryTrySwapItem);
+        }
+
+        private async Task InventoryTrySwapItem(IStrefaPlayer player, int inventoryId, int selectedItemId, int selectedItemSlotId, int itemToSwapId, 
+            int itemToSwapSlotId, int itemToSwapInventoryId)
+        {
+            if(!player.TryGetCharacter(out var character)) return;
+            var inventory = InventoriesHelper.GetCorrectInventory(player, character, inventoryId);
+            var inventoryToSwap = InventoriesHelper.GetCorrectInventory(player, character, itemToSwapInventoryId);
+
+            _inventoryTransferService.SwapItemAsync(inventory, selectedItemId, selectedItemSlotId, itemToSwapId, itemToSwapSlotId, inventoryToSwap);
         }
 
         private void GetPlayerInventory(IPlayer player)

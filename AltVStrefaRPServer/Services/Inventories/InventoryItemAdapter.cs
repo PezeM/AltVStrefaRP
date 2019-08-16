@@ -16,6 +16,7 @@ namespace AltVStrefaRPServer.Services.Inventories
             int stackSize = 0;
             bool isDroppable;
             int equipmentSlot = 0;
+            string description = string.Empty;
             while (reader.HasNext())
             { 
                 switch (reader.NextName())
@@ -40,6 +41,9 @@ namespace AltVStrefaRPServer.Services.Inventories
                         break;
                     case "equipmentSlot":
                         equipmentSlot = reader.NextInt();
+                        break;
+                    case "description":
+                        description = reader.NextString();
                         break;
                     default:
                         reader.SkipValue();

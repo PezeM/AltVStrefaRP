@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using AltVStrefaRPServer.Models.Inventory;
+using AltVStrefaRPServer.Models.Inventory.Interfaces;
 using AltVStrefaRPServer.Models.Inventory.Responses;
 using IInventoryContainer = AltVStrefaRPServer.Models.Inventory.Interfaces.IInventoryContainer;
 
@@ -52,6 +53,28 @@ namespace AltVStrefaRPServer.Services.Inventories
         {
             if (!sourceInventory.HasItem(itemId, out var itemToTransfer)) return InventoryTransferItemResponse.ItemNotFound;
             return await TransferItemAsync(sourceInventory, receiverInventory, itemToTransfer, newSlot);
+        }
+
+        public async Task SwapItemAsync(IInventoryContainer inventory, int selectedItemId, int selectedItemSlotId, int itemToSwapId, int itemToSwapSlotId, 
+            IInventoryContainer inventoryToSwap = null)
+        {
+            if (!inventory.HasItem(selectedItemId, out var selectedItem) || selectedItem.SlotId != selectedItemSlotId) return;
+            if (inventoryToSwap == null)
+            {
+                if (!inventory.HasItem(itemToSwapId, out var itemToSwap) || itemToSwap.SlotId != itemToSwapSlotId) return;
+                await SwapItemAsync(inventory, selectedItem, selectedItemSlotId, itemToSwap, itemToSwapSlotId);
+            }
+            else
+            {
+                if (!inventoryToSwap.HasItem(itemToSwapId, out var itemToSwap) || itemToSwap.SlotId != itemToSwapSlotId) return;
+                await SwapItemAsync(inventory, selectedItem, selectedItemSlotId, itemToSwap, itemToSwapSlotId, inventoryToSwap);
+            }
+        }
+
+        public async Task SwapItemAsync(IInventoryContainer inventory, InventoryItem selectedItem, int selectedItemSlotId, InventoryItem itemToSwap,
+            int itemToSwapSlotId, IInventoryContainer inventoryToSwap = null)
+        {
+
         }
     }
 }
