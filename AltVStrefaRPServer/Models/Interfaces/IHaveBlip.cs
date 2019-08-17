@@ -5,5 +5,6 @@
         int BlipSprite { get; }
         int BlipColor { get; }
         string BlipName { get; }
+        void CreateBlip();
     }
 }

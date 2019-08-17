@@ -1,5 +1,4 @@
-﻿using AltV.Net.Elements.Entities;
-using AltVStrefaRPServer.Models.Dto;
+﻿using AltVStrefaRPServer.Models.Dto;
 using AltVStrefaRPServer.Models.Dto.Fractions;
 using AltVStrefaRPServer.Models.Fractions.Permissions;
 using AltVStrefaRPServer.Models.Interfaces;
@@ -12,15 +11,14 @@ namespace AltVStrefaRPServer.Models.Fractions
 {
     public interface IFraction : IMoney, IPosition, IHaveBlip
     {
-        IBlip Blip { get; set; }
+        int Id { get; set; }
+        string Name { get; set; }
         DateTime CreationDate { get; set; }
         string Description { get; set; }
         IReadOnlyCollection<Character> Employees { get; }
         int EmployeesCount { get; }
         IReadOnlyCollection<FractionRank> FractionRanks { get; }
-        int Id { get; set; }
         List<int> Invites { get; }
-        string Name { get; set; }
 
         Task<bool> AddNewEmployeeAsync(Character newEmployee, IFractionDatabaseService fractionDatabaseService);
         Task<bool> AddNewRankAsync(NewFractionRankDto newRank, IFractionDatabaseService fractionDatabaseService);

@@ -7,10 +7,11 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AltVStrefaRPServer.Modules.Core;
 
 namespace AltVStrefaRPServer.Modules.CharacterModule
 {
-    public class CharacterManager : ICharacterManager
+    public sealed class CharacterManager : ICharacterManager
     {
         private static readonly Lazy<CharacterManager> lazy = new Lazy<CharacterManager>(() => new CharacterManager());
         public static CharacterManager Instance { get { return lazy.Value; } }
@@ -65,6 +66,7 @@ namespace AltVStrefaRPServer.Modules.CharacterModule
                 player.Model = character.Gender == 0 ? (uint)PedModel.FreemodeMale01 : (uint)PedModel.FreemodeFemale01;
                 player.Dimension = character.Dimension;
                 character.LastPlayed = DateTime.Now;
+                character.Player.Emit("blipManagerLoadAllBlips", BlipManager.Instance.GetBlipsList());
 
                 _characters.Add(player.Id, character);
                 Log.ForContext<CharacterManager>().Information("Initialized character {characterName} CID({characterId}) ID({playerId}) in the world",

@@ -13,7 +13,9 @@ namespace AltVStrefaRPServer.Models.Fractions
         public float PropertyTax { get; private set; }
         public float GunTax { get; private set; }
         public float GlobalTax { get; private set; }
-        public List<float> Taxes { get; private set; } = new List<float>();
+        public List<float> Taxes { get; } = new List<float>();
+        public override int BlipColor { get; protected set; } = 1;
+        public override int BlipSprite { get; protected set; } = 181;
         public override string BlipName { get; protected set; } = "Urząd miasta";
 
         protected TownHallFraction() : base()

@@ -11,6 +11,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AltVStrefaRPServer.Models.Core;
+using AltVStrefaRPServer.Modules.Core;
 
 namespace AltVStrefaRPServer.Models.Fractions
 {
@@ -37,7 +39,7 @@ namespace AltVStrefaRPServer.Models.Fractions
         public virtual string BlipName { get; protected set; }
         public virtual int BlipColor { get; protected set; }
         public virtual int BlipSprite { get; protected set; }
-        public virtual IBlip Blip { get; set; }
+        public virtual IBlipWrapper Blip { get; set; }
         public List<int> Invites { get; } = new List<int>();
 
         protected Fraction()
@@ -65,6 +67,11 @@ namespace AltVStrefaRPServer.Models.Fractions
         public Position GetPosition() => new Position(X, Y, Z);
 
         public string MoneyTransactionDisplayName() => Name;
+
+        public void CreateBlip()
+        {
+            Blip = BlipManager.Instance.CreateBlip(BlipName, BlipSprite, BlipColor, GetPosition());
+        }
 
         public bool HasPermission<TPermission>(Character character) where TPermission : FractionPermission
             => GetEmployeeRank(character)?.HasPermission<TPermission>() ?? false;

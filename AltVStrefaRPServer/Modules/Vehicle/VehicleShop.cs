@@ -1,12 +1,12 @@
-﻿using AltV.Net;
-using AltV.Net.Data;
-using AltV.Net.Elements.Entities;
+﻿using AltV.Net.Data;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Interfaces;
 using AltVStrefaRPServer.Services.Vehicles.VehicleShops;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AltVStrefaRPServer.Models.Core;
+using AltVStrefaRPServer.Modules.Core;
 
 namespace AltVStrefaRPServer.Modules.Vehicle
 {
@@ -29,15 +29,15 @@ namespace AltVStrefaRPServer.Modules.Vehicle
 
         public float Money { get; private set; }
 
-        public IBlip ShopBlip { get; set; }
-        public int BlipSprite { get; set; }
-        public int BlipColor { get; set; }
+        public IBlipWrapper ShopBlip { get; set; }
+        public int BlipSprite => 67;
+        public int BlipColor => 1;
         public string BlipName => "Sklep samochodowy";
 
         private VehicleShop() { }
 
         public VehicleShop(int vehicleShopId, Position position, List<VehiclePrice> availableVehicles, Position positionOfBoughtVehicles,
-            Rotation rotationOfBoughtVehicles, int blipSprite = 67, int blipColor = 1)
+            Rotation rotationOfBoughtVehicles)
         {
             VehicleShopId = vehicleShopId;
             X = position.X;
@@ -50,10 +50,6 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             BoughtVehiclesRoll = rotationOfBoughtVehicles.Roll;
             BoughtVehiclesYaw = rotationOfBoughtVehicles.Yaw;
             AvailableVehicles = availableVehicles;
-            BlipColor = blipColor;
-            BlipSprite = blipSprite;
-
-            CreateShopBlip();
         }
 
         public VehiclePrice FindVehicleByModel(long vehicleModel)
@@ -67,14 +63,6 @@ namespace AltVStrefaRPServer.Modules.Vehicle
 
         public Rotation GetRotationOfBoughtVehicles()
             => new Rotation(BoughtVehiclesRoll, BoughtVehiclesPitch, BoughtVehiclesYaw);
-
-        private void CreateShopBlip()
-        {
-            ShopBlip = Alt.CreateBlip(BlipType.Object, GetPosition());
-            ShopBlip.Sprite = 67;
-            ShopBlip.Color = 1;
-            Alt.Log($"VehicleShop blip for shop {VehicleShopId}. Type: {ShopBlip.BlipType} Position: {ShopBlip.Position}");
-        }
 
         public void AddMoney(float amount)
         {
@@ -97,6 +85,11 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             AvailableVehicles.Add(vehiclePrice);
             await vehicleShopDatabaseService.SaveVehicleShopAsync(this);
             return true;
+        }
+
+        public void CreateBlip()
+        {
+            ShopBlip = BlipManager.Instance.CreateBlip(BlipName, 67, 1, GetPosition());
         }
     }
 }

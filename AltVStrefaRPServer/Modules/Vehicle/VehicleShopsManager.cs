@@ -33,6 +33,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             foreach (var vehicleShop in _vehicleShopDatabaseService.GetAllVehicleShops())
             {
                 VehicleShops.Add(vehicleShop);
+                vehicleShop.CreateBlip();
             }
             _logger.LogInformation("Loaded {vehicleShopsCount} vehicle shops in {elapsedTime}ms", VehicleShops.Count, Time.GetElapsedTime(startTime));
         }

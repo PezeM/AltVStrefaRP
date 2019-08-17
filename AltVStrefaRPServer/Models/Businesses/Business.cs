@@ -4,6 +4,7 @@ using AltVStrefaRPServer.Models.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AltVStrefaRPServer.Modules.Core;
 
 namespace AltVStrefaRPServer.Models.Businesses
 {
@@ -41,6 +42,11 @@ namespace AltVStrefaRPServer.Models.Businesses
             X = position.X;
             Y = position.Y;
             Z = position.Z;
+        }
+
+        public void CreateBlip()
+        {
+            BlipManager.Instance.CreateBlip(BlipName, BlipSprite, BlipColor, GetPosition());
         }
 
         /// <summary>

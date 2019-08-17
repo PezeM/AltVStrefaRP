@@ -49,7 +49,7 @@ namespace AltVStrefaRPServer.Handlers
         {
             try
             {
-                var character = await _characterDatabaseService.GetCharacterByIdAsync(characterId);
+                var character = await _characterDatabaseService.GetCharacterByIdAsync(characterId).ConfigureAwait(false);
                 if (character == null)
                 {
                     // TODO: Emit event to player that cound't find character with given ID
@@ -65,7 +65,7 @@ namespace AltVStrefaRPServer.Handlers
                     }
                     else
                     {
-                        // Emit another event and enable button to choose character
+                        player.Kick("Wystąpił błąd poczas wyboru postaci.");
                     }
                 });
             }
