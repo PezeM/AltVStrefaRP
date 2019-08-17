@@ -22,9 +22,12 @@ using AltVStrefaRPServer.Services.Vehicles;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using AltVStrefaRPServer.Models;
+using Newtonsoft.Json;
 
 namespace AltVStrefaRPServer
 {
@@ -36,6 +39,7 @@ namespace AltVStrefaRPServer
         private ILogger<Start> _logger;
 
         private Startup _startup;
+
         public override void OnStart()
         {
             _startup = new Startup();
@@ -88,9 +92,25 @@ namespace AltVStrefaRPServer
                 Alt.Log("Some test");
                 foreach (var item in data)
                 {
-                    Alt.Log($"AuthResult data: {item.ToString()}");
+                    Alt.Log($"AuthResult data: {item}");
+                    if (item is Dictionary<string, object> dataDictionary)
+                    {
+                        Alt.Log("Its dictionary");
+                        foreach (var value in dataDictionary)
+                        {
+                            Alt.Log($"Key: {value.Key} Value: {value.Value}");
+                        }
+                    }
                 }
             });
+        }
+
+
+        public class TestOAuth
+        {
+            public string Token { get; set; }
+            public string Expires { get; set; }
+            public string Scopes { get; set; }
         }
 
         private void OnOnPlayerEvent(IPlayer player, string eventName, object[] args)

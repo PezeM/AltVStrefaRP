@@ -119,7 +119,7 @@ namespace AltVStrefaRPServer.Models.Inventory
             var response = AddItem(itemToAdd, amount);
             if (response.AnyChangesMade)
             {
-                await OnAddedNewItemsAsync(inventoryDatabaseService, response);
+                await OnAddedNewItemsAsync(inventoryDatabaseService, response).ConfigureAwait(false);
             }
 
             return response;
@@ -222,7 +222,7 @@ namespace AltVStrefaRPServer.Models.Inventory
 
         protected int GetFreeSlot()
         {
-            var freeSlots = Enumerable.Range(0, MaxSlots - 1).ToList();
+            var freeSlots = Enumerable.Range(0, MaxSlots).ToList();
             for (var i = 0; i < _items.Count; i++)
             {
                 if (freeSlots.Contains(_items[i].SlotId))
@@ -230,7 +230,7 @@ namespace AltVStrefaRPServer.Models.Inventory
                     freeSlots.Remove(_items[i].SlotId);
                 }
             }
-            return freeSlots.First();
+            return freeSlots[0];
         }
     }
 }

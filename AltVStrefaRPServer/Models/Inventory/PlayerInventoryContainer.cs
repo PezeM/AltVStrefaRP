@@ -39,7 +39,7 @@ namespace AltVStrefaRPServer.Models.Inventory
         public async Task<InventoryUseResponse> UseItemAsync(Character character, int itemId, IInventoryDatabaseService inventoryDatabaseService)
         {
             if (!HasItem(itemId, out var item)) return InventoryUseResponse.ItemNotFound;
-            return await UseItemAsync(character, item, inventoryDatabaseService);
+            return await UseItemAsync(character, item, inventoryDatabaseService).ConfigureAwait(false);
         }
 
         protected override void OnNewItemStacked(int itemId, int quantity)

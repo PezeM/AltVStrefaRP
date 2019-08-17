@@ -125,7 +125,7 @@ namespace AltVStrefaRPServer.Models.Inventory
             IInventoryDatabaseService inventoryDatabaseService)
         {
             if (!(item.Item is IDroppable droppable)) return InventoryDropResponse.ItemNotDroppable;
-            if (await RemoveItemAsync(item, amount, inventoryDatabaseService) == InventoryRemoveResponse.NotEnoughItems)
+            if (await RemoveItemAsync(item, amount, inventoryDatabaseService).ConfigureAwait(false) == InventoryRemoveResponse.NotEnoughItems)
                 return InventoryDropResponse.NotEnoughItems;
 
             var newBaseItem = BaseItem.ShallowClone(item.Item);
