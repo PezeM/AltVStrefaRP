@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using AltV.Net.Data;
+﻿using AltV.Net.Data;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Modules.Vehicle;
+using System.Collections.Generic;
 using VehicleModel = AltV.Net.Enums.VehicleModel;
 
 namespace AltVStrefaRPServer.Services.Vehicles.VehicleShops

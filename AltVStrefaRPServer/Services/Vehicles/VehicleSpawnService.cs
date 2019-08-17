@@ -2,12 +2,12 @@
 using AltV.Net.Async;
 using AltV.Net.Data;
 using AltV.Net.Enums;
+using AltVStrefaRPServer.Data;
+using AltVStrefaRPServer.Models.Vehicles;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
-using AltVStrefaRPServer.Data;
-using Microsoft.Extensions.Logging;
 using VehicleModel = AltVStrefaRPServer.Models.Vehicles.VehicleModel;
-using AltVStrefaRPServer.Models.Vehicles;
 
 namespace AltVStrefaRPServer.Services.Vehicles
 {
@@ -24,12 +24,12 @@ namespace AltVStrefaRPServer.Services.Vehicles
 
         public async Task SpawnVehicleAsync(VehicleModel vehicleModel)
         {
-            if(!CanSpawnVehicle(vehicleModel)) return;
+            if (!CanSpawnVehicle(vehicleModel)) return;
 
             try
             {
                 vehicleModel.VehicleHandle = await AltAsync.CreateVehicle(vehicleModel.Model,
-                    new Position(vehicleModel.X, vehicleModel.Y, vehicleModel.Z), 
+                    new Position(vehicleModel.X, vehicleModel.Y, vehicleModel.Z),
                     new Rotation(vehicleModel.Roll, vehicleModel.Pitch, vehicleModel.Yaw)).ConfigureAwait(false);
             }
             catch (Exception e)
@@ -44,12 +44,12 @@ namespace AltVStrefaRPServer.Services.Vehicles
 
         public void SpawnVehicle(VehicleModel vehicleModel)
         {
-            if(!CanSpawnVehicle(vehicleModel)) return;
+            if (!CanSpawnVehicle(vehicleModel)) return;
 
             try
             {
                 vehicleModel.VehicleHandle = Alt.CreateVehicle(vehicleModel.Model,
-                    new Position(vehicleModel.X, vehicleModel.Y, vehicleModel.Z), 
+                    new Position(vehicleModel.X, vehicleModel.Y, vehicleModel.Z),
                     new Rotation(vehicleModel.Roll, vehicleModel.Pitch, vehicleModel.Yaw));
             }
             catch (Exception e)

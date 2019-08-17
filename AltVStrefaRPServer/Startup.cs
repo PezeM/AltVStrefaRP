@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using AltVStrefaRPServer.Data;
+﻿using AltVStrefaRPServer.Data;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Handlers;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
@@ -34,6 +32,8 @@ using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.Elasticsearch;
+using System;
+using System.IO;
 
 namespace AltVStrefaRPServer
 {
@@ -149,10 +149,10 @@ namespace AltVStrefaRPServer
                 .Enrich.FromLogContext()
                 .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] <{ThreadId}><{ThreadName}> {Message:lj} {NewLine}{Exception}")
                 .WriteTo.File(logsPath + ".log",
-                    LogEventLevel.Verbose, 
-                    outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] <{ThreadId}><{ThreadName}> {Message:lj} {NewLine}{Exception}", 
-                    rollingInterval: RollingInterval.Day, 
-                    retainedFileCountLimit: 100, 
+                    LogEventLevel.Verbose,
+                    outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] <{ThreadId}><{ThreadName}> {Message:lj} {NewLine}{Exception}",
+                    rollingInterval: RollingInterval.Day,
+                    retainedFileCountLimit: 100,
                     rollOnFileSizeLimit: true)
                 .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(options.Uri))
                 {

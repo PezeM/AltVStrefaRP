@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using AltV.Net;
+﻿using AltV.Net;
 using AltV.Net.Elements.Args;
 using AltVStrefaRPServer.Models.Dto;
 using AltVStrefaRPServer.Models.Inventory;
+using System.Collections.Generic;
 
 namespace AltVStrefaRPServer.Services.Inventories
 {
@@ -23,7 +23,7 @@ namespace AltVStrefaRPServer.Services.Inventories
             int inventorySlots = 0;
             List<InventoryItem> items = null;
             while (reader.HasNext())
-            { 
+            {
                 switch (reader.NextName())
                 {
                     case "inventoryId":
@@ -70,8 +70,8 @@ namespace AltVStrefaRPServer.Services.Inventories
 
         public void ToMValue(object obj, IMValueWriter writer)
         {
-            if (obj is InventoryContainerDto value) 
-            { 
+            if (obj is InventoryContainerDto value)
+            {
                 ToMValue(value, writer);
             }
         }

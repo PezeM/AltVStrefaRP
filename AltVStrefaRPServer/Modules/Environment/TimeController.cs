@@ -1,9 +1,9 @@
 ﻿using AltV.Net;
-using System.Timers;
 using AltVStrefaRPServer.Models.Enums;
-using System;
 using AltVStrefaRPServer.Models.Server;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Timers;
 
 namespace AltVStrefaRPServer.Modules.Environment
 {
@@ -11,7 +11,7 @@ namespace AltVStrefaRPServer.Modules.Environment
     {
         private Timer _gameTimeTimer;
         private readonly int _timerInterval = 60000;
-        private int _elapsedMinutes = AppSettings.Current.ServerConfig.ChangeWeatherInterval == 0 
+        private int _elapsedMinutes = AppSettings.Current.ServerConfig.ChangeWeatherInterval == 0
             ? 30 : AppSettings.Current.ServerConfig.ChangeWeatherInterval;
         private readonly Random _rng;
         private readonly ILogger<TimeController> _logger;

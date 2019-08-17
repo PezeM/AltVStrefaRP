@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using AltV.Net;
+﻿using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Extensions;
@@ -11,6 +9,7 @@ using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Money;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 namespace AltVStrefaRPServer.Modules.Vehicle
 {
@@ -71,17 +70,17 @@ namespace AltVStrefaRPServer.Modules.Vehicle
 
             if (!await _moneyService.TransferMoneyFromBankAccountToEntityAsync(character, shop, vehicleToBuy.Price, TransactionType.VehicleBuy))
             {
-                await _notificationService.ShowErrorNotificationAsync(player, 
+                await _notificationService.ShowErrorNotificationAsync(player,
                     "Błąd!", $"Nie posiadasz {vehicleToBuy.Price}$ aby zakupić ten pojazd.", 6000);
                 return;
             }
 
             // Player bought the vehicle, create vehicleModel and save it to database.
-            await _vehiclesManager.CreateVehicleAsync(vehicleToBuy.VehicleModel.ToString(), shop.GetPositionOfBoughtVehicles(), 
+            await _vehiclesManager.CreateVehicleAsync(vehicleToBuy.VehicleModel.ToString(), shop.GetPositionOfBoughtVehicles(),
                 shop.GetRotationOfBoughtVehicles(), 0, character.Id, OwnerType.Character);
-            await _notificationService.ShowSuccessNotificationAsync(player, "Zakupiono pojazd!", 
+            await _notificationService.ShowSuccessNotificationAsync(player, "Zakupiono pojazd!",
                 $"Pomyślnie zakupiono pojazd {vehicleToBuy.VehicleModel.ToString()} za {vehicleToBuy.Price}$.");
-            _logger.LogInformation("Character CID({characterId}) {characterName} bought new vehicle {vehicleModel} for {vehiclePrice} in shop ID({vehicleShopId})", 
+            _logger.LogInformation("Character CID({characterId}) {characterName} bought new vehicle {vehicleModel} for {vehiclePrice} in shop ID({vehicleShopId})",
                 character.Id, character.GetFullName(), vehicleToBuy.VehicleModel.ToString(), vehicleToBuy.Price, shop.VehicleShopId);
         }
     }

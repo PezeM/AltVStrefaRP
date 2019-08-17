@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using AltV.Net;
+﻿using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Extensions;
@@ -16,6 +13,9 @@ using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Characters;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace AltVStrefaRPServer.Modules.Fractions
 {
@@ -36,7 +36,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
             _vehiclesManager = vehiclesManager;
             _logger = logger;
 
-            Alt.On<IPlayer, int, float>("TryToUpdateTaxValue", TryToUpdateTaxValue);  
+            Alt.On<IPlayer, int, float>("TryToUpdateTaxValue", TryToUpdateTaxValue);
             AltAsync.On<IPlayer, string, string, Task>("TryToGetResidentData", TryToGetResidentDataEventAsync);
             Alt.On<IPlayer>("TryToOpenFractionResidentsPage", TryToOpenFractionResidentsPage);
             Alt.On<IPlayer>("TryToOpenFractionTaxesPage", TryToOpenFractionTaxesPage);
@@ -84,7 +84,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
         private void TryToUpdateTaxValue(IPlayer player, int taxId, float newTax)
         {
             if (!player.TryGetCharacter(out Character character)) return;
-            if(!_fractionsManager.TryToGetTownHallFraction(out TownHallFraction townHallFraction)) return;
+            if (!_fractionsManager.TryToGetTownHallFraction(out TownHallFraction townHallFraction)) return;
             if (townHallFraction.GetEmployeeRank(character)?.RankType != RankType.Highest)
             {
                 _notificationService.ShowErrorNotification(player, "Brak uprawnień",
@@ -96,19 +96,19 @@ namespace AltVStrefaRPServer.Modules.Fractions
             if (UpdateTax(taxId, newTax, townHallFraction))
             {
                 player.Emit("updateTaxValue", taxId, newTax);
-                _logger.LogInformation("Character {characterName} CID({characterId}) changed tax ID({taxId}) to {newTaxValue}%", 
-                    character.GetFullName(), character.Id, taxId, newTax*100);
+                _logger.LogInformation("Character {characterName} CID({characterId}) changed tax ID({taxId}) to {newTaxValue}%",
+                    character.GetFullName(), character.Id, taxId, newTax * 100);
             }
             else
             {
                 _notificationService.ShowErrorNotification(player, "Błąd", $"Nie udało się ustawić nowego podatku.");
             }
         }
-        
+
         private void TryToOpenFractionRegistrationPage(IPlayer player)
         {
             if (!player.TryGetCharacter(out Character character)) return;
-            if(!_fractionsManager.TryToGetTownHallFraction(out TownHallFraction townHallFraction)) return;
+            if (!_fractionsManager.TryToGetTownHallFraction(out TownHallFraction townHallFraction)) return;
             if (!townHallFraction.HasPermission<TownHallActionsPermission>(character))
             {
                 _notificationService.ShowErrorNotification(player, "Brak uprawnień",

@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
-using AltVStrefaRPServer.Database;
+﻿using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Models.Inventory.Responses;
+using System;
+using System.Threading.Tasks;
 
 namespace AltVStrefaRPServer.Services.Inventories
 {
@@ -31,7 +31,7 @@ namespace AltVStrefaRPServer.Services.Inventories
                 using (var transaction = await context.Database.BeginTransactionAsync())
                 {
                     if (!inventory.HasItem(itemToEquipId, out var itemToEquip) || itemToEquip.Quantity < 1) return InventoryEquipItemResponse.ItemNotFound;
-                    
+
                     var response = playerEquipment.EquipItem(itemToEquip);
                     if (response != InventoryEquipItemResponse.ItemEquipped) return response;
 
@@ -65,14 +65,14 @@ namespace AltVStrefaRPServer.Services.Inventories
             return await UnequipItemAsync(inventory, character.Equipment, itemToEquipId, newSlotId);
         }
 
-        public async Task<InventoryUnequipItemResponse> UnequipItemAsync(InventoryContainer inventory, PlayerEquipment playerEquipment, int itemToUnequipId, 
+        public async Task<InventoryUnequipItemResponse> UnequipItemAsync(InventoryContainer inventory, PlayerEquipment playerEquipment, int itemToUnequipId,
             int newSlotId = -1)
         {
             if (!playerEquipment.HasItem(itemToUnequipId, out var itemToUnequip)) return InventoryUnequipItemResponse.ItemNotFound;
             return await UnequipItemAsync(inventory, playerEquipment, itemToUnequip, newSlotId);
         }
 
-        public async Task<InventoryUnequipItemResponse> UnequipItemAsync(InventoryContainer inventory, PlayerEquipment playerEquipment, InventoryItem itemToUnequip, 
+        public async Task<InventoryUnequipItemResponse> UnequipItemAsync(InventoryContainer inventory, PlayerEquipment playerEquipment, InventoryItem itemToUnequip,
             int newSlotId = -1)
         {
             using (var context = _factory.Invoke())

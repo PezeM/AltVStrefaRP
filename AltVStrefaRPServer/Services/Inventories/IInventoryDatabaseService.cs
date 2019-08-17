@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using AltVStrefaRPServer.Models.Inventory;
+﻿using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Models.Inventory.Items;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AltVStrefaRPServer.Services.Inventories
 {

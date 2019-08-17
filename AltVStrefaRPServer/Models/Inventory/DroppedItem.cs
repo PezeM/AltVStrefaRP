@@ -1,8 +1,8 @@
-﻿using System;
-using AltV.Net;
+﻿using AltV.Net;
 using AltVStrefaRPServer.Models.Interfaces;
 using AltVStrefaRPServer.Models.Inventory.Items;
 using AltVStrefaRPServer.Services.Inventories;
+using System;
 using Position = AltV.Net.Data.Position;
 
 namespace AltVStrefaRPServer.Models.Inventory
@@ -20,7 +20,7 @@ namespace AltVStrefaRPServer.Models.Inventory
         public BaseItem Item { get; set; }
         public int BaseItemId { get; protected set; }
 
-        public DroppedItem(){}
+        public DroppedItem() { }
 
         public DroppedItem(int count, string model, BaseItem item, Position position)
         {
@@ -42,7 +42,7 @@ namespace AltVStrefaRPServer.Models.Inventory
 
         public Position GetPosition()
         {
-            return new Position(X,Y,Z);
+            return new Position(X, Y, Z);
         }
     }
 }

@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using AltV.Net.Data;
+﻿using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Interfaces;
+using System;
+using System.Collections.Generic;
 
 namespace AltVStrefaRPServer.Models.Businesses
 {

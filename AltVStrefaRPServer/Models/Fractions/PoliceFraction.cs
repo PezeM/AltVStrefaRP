@@ -1,7 +1,7 @@
 ﻿using AltV.Net.Data;
-using System.Collections.Generic;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Fractions.Permissions;
+using System.Collections.Generic;
 
 namespace AltVStrefaRPServer.Models.Fractions
 {

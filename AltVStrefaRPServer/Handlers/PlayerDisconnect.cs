@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using AltV.Net.Async;
+﻿using AltV.Net.Async;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Extensions;
@@ -8,6 +6,8 @@ using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Modules.CharacterModule;
 using AltVStrefaRPServer.Services.Characters;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Threading.Tasks;
 
 namespace AltVStrefaRPServer.Handlers
 {

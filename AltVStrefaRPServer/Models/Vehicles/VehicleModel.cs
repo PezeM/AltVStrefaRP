@@ -40,7 +40,7 @@ namespace AltVStrefaRPServer.Models.Vehicles
 
         public Position GetPosition()
         {
-            return new Position(X,Y,Z);
+            return new Position(X, Y, Z);
         }
     }
 }

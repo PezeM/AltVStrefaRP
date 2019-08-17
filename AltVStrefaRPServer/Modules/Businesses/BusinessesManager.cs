@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AltV.Net.Data;
+﻿using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Helpers;
@@ -13,6 +10,9 @@ using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Services.Businesses;
 using AltVStrefaRPServer.Services.Characters;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace AltVStrefaRPServer.Modules.Businesses
 {
@@ -26,7 +26,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
         private readonly BusinessFactory _businessFactory;
         private readonly ILogger<BusinessesManager> _logger;
 
-        public BusinessesManager(IBusinessService businessService, IBusinessDatabaseService businessDatabaseService, ICharacterDatabaseService characterDatabaseService, 
+        public BusinessesManager(IBusinessService businessService, IBusinessDatabaseService businessDatabaseService, ICharacterDatabaseService characterDatabaseService,
             ILogger<BusinessesManager> logger)
         {
             _businesses = new Dictionary<int, Business>();
@@ -114,7 +114,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
             lock (_businesses)
             {
                 _businesses.Add(business.Id, business);
-                _logger.LogInformation("Character ID({characterId}) created new business {businessName} ID({businessId}) in {elapsedTime} ms", 
+                _logger.LogInformation("Character ID({characterId}) created new business {businessName} ID({businessId}) in {elapsedTime} ms",
                     ownerId, business.BusinessName, business.Id, Time.GetElapsedTime(startTime));
             }
 

@@ -1,12 +1,12 @@
 ﻿using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
-using System;
 using AltVStrefaRPServer.Data;
 using AltVStrefaRPServer.Models.Businesses;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Fractions;
-using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Models.Interfaces;
+using AltVStrefaRPServer.Models.Inventory;
+using System;
 
 namespace AltVStrefaRPServer.Models
 {
@@ -16,7 +16,7 @@ namespace AltVStrefaRPServer.Models
         public int AccountId { get; set; }
         public Account Account { get; set; }
         public BankAccount BankAccount { get; set; }
-        public bool IsBanned {get; set; }
+        public bool IsBanned { get; set; }
         public bool IsMuted { get; set; }
         public bool CanDriveVehicles { get; set; }
         public PlayerInventoryContainer Inventory { get; set; }

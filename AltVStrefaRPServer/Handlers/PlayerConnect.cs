@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using AltV.Net;
+﻿using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
@@ -14,6 +12,8 @@ using AltVStrefaRPServer.Services.Characters;
 using AltVStrefaRPServer.Services.Characters.Accounts;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System;
+using System.Threading.Tasks;
 
 namespace AltVStrefaRPServer.Handlers
 {
@@ -27,8 +27,8 @@ namespace AltVStrefaRPServer.Handlers
         private readonly ILogger<PlayerConnect> _logger;
         private readonly TimeController _timeController;
 
-        public PlayerConnect(AppSettings appSettings, ILogin loginService, ICharacterDatabaseService characterDatabaseService, 
-            IAccountDatabaseService accountDatabaseService, IAccountFactoryService accountFactoryService, TimeController timeController, 
+        public PlayerConnect(AppSettings appSettings, ILogin loginService, ICharacterDatabaseService characterDatabaseService,
+            IAccountDatabaseService accountDatabaseService, IAccountFactoryService accountFactoryService, TimeController timeController,
             ILogger<PlayerConnect> logger)
         {
             _appSettings = appSettings;
@@ -148,7 +148,7 @@ namespace AltVStrefaRPServer.Handlers
 
         private void OnPlayerConnect(IPlayer player, string reason)
         {
-            _logger.LogInformation("New player connected to the server. ID({playerId}) Name {playerName} Ip {playerIp}", 
+            _logger.LogInformation("New player connected to the server. ID({playerId}) Name {playerName} Ip {playerIp}",
                 player.Id, player.Name, player.Ip);
 
             player.Spawn(new Position(_appSettings.ServerConfig.LoginPosition.X, _appSettings.ServerConfig.LoginPosition.Y,

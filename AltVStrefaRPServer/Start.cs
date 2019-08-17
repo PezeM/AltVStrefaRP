@@ -1,8 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using AltV.Net;
+﻿using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Extensions;
@@ -25,6 +21,10 @@ using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Vehicles;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace AltVStrefaRPServer
 {
@@ -36,9 +36,9 @@ namespace AltVStrefaRPServer
         private ILogger<Start> _logger;
 
         private Startup _startup;
-        public override void OnStart ()
+        public override void OnStart()
         {
-            _startup = new Startup ();
+            _startup = new Startup();
             _logger = _startup.ServiceProvider.GetService<ILogger<Start>>();
             _logger.LogInformation("Starting StrefaRP...");
 
@@ -46,31 +46,31 @@ namespace AltVStrefaRPServer
             AltAsync.OnPlayerEnterVehicle += OnPlayerEnterVehicleAsync;
             Alt.OnPlayerEvent += OnOnPlayerEvent;
 
-            var playerConnectEvent = _startup.ServiceProvider.GetService<PlayerConnect> ();
-            var playerDiconnectEvent = _startup.ServiceProvider.GetService<PlayerDisconnect> ();
+            var playerConnectEvent = _startup.ServiceProvider.GetService<PlayerConnect>();
+            var playerDiconnectEvent = _startup.ServiceProvider.GetService<PlayerDisconnect>();
             var vehicleHandler = _startup.ServiceProvider.GetService<VehicleHandler>();
-            var vehicleShopsHandler = _startup.ServiceProvider.GetService<VehicleShopsHandler> ();
-            var bankHandler = _startup.ServiceProvider.GetServices<BankHandler> ();
-            var sittingHandler = _startup.ServiceProvider.GetService<SittingHandler> ();
-            var thrashBinsHandler = _startup.ServiceProvider.GetService<TrashbinsController> ();
-            var temporaryChatHandler = _startup.ServiceProvider.GetService<TemporaryChatHandler> ();
-            var timeManager = _startup.ServiceProvider.GetService<TimeController> ();
-            var objectSync = _startup.ServiceProvider.GetService<ObjectSync> ();
+            var vehicleShopsHandler = _startup.ServiceProvider.GetService<VehicleShopsHandler>();
+            var bankHandler = _startup.ServiceProvider.GetServices<BankHandler>();
+            var sittingHandler = _startup.ServiceProvider.GetService<SittingHandler>();
+            var thrashBinsHandler = _startup.ServiceProvider.GetService<TrashbinsController>();
+            var temporaryChatHandler = _startup.ServiceProvider.GetService<TemporaryChatHandler>();
+            var timeManager = _startup.ServiceProvider.GetService<TimeController>();
+            var objectSync = _startup.ServiceProvider.GetService<ObjectSync>();
             var networkingTest = _startup.ServiceProvider.GetService<NetworkingManager>();
-            _vehicleSpawnService = _startup.ServiceProvider.GetService<IVehicleSpawnService> ();
+            _vehicleSpawnService = _startup.ServiceProvider.GetService<IVehicleSpawnService>();
 
-            _vehiclesManager = _startup.ServiceProvider.GetService<IVehiclesManager> ();
-            var vehicleShopManager = _startup.ServiceProvider.GetService<VehicleShopsManager> ();
-            var businessesManager = _startup.ServiceProvider.GetService<BusinessesManager> ();
-            var businessHandler = _startup.ServiceProvider.GetServices<BusinessHandler> ();
-            var characterCreator = _startup.ServiceProvider.GetService<CharacterCreator> ();
-            var adminCommands = _startup.ServiceProvider.GetService<AdminCommands> ();
-            var bankAccountsManager = _startup.ServiceProvider.GetServices<BankAccountManager> ();
+            _vehiclesManager = _startup.ServiceProvider.GetService<IVehiclesManager>();
+            var vehicleShopManager = _startup.ServiceProvider.GetService<VehicleShopsManager>();
+            var businessesManager = _startup.ServiceProvider.GetService<BusinessesManager>();
+            var businessHandler = _startup.ServiceProvider.GetServices<BusinessHandler>();
+            var characterCreator = _startup.ServiceProvider.GetService<CharacterCreator>();
+            var adminCommands = _startup.ServiceProvider.GetService<AdminCommands>();
+            var bankAccountsManager = _startup.ServiceProvider.GetServices<BankAccountManager>();
             var inventoryManager = _startup.ServiceProvider.GetService<InventoriesManager>();
             var inventoryHandler = _startup.ServiceProvider.GetService<InventoryHandler>();
             // Fractions
-            var fractionManager = _startup.ServiceProvider.GetService<FractionsManager> ();
-            var fractionHandler = _startup.ServiceProvider.GetService<FractionHandler> ();
+            var fractionManager = _startup.ServiceProvider.GetService<FractionsManager>();
+            var fractionHandler = _startup.ServiceProvider.GetService<FractionHandler>();
             var townHallFractionHandler = _startup.ServiceProvider.GetService<TownHallFractionHandler>();
 
             Alt.On<IPlayer, ulong>("bigNumber", (player, number) =>
@@ -82,14 +82,23 @@ namespace AltVStrefaRPServer
             {
                 Alt.Log($"LONG BIGNUMBER VALUE: {number}");
             });
+
+            Alt.OnClient("discordOAuth2Result", (player, data) =>
+            {
+                Alt.Log("Some test");
+                foreach (var item in data)
+                {
+                    Alt.Log($"AuthResult data: {item.ToString()}");
+                }
+            });
         }
 
-        private void OnOnPlayerEvent (IPlayer player, string eventName, object[] args)
+        private void OnOnPlayerEvent(IPlayer player, string eventName, object[] args)
         {
             _logger.LogDebug("Event {eventName} triggered for player {playerName} with {argsLength} args", eventName, player.Name, args.Length);
         }
 
-        private Task OnPlayerEnterVehicleAsync (IVehicle vehicle, IPlayer player, byte seat)
+        private Task OnPlayerEnterVehicleAsync(IVehicle vehicle, IPlayer player, byte seat)
         {
             try
             {
@@ -100,76 +109,76 @@ namespace AltVStrefaRPServer
             }
             catch (Exception ex)
             {
-                Alt.Log (ex.ToString ());
+                Alt.Log(ex.ToString());
             }
 
             return Task.CompletedTask;
         }
 
-        private async Task OnConsoleCommandAsync (string name, string[] args)
+        private async Task OnConsoleCommandAsync(string name, string[] args)
         {
-            Alt.Log ($"[CONSOLE COMMAND] Name: {name} args: {args}");
-            var stopwatch = new Stopwatch ();
-            stopwatch.Start ();
+            Alt.Log($"[CONSOLE COMMAND] Name: {name} args: {args}");
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
 
             if (args.Length < 1) return;
             if (name == "stop")
             {
                 var resource = args[0];
-                if (resource.IsNullOrEmpty ()) return;
+                if (resource.IsNullOrEmpty()) return;
 
-                Alt.Log ($"Stopping resource: {resource}.");
+                Alt.Log($"Stopping resource: {resource}.");
             }
             else if (name == "vehicle")
             {
                 var model = args[0];
-                if (model.IsNullOrEmpty ()) return;
+                if (model.IsNullOrEmpty()) return;
 
-                var player = Alt.GetAllPlayers ().FirstOrDefault ();
+                var player = Alt.GetAllPlayers().FirstOrDefault();
                 if (player == null)
                 {
-                    Alt.Log ($"Not found any player in the game");
+                    Alt.Log($"Not found any player in the game");
                     return;
                 }
 
-                await VehicleCommandAsync (model, player).ConfigureAwait (false);
+                await VehicleCommandAsync(model, player).ConfigureAwait(false);
             }
             else if (name == "spawn")
             {
                 if (!int.TryParse(args[0], out var id))
                 {
-                    Alt.Log ($"Wrong vehicle id for command {name}");
+                    Alt.Log($"Wrong vehicle id for command {name}");
                     return;
                 }
-                SpawnVehicleComand (id);
+                SpawnVehicleComand(id);
             }
-            stopwatch.Stop ();
-            Alt.Log ($"Executed console command in {stopwatch.Elapsed}");
+            stopwatch.Stop();
+            Alt.Log($"Executed console command in {stopwatch.Elapsed}");
         }
 
-        public async Task VehicleCommandAsync (string vehicleModel, IPlayer player)
+        public async Task VehicleCommandAsync(string vehicleModel, IPlayer player)
         {
-            var character = player.GetCharacter ();
+            var character = player.GetCharacter();
             if (character == null) return;
 
-            var vehicle = await _vehiclesManager.CreateVehicleAsync (vehicleModel, player.Position, player.Rotation,
-                player.Dimension, character.Id, OwnerType.None).ConfigureAwait (false);
-            await _vehicleSpawnService.SpawnVehicleAsync (vehicle);
+            var vehicle = await _vehiclesManager.CreateVehicleAsync(vehicleModel, player.Position, player.Rotation,
+                player.Dimension, character.Id, OwnerType.None).ConfigureAwait(false);
+            await _vehicleSpawnService.SpawnVehicleAsync(vehicle);
         }
 
-        public void SpawnVehicleComand (int vehicleId)
+        public void SpawnVehicleComand(int vehicleId)
         {
             if (!_vehiclesManager.TryGetVehicleModel(vehicleId, out VehicleModel vehicle))
             {
                 Alt.Log($"Didn't found vehicle with ID {vehicleId}");
                 return;
             }
-            _vehicleSpawnService.SpawnVehicle (vehicle);
+            _vehicleSpawnService.SpawnVehicle(vehicle);
         }
 
-        public override IEntityFactory<IVehicle> GetVehicleFactory ()
+        public override IEntityFactory<IVehicle> GetVehicleFactory()
         {
-            return new CustomVehicleFactory ();
+            return new CustomVehicleFactory();
         }
 
         public override IEntityFactory<IPlayer> GetPlayerFactory()
@@ -177,12 +186,12 @@ namespace AltVStrefaRPServer
             return new StrefaPlayerFactory();
         }
 
-        public override void OnStop ()
+        public override void OnStop()
         {
-            Alt.Log ($"Stopped resource {GetType().Namespace}");
+            Alt.Log($"Stopped resource {GetType().Namespace}");
         }
 
-        public void Test ()
+        public void Test()
         {
             _ = Task.Run(() =>
               {

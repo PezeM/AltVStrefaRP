@@ -5,7 +5,7 @@
         ExtraSunny = 0,
         Clear = 1,
         Clouds = 2,
-        Smog  =3,
+        Smog = 3,
         Foggy = 4,
         Overcast = 5,
         Rain = 6,

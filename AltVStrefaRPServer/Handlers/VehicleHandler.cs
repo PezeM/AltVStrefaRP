@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using AltV.Net;
+﻿using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
 using AltV.Net.Enums;
@@ -11,6 +10,7 @@ using AltVStrefaRPServer.Models.Vehicles;
 using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Vehicles;
 using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 using VehicleModel = AltVStrefaRPServer.Models.Vehicles.VehicleModel;
 
 namespace AltVStrefaRPServer.Handlers
@@ -30,7 +30,7 @@ namespace AltVStrefaRPServer.Handlers
             _vehiclesManager = vehiclesManager;
             _notificationService = notificationService;
             _vehicleSpawnService = vehicleSpawnService;
-            _logger = logger;   
+            _logger = logger;
 
             AltAsync.OnPlayerLeaveVehicle += OnPlayerLeaveVehicleAsync;
             AltAsync.OnPlayerEnterVehicle += OnPlayerEnterVehicleAsync;
@@ -57,13 +57,13 @@ namespace AltVStrefaRPServer.Handlers
 
         private void ToggleHoodState(IPlayer player, IMyVehicle vehicle)
         {
-            if(vehicle.LockState == VehicleLockState.Locked) return;
+            if (vehicle.LockState == VehicleLockState.Locked) return;
             if (vehicle.GetDoorState(VehicleDoor.Hood) == VehicleDoorState.Closed)
             {
                 vehicle.SetDoorState(VehicleDoor.Hood, VehicleDoorState.OpenedLevel7);
                 player.Emit("toggleHoodState", 1, vehicle);
             }
-            else if(vehicle.GetDoorState(VehicleDoor.Hood) == VehicleDoorState.OpenedLevel7)
+            else if (vehicle.GetDoorState(VehicleDoor.Hood) == VehicleDoorState.OpenedLevel7)
             {
                 vehicle.SetDoorState(VehicleDoor.Hood, VehicleDoorState.Closed);
                 player.Emit("toggleHoodState", 0, vehicle);
@@ -72,13 +72,13 @@ namespace AltVStrefaRPServer.Handlers
 
         private void ToggleTrunkState(IPlayer player, IMyVehicle vehicle)
         {
-            if(vehicle.LockState == VehicleLockState.Locked) return;
+            if (vehicle.LockState == VehicleLockState.Locked) return;
             if (vehicle.GetDoorState(VehicleDoor.Trunk) == VehicleDoorState.Closed)
             {
                 vehicle.SetDoorState(VehicleDoor.Trunk, VehicleDoorState.OpenedLevel7);
                 player.Emit("toggleTrunkState", 1, vehicle);
             }
-            else if(vehicle.GetDoorState(VehicleDoor.Trunk) == VehicleDoorState.OpenedLevel7)
+            else if (vehicle.GetDoorState(VehicleDoor.Trunk) == VehicleDoorState.OpenedLevel7)
             {
                 vehicle.SetDoorState(VehicleDoor.Trunk, VehicleDoorState.Closed);
                 player.Emit("toggleTrunkState", 0, vehicle);
@@ -122,13 +122,13 @@ namespace AltVStrefaRPServer.Handlers
         private async Task DespawnVehicleEventAsync(IPlayer player, int vehicleId)
         {
             var character = player.GetCharacter();
-            if(character == null) return;
+            if (character == null) return;
 
             var vehicle = _vehiclesManager.GetVehicleModel((ushort)vehicleId);
-            if(vehicle == null) return;
+            if (vehicle == null) return;
 
             _logger.LogDebug("Character {characterId} tried to open vehicle VID({vehicleId)", character.Id, vehicle.Id);
-            if(!_vehiclesManager.HasVehiclePermission(character, vehicle))
+            if (!_vehiclesManager.HasVehiclePermission(character, vehicle))
             {
                 await _notificationService.ShowErrorNotificationAsync(player, "Brak kluczyków", "Nie posiadasz kluczyków do tego pojazdu.");
                 return;
@@ -157,7 +157,7 @@ namespace AltVStrefaRPServer.Handlers
         {
             var startTime = Time.GetTimestampMs();
             // Saves vehicle only if the drivers exits
-            if(vehicle.Driver != player) return;
+            if (vehicle.Driver != player) return;
             if (!_vehiclesManager.TryGetVehicleModel(vehicle, out VehicleModel vehicleModel)) return;
 
             // For thread safety

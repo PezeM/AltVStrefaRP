@@ -6,6 +6,6 @@
         public override string Description { get; set; } = "Możliwość zarządzania rangami(usuwanie, dodawanie, zmiana uprawnień)";
         public override bool HasPermission { get; set; } = true;
 
-        public ManageRanksPermission(bool hasPermission) : base(hasPermission){}
+        public ManageRanksPermission(bool hasPermission) : base(hasPermission) { }
     }
 }

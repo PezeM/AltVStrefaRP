@@ -9,7 +9,7 @@ namespace AltVStrefaRPServer.Models.Dto.Fractions
         public string Name { get; set; }
         public string LastName { get; set; }
         public int Age { get; set; }
-        public int RankId {get; set; }
+        public int RankId { get; set; }
         public string RankName { get; set; }
 
         public IMValueBaseAdapter GetAdapter() => _myAdapter;

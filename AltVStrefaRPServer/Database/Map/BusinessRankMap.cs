@@ -9,7 +9,7 @@ namespace AltVStrefaRPServer.Database.Map
         public void Configure(EntityTypeBuilder<BusinessRank> builder)
         {
             builder.HasOne(b => b.Permissions)
-                .WithOne(r=> r.BusinessRank)
+                .WithOne(r => r.BusinessRank)
                 .HasForeignKey<BusinessPermissions>(b => b.BusinessRankForeignKey);
         }
     }

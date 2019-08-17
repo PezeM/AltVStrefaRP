@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using AltV.Net;
+﻿using AltV.Net;
 using AltV.Net.Elements.Args;
+using System.Collections.Generic;
 
 namespace AltVStrefaRPServer.Models.Dto.Fractions
 {
@@ -17,7 +17,7 @@ namespace AltVStrefaRPServer.Models.Dto.Fractions
         public string BusinessName { get; set; }
         public List<VehicleDataDto> Vehicles { get; set; } = new List<VehicleDataDto>();
 
-        public FractionResidentDto(int id, string name, string lastName, int age, int bankAccount, float bankMoney, string fractionName, 
+        public FractionResidentDto(int id, string name, string lastName, int age, int bankAccount, float bankMoney, string fractionName,
             string businessName, List<VehicleDataDto> vehicles)
         {
             Id = id;
@@ -38,17 +38,17 @@ namespace AltVStrefaRPServer.Models.Dto.Fractions
             return _myAdapter;
         }
     }
-    
+
     public class FractionResidentDtoAdapter : IMValueAdapter<FractionResidentDto>
-    { 
+    {
         private readonly IMValueAdapter<List<VehicleDataDto>> _vehicleListAdapter;
-        public FractionResidentDtoAdapter() 
-        { 
+        public FractionResidentDtoAdapter()
+        {
             _vehicleListAdapter = DefaultMValueAdapters.GetArrayAdapter(new VehicleDataAdapter());
         }
 
         public FractionResidentDto FromMValue(IMValueReader reader)
-        { 
+        {
             reader.BeginObject();
             int id = 0;
             string name = null;
@@ -60,7 +60,7 @@ namespace AltVStrefaRPServer.Models.Dto.Fractions
             string businessName = "Brak";
             List<VehicleDataDto> vehicles = null;
             while (reader.HasNext())
-            { 
+            {
                 switch (reader.NextName())
                 {
                     case "id":
@@ -124,16 +124,16 @@ namespace AltVStrefaRPServer.Models.Dto.Fractions
             writer.EndObject();
         }
 
-        public void ToMValue(object obj, IMValueWriter writer) 
-        { 
-            if (obj is FractionResidentDto value) 
-            { 
+        public void ToMValue(object obj, IMValueWriter writer)
+        {
+            if (obj is FractionResidentDto value)
+            {
                 ToMValue(value, writer);
             }
         }
 
-        object IMValueBaseAdapter.FromMValue(IMValueReader reader) 
-        { 
+        object IMValueBaseAdapter.FromMValue(IMValueReader reader)
+        {
             return FromMValue(reader);
         }
     }

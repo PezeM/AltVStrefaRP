@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using AltV.Net;
+﻿using AltV.Net;
 using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Services.Inventories;
+using System.Collections.Generic;
 
 namespace AltVStrefaRPServer.Models.Dto
 {

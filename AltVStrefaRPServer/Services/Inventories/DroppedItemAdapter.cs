@@ -1,5 +1,4 @@
 ﻿using AltV.Net;
-using AltV.Net.Data;
 using AltVStrefaRPServer.Models.Inventory;
 
 namespace AltVStrefaRPServer.Services.Inventories
@@ -7,7 +6,7 @@ namespace AltVStrefaRPServer.Services.Inventories
     public class DroppedItemAdapter : IMValueAdapter<DroppedItem>
     {
         public DroppedItem FromMValue(IMValueReader reader)
-        { 
+        {
             reader.BeginObject();
             int id = 0;
             string model = string.Empty;
@@ -16,7 +15,7 @@ namespace AltVStrefaRPServer.Services.Inventories
             double y = 0;
             double z = 0;
             while (reader.HasNext())
-            { 
+            {
                 switch (reader.NextName())
                 {
                     case "id":
@@ -75,16 +74,16 @@ namespace AltVStrefaRPServer.Services.Inventories
             writer.EndObject();
         }
 
-        public void ToMValue(object obj, IMValueWriter writer) 
-        { 
-            if (obj is DroppedItem value) 
-            { 
+        public void ToMValue(object obj, IMValueWriter writer)
+        {
+            if (obj is DroppedItem value)
+            {
                 ToMValue(value, writer);
             }
         }
 
-        object IMValueBaseAdapter.FromMValue(IMValueReader reader) 
-        { 
+        object IMValueBaseAdapter.FromMValue(IMValueReader reader)
+        {
             return FromMValue(reader);
         }
     }

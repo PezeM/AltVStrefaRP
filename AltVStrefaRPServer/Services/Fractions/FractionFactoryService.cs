@@ -8,7 +8,7 @@ namespace AltVStrefaRPServer.Services.Fractions
     {
         public PoliceFraction CreateDefaultPoliceFraction(IFractionDatabaseService fractionDatabaseService)
         {
-            var policeFraction = new PoliceFraction("Departament Policji", "Departament Policji", 5000.00f, new Position(200,300,400));
+            var policeFraction = new PoliceFraction("Departament Policji", "Departament Policji", 5000.00f, new Position(200, 300, 400));
             fractionDatabaseService.AddNewFraction(policeFraction);
             return policeFraction;
         }
@@ -24,7 +24,7 @@ namespace AltVStrefaRPServer.Services.Fractions
         {
             var defaultTaxes = AppSettings.Current.ServerConfig.EconomySettings;
             var townHallFraction = new TownHallFraction("Urząd miasta", "Urząd miasta Los Santos", 10000.00f, new Position(100, 200, 300), // Some random for now
-                defaultTaxes.VehicleTax.Default, defaultTaxes.PropertyTax.Default, defaultTaxes.GunTax.Default, defaultTaxes.GlobalTax.Default); 
+                defaultTaxes.VehicleTax.Default, defaultTaxes.PropertyTax.Default, defaultTaxes.GunTax.Default, defaultTaxes.GlobalTax.Default);
             fractionDatabaseService.AddNewFraction(townHallFraction);
             return townHallFraction;
         }

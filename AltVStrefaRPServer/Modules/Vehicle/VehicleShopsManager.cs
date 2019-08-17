@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using AltV.Net;
-using AltV.Net.Data;
+﻿using AltV.Net.Data;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Services.Vehicles.VehicleShops;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace AltVStrefaRPServer.Modules.Vehicle
 {
@@ -16,7 +15,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
 
         public List<VehicleShop> VehicleShops { get; private set; }
 
-        public VehicleShopsManager(IVehicleShopDatabaseService vehicleShopDatabaseService, IVehicleShopsFactory vehicleShopsFactory, 
+        public VehicleShopsManager(IVehicleShopDatabaseService vehicleShopDatabaseService, IVehicleShopsFactory vehicleShopsFactory,
             ILogger<VehicleShopsManager> logger)
         {
             VehicleShops = new List<VehicleShop>();
@@ -40,7 +39,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
 
         public VehicleShop GetVehicleShop(int shopId) => VehicleShops.FirstOrDefault(s => s.VehicleShopId == shopId);
 
-        public VehicleShop GetClosestVehicleShop(Position position, int range = 10) 
+        public VehicleShop GetClosestVehicleShop(Position position, int range = 10)
             => VehicleShops.FirstOrDefault(s => s.GetPosition().Distance(position) < range);
 
         public bool IsNearVehicleShop(Position position, out VehicleShop vehicleShop, int range = 10)

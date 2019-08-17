@@ -13,7 +13,7 @@ namespace AltVStrefaRPServer.Models.Inventory
         public int BaseItemId { get; set; }
         public int InventoryId { get; set; }
 
-        protected InventoryItem(){}
+        protected InventoryItem() { }
 
         public InventoryItem(int id, BaseItem item, int quantity, int slotId) : this(item, quantity, slotId)
         {

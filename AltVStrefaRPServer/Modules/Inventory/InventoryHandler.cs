@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using AltV.Net;
+﻿using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Extensions;
@@ -12,6 +11,7 @@ using AltVStrefaRPServer.Models.Vehicles;
 using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Inventories;
 using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 using Position = AltV.Net.Data.Position;
 
 namespace AltVStrefaRPServer.Modules.Inventory
@@ -26,7 +26,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
         private readonly IInventoryEquipService _inventoryEquipService;
         private readonly ILogger<InventoryHandler> _logger;
 
-        public InventoryHandler(IInventoriesManager inventoriesManager, IInventoryDatabaseService inventoryDatabaseService, INotificationService notificationService, 
+        public InventoryHandler(IInventoriesManager inventoriesManager, IInventoryDatabaseService inventoryDatabaseService, INotificationService notificationService,
             IVehiclesManager vehiclesManager, IInventoryTransferService inventoryTransferService, IInventoryEquipService inventoryEquipService,
             ILogger<InventoryHandler> logger)
         {
@@ -57,8 +57,8 @@ namespace AltVStrefaRPServer.Modules.Inventory
         private void GetPlayerInventory(IPlayer player)
         {
             var startTime = Time.GetTimestampMs();
-            if(!player.TryGetCharacter(out var character)) return;
-            player.Emit("populatePlayerInventory", InventoryContainerConverter.ConvertFromCharacterInventory(character), 
+            if (!player.TryGetCharacter(out var character)) return;
+            player.Emit("populatePlayerInventory", InventoryContainerConverter.ConvertFromCharacterInventory(character),
                 InventoryContainerConverter.ConvertFromEquippedInventory(character));
             _logger.LogDebug("Send player inventory in {elapsedTime}ms", Time.GetElapsedTime(startTime));
         }
@@ -174,8 +174,8 @@ namespace AltVStrefaRPServer.Modules.Inventory
 
             StackItemResponse(player, response);
         }
-        
-        private async Task InventoryTryStackItemBetweenInventoriesAsync(IStrefaPlayer player, int inventoryId, int itemToStackFromId, int itemToStackId, 
+
+        private async Task InventoryTryStackItemBetweenInventoriesAsync(IStrefaPlayer player, int inventoryId, int itemToStackFromId, int itemToStackId,
             int itemToStackInventoryId)
         {
             if (!player.TryGetCharacter(out var character)) return;
@@ -196,10 +196,10 @@ namespace AltVStrefaRPServer.Modules.Inventory
         private async Task InventoryTryUnequipItemAsync(IStrefaPlayer player, int playerEquipmentId, int inventoryId, int equippedItemId, int newSlotId)
         {
             if (!player.TryGetCharacter(out var character)) return;
-            
+
             var inventory = InventoriesHelper.GetCorrectInventory(player, character, inventoryId);
             var response = await _inventoryEquipService.UnequipItemAsync((InventoryContainer)inventory, character, playerEquipmentId, equippedItemId, newSlotId);
-            
+
             TryUnequipResponse(player, response);
         }
 
@@ -243,7 +243,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
             InventoryTryMoveItemResponse(player, response);
         }
 
-        private async Task InventoryTrySwapItemsAsync(IStrefaPlayer player, int inventoryId, int selectedItemId, int selectedItemSlotId, int itemToSwapId, 
+        private async Task InventoryTrySwapItemsAsync(IStrefaPlayer player, int inventoryId, int selectedItemId, int selectedItemSlotId, int itemToSwapId,
             int itemToSwapSlotId, int itemToSwapInventoryId)
         {
             if (!player.TryGetCharacter(out var character)) return;
@@ -378,7 +378,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
                     break;
             }
         }
-        
+
         private static void InventorySwapItemRespone(IStrefaPlayer player, InventorySwapItemResponse response)
         {
             switch (response.Type)

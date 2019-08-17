@@ -5,7 +5,7 @@ namespace AltVStrefaRPServer.Models
 {
     public interface IStrefaPlayer : IPlayer
     {
-        int AccountId { get;set; }
+        int AccountId { get; set; }
         IInventoryContainer LastOpenedInventory { get; set; }
     }
 }

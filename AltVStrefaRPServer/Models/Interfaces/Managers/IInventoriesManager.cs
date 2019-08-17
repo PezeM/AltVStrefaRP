@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using AltVStrefaRPServer.Models.Inventory;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using AltVStrefaRPServer.Models.Inventory;
 
 namespace AltVStrefaRPServer.Models.Interfaces.Managers
 {

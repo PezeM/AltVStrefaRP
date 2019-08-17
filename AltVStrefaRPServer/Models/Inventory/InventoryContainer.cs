@@ -1,20 +1,20 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using AltVStrefaRPServer.Extensions;
+﻿using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Models.Inventory.Interfaces;
 using AltVStrefaRPServer.Models.Inventory.Items;
 using AltVStrefaRPServer.Models.Inventory.Responses;
 using AltVStrefaRPServer.Modules.Inventory;
 using AltVStrefaRPServer.Services.Inventories;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace AltVStrefaRPServer.Models.Inventory
 {
-    public class InventoryContainer: Inventory, IInventoryContainer
+    public class InventoryContainer : Inventory, IInventoryContainer
     {
         public int MaxSlots { get; protected set; }
 
-        protected InventoryContainer(){}
+        protected InventoryContainer() { }
 
         public InventoryContainer(int maxSlots) : base()
         {
@@ -27,7 +27,7 @@ namespace AltVStrefaRPServer.Models.Inventory
 
         public bool TryGetInventoryItemNotFullyStacked(BaseItem item, out InventoryItem inventoryItem)
         {
-            inventoryItem = _items.FirstOrDefault(i => i.Item.GetType() == item.GetType() && i.Quantity < item.StackSize);
+            inventoryItem = _items.FirstOrDefault(i => i.Item.Name == item.Name && i.Quantity < item.StackSize);
             return inventoryItem != null;
         }
 
@@ -41,7 +41,7 @@ namespace AltVStrefaRPServer.Models.Inventory
 
         public override AddItemResponse AddInventoryItem(InventoryItem item)
         {
-            if(!HasEmptySlots()) return new AddItemResponse(0);
+            if (!HasEmptySlots()) return new AddItemResponse(0);
             var freeSlot = GetFreeSlot();
             item.SetSlot(freeSlot);
             return base.AddInventoryItem(item);
@@ -49,7 +49,7 @@ namespace AltVStrefaRPServer.Models.Inventory
 
         public AddItemResponse AddInventoryItem(InventoryItem item, int slotId)
         {
-            if(!IsSlotEmpty(slotId)) return new AddItemResponse(0);
+            if (!IsSlotEmpty(slotId)) return new AddItemResponse(0);
             item.SetSlot(slotId);
             return base.AddInventoryItem(item);
         }
@@ -129,8 +129,8 @@ namespace AltVStrefaRPServer.Models.Inventory
         {
             await inventoryDatabaseService.UpdateInventoryAsync(this);
         }
-        
-        protected virtual void OnNewItemStacked(int itemId, int quantity) {}
+
+        protected virtual void OnNewItemStacked(int itemId, int quantity) { }
 
         public InventoryMoveItemResponse MoveItemToSlot(int itemId, int newSlot)
         {

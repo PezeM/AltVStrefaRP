@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AltV.Net.Data;
+﻿using AltV.Net.Data;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Models.Inventory.Interfaces;
 using AltVStrefaRPServer.Models.Inventory.Items;
 using AltVStrefaRPServer.Models.Inventory.Responses;
 using AltVStrefaRPServer.Services.Inventories;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace AltVStrefaRPServer.Models.Inventory
 {
@@ -109,7 +109,8 @@ namespace AltVStrefaRPServer.Models.Inventory
             var response = RemoveItem(item, amount);
             if (response != InventoryRemoveResponse.ItemRemovedCompletly) return response;
 
-            await inventoryDatabaseService.UpdateInventoryAsync(this);
+            await inventoryDatabaseService.RemoveItemAsync(item);
+            //await inventoryDatabaseService.UpdateInventoryAsync(this);
             return InventoryRemoveResponse.ItemRemovedCompletly;
         }
 
@@ -120,11 +121,11 @@ namespace AltVStrefaRPServer.Models.Inventory
             return await DropItemAsync(item, amount, position, inventoriesManager, inventoryDatabaseService);
         }
 
-        public async Task<InventoryDropResponse> DropItemAsync(InventoryItem item, int amount, Position position, IInventoriesManager inventoriesManager, 
+        public async Task<InventoryDropResponse> DropItemAsync(InventoryItem item, int amount, Position position, IInventoriesManager inventoriesManager,
             IInventoryDatabaseService inventoryDatabaseService)
         {
             if (!(item.Item is IDroppable droppable)) return InventoryDropResponse.ItemNotDroppable;
-            if (await RemoveItemAsync(item, amount, inventoryDatabaseService) == InventoryRemoveResponse.NotEnoughItems) 
+            if (await RemoveItemAsync(item, amount, inventoryDatabaseService) == InventoryRemoveResponse.NotEnoughItems)
                 return InventoryDropResponse.NotEnoughItems;
 
             var newBaseItem = BaseItem.ShallowClone(item.Item);

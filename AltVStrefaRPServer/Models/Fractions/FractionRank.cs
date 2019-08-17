@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using AltVStrefaRPServer.Models.Enums;
+﻿using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Fractions.Permissions;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace AltVStrefaRPServer.Models.Fractions
 {
@@ -11,10 +11,10 @@ namespace AltVStrefaRPServer.Models.Fractions
         public string RankName { get; set; }
         public int Priority { get; private set; } = 0;
         public RankType RankType { get; private set; }
-        public ICollection<FractionPermission> Permissions { get; private set;} = new List<FractionPermission>();
+        public ICollection<FractionPermission> Permissions { get; private set; } = new List<FractionPermission>();
         public Fraction Fraction { get; private set; }
 
-        private FractionRank(){}
+        private FractionRank() { }
 
         public FractionRank(string rankName, RankType rankType, int rankPriority, List<FractionPermission> permissions)
         {
@@ -56,7 +56,7 @@ namespace AltVStrefaRPServer.Models.Fractions
 
         public bool HasHigherPriority(FractionRank secondRank)
         {
-            if (RankType ==  RankType.Highest) return true;
+            if (RankType == RankType.Highest) return true;
             return Priority > secondRank.Priority;
         }
 

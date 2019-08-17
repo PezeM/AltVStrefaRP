@@ -1,11 +1,11 @@
-﻿using System;
+﻿using AltV.Net;
+using MessagePack;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
-using AltV.Net;
-using MessagePack;
-using Newtonsoft.Json;
 
 namespace AltVStrefaRPServer.Services
 {
@@ -46,14 +46,14 @@ namespace AltVStrefaRPServer.Services
             int size = GetSizeOfObject(objectToCalucalate);
             Console.WriteLine($"Size of the object is {size}");
         }
-        
+
         /// <summary>
         /// Gets the size of object.
         /// </summary>
         /// <param name="obj">The object.</param>
         /// <param name="avgStringSize">Average size of the string.</param>
         /// <returns>An approximation of the size of the object in bytes</returns>
-        public static int GetSizeOfObject(object obj, int avgStringSize=-1)
+        public static int GetSizeOfObject(object obj, int avgStringSize = -1)
         {
             int pointerSize = IntPtr.Size;
             int size = 0;

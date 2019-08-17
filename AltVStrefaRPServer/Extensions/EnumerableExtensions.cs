@@ -11,7 +11,7 @@ namespace AltVStrefaRPServer.Extensions
             return !source.Any();
         }
 
-        public static bool None<TSource>(this IEnumerable<TSource> source, 
+        public static bool None<TSource>(this IEnumerable<TSource> source,
             Func<TSource, bool> predicate)
         {
             return !source.Any(predicate);

@@ -11,7 +11,7 @@ namespace AltVStrefaRPServer.Models.Inventory.Items
         public WeaponModel WeaponModel { get; private set; }
         public int Ammo { get; set; }
 
-        public WeaponItem(string name, string model, WeaponModel weaponModel, int ammo, EquipmentSlot equipmentSlot = EquipmentSlot.LeftHand, string description = null) 
+        public WeaponItem(string name, string model, WeaponModel weaponModel, int ammo, EquipmentSlot equipmentSlot = EquipmentSlot.LeftHand, string description = null)
             : base(name, equipmentSlot)
         {
             Model = model;

@@ -7,7 +7,7 @@
         public int StackSize { get; protected set; }
         public string Description { get; protected set; } = "Brak opisu";
 
-        protected BaseItem(){}
+        protected BaseItem() { }
 
         protected BaseItem(string name, int stackSize)
         {

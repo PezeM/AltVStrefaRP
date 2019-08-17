@@ -3,7 +3,6 @@ using AltVStrefaRPServer.Models.Businesses;
 using AltVStrefaRPServer.Models.Fractions;
 using AltVStrefaRPServer.Models.Fractions.Permissions;
 using AltVStrefaRPServer.Models.Inventory;
-using AltVStrefaRPServer.Models.Inventory.Interfaces;
 using AltVStrefaRPServer.Models.Inventory.Items;
 using AltVStrefaRPServer.Models.Vehicles;
 using AltVStrefaRPServer.Modules.Vehicle;

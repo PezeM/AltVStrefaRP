@@ -1,7 +1,7 @@
-﻿using System.Linq;
-using AltVStrefaRPServer.Models;
+﻿using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Dto;
 using AltVStrefaRPServer.Models.Vehicles;
+using System.Linq;
 
 namespace AltVStrefaRPServer.Modules.Inventory
 {

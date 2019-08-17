@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using AltVStrefaRPServer.Models;
+﻿using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Dto;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AltVStrefaRPServer.Services.Characters
 {

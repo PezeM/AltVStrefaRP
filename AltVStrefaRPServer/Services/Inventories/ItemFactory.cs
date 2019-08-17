@@ -6,17 +6,17 @@ namespace AltVStrefaRPServer.Services.Inventories
 {
     public class ItemFactory
     {
-        public BaseItem CreateClothItem(string name, EquipmentSlot slot, int drawableId, int textureId, int paletteId, bool isProp = false, 
+        public BaseItem CreateClothItem(string name, EquipmentSlot slot, int drawableId, int textureId, int paletteId, bool isProp = false,
             string model = "prop_ld_tshirt_02", string description = null)
         {
             return new ClothItem(name, slot, drawableId, textureId, paletteId, isProp, model, description);
         }
 
-        public BaseItem CreateBurger(int stackSize = 20, ushort hungerValue = 20, string description = null) 
+        public BaseItem CreateBurger(int stackSize = 20, ushort hungerValue = 20, string description = null)
             => new FoodItem("Burger", stackSize, "prop_cs_burger_01", hungerValue, description);
-        public BaseItem CreateWater(int stackSize = 10, ushort thirstValue = 10, string description = null) 
+        public BaseItem CreateWater(int stackSize = 10, ushort thirstValue = 10, string description = null)
             => new DrinkItem("Woda", stackSize, "ng_proc_brkbottle_02a", thirstValue, description);
-        public BaseItem CreateSprunk(int stackSize = 10, ushort thirstvalue = 13, string description = null) 
+        public BaseItem CreateSprunk(int stackSize = 10, ushort thirstvalue = 13, string description = null)
             => new DrinkItem("Sprunk", stackSize, "prop_ld_can_01", thirstvalue, description);
         // prop_ld_can_01 - sprunk can
 

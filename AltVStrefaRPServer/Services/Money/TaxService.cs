@@ -19,11 +19,15 @@ namespace AltVStrefaRPServer.Services.Money
 
             switch (transactionType)
             {
-                case TransactionType.VehicleSell: case TransactionType.VehicleBuy:
+                case TransactionType.VehicleSell:
+                case TransactionType.VehicleBuy:
                     return townHall.PriceAfterTax(price, townHall.VehicleTax);
-                case TransactionType.BankDeposit: case TransactionType.BankWithdraw: case TransactionType.BankTransfer:
+                case TransactionType.BankDeposit:
+                case TransactionType.BankWithdraw:
+                case TransactionType.BankTransfer:
                     return price;
-                case TransactionType.BuyingFurnitures: case TransactionType.BuyingProperties:
+                case TransactionType.BuyingFurnitures:
+                case TransactionType.BuyingProperties:
                     return townHall.PriceAfterTax(price, townHall.PropertyTax);
                 case TransactionType.BuyingGuns:
                     return townHall.PriceAfterTax(price, townHall.GunTax);

@@ -1,11 +1,11 @@
-﻿using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using AltVStrefaRPServer.Helpers;
+﻿using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Services.Inventories;
 using Microsoft.Extensions.Logging;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AltVStrefaRPServer.Modules.Inventory
 {
@@ -17,7 +17,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
         private readonly INetworkingManager _networkingManager;
         private readonly ILogger<InventoriesManager> _logger;
 
-        public InventoriesManager(IInventoryDatabaseService inventoryDatabaseService, INetworkingManager networkingManager, 
+        public InventoriesManager(IInventoryDatabaseService inventoryDatabaseService, INetworkingManager networkingManager,
             ILogger<InventoriesManager> logger)
         {
             _inventoryDatabaseService = inventoryDatabaseService;

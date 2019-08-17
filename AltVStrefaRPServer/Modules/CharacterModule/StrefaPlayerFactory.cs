@@ -1,7 +1,7 @@
-﻿using System;
-using AltV.Net;
+﻿using AltV.Net;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Models;
+using System;
 
 namespace AltVStrefaRPServer.Modules.CharacterModule
 {

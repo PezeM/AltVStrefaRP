@@ -1,12 +1,12 @@
 ﻿using AltV.Net.Elements.Entities;
 using AltV.Net.Enums;
+using AltVStrefaRPServer.Data;
 using AltVStrefaRPServer.Models;
+using AltVStrefaRPServer.Models.Interfaces.Managers;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using AltVStrefaRPServer.Data;
-using AltVStrefaRPServer.Models.Interfaces.Managers;
-using Serilog;
 
 namespace AltVStrefaRPServer.Modules.CharacterModule
 {
@@ -57,7 +57,7 @@ namespace AltVStrefaRPServer.Modules.CharacterModule
                 character.Player = player;
                 player.SetSyncedMetaData(MetaData.PLAYER_NAME, character.GetFullName());
                 player.SetSyncedMetaData(MetaData.REMOTE_ID, character.Id);
-                character.Equipment.InitializeEquipment();    
+                character.Equipment.InitializeEquipment();
 
                 // TODO: Setting skin and shared data
                 player.SetPosition(character.X, character.Y, character.Z);
@@ -67,7 +67,7 @@ namespace AltVStrefaRPServer.Modules.CharacterModule
                 character.LastPlayed = DateTime.Now;
 
                 _characters.Add(player.Id, character);
-                Log.ForContext<CharacterManager>().Information("Initialized character {characterName} CID({characterId}) ID({playerId}) in the world", 
+                Log.ForContext<CharacterManager>().Information("Initialized character {characterName} CID({characterId}) ID({playerId}) in the world",
                     character.GetFullName(), character.Id, player.Id);
                 return true;
             }

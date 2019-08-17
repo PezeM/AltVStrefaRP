@@ -1,9 +1,9 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using AltVStrefaRPServer.Database;
+﻿using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace AltVStrefaRPServer.Services.Characters.Accounts
 {

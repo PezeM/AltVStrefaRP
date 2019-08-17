@@ -1,5 +1,5 @@
-﻿using System.Threading.Tasks;
-using AltVStrefaRPServer.Models;
+﻿using AltVStrefaRPServer.Models;
+using System.Threading.Tasks;
 
 namespace AltVStrefaRPServer.Services.Characters.Accounts
 {

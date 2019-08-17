@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using AltV.Net.Data;
+﻿using AltV.Net.Data;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Fractions.Permissions;
 using AltVStrefaRPServer.Modules.Money;
+using System;
+using System.Collections.Generic;
 
 namespace AltVStrefaRPServer.Models.Fractions
 {
@@ -13,7 +13,7 @@ namespace AltVStrefaRPServer.Models.Fractions
         public float PropertyTax { get; private set; }
         public float GunTax { get; private set; }
         public float GlobalTax { get; private set; }
-        public List<float> Taxes { get; private set; } = new List<float>(); 
+        public List<float> Taxes { get; private set; } = new List<float>();
         public override string BlipName { get; protected set; } = "Urząd miasta";
 
         protected TownHallFraction() : base()
@@ -32,7 +32,7 @@ namespace AltVStrefaRPServer.Models.Fractions
 
         public bool SetVehicleTax(float newTax)
         {
-            if(!ServerEconomySettings.SetVehicleTax(newTax)) return false;
+            if (!ServerEconomySettings.SetVehicleTax(newTax)) return false;
 
             VehicleTax = newTax;
             return true;
@@ -40,7 +40,7 @@ namespace AltVStrefaRPServer.Models.Fractions
 
         public bool SetPropertyTax(float newTax)
         {
-            if(!ServerEconomySettings.SetPropertyTax(newTax)) return false;
+            if (!ServerEconomySettings.SetPropertyTax(newTax)) return false;
 
             PropertyTax = newTax;
             return true;
@@ -48,7 +48,7 @@ namespace AltVStrefaRPServer.Models.Fractions
 
         public bool SetGunTax(float newTax)
         {
-            if(!ServerEconomySettings.SetGunTax(newTax)) return false;
+            if (!ServerEconomySettings.SetGunTax(newTax)) return false;
 
             GunTax = newTax;
             return true;
@@ -56,7 +56,7 @@ namespace AltVStrefaRPServer.Models.Fractions
 
         public bool SetGlobalTax(float newTax)
         {
-            if(!ServerEconomySettings.SetGlobalTax(newTax)) return false;
+            if (!ServerEconomySettings.SetGlobalTax(newTax)) return false;
 
             GlobalTax = newTax;
             return true;

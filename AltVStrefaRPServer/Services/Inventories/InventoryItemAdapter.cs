@@ -18,7 +18,7 @@ namespace AltVStrefaRPServer.Services.Inventories
             int equipmentSlot = 0;
             string description = string.Empty;
             while (reader.HasNext())
-            { 
+            {
                 switch (reader.NextName())
                 {
                     case "id":

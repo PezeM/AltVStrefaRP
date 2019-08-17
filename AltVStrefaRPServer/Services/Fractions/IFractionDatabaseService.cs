@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using AltVStrefaRPServer.Models.Fractions;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using AltVStrefaRPServer.Models.Fractions;
 
 namespace AltVStrefaRPServer.Services.Fractions
 {

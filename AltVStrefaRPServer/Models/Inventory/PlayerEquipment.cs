@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using AltVStrefaRPServer.Models.Inventory.Interfaces;
+﻿using AltVStrefaRPServer.Models.Inventory.Interfaces;
 using AltVStrefaRPServer.Models.Inventory.Items;
 using AltVStrefaRPServer.Models.Inventory.Responses;
+using System.Collections.Generic;
 
 namespace AltVStrefaRPServer.Models.Inventory
 {
@@ -27,7 +27,7 @@ namespace AltVStrefaRPServer.Models.Inventory
         public InventoryEquipItemResponse EquipItem(InventoryItem inventoryItem)
         {
             if (!(inventoryItem.Item is Equipmentable equipmentableItem)) return InventoryEquipItemResponse.ItemNotEquipmentable;
-            if (EquippedItems.ContainsKey(equipmentableItem.EquipmentSlot)) 
+            if (EquippedItems.ContainsKey(equipmentableItem.EquipmentSlot))
             {
                 return InventoryEquipItemResponse.ItemAlreadyEquippedAtThatSlot;
             }
@@ -52,7 +52,7 @@ namespace AltVStrefaRPServer.Models.Inventory
         public InventoryUnequipItemResponse UnequipItem(InventoryItem inventoryItem)
         {
             if (!(inventoryItem.Item is Equipmentable equipmentableItem)) return InventoryUnequipItemResponse.ItemNotEquipmentable;
-            if (!EquippedItems.ContainsKey(equipmentableItem.EquipmentSlot)) 
+            if (!EquippedItems.ContainsKey(equipmentableItem.EquipmentSlot))
             {
                 return InventoryUnequipItemResponse.NoItemAtThatSlot;
             }

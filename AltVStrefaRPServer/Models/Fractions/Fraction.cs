@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AltV.Net.Async;
+﻿using AltV.Net.Async;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Extensions;
@@ -11,6 +7,10 @@ using AltVStrefaRPServer.Models.Dto.Fractions;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Fractions.Permissions;
 using AltVStrefaRPServer.Services.Fractions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace AltVStrefaRPServer.Models.Fractions
 {

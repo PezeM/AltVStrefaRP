@@ -1,7 +1,7 @@
-﻿using System.Threading.Tasks;
-using AltVStrefaRPServer.Models.Inventory.Items;
+﻿using AltVStrefaRPServer.Models.Inventory.Items;
 using AltVStrefaRPServer.Models.Inventory.Responses;
 using AltVStrefaRPServer.Services.Inventories;
+using System.Threading.Tasks;
 
 namespace AltVStrefaRPServer.Models.Inventory.Interfaces
 {

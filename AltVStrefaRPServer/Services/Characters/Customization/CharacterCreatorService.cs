@@ -1,11 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
-using AltVStrefaRPServer.Database;
+﻿using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Models.Server;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Threading.Tasks;
 
 namespace AltVStrefaRPServer.Services.Characters.Customization
 {
@@ -24,7 +24,7 @@ namespace AltVStrefaRPServer.Services.Characters.Customization
             {
                 return await context.Characters
                     .AsNoTracking()
-                    .AnyAsync(c => c.FirstName.ToLower() == firstName 
+                    .AnyAsync(c => c.FirstName.ToLower() == firstName
                                    && c.LastName.ToLower() == lastName);
             }
         }
@@ -71,6 +71,6 @@ namespace AltVStrefaRPServer.Services.Characters.Customization
             newCharacter.AddMoney(AppSettings.Current.ServerConfig.StartingPlayerMoney);
 
             return newCharacter;
-        } 
+        }
     }
 }

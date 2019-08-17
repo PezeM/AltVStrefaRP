@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AltV.Net;
+﻿using AltV.Net;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Interfaces;
 using AltVStrefaRPServer.Services.Vehicles.VehicleShops;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace AltVStrefaRPServer.Modules.Vehicle
 {
@@ -36,7 +36,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
 
         private VehicleShop() { }
 
-        public VehicleShop(int vehicleShopId, Position position, List<VehiclePrice> availableVehicles, Position positionOfBoughtVehicles, 
+        public VehicleShop(int vehicleShopId, Position position, List<VehiclePrice> availableVehicles, Position positionOfBoughtVehicles,
             Rotation rotationOfBoughtVehicles, int blipSprite = 67, int blipColor = 1)
         {
             VehicleShopId = vehicleShopId;

@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using AltVStrefaRPServer.Helpers;
+﻿using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Fractions;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Models.Logs;
 using AltVStrefaRPServer.Services.Fractions;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 
 namespace AltVStrefaRPServer.Modules.Fractions
 {
@@ -41,7 +41,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
         public bool TryToGetFraction(int fractionId, out Fraction fraction)
             => _fractions.TryGetValue(fractionId, out fraction);
 
-        public bool TryToGetFraction(Character character, out Fraction fraction) 
+        public bool TryToGetFraction(Character character, out Fraction fraction)
             => _fractions.TryGetValue(character.CurrentFractionId.GetValueOrDefault(), out fraction);
 
         public Fraction GetFraction<T>() where T : Fraction
@@ -49,11 +49,11 @@ namespace AltVStrefaRPServer.Modules.Fractions
             // TODO: Refactor this
             if (_townHallFraction is T)
                 return _townHallFraction;
-            else if (_policeFraction is T) 
+            else if (_policeFraction is T)
                 return _policeFraction;
-            else if (_samsFraction is T) 
+            else if (_samsFraction is T)
                 return _samsFraction;
-            else 
+            else
                 return null;
         }
 
@@ -84,7 +84,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
                 if (fraction is TownHallFraction townHallFraction)
                 {
                     _townHallFraction = townHallFraction;
-                } 
+                }
                 else if (fraction is PoliceFraction policeFraction)
                 {
                     _policeFraction = policeFraction;
@@ -101,11 +101,11 @@ namespace AltVStrefaRPServer.Modules.Fractions
         {
             if (_policeFraction == null)
             {
-               _logger.LogWarning("Police fraction was empty. Creating missing fractions.");
-               _policeFraction = _fractionFactoryService.CreateDefaultPoliceFraction(_fractionDatabaseService);
-               _fractions.Add(_policeFraction.Id, _policeFraction);
-               _logger.LogInformation("Created new police fraction {@fraction}", new FractionLogDto(_policeFraction));
-            } 
+                _logger.LogWarning("Police fraction was empty. Creating missing fractions.");
+                _policeFraction = _fractionFactoryService.CreateDefaultPoliceFraction(_fractionDatabaseService);
+                _fractions.Add(_policeFraction.Id, _policeFraction);
+                _logger.LogInformation("Created new police fraction {@fraction}", new FractionLogDto(_policeFraction));
+            }
             if (_samsFraction == null)
             {
                 _logger.LogWarning("SAMS fraction was empty. Creating missing fractions.");

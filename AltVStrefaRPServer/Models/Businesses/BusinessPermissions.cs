@@ -4,7 +4,7 @@
     {
         public int Id { get; private set; }
         public bool HaveVehicleKeys { get; set; }
-        public bool HaveBusinessKeys { get; set; } 
+        public bool HaveBusinessKeys { get; set; }
         public bool CanOpenBusinessMenu { get; set; }
         public bool CanOpenBusinessInventory { get; set; }
         public bool CanInviteNewMembers { get; set; }

@@ -1,14 +1,14 @@
-﻿using System.Threading.Tasks;
-using AltV.Net.Async;
+﻿using AltV.Net.Async;
 using AltVStrefaRPServer.Models.Inventory.Responses;
 using AltVStrefaRPServer.Services.Inventories;
+using System.Threading.Tasks;
 
 namespace AltVStrefaRPServer.Models.Inventory
 {
     public class PlayerInventoryContainer : InventoryContainer
     {
         public Character Owner { get; set; }
-        protected PlayerInventoryContainer() {}
+        protected PlayerInventoryContainer() { }
 
         public PlayerInventoryContainer(int maxSlots) : base(maxSlots)
         {
@@ -28,7 +28,7 @@ namespace AltVStrefaRPServer.Models.Inventory
             return InventoryUseResponse.ItemUsed;
         }
 
-        public async Task<InventoryUseResponse> UseItemAsync(Character character, InventoryItem item, IInventoryDatabaseService inventoryDatabaseService, 
+        public async Task<InventoryUseResponse> UseItemAsync(Character character, InventoryItem item, IInventoryDatabaseService inventoryDatabaseService,
             int quantity = 1)
         {
             if (!item.Item.UseItem(character)) return InventoryUseResponse.ItemNotUsed;

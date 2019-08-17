@@ -1,9 +1,9 @@
-﻿using System;
-using System.IO;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using System;
+using System.IO;
 
 namespace AltVStrefaRPServer.Database
 {

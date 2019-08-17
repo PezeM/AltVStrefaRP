@@ -1,10 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
-using AltV.Net;
+﻿using AltV.Net;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Interfaces;
+using System;
+using System.Threading.Tasks;
 
 namespace AltVStrefaRPServer.Services.Money
 {
