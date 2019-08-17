@@ -74,7 +74,7 @@ namespace AltVStrefaRPServer.Services.MValueAdapters
 
         public void ToMValue(object obj, IMValueWriter writer)
         {
-            if (obj is BlipWrapperAdapter value)
+            if (obj is BlipWrapper value)
             {
                 ToMValue(value, writer);
             }
@@ -123,7 +123,7 @@ namespace AltVStrefaRPServer.Services.MValueAdapters
             writer.Value(value.X);
             writer.Name("y");
             writer.Value(value.Y);
-            writer.Name("y");
+            writer.Name("z");
             writer.Value(value.Z);
             writer.EndObject();
         }

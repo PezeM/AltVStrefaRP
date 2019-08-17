@@ -14,21 +14,21 @@ namespace AltVStrefaRPServer.Modules.Core
     {
         private static readonly Lazy<BlipManager> lazy = new Lazy<BlipManager>(() => new BlipManager());
         public static BlipManager Instance { get { return lazy.Value; } }
-        private readonly Dictionary<int, IBlipWrapper> _blips;
+        private readonly Dictionary<int, BlipWrapper> _blips;
         private readonly IIdGenerator _idGenerator;
-        private HashSet<IBlipWrapper> _blipList;
+        private List<BlipWrapper> _blipList;
 
         public IMValueBaseAdapter BlipAdapter { get; set; }
 
         private BlipManager()
         {
             _idGenerator = new IdGenerator();
-            _blips = new Dictionary<int, IBlipWrapper>();
-            _blipList = new HashSet<IBlipWrapper>();
+            _blips = new Dictionary<int, BlipWrapper>();
+            _blipList = new List<BlipWrapper>();
             BlipAdapter = new BlipWrapperAdapter();
         }
 
-        public HashSet<IBlipWrapper> GetBlipsList() => _blipList;
+        public List<BlipWrapper> GetBlipsList() => _blipList;
 
         public IBlipWrapper CreateBlip(string blipName, int blipSprite, int blipColor, Position position, int blipType = 3)
         {
@@ -56,7 +56,7 @@ namespace AltVStrefaRPServer.Modules.Core
 
         public bool Remove(int id)
         {
-            IBlipWrapper removedBlip;
+            BlipWrapper removedBlip;
             lock (_blips)
             {
                 if (!_blips.Remove(id, out removedBlip)) return false;
@@ -94,7 +94,7 @@ namespace AltVStrefaRPServer.Modules.Core
             Alt.EmitAllClients("blipManagerAddedNewBlip", newBlip);
         }
 
-        private void OnBlipRemove(IBlipWrapper removedBlip)
+        private void OnBlipRemove(BlipWrapper removedBlip)
         {
             // Propably event to all players that specific blip was removed
             _blipList.Remove(removedBlip);

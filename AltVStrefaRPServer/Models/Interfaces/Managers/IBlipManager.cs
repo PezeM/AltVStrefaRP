@@ -9,7 +9,7 @@ namespace AltVStrefaRPServer.Models.Interfaces.Managers
     {
         IMValueBaseAdapter BlipAdapter { get; set; }
 
-        HashSet<IBlipWrapper> GetBlipsList();
+        List<BlipWrapper> GetBlipsList();
         IBlipWrapper CreateBlip(string blipName, int blipSprite, int blipColor, Position position, int blipType = 3);
         bool Remove(IBlipWrapper blip);
         bool Remove(int id);

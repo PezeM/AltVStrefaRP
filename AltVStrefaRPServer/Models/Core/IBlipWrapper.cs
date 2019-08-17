@@ -3,7 +3,7 @@ using AltV.Net.Data;
 
 namespace AltVStrefaRPServer.Models.Core
 {
-    public interface IBlipWrapper : IMValueConvertible
+    public interface IBlipWrapper
     {
         int Id { get; set; }
         string Name { get; set; }

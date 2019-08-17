@@ -4,7 +4,7 @@ using AltVStrefaRPServer.Modules.Core;
 
 namespace AltVStrefaRPServer.Models.Core
 {
-    public class BlipWrapper : IBlipWrapper
+    public class BlipWrapper : IBlipWrapper, IMValueConvertible
     {
         private string _name;
         private int _sprite;
