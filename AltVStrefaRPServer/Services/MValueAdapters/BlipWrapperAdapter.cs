@@ -20,7 +20,6 @@ namespace AltVStrefaRPServer.Services.MValueAdapters
             string name = null;
             int color = 0;
             int sprite = 0;
-            int type = 0;
             Position position = Position.Zero;
             while (reader.HasNext())
             {
@@ -38,9 +37,6 @@ namespace AltVStrefaRPServer.Services.MValueAdapters
                     case "sprite":
                         sprite = reader.NextInt();
                         break;
-                    case "type":
-                        type = reader.NextInt();
-                        break;
                     case "position":
                         position = _positionAdapter.FromMValue(reader);
                         break;
@@ -51,7 +47,7 @@ namespace AltVStrefaRPServer.Services.MValueAdapters
             }
 
             reader.EndObject();
-            return id == 0 ? null : new BlipWrapper(id, name, sprite, color, position, type);
+            return id == 0 ? null : new BlipWrapper(id, name, sprite, color, position);
         }
 
         public void ToMValue(BlipWrapper value, IMValueWriter writer)
@@ -67,8 +63,6 @@ namespace AltVStrefaRPServer.Services.MValueAdapters
             writer.Value(value.Sprite);
             writer.Name("position");
             _positionAdapter.ToMValue(value.Position, writer); // Don't know if it will work
-            writer.Name("type");
-            writer.Value(value.Type);
             writer.EndObject();
         }
 

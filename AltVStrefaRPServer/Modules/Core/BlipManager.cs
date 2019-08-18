@@ -31,9 +31,9 @@ namespace AltVStrefaRPServer.Modules.Core
 
         public MValue GetBlips() => _blipsMValue;
 
-        public IBlipWrapper CreateBlip(string blipName, int blipSprite, int blipColor, Position position, int blipType = 3)
+        public IBlipWrapper CreateBlip(string blipName, int blipSprite, int blipColor, Position position)
         {
-            var newBlip = new BlipWrapper(blipName, blipSprite, blipColor, position, blipType);
+            var newBlip = new BlipWrapper(blipName, blipSprite, blipColor, position);
             var nextId = _idGenerator.GetNextId();
             lock (_blips)
             {

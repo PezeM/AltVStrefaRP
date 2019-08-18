@@ -10,7 +10,7 @@ namespace AltVStrefaRPServer.Models.Interfaces.Managers
         IMValueBaseAdapter BlipAdapter { get; set; }
 
         MValue GetBlips();
-        IBlipWrapper CreateBlip(string blipName, int blipSprite, int blipColor, Position position, int blipType = 3);
+        IBlipWrapper CreateBlip(string blipName, int blipSprite, int blipColor, Position position);
         bool Remove(IBlipWrapper blip);
         bool Remove(int id);
     }

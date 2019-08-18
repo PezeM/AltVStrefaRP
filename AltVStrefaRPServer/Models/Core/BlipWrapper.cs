@@ -4,7 +4,7 @@ using AltVStrefaRPServer.Modules.Core;
 
 namespace AltVStrefaRPServer.Models.Core
 {
-    public class BlipWrapper : IBlipWrapper, IMValueConvertible
+    public class BlipWrapper : IBlipWrapper
     {
         private string _name;
         private int _sprite;
@@ -22,8 +22,6 @@ namespace AltVStrefaRPServer.Models.Core
                 BlipManager.Instance.UpdateBlipName(this, value);
             }
         }
-
-        public int Type { get; set; }
 
         public int Sprite
         {
@@ -55,17 +53,16 @@ namespace AltVStrefaRPServer.Models.Core
             }
         }
 
-        public BlipWrapper(int id, string name, int sprite, int color, Position position, int type) : this(name, sprite, color, position, type)
+        public BlipWrapper(int id, string name, int sprite, int color, Position position) : this(name, sprite, color, position)
         {
             Id = id;
         }
 
-        public BlipWrapper(string name, int sprite, int color, Position position, int type)
+        public BlipWrapper(string name, int sprite, int color, Position position)
         {
             Name = name;
             Sprite = sprite;
             Color = color;
-            Type = type;
             Position = position;
         }
 
