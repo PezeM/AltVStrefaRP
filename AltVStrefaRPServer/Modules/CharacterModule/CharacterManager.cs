@@ -66,7 +66,7 @@ namespace AltVStrefaRPServer.Modules.CharacterModule
                 player.Model = character.Gender == 0 ? (uint)PedModel.FreemodeMale01 : (uint)PedModel.FreemodeFemale01;
                 player.Dimension = character.Dimension;
                 character.LastPlayed = DateTime.Now;
-                character.Player.Emit("blipManagerLoadAllBlips", BlipManager.Instance.GetBlipsList());
+                character.Player.Emit("blipManagerLoadAllBlips", BlipManager.Instance.GetBlips());
 
                 _characters.Add(player.Id, character);
                 Log.ForContext<CharacterManager>().Information("Initialized character {characterName} CID({characterId}) ID({playerId}) in the world",

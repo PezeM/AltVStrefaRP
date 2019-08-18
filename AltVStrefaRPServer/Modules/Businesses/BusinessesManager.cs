@@ -18,7 +18,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
 {
     public class BusinessesManager : IBusinessesManager
     {
-        private Dictionary<int, Business> _businesses;
+        private readonly Dictionary<int, Business> _businesses;
 
         private readonly IBusinessService _businessService;
         private readonly IBusinessDatabaseService _businessDatabaseService;
@@ -92,7 +92,8 @@ namespace AltVStrefaRPServer.Modules.Businesses
         /// </summary>
         /// <param name="businessName"></param>
         /// <returns></returns>
-        public bool CheckIfBusinessExists(string businessName) => _businesses.Values.Any(b => b.BusinessName.ToLower() == businessName.ToLower());
+        public bool CheckIfBusinessExists(string businessName) => _businesses.Values.Any(b =>
+            string.Equals(b.BusinessName, businessName, System.StringComparison.CurrentCultureIgnoreCase));
 
         /// <summary>
         /// Create new business and save it to database
@@ -198,7 +199,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
             if (!business.RemoveEmployee(employee)) return false;
             employee.BusinessRank = 0;
 
-            await Task.WhenAll(_businessDatabaseService.UpdateBusinessAsync(business), _characterDatabaseService.UpdateCharacterAsync(employee));
+            await Task.WhenAll(_businessDatabaseService.UpdateBusinessAsync(business), _characterDatabaseService.UpdateCharacterAsync(employee)).ConfigureAwait(false);
             return true;
         }
 
@@ -220,7 +221,8 @@ namespace AltVStrefaRPServer.Modules.Businesses
                     business.SetDefaultRank(character);
                 }
 
-                await Task.WhenAll(_businessDatabaseService.UpdateBusinessAsync(business), _characterDatabaseService.UpdateCharactersAsync(employeesToChange));
+                await Task.WhenAll(_businessDatabaseService.UpdateBusinessAsync(business), _characterDatabaseService.UpdateCharactersAsync(employeesToChange))
+                    .ConfigureAwait(false);
             }
             else
             {
@@ -251,6 +253,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
             {
                 //_businesses.TryAdd(business.Id, _businessFactory.CreateNewBusiness(business));
                 _businesses.TryAdd(business.Id, business);
+                business.CreateBlip();
                 //_businessFactory.CreateBusiness(business);
             }
             _logger.LogInformation("Loaded {businessesCount} businesses from databse in {elapsedTime} ms", _businesses.Count, Time.GetElapsedTime(startTime));

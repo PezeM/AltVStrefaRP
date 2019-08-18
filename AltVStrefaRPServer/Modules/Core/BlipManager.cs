@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using AltV.Net;
-using AltV.Net.Data;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models.Core;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Services.MValueAdapters;
 using Serilog;
+using MValue = AltV.Net.Elements.Args.MValue;
+using Position = AltV.Net.Data.Position;
 
 namespace AltVStrefaRPServer.Modules.Core
 {
@@ -16,19 +17,19 @@ namespace AltVStrefaRPServer.Modules.Core
         public static BlipManager Instance { get { return lazy.Value; } }
         private readonly Dictionary<int, BlipWrapper> _blips;
         private readonly IIdGenerator _idGenerator;
-        private List<BlipWrapper> _blipList;
+        private MValue _blipsMValue;
 
         public IMValueBaseAdapter BlipAdapter { get; set; }
 
         private BlipManager()
         {
+            _blipsMValue = new MValue();
             _idGenerator = new IdGenerator();
             _blips = new Dictionary<int, BlipWrapper>();
-            _blipList = new List<BlipWrapper>();
             BlipAdapter = new BlipWrapperAdapter();
         }
 
-        public List<BlipWrapper> GetBlipsList() => _blipList;
+        public MValue GetBlips() => _blipsMValue;
 
         public IBlipWrapper CreateBlip(string blipName, int blipSprite, int blipColor, Position position, int blipType = 3)
         {
@@ -90,14 +91,14 @@ namespace AltVStrefaRPServer.Modules.Core
         {
             // Emit event to all players to remove specific blip
             // Update blip mvalue definition
-            _blipList.Add(newBlip);
+            _blipsMValue = MValue.CreateFromObject(_blips.Values);
             Alt.EmitAllClients("blipManagerAddedNewBlip", newBlip);
         }
 
         private void OnBlipRemove(BlipWrapper removedBlip)
         {
             // Propably event to all players that specific blip was removed
-            _blipList.Remove(removedBlip);
+            _blipsMValue = MValue.CreateFromObject(_blips.Values);
             Alt.EmitAllClients("blipManagerRemovedBlip", removedBlip.Id);
         }
     }
