@@ -31,9 +31,9 @@ namespace AltVStrefaRPServer.Modules.Core
 
         public MValue GetBlips() => _blipsMValue;
 
-        public IBlipWrapper CreateBlip(string blipName, int blipSprite, int blipColor, Position position)
+        public IBlipWrapper CreateBlip(string blipName, int blipSprite, int blipColor, Position position, float scale = 1)
         {
-            var newBlip = new BlipWrapper(blipName, blipSprite, blipColor, position);
+            var newBlip = new BlipWrapper(blipName, blipSprite, blipColor, position, scale);
             var nextId = _idGenerator.GetNextId();
             lock (_blips)
             {
@@ -85,6 +85,11 @@ namespace AltVStrefaRPServer.Modules.Core
         internal void UpdateBlipColor(BlipWrapper blipWrapper, int value)
         {
             Alt.EmitAllClients("blipManagerUpdateBlipColor", blipWrapper.Id, value);
+        }
+
+        internal void UpdateBlipScale(BlipWrapper blipWrapper, float value)
+        {
+            Alt.EmitAllClients("blipManagerUpdateBlipScale", blipWrapper.Id, value);
         }
 
         private void OnBlipAdd(BlipWrapper newBlip)

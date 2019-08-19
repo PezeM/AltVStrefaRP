@@ -9,6 +9,7 @@ namespace AltVStrefaRPServer.Models.Core
         private string _name;
         private int _sprite;
         private int _color;
+        private float _scale;
         private Position _position;
 
         public int Id { get; set; }
@@ -43,6 +44,16 @@ namespace AltVStrefaRPServer.Models.Core
             }
         }
 
+        public float Scale
+        {
+            get { return _scale; }
+            set
+            {
+                _scale = value;
+                BlipManager.Instance.UpdateBlipScale(this, value);
+            }
+        }
+
         public Position Position
         {
             get { return _position; }
@@ -53,16 +64,17 @@ namespace AltVStrefaRPServer.Models.Core
             }
         }
 
-        public BlipWrapper(int id, string name, int sprite, int color, Position position) : this(name, sprite, color, position)
+        public BlipWrapper(int id, string name, int sprite, int color, Position position, float scale = 1) : this(name, sprite, color, position, scale)
         {
             Id = id;
         }
 
-        public BlipWrapper(string name, int sprite, int color, Position position)
+        public BlipWrapper(string name, int sprite, int color, Position position, float scale = 1)
         {
             Name = name;
             Sprite = sprite;
             Color = color;
+            Scale = scale;
             Position = position;
         }
 

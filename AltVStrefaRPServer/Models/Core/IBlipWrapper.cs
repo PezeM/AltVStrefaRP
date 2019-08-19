@@ -9,6 +9,7 @@ namespace AltVStrefaRPServer.Models.Core
         string Name { get; set; }
         int Sprite { get; set; }
         int Color { get; set; }
+        float Scale { get; set; }
         Position Position { get; set; }
 
         void DestroyBlip();
