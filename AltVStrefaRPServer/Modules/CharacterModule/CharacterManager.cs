@@ -7,6 +7,7 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Modules.Core;
 
 namespace AltVStrefaRPServer.Modules.CharacterModule
@@ -65,6 +66,8 @@ namespace AltVStrefaRPServer.Modules.CharacterModule
                 //player.Spawn(character.GetPosition());
                 player.Model = character.Gender == 0 ? (uint)PedModel.FreemodeMale01 : (uint)PedModel.FreemodeFemale01;
                 player.Dimension = character.Dimension;
+                EquipItems(character);
+
                 character.LastPlayed = DateTime.Now;
                 character.Player.Emit("blipManagerLoadAllBlips", BlipManager.Instance.GetBlips());
 
@@ -85,6 +88,14 @@ namespace AltVStrefaRPServer.Modules.CharacterModule
             {
                 _characters.Remove(character.Player.Id);
                 Log.ForContext<CharacterManager>().Information("Removed character {characterName} CID({characterId}) from server", character.GetFullName(), character.Id);
+            }
+        }
+
+        private void EquipItems(Character character)
+        {
+            foreach (InventoryItem item in character.Equipment.Items)
+            {
+                item.Item.UseItem(character);
             }
         }
     }
