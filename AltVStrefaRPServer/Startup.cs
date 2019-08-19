@@ -34,6 +34,7 @@ using Serilog.Events;
 using Serilog.Sinks.Elasticsearch;
 using System;
 using System.IO;
+using AltVStrefaRPServer.Modules.Core;
 
 namespace AltVStrefaRPServer
 {
@@ -118,6 +119,7 @@ namespace AltVStrefaRPServer
             services.AddSingleton<InventoryHandler>();
             services.AddSingleton<INetworkingManager, NetworkingManager>();
             services.AddSingleton<VehiclesData>();
+            services.AddSingleton<SoundManager>();
 
             services.AddTransient<AdminCommands>();
             services.AddTransient<CharacterCreator>();
