@@ -2,6 +2,7 @@
 using AltVStrefaRPServer.Models.Businesses;
 using AltVStrefaRPServer.Models.Fractions;
 using AltVStrefaRPServer.Models.Fractions.Permissions;
+using AltVStrefaRPServer.Models.Houses;
 using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Models.Inventory.Items;
 using AltVStrefaRPServer.Models.Vehicles;
@@ -63,6 +64,10 @@ namespace AltVStrefaRPServer.Database
         public DbSet<InventoryItem> InventoryItems { get; set; }
         public DbSet<DroppedItem> DroppedItems { get; set; }
 
+        // Housing
+        public DbSet<Interior> Interiors { get; set; }
+        public DbSet<House> Houses { get; set; }
+        
         public ServerContext(DbContextOptions options) : base(options)
         {
         }

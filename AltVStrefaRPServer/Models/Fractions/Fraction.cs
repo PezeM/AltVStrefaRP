@@ -25,9 +25,9 @@ namespace AltVStrefaRPServer.Models.Fractions
         public float Money { get; private set; }
 
         public DateTime CreationDate { get; set; }
-        public virtual float X { get; set; }
-        public virtual float Y { get; set; }
-        public virtual float Z { get; set; }
+        public float X { get; set; }
+        public float Y { get; set; }
+        public float Z { get; set; }
 
         protected List<Character> _employees;
         public IReadOnlyCollection<Character> Employees => _employees;
@@ -102,7 +102,7 @@ namespace AltVStrefaRPServer.Models.Fractions
 
         public void AddMoney(float amount)
         {
-            // Also maybe own list of transactions and notify owner but propably not
+            // Also maybe own list of transactions and notify owner but probably not
             Money += amount;
         }
 
@@ -185,10 +185,8 @@ namespace AltVStrefaRPServer.Models.Fractions
                 await fractionDatabaseService.RemoveFractionRankAsync(rank).ConfigureAwait(false);
                 return true;
             }
-            else
-            {
-                return false;
-            }
+
+            return false;
         }
 
         public async Task<bool> UpdateEmployeeRankAsync(Character employeeChangingRank, int employeeId, int newRankId, IFractionDatabaseService fractionDatabaseService)
