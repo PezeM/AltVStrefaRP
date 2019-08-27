@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Linq;
 using AltV.Net;
 using AltV.Net.Data;
-using AltV.Net.Elements.Entities;
-using AltVStrefaRPServer.Data;
 using AltVStrefaRPServer.Models.Core;
 using AltVStrefaRPServer.Models.Interfaces;
+using AltVStrefaRPServer.Services.MValueAdapters;
 
 namespace AltVStrefaRPServer.Models.Houses
 {
-    public class House : IPosition
+    public class House : IPosition, IWritable
     {
         public int Id { get; set; }
         public Character Owner { get; private set; }
@@ -35,7 +33,8 @@ namespace AltVStrefaRPServer.Models.Houses
         }
         
         public Position GetPosition() => new Position(X, Y, Z);
-
+        public bool HasOwner() => Owner != null;
+        
         public string ChangeLockPattern()
         {
             LockPattern = new Guid().ToString();
@@ -62,6 +61,22 @@ namespace AltVStrefaRPServer.Models.Houses
             player.Dimension = 0;
             player.Position = GetPosition();
             player.HouseId = 0;
+        }
+
+        public void OnWrite(IMValueWriter writer)
+        {
+            writer.BeginObject();
+            writer.Name("price");
+            writer.Value(Price);
+            writer.Name("owner");
+            writer.Value(HasOwner());
+            writer.Name("isClosed");
+            writer.Value(IsLocked);
+            writer.Name("interiorName");
+            writer.Value(Interior?.Name);
+            writer.Name("position");
+            new PositionAdapter().ToMValue(GetPosition(), writer);
+            writer.EndObject();
         }
     }
 }

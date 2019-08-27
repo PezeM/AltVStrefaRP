@@ -36,6 +36,9 @@ namespace AltVStrefaRPServer.Modules.HousingModule
         private void HouseInteractionMenu(IStrefaPlayer player)
         {
             if (player.HouseEnterColshape == 0) return;
+            if (!_housesManager.TryGetHouse(player.HouseEnterColshape, out var house)) return;
+
+            player.Emit("showHouseInteractionMenu", house);
         }
         
         private void TryEnterHouse(IStrefaPlayer player)
