@@ -9,6 +9,7 @@ namespace AltVStrefaRPServer.Models
         public int AccountId { get; set; }
         public IInventoryContainer LastOpenedInventory { get; set; }
         public int HouseId { get; set; }
+        public int HouseEnterColshape { get; set; }
 
         public StrefaPlayer(IntPtr nativePointer, ushort id) : base(nativePointer, id) { }
     }

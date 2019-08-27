@@ -8,5 +8,6 @@ namespace AltVStrefaRPServer.Models
         int AccountId { get; set; }
         IInventoryContainer LastOpenedInventory { get; set; }
         int HouseId { get; set; }
+        int HouseEnterColshape { get; set; }
     }
 }

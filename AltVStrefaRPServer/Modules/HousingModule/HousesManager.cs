@@ -22,6 +22,12 @@ namespace AltVStrefaRPServer.Modules.HousingModule
             InitializeHouses();
         }
 
+        public bool TryGetHouse(int houseId, out House house) => _houses.TryGetValue(houseId, out house);
+
+        public bool CheckIfHouseExists(int houseId) => _houses.ContainsKey(houseId);
+
+        public House GetHouse(int houseId) => CheckIfHouseExists(houseId) ? _houses[houseId] : null;
+        
         private void InitializeHouses()
         {
             var startTime = Time.GetTimestampMs();

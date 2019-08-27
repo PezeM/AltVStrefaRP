@@ -7,6 +7,8 @@ using AltVStrefaRPServer.Models.Fractions;
 using AltVStrefaRPServer.Models.Interfaces;
 using AltVStrefaRPServer.Models.Inventory;
 using System;
+using System.Collections.Generic;
+using AltVStrefaRPServer.Models.Houses;
 
 namespace AltVStrefaRPServer.Models
 {
@@ -51,6 +53,8 @@ namespace AltVStrefaRPServer.Models
         public Fraction Fraction { get; set; }
         public int FractionRank { get; set; }
 
+        public ICollection<House> Houses { get; private set; }
+        
         public string GetFullName()
         {
             return string.Join(' ', FirstName, LastName);

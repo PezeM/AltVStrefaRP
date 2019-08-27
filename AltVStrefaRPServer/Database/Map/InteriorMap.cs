@@ -9,6 +9,9 @@ namespace AltVStrefaRPServer.Database.Map
         public void Configure(EntityTypeBuilder<Interior> builder)
         {
             builder.Ignore(i => i.Colshape);
+
+            builder.HasMany(i => i.Houses)
+                .WithOne(h => h.Interior);
         }
     }
 }

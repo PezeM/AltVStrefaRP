@@ -11,12 +11,12 @@ namespace AltVStrefaRPServer.Database.Map
         {
             builder.Ignore(c => c.Player);
 
+            builder.Property(c => c.Gender)
+                .HasConversion<int>();
+            
             builder.HasOne(c => c.BankAccount)
                 .WithOne(b => b.Character)
                 .HasForeignKey<BankAccount>(b => b.CharacterId);
-
-            builder.Property(c => c.Gender)
-                .HasConversion<int>();
 
             builder.HasOne<Business>(c => c.Business)
                 .WithMany(b => b.Employees)
@@ -36,6 +36,9 @@ namespace AltVStrefaRPServer.Database.Map
             builder.HasOne(c => c.Equipment)
                 .WithOne(e => e.Owner)
                 .HasForeignKey<Character>(c => c.EquipmentId);
+
+            builder.HasMany(c => c.Houses)
+                .WithOne(c => c.Owner);
         }
     }
 }
