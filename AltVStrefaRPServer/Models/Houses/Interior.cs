@@ -1,7 +1,10 @@
-﻿using AltV.Net;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using AltV.Net;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Models.Interfaces;
+using AltVStrefaRPServer.Services.Housing;
 
 namespace AltVStrefaRPServer.Models.Houses
 {
@@ -20,6 +23,8 @@ namespace AltVStrefaRPServer.Models.Houses
         public float Y { get; set; }
         public float Z { get; set; }
         
+        public ICollection<House> Houses { get; set; }
+        
         public IColShape Colshape { get; set; }
 
         public Interior()
@@ -29,14 +34,21 @@ namespace AltVStrefaRPServer.Models.Houses
             // Interior exit colshape 
             Alt.OnColShape += (shape, entity, state) =>
             {
-                if (shape != Colshape || !state) return;
+                if (shape != Colshape) return;
                 if (!(entity is IStrefaPlayer player)) return;
 
                 player.Emit("showInteriorExitMenu", state);
             };
+            
+            // Create marker where player can access house inventory
         }
         
         public Position GetPosition() => new Position(X, Y, Z);
 
+        public async Task DeleteInterior(IInteriorDatabaseService interiorDatabaseService)
+        {
+            Colshape.Remove();
+            await interiorDatabaseService.RemoveInteriorAsync(this);
+        }
     }
 }

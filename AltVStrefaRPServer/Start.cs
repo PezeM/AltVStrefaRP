@@ -27,6 +27,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using AltVStrefaRPServer.Models;
+using AltVStrefaRPServer.Modules.Core.Colshapes;
 using Newtonsoft.Json;
 
 namespace AltVStrefaRPServer
@@ -210,6 +211,11 @@ namespace AltVStrefaRPServer
         public override IEntityFactory<IPlayer> GetPlayerFactory()
         {
             return new StrefaPlayerFactory();
+        }
+
+        public override IBaseObjectFactory<IColShape> GetColShapeFactory()
+        {
+            return new StrefaColshapeFactory();
         }
 
         public override void OnStop()

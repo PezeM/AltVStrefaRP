@@ -11,7 +11,7 @@ namespace AltVStrefaRPServer.Models.Houses
     public class House : IPosition
     {
         public int Id { get; set; }
-        public Character Owner { get; set; }
+        public Character Owner { get; private set; }
         public float X { get; set; }
         public float Y { get; set; }
         public float Z { get; set; }
@@ -37,6 +37,12 @@ namespace AltVStrefaRPServer.Models.Houses
         {
             LockPattern = new Guid().ToString();
             return LockPattern;
+        }
+
+        public bool ChangeOwner(Character newOwner)
+        {
+            if (newOwner.Id == Owner?.Id) return false;
+            return true;
         }
     }
 }

@@ -16,7 +16,7 @@ namespace AltVStrefaRPServer.Modules.HousingModule
         {
             if (!(entity is IStrefaPlayer player)) return;
             
-            if(colshape.GetMetaData(MetaData.COLSHAPE_HOUSE_ID, out int houseId)) return;
+            if(colshape.GetData(MetaData.COLSHAPE_HOUSE_ID, out int houseId)) return;
 
             player.HouseId = entered ? houseId : 0;
             player.Emit("inHouseEnterColshape", entered);
