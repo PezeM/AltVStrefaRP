@@ -142,35 +142,41 @@ namespace AltVStrefaRPServer
             stopwatch.Start();
 
             if (args.Length < 1) return;
-            if (name == "stop")
+            switch (name)
             {
-                var resource = args[0];
-                if (resource.IsNullOrEmpty()) return;
-
-                Alt.Log($"Stopping resource: {resource}.");
-            }
-            else if (name == "vehicle")
-            {
-                var model = args[0];
-                if (model.IsNullOrEmpty()) return;
-
-                var player = Alt.GetAllPlayers().FirstOrDefault();
-                if (player == null)
+                case "stop":
                 {
-                    Alt.Log($"Not found any player in the game");
-                    return;
-                }
+                    var resource = args[0];
+                    if (resource.IsNullOrEmpty()) return;
 
-                await VehicleCommandAsync(model, player).ConfigureAwait(false);
-            }
-            else if (name == "spawn")
-            {
-                if (!int.TryParse(args[0], out var id))
-                {
-                    Alt.Log($"Wrong vehicle id for command {name}");
-                    return;
+                    Alt.Log($"Stopping resource: {resource}.");
+                    break;
                 }
-                SpawnVehicleComand(id);
+                case "vehicle":
+                {
+                    var model = args[0];
+                    if (model.IsNullOrEmpty()) return;
+
+                    var player = Alt.GetAllPlayers().FirstOrDefault();
+                    if (player == null)
+                    {
+                        Alt.Log($"Not found any player in the game");
+                        return;
+                    }
+
+                    await VehicleCommandAsync(model, player).ConfigureAwait(false);
+                    break;
+                }
+                case "spawn":
+                {
+                    if (!int.TryParse(args[0], out var id))
+                    {
+                        Alt.Log($"Wrong vehicle id for command {name}");
+                        return;
+                    }
+                    SpawnVehicleComand(id);
+                    break;
+                }
             }
             stopwatch.Stop();
             Alt.Log($"Executed console command in {stopwatch.Elapsed}");

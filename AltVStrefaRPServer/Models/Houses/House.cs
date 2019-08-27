@@ -1,5 +1,7 @@
 ﻿using AltV.Net;
 using AltV.Net.Data;
+using AltV.Net.Elements.Entities;
+using AltVStrefaRPServer.Data;
 using AltVStrefaRPServer.Models.Interfaces;
 
 namespace AltVStrefaRPServer.Models.Houses
@@ -16,25 +18,15 @@ namespace AltVStrefaRPServer.Models.Houses
         
         // Don't know if its needed and will do M-1 
         public Interior Interior { get; set; }
+
+        public IColShape Colshape { get; private set; }
+        
+        public House()
+        {
+            Colshape = Alt.CreateColShapeCylinder(GetPosition(), 1f, 1f);
+            Colshape.SetData(MetaData.COLSHAPE_HOUSE_ID, Id);
+        }
         
         public Position GetPosition() => new Position(X, Y, Z);
     }
-    
-    public class Interior : IPosition
-    {
-        /// <summary>
-        /// Database id of the interior
-        /// </summary>
-        public int Id { get; set; }
-        
-        /// <summary>
-        /// Name of the interior
-        /// </summary>
-        public string Name { get; set; }
-        public float X { get; set; }
-        public float Y { get; set; }
-        public float Z { get; set; }
-        
-        public Position GetPosition() => new Position(X, Y, Z);
-    }    
 }

@@ -17,5 +17,6 @@
 
         #endregion
 
+        public static readonly string COLSHAPE_HOUSE_ID = "colshapeHouseId";
     }
 }
