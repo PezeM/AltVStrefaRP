@@ -23,6 +23,9 @@ namespace AltVStrefaRPServer.Models.Houses
         public float Y { get; set; }
         public float Z { get; set; }
         
+        /// <summary>
+        /// Collection of houses using this interior
+        /// </summary>
         public ICollection<House> Houses { get; set; }
         
         public IColShape Colshape { get; set; }

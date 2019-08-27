@@ -38,7 +38,8 @@ namespace AltVStrefaRPServer.Database.Map
                 .HasForeignKey<Character>(c => c.EquipmentId);
 
             builder.HasMany(c => c.Houses)
-                .WithOne(c => c.Owner);
+                .WithOne(c => c.Owner)
+                .HasForeignKey(h => h.OwnerId);
         }
     }
 }

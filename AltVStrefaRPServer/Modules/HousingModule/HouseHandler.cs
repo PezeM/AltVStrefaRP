@@ -21,8 +21,9 @@ namespace AltVStrefaRPServer.Modules.HousingModule
             Alt.On<IStrefaPlayer>("HouseInteractionMenu", HouseInteractionMenu);
             Alt.On<IStrefaPlayer>("TryEnterHouse", TryEnterHouse);
             Alt.On<IStrefaPlayer>("TryLeaveHouse", TryLeaveHouse);
+            Alt.On<IStrefaPlayer>("TryBuyHouse", TryBuyHouse);
         }
-      
+        
         private void AltOnOnColShape(IColShape colshape, IEntity entity, bool entered)
         {
             if (!(entity is IStrefaPlayer player)) return;
@@ -71,6 +72,18 @@ namespace AltVStrefaRPServer.Modules.HousingModule
             if (!_housesManager.TryGetHouse(player.HouseId, out var house)) return;
             
             house.MovePlayerOutside(player);
+        }
+        
+        private void TryBuyHouse(IStrefaPlayer player)
+        {
+            if (player.HouseEnterColshape == 0) return;
+            if (!_housesManager.TryGetHouse(player.HouseEnterColshape, out var house)) return;
+
+            if (!house.HasOwner())
+            {
+                _notificationService.ShowErrorNotification(player, "Budynek zamieszkały", "Mieszkanie posiada już właściciela", 3500);
+                return;
+            }
         }
     }
 }
