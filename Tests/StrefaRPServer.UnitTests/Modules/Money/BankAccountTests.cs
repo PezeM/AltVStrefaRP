@@ -49,7 +49,7 @@ namespace StrefaRPServer.UnitTests.Modules.Money
         }
 
         [Test]
-        public void TransferingMoneyDescreasesBalance()
+        public void TransferingMoneyDecreasesBalance()
         {
             var depositedMoney = 1000f;
             var moneyToTransfer = 100.01f;

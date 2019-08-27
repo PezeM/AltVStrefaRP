@@ -150,7 +150,7 @@ namespace AltVStrefaRPServer
                 .Enrich.WithThreadName()
                 .Enrich.FromLogContext()
                 .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] <{ThreadId}><{ThreadName}> {Message:lj} {NewLine}{Exception}")
-                .WriteTo.File(logsPath + ".log",
+                .WriteTo.File($"{logsPath}.log",
                     LogEventLevel.Verbose,
                     outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] <{ThreadId}><{ThreadName}> {Message:lj} {NewLine}{Exception}",
                     rollingInterval: RollingInterval.Day,

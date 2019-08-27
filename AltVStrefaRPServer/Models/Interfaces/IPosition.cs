@@ -7,6 +7,11 @@ namespace AltVStrefaRPServer.Models.Interfaces
         float X { get; set; }
         float Y { get; set; }
         float Z { get; set; }
+        
+        /// <summary>
+        /// Returns entity <see cref="Position"/>
+        /// </summary>
+        /// <returns></returns>
         Position GetPosition();
     }
 }
