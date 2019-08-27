@@ -37,7 +37,7 @@ namespace AltVStrefaRPServer
         private IVehicleSpawnService _vehicleSpawnService;
         private SerializatorTest _serializatorTest;
         private ILogger<Start> _logger;
-
+        
         private Startup _startup;
 
         public override void OnStart()
@@ -79,12 +79,12 @@ namespace AltVStrefaRPServer
 
             Alt.On<IPlayer, ulong>("bigNumber", (player, number) =>
             {
-                Alt.Log($"ULONG BIGNUMBER VALUE: {number}");
+                Alt.Log($"ULONG BIGNUMBER VALUE: {number.ToString()}");
             });
 
             Alt.On<IPlayer, long>("bigNumber", (player, number) =>
             {
-                Alt.Log($"LONG BIGNUMBER VALUE: {number}");
+                Alt.Log($"LONG BIGNUMBER VALUE: {number.ToString()}");
             });
 
             Alt.OnClient("discordOAuth2Result", (player, data) =>
@@ -96,9 +96,9 @@ namespace AltVStrefaRPServer
                     if (item is Dictionary<string, object> dataDictionary)
                     {
                         Alt.Log("Its dictionary");
-                        foreach (var value in dataDictionary)
+                        foreach (var (key, value) in dataDictionary)
                         {
-                            Alt.Log($"Key: {value.Key} Value: {value.Value}");
+                            Alt.Log($"Key: {key} Value: {value}");
                         }
                     }
                 }

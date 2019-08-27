@@ -8,7 +8,7 @@ namespace StrefaRPServer.UnitTests.Modules.Inventory
 {
     public class InventoryMoveItemTest
     {
-        private readonly int _inventorySlotsNumber = 10;
+        private const int InventorySlotsNumber = 10;
         private InventoryContainer _inventory;
         private ItemFactory _itemFactory;
         private InventoryItem _item;
@@ -22,7 +22,7 @@ namespace StrefaRPServer.UnitTests.Modules.Inventory
         [SetUp]
         public void Setup()
         {
-            _inventory = new InventoryContainer(_inventorySlotsNumber);
+            _inventory = new InventoryContainer(InventorySlotsNumber);
             _item = new InventoryItem(_itemFactory.CreateBurger(), 5, 0);    
         }
 
@@ -43,7 +43,7 @@ namespace StrefaRPServer.UnitTests.Modules.Inventory
         [Test]
         public void MovesItemToNewSlotBySlotId()
         {
-            int newSlotId = 2;
+            var newSlotId = 2;
             _inventory.AddInventoryItem(_item);
 
             _inventory.MoveItemToSlot(_item.Id, newSlotId);
@@ -80,7 +80,7 @@ namespace StrefaRPServer.UnitTests.Modules.Inventory
         public void CantMoveItemToSlotIdHigherThanMaxSlotsNumber()
         {
             _inventory.AddInventoryItem(_item);
-            var outOfRangeSlotNumber = _inventorySlotsNumber + 1;
+            var outOfRangeSlotNumber = InventorySlotsNumber + 1;
 
             _inventory.MoveItemToSlot(_item, outOfRangeSlotNumber);
 

@@ -35,6 +35,8 @@ namespace AltVStrefaRPServer
                     Log.CloseAndFlush();
                     Environment.Exit(0);
                     return false;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(sig), sig, null);
             }
 
             return true;

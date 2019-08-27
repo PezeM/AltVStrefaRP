@@ -86,7 +86,7 @@ namespace StrefaRPServer.UnitTests.Modules.Inventory
 
             await _inventoryEquipService.EquipItemAsync(_inventoryContainer, _playerEquipment, _itemToEquip.Id);
 
-            bool actual = (await _context.Inventories.FindAsync(_inventoryContainer.Id)).Items.Contains(_itemToEquip);
+            var actual = (await _context.Inventories.FindAsync(_inventoryContainer.Id)).Items.Contains(_itemToEquip);
             Assert.That(actual, Is.False);
         }
 

@@ -44,7 +44,7 @@ namespace AltVStrefaRPServer
     public class Startup
     {
         public IConfiguration Configuration { get; set; }
-        public ServiceProvider ServiceProvider { get; set; }
+        public ServiceProvider ServiceProvider { get; private set; }
 
         public Startup()
         {
@@ -135,7 +135,7 @@ namespace AltVStrefaRPServer
             ServiceProvider = services.BuildServiceProvider();
         }
 
-        private void AddLogging(ServiceCollection services, ElasticsearchOptions options)
+        private static void AddLogging(IServiceCollection services, ElasticsearchOptions options)
         {
             services.AddLogging(builder =>
             {
@@ -156,11 +156,11 @@ namespace AltVStrefaRPServer
                     rollingInterval: RollingInterval.Day,
                     retainedFileCountLimit: 100,
                     rollOnFileSizeLimit: true)
-                .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(options.Uri))
-                {
-                    AutoRegisterTemplate = options.AutoRegisterTemplate,
-                    ModifyConnectionSettings = x => x.BasicAuthentication(options.Username, options.Password)
-                })
+                //.WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(options.Uri))
+                //{
+                //    AutoRegisterTemplate = options.AutoRegisterTemplate,
+                //    ModifyConnectionSettings = x => x.BasicAuthentication(options.Username, options.Password)
+                //})
                 .CreateLogger();
         }
     }

@@ -198,7 +198,8 @@ namespace AltVStrefaRPServer.Modules.Inventory
             if (!player.TryGetCharacter(out var character)) return;
 
             var inventory = InventoriesHelper.GetCorrectInventory(player, character, inventoryId);
-            var response = await _inventoryEquipService.UnequipItemAsync((InventoryContainer)inventory, character, playerEquipmentId, equippedItemId, newSlotId);
+            var response = await _inventoryEquipService.UnequipItemAsync((InventoryContainer)inventory, character, playerEquipmentId, equippedItemId, newSlotId)
+                .ConfigureAwait(false);
 
             TryUnequipResponse(player, response);
         }
@@ -208,7 +209,8 @@ namespace AltVStrefaRPServer.Modules.Inventory
             if (!player.TryGetCharacter(out var character)) return;
 
             var inventory = InventoriesHelper.GetCorrectInventory(player, character, selectedInventoryId);
-            var response = await _inventoryEquipService.EquipItemAsync(character, (InventoryContainer)inventory, playerEquipmentId, itemToEquipId);
+            var response = await _inventoryEquipService.EquipItemAsync(character, (InventoryContainer)inventory, playerEquipmentId, itemToEquipId)
+                .ConfigureAwait(false);
 
             TryEquipResponse(player, playerEquipmentId, character, response);
         }
