@@ -22,6 +22,11 @@ namespace AltVStrefaRPServer.Modules.HousingModule
             InitializeInteriors();
         }
 
+        public bool TryGetInterior(int interiorId, out Interior interior) => _interiors.TryGetValue(interiorId, out interior);
+
+        public Interior GetInterior(int interiorId) =>
+            _interiors.ContainsKey(interiorId) ? _interiors[interiorId] : null;
+        
         private void InitializeInteriors()
         {
             var startTime = Time.GetTimestampMs();
