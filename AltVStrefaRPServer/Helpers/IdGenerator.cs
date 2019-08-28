@@ -4,16 +4,16 @@ namespace AltVStrefaRPServer.Helpers
 {
     public class IdGenerator : IIdGenerator
     {
-        private int currentId;
+        private int _currentId;
 
         public int GetNextId()
         {
-            return Interlocked.Increment(ref currentId);
+            return Interlocked.Increment(ref _currentId);
         }
 
         public void Reset()
         {
-            currentId = 0;
+            _currentId = 0;
         }
     }
 }

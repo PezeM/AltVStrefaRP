@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Diagnostics;
+using System.Linq;
 using System.Text;
 
 namespace AltVStrefaRPServer.Extensions
@@ -15,6 +16,27 @@ namespace AltVStrefaRPServer.Extensions
         /// </summary>
         public static bool IsNullOrWhiteSpace(this string s) => string.IsNullOrWhiteSpace(s);
 
+        /// <summary>
+        /// A nice way of checking if a string is null, empty or whitespace 
+        /// </summary>
+        /// <param name="value">The string to test.</param>
+        /// <returns>
+        /// <see langword="true"/> if the format parameter is null or an empty string (""); otherwise, <see langword="false"/>.
+        /// </returns>
+        [DebuggerStepThrough]
+        public static bool IsNullOrEmptyOrWhiteSpace(this string value) => string.IsNullOrWhiteSpace(value);
+        
+        /// <summary>
+        /// A nice way of checking the inverse of (if a string is null, empty or whitespace) 
+        /// </summary>
+        /// <param name="value">The string to test.</param>
+        /// <returns>
+        /// <see langword="true"/> if the format parameter is not null or an empty string (""); otherwise, <see langword="false"/>.
+        /// </returns>
+        [DebuggerStepThrough]
+        public static bool IsNotNullOrEmptyOrWhiteSpace(this string value) 
+            => !value.IsNullOrEmptyOrWhiteSpace();
+        
         /// <summary>
         /// Returns an empty string if given a null string, otherwise returns given string.
         /// </summary>
