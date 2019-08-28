@@ -35,6 +35,9 @@ using Serilog.Sinks.Elasticsearch;
 using System;
 using System.IO;
 using AltVStrefaRPServer.Modules.Core;
+using AltVStrefaRPServer.Modules.HousingModule;
+using AltVStrefaRPServer.Services.Housing;
+using AltVStrefaRPServer.Services.Housing.Factories;
 
 namespace AltVStrefaRPServer
 {
@@ -98,7 +101,10 @@ namespace AltVStrefaRPServer
             services.AddTransient<IInventoryDatabaseService, InventoryDatabaseService>();
             services.AddTransient<IInventoryTransferService, InventoryTransferService>();
             services.AddTransient<IInventoryEquipService, InventoryEquipService>();
-
+            services.AddTransient<IInteriorDatabaseService, InteriorDatabaseService>();
+            services.AddTransient<IInteriorsFactoryService, InteriorsFactoryService>();
+            services.AddTransient<IHouseDatabaseService, HouseDatabaseService>();
+            
             services.AddTransient<PlayerConnect>();
             services.AddTransient<PlayerDisconnect>();
             services.AddTransient<VehicleHandler>();
@@ -120,7 +126,9 @@ namespace AltVStrefaRPServer
             services.AddSingleton<INetworkingManager, NetworkingManager>();
             services.AddSingleton<VehiclesData>();
             services.AddSingleton<SoundManager>();
-
+            services.AddSingleton<IInteriorsManager, InteriorsManager>();
+            services.AddSingleton<IHousesManager, HousesManager>();
+            
             services.AddTransient<AdminCommands>();
             services.AddTransient<CharacterCreator>();
             services.AddTransient<SittingHandler>();
