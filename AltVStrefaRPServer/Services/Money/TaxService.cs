@@ -15,7 +15,7 @@ namespace AltVStrefaRPServer.Services.Money
 
         public float CalculatePriceAfterTax(float price, TransactionType transactionType)
         {
-            if (!_fractionsManager.TryToGetTownHallFraction(out TownHallFraction townHall)) return price;
+            if (!_fractionsManager.TryToGetTownHallFraction(out var townHall)) return price;
 
             switch (transactionType)
             {
@@ -26,8 +26,9 @@ namespace AltVStrefaRPServer.Services.Money
                 case TransactionType.BankWithdraw:
                 case TransactionType.BankTransfer:
                     return price;
-                case TransactionType.BuyingFurnitures:
-                case TransactionType.BuyingProperties:
+                case TransactionType.FurnitureBuy:
+                case TransactionType.PropertiesBuy:
+                case TransactionType.PropertiesSell:
                     return townHall.PriceAfterTax(price, townHall.PropertyTax);
                 case TransactionType.BuyingGuns:
                     return townHall.PriceAfterTax(price, townHall.GunTax);

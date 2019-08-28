@@ -35,7 +35,7 @@ namespace AltVStrefaRPServer.Modules.HousingModule
 
         public House GetHouse(int houseId) => CheckIfHouseExists(houseId) ? _houses[houseId] : null;
 
-        public async Task<AddNewHouseResponse> AddNewHouseAsync(Position position, float price, int interiorId)
+        public async Task<AddNewHouseResponse> AddNewHouseAsync(Position position, int price, int interiorId)
         {
             if (interiorId <= 0) return AddNewHouseResponse.WrongInteriorId;
             if (_interiorsManager.TryGetInterior(interiorId, out var interior))

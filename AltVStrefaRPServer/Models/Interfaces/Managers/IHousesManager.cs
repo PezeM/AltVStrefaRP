@@ -1,4 +1,6 @@
-﻿using AltVStrefaRPServer.Models.Houses;
+﻿using System.Threading.Tasks;
+using AltV.Net.Data;
+using AltVStrefaRPServer.Models.Houses;
 
 namespace AltVStrefaRPServer.Models.Interfaces.Managers
 {
@@ -7,5 +9,6 @@ namespace AltVStrefaRPServer.Models.Interfaces.Managers
         bool TryGetHouse(int houseId, out House house);
         bool CheckIfHouseExists(int houseId);
         House GetHouse(int houseId);
+        Task<AddNewHouseResponse> AddNewHouseAsync(Position position, int price, int interiorId);
     }
 }

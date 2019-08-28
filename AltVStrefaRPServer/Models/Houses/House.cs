@@ -21,7 +21,7 @@ namespace AltVStrefaRPServer.Models.Houses
         public float X { get; set; }
         public float Y { get; set; }
         public float Z { get; set; }
-        public float Price { get; set; }
+        public int Price { get; set; }
         public bool IsLocked { get; set; }
         public string LockPattern { get; private set; }
         

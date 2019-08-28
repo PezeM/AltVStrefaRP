@@ -1,9 +1,15 @@
-﻿using AltV.Net;
+﻿using System;
+using System.Threading.Tasks;
+using AltV.Net;
+using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
+using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Core;
+using AltVStrefaRPServer.Models.Houses;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Services;
+using AltVStrefaRPServer.Services.Money;
 
 namespace AltVStrefaRPServer.Modules.HousingModule
 {
@@ -11,17 +17,20 @@ namespace AltVStrefaRPServer.Modules.HousingModule
     {
         private readonly INotificationService _notificationService;
         private readonly IHousesManager _housesManager;
+        private readonly IMoneyService _moneyService;
 
-        public HouseHandler(INotificationService notificationService, IHousesManager housesManager)
+        public HouseHandler(INotificationService notificationService, IHousesManager housesManager, IMoneyService moneyService)
         {
             _notificationService = notificationService;
             _housesManager = housesManager;
+            _moneyService = moneyService;
             Alt.OnColShape += AltOnOnColShape;
             
             Alt.On<IStrefaPlayer>("HouseInteractionMenu", HouseInteractionMenu);
             Alt.On<IStrefaPlayer>("TryEnterHouse", TryEnterHouse);
             Alt.On<IStrefaPlayer>("TryLeaveHouse", TryLeaveHouse);
             Alt.On<IStrefaPlayer>("TryBuyHouse", TryBuyHouse);
+            AltAsync.On<IStrefaPlayer, int, int, Task>("TryToCreateNewHouse", TryToCreateNewHouseAsync);
         }
         
         private void AltOnOnColShape(IColShape colshape, IEntity entity, bool entered)
@@ -83,6 +92,36 @@ namespace AltVStrefaRPServer.Modules.HousingModule
             {
                 _notificationService.ShowErrorNotification(player, "Budynek zamieszkały", "Mieszkanie posiada już właściciela", 3500);
                 return;
+            }
+        }
+        
+        public async Task TryToCreateNewHouseAsync(IStrefaPlayer player, int price, int interiorId)
+        {
+            if (!player.TryGetCharacter(out var character)) return;
+            if (character.Account.AdminLevel < AdminLevel.Admin)
+            {
+                _notificationService.ShowErrorNotificationLocked(player, "Brak uprawnień", "Nie posiadasz odpowiednich uprawnień do wykonania tej akcji");
+                return;
+            };
+
+            var result = await _housesManager.AddNewHouseAsync(player.Position, price, interiorId);
+            switch (result)
+            {
+                case AddNewHouseResponse.WrongInteriorId:
+                    _notificationService.ShowErrorNotificationLocked(player, "Błąd", "Podano złe id interioru", 3500);
+                    break;
+                case AddNewHouseResponse.InteriorNotFound:
+                    _notificationService.ShowErrorNotificationLocked(player, "Błąd",
+                        "Nie znaleziono interioru z podanym id", 3500);
+                    break;
+                case AddNewHouseResponse.CantCreateHouse:
+                    _notificationService.ShowErrorNotificationLocked(player, "Błąd",
+                        "Nie udało się tworzenie nowego mieszkania", 3500);
+                    break;
+                case AddNewHouseResponse.HouseCreated:
+                    _notificationService.ShowErrorNotificationLocked(player, "Stworzono mieszkanie",
+                        $"Stworzono mieszkanie z cena {price} i interiorem ID({interiorId})", 3500);
+                    break;
             }
         }
     }

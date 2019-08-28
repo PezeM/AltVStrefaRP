@@ -9,8 +9,9 @@
         BankDeposit,
         BankTransfer,
         BuyingClothes,
-        BuyingFurnitures,
-        BuyingProperties,
+        FurnitureBuy,
+        PropertiesBuy,
+        PropertiesSell,
         BuyingGuns,
         Uncategorized = 1000
     }
