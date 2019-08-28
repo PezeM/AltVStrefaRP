@@ -1,6 +1,7 @@
 ﻿using System;
 using AltV.Net;
 using AltV.Net.Data;
+using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models.Core;
 using AltVStrefaRPServer.Models.Interfaces;
 using AltVStrefaRPServer.Services.MValueAdapters;
@@ -64,6 +65,11 @@ namespace AltVStrefaRPServer.Models.Houses
             player.HouseId = 0;
         }
 
+        public void CreateLockPattern()
+        {
+            LockPattern = AdvancedIdGenerator.Instance.Next;
+        }
+        
         public void OnWrite(IMValueWriter writer)
         {
             writer.BeginObject();

@@ -7,7 +7,7 @@ namespace AltVStrefaRPServer.Services.Housing.Factories
     {
         public House CreateNewHouse(Position position, float price)
         {
-            return new House
+            var newHouse = new House
             {
                 X = position.X,
                 Y = position.Y,
@@ -15,6 +15,9 @@ namespace AltVStrefaRPServer.Services.Housing.Factories
                 Price = price,
                 IsLocked = true,
             };
+
+            newHouse.CreateLockPattern();
+            return newHouse;
         }
     }
 }
