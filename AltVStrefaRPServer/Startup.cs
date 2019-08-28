@@ -104,6 +104,7 @@ namespace AltVStrefaRPServer
             services.AddTransient<IInteriorDatabaseService, InteriorDatabaseService>();
             services.AddTransient<IInteriorsFactoryService, InteriorsFactoryService>();
             services.AddTransient<IHouseDatabaseService, HouseDatabaseService>();
+            services.AddTransient<IHouseFactoryService, HouseFactoryService>();
             
             services.AddTransient<PlayerConnect>();
             services.AddTransient<PlayerDisconnect>();

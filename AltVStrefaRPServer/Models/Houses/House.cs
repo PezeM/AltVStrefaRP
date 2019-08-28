@@ -26,7 +26,7 @@ namespace AltVStrefaRPServer.Models.Houses
         
         public IStrefaColshape Colshape { get; private set; }
         
-        public House()
+        public void InitializeHouse()
         {
             Colshape = (IStrefaColshape) Alt.CreateColShapeCylinder(GetPosition(), 1f, 1f);
             Colshape.HouseId = Id;
