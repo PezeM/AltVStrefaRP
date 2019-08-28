@@ -43,7 +43,8 @@ namespace AltVStrefaRPServer.Models.Houses
 
         public bool ChangeOwner(Character newOwner)
         {
-            if (newOwner.Id == Owner?.Id) return false;
+            if (newOwner.Id == Owner?.Id || Owner != null) return false;
+            Owner = newOwner;
             return true;
         }
 
