@@ -44,6 +44,15 @@ namespace AltVStrefaRPServer.Services.Housing
             }
         }
 
+        public void AddNewInteriors(IEnumerable<Interior> newInteriors)
+        {
+            using (var context = _factory.Invoke())
+            {
+                context.Interiors.AddRange(newInteriors);
+                context.SaveChanges();
+            }
+        }
+
         public async Task SaveInteriorAsync(Interior interior)
         {
             using (var context = _factory.Invoke())

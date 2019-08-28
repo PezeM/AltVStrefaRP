@@ -30,8 +30,13 @@ namespace AltVStrefaRPServer.Models.Houses
         
         public IColShape Colshape { get; set; }
 
-        public Interior()
+        public Interior(string name, float x, float y, float z)
         {
+            Name = name;
+            X = x;
+            Y = y;
+            Z = z;
+            
             Colshape = Alt.CreateColShapeCylinder(GetPosition(), 1f, 1f);
 
             // Interior exit colshape 

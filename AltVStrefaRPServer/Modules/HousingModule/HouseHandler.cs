@@ -10,7 +10,7 @@ namespace AltVStrefaRPServer.Modules.HousingModule
     public class HouseHandler
     {
         private readonly INotificationService _notificationService;
-        private IHousesManager _housesManager;
+        private readonly IHousesManager _housesManager;
 
         public HouseHandler(INotificationService notificationService, IHousesManager housesManager)
         {

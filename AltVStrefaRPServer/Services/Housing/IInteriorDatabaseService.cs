@@ -9,6 +9,7 @@ namespace AltVStrefaRPServer.Services.Housing
         IEnumerable<Interior> GetAllInteriors();
         Task AddNewInteriorAsync(Interior interior);
         void AddNewInterior(Interior interior);
+        void AddNewInteriors(IEnumerable<Interior> newInteriors);
         Task SaveInteriorAsync(Interior interior);
         void SaveInterior(Interior interior);
         Task RemoveInteriorAsync(Interior interior);
