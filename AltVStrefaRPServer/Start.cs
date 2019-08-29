@@ -28,6 +28,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Modules.Core.Colshapes;
+using AltVStrefaRPServer.Modules.HousingModule;
 using Newtonsoft.Json;
 
 namespace AltVStrefaRPServer
@@ -77,7 +78,11 @@ namespace AltVStrefaRPServer
             var fractionManager = _startup.ServiceProvider.GetService<FractionsManager>();
             var fractionHandler = _startup.ServiceProvider.GetService<FractionHandler>();
             var townHallFractionHandler = _startup.ServiceProvider.GetService<TownHallFractionHandler>();
-
+            // Housing
+            var housesManager = _startup.ServiceProvider.GetService<HousesManager>();
+            var interiorsManager = _startup.ServiceProvider.GetService<InteriorsManager>();
+            var houseHandler = _startup.ServiceProvider.GetService<HouseHandler>();
+            
             Alt.On<IPlayer, ulong>("bigNumber", (player, number) =>
             {
                 Alt.Log($"ULONG BIGNUMBER VALUE: {number.ToString()}");

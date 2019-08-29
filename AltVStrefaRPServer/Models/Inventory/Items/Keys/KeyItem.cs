@@ -11,9 +11,9 @@ namespace AltVStrefaRPServer.Models.Inventory.Items.Keys
             Model = model;
         }
         
-        public override bool UseItem(Character character)
+        public override bool UseItem(Character character) 
         {
-            throw new System.NotImplementedException();
+            return true;
         }
 
         public override BaseItem Copy() => (KeyItem)MemberwiseClone();

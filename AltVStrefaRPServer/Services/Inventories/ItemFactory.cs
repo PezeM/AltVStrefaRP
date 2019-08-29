@@ -2,6 +2,8 @@
 using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Models.Inventory.Items;
+using AltVStrefaRPServer.Models.Inventory.Items.Keys;
+using Microsoft.Azure.KeyVault.Models;
 
 namespace AltVStrefaRPServer.Services.Inventories
 {
@@ -58,6 +60,13 @@ namespace AltVStrefaRPServer.Services.Inventories
             return weaponItem;
         }
 
+        public HouseKeyItem CreateHouseKeyItem(string lockPatter, string model = "prop_cs_keys_01")
+        {
+            var houseKeyItem = new HouseKeyItem(model, lockPatter);
+            houseKeyItem.ChangeItemDescription("Klucze do mieszkania");
+            return houseKeyItem;
+        }
+        
         public BaseItem CreateItem(ItemType item)
         {
             switch (item)
