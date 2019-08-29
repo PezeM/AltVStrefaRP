@@ -1,14 +1,9 @@
-﻿using AltVStrefaRPServer.Extensions;
-
-namespace AltVStrefaRPServer.Models.Inventory.Items
+﻿namespace AltVStrefaRPServer.Models.Inventory.Items
 {
     public class FoodItem : Consumable
     {
-        public FoodItem(string name, int stackSize, string model, ushort value, string description) : base(name, stackSize, model, value)
-        {
-            Description = !description.IsNullOrEmpty() ? description : $"{Name} napełnia {Value} głodu";
-        }
-
+        public FoodItem(string name, int stackSize, string model, ushort value) : base(name, stackSize, model, value) {}
+        
         public override bool UseItem(Character character)
         {
             character.Player.Health += Value;

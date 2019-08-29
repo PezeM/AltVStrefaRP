@@ -5,7 +5,7 @@
         public int Id { get; set; }
         public string Name { get; protected set; }
         public int StackSize { get; protected set; }
-        public string Description { get; protected set; } = "Brak opisu";
+        public virtual string Description { get; protected set; } = "Brak opisu";
 
         protected BaseItem() { }
 
@@ -14,22 +14,20 @@
             Name = name;
             StackSize = stackSize;
         }
-
-        protected BaseItem(string name, int stackSize, string description)
-        {
-            Name = name;
-            StackSize = stackSize;
-            Description = description;
-        }
-
+        
         protected BaseItem(BaseItem baseItem)
         {
             Id = baseItem.Id;
             Name = baseItem.Name;
             StackSize = baseItem.StackSize;
-            Description = baseItem.Description;
+            ChangeItemDescription(baseItem.Description);
         }
 
+        public void ChangeItemDescription(string description)
+        {
+            Description = description;
+        }
+        
         public abstract bool UseItem(Character character);
 
         public BaseItem ShallowClone()

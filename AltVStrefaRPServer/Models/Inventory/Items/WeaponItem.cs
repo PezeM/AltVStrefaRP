@@ -11,13 +11,12 @@ namespace AltVStrefaRPServer.Models.Inventory.Items
         public WeaponModel WeaponModel { get; private set; }
         public int Ammo { get; set; }
 
-        public WeaponItem(string name, string model, WeaponModel weaponModel, int ammo, EquipmentSlot equipmentSlot = EquipmentSlot.LeftHand, string description = null)
+        public WeaponItem(string name, string model, WeaponModel weaponModel, int ammo, EquipmentSlot equipmentSlot = EquipmentSlot.LeftHand)
             : base(name, equipmentSlot)
         {
             Model = model;
             Ammo = ammo;
             WeaponModel = weaponModel;
-            Description = !description.IsNullOrEmpty() ? description : $"{Name} z {ammo} amunicji";
         }
 
         public override bool UseItem(Character character)

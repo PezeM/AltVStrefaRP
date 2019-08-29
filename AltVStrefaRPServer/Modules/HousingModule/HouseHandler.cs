@@ -91,12 +91,7 @@ namespace AltVStrefaRPServer.Modules.HousingModule
             if (!_housesManager.TryGetHouse(player.HouseEnterColshape, out var house)) return;
             if (!player.TryGetCharacter(out var character)) return;
             
-            await _buyHouseService.BuyHouseAsync(character, house);
-            if (!house.HasOwner())
-            {
-                await _notificationService.ShowErrorNotificationAsync(player, "Budynek zamieszkały", "Mieszkanie posiada już właściciela", 3500);
-                return;
-            }
+            var response =await _buyHouseService.BuyHouseAsync(character, house);
         }
         
         public async Task TryToCreateNewHouseAsync(IStrefaPlayer player, int price, int interiorId)

@@ -2,7 +2,7 @@
 
 namespace AltVStrefaRPServer.Models.Inventory.Items
 {
-    public class Consumable : BaseItem, IDroppable
+    public abstract class Consumable : BaseItem, IDroppable
     {
         public ushort Value { get; protected set; }
         public string Model { get; protected set; }

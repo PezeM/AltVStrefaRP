@@ -18,12 +18,12 @@ namespace AltVStrefaRPServer.Services.Housing
         {
             // Check if house has owner
             if (house.HasOwner()) return BuyHouseResponse.HouseHasOwner;
-            if (newOwner.Inventory.HasEmptySlots()) return BuyHouseResponse.NotEnoughSpaceInInventoryForKey;
-            
             // Check if user has empty space for key item
-            // Set house owner
-            // Generate new house lock pattern
+            if (newOwner.Inventory.HasEmptySlots()) return BuyHouseResponse.NotEnoughSpaceInInventoryForKey;
+
             // Add key item to character inventory
+            // Generate new house lock pattern
+            // Set house owner
 
             return BuyHouseResponse.HouseBought;
         }

@@ -1,5 +1,4 @@
-﻿using AltVStrefaRPServer.Extensions;
-using AltVStrefaRPServer.Models.Inventory.Interfaces;
+﻿using AltVStrefaRPServer.Models.Inventory.Interfaces;
 
 namespace AltVStrefaRPServer.Models.Inventory.Items
 {
@@ -11,7 +10,7 @@ namespace AltVStrefaRPServer.Models.Inventory.Items
         public bool IsProp { get; set; }
         public string Model { get; private set; }
 
-        public ClothItem(string name, EquipmentSlot equipmentSlot, int drawableId, int textureId, int paletteId, bool isProp, string model, string description = null)
+        public ClothItem(string name, EquipmentSlot equipmentSlot, int drawableId, int textureId, int paletteId, bool isProp, string model)
             : base(name, equipmentSlot)
         {
             DrawableId = drawableId;
@@ -19,7 +18,6 @@ namespace AltVStrefaRPServer.Models.Inventory.Items
             PaletteId = paletteId;
             IsProp = isProp;
             Model = model;
-            Description = !description.IsNullOrEmpty() ? description : $"{Name} Typ {DrawableId} Rodzaj {TextureId}";
         }
 
         public override bool UseItem(Character character)
@@ -38,7 +36,7 @@ namespace AltVStrefaRPServer.Models.Inventory.Items
             return (ClothItem)MemberwiseClone();
         }
 
-        // Usefull models
+        // Useful models
         // p_lazlow_shirt_s, p_laz_j01_s, prop_ld_tshirt_01, prop_ld_tshirt_02
         // p_jewel_necklace_02, p_jimmyneck_03_s, p_jewel_necklace02_s
         // p_ld_heist_bag_01
