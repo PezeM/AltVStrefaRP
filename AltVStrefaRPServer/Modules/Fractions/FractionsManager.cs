@@ -6,6 +6,7 @@ using AltVStrefaRPServer.Models.Logs;
 using AltVStrefaRPServer.Services.Fractions;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace AltVStrefaRPServer.Modules.Fractions
 {
@@ -29,7 +30,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
             Initialize();
 
             // Create default fractions if they are not created yet
-            CreateDeafultFractions();
+            CreateDefaultFractions();
         }
 
         public bool TryToGetFraction<T>(int fractionId, out Fraction fraction) where T : Fraction
@@ -78,27 +79,27 @@ namespace AltVStrefaRPServer.Modules.Fractions
         private void Initialize()
         {
             var startTime = Time.GetTimestampMs();
-            foreach (var fraction in _fractionDatabaseService.GetAllFractionsList())
+            foreach (var fraction in _fractionDatabaseService.GetAllFractionsList().ToList())
             {
                 _fractions.Add(fraction.Id, fraction);
-                if (fraction is TownHallFraction townHallFraction)
+                switch (fraction)
                 {
-                    _townHallFraction = townHallFraction;
-                }
-                else if (fraction is PoliceFraction policeFraction)
-                {
-                    _policeFraction = policeFraction;
-                }
-                else if (fraction is SamsFraction samsFraction)
-                {
-                    _samsFraction = samsFraction;
+                    case TownHallFraction townHallFraction:
+                        _townHallFraction = townHallFraction;
+                        break;
+                    case PoliceFraction policeFraction:
+                        _policeFraction = policeFraction;
+                        break;
+                    case SamsFraction samsFraction:
+                        _samsFraction = samsFraction;
+                        break;
                 }
                 fraction.CreateBlip();
             }
             _logger.LogInformation("Loaded {fractionsCount} fractions from databse in {elapsedTime} ms", _fractions.Count, Time.GetElapsedTime(startTime));
         }
 
-        private void CreateDeafultFractions()
+        private void CreateDefaultFractions()
         {
             if (_policeFraction == null)
             {

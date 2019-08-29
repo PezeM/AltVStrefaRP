@@ -25,7 +25,7 @@ namespace AltVStrefaRPServer.Services.Money.Bank
             }
         }
 
-        public async Task AddNewBankAccount(Character character)
+        public async Task AddNewBankAccountAsync(Character character)
         {
             using (var context = _factory.Invoke())
             {
@@ -35,7 +35,16 @@ namespace AltVStrefaRPServer.Services.Money.Bank
             }
         }
 
-        public async Task<List<MoneyTransaction>> GetTransferHistory(Character character, int numberOfLastTransactions = 50)
+        public async Task UpdateBankAccountAsync(BankAccount bankAccount)
+        {
+            using (var context = _factory.Invoke())
+            {
+                context.BankAccounts.Update(bankAccount);
+                await context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<List<MoneyTransaction>> GetTransferHistoryAsync(Character character, int numberOfLastTransactions = 50)
         {
             using (var context = _factory.Invoke())
             {

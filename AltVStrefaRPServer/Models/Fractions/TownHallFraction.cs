@@ -4,6 +4,7 @@ using AltVStrefaRPServer.Models.Fractions.Permissions;
 using AltVStrefaRPServer.Modules.Money;
 using System;
 using System.Collections.Generic;
+using AltVStrefaRPServer.Services.Money;
 
 namespace AltVStrefaRPServer.Models.Fractions
 {
@@ -64,12 +65,15 @@ namespace AltVStrefaRPServer.Models.Fractions
             return true;
         }
 
-        public float PriceAfterTax(float amount, float taxPercentage)
+        public void AddTax(float taxAmount)
         {
-            var tax = (float)Math.Round(amount * taxPercentage);
-            AddMoney(tax);
-            Taxes.Add(tax);
-            return amount + tax;
+            AddMoney(taxAmount);
+            Taxes.Add(taxAmount);
+        }
+        
+        public float CalculateTax(float amount, float taxPercentage)
+        {
+            return (float)Math.Round(amount * taxPercentage);
         }
 
         protected override void GenerateDefaultRanks()

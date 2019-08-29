@@ -5,6 +5,8 @@ using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Interfaces;
 using System;
 using System.Threading.Tasks;
+using AltVStrefaRPServer.Services.Money.Bank;
+using Microsoft.Extensions.Logging;
 
 namespace AltVStrefaRPServer.Services.Money
 {
@@ -12,11 +14,15 @@ namespace AltVStrefaRPServer.Services.Money
     {
         private readonly Func<ServerContext> _factory;
         private readonly ITaxService _taxService;
+        private readonly IBankAccountDatabaseService _bankAccountDatabaseService;
+        private readonly ILogger<MoneyService> _logger;
 
-        public MoneyService(Func<ServerContext> factory, ITaxService taxService)
+        public MoneyService(Func<ServerContext> factory, ITaxService taxService, IBankAccountDatabaseService bankAccountDatabaseService, ILogger<MoneyService> logger)
         {
             _factory = factory;
             _taxService = taxService;
+            _bankAccountDatabaseService = bankAccountDatabaseService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -34,6 +40,18 @@ namespace AltVStrefaRPServer.Services.Money
         /// <returns></returns>
         public bool RemoveMoney(IMoney receiver, float amount) => receiver.RemoveMoney(amount);
 
+        public async Task<bool> RemoveMoneyFromBankAccountAsync(Character source, float amount,
+            TransactionType transactionType)
+        {
+            if (source.BankAccount == null) return false;
+            var tax = _taxService.CalculateTax(amount, transactionType, out var townHall);
+            if (!source.BankAccount.RemoveMoney(amount + tax)) return false;
+            townHall.AddTax(tax);
+
+            await _bankAccountDatabaseService.UpdateBankAccountAsync(source.BankAccount);
+            return true;
+        }
+        
         /// <summary>
         /// Transfers money from <see cref="IMoney"/> to <see cref="IMoney"/>
         /// </summary>
@@ -44,23 +62,25 @@ namespace AltVStrefaRPServer.Services.Money
         /// <returns></returns>
         public async Task<bool> TransferMoneyFromEntityToEntityAsync(IMoney source, IMoney receiver, float amount, TransactionType transactionType)
         {
-            var afterTax = _taxService.CalculatePriceAfterTax(amount, transactionType);
-            if (!source.RemoveMoney(afterTax)) return false;
+            var tax = _taxService.CalculateTax(amount, transactionType, out var townHall);
+            if (!source.RemoveMoney(tax + amount)) return false;
             receiver.AddMoney(amount);
+            townHall.AddTax(tax);
             await SaveTransferAsync(source, receiver, amount, transactionType);
             return true;
         }
 
         public async Task<bool> TransferMoneyFromBankAccountToEntityAsync(Character source, IMoney receiver, float amount, TransactionType transactionType)
         {
-            var afterTax = _taxService.CalculatePriceAfterTax(amount, transactionType);
             if (source.BankAccount == null) return false;
-            else if (!source.BankAccount.TransferMoney(receiver, amount, afterTax)) return false;
-
+            var tax = _taxService.CalculateTax(amount, transactionType, out var townHall);
+            if (!source.BankAccount.TransferMoney(receiver, amount, tax)) return false;
+            townHall.AddTax(tax);
+            
             await SaveTransferAsync(source, receiver, amount, transactionType);
             return true;
         }
-
+        
         private async Task SaveTransferAsync(IMoney source, IMoney receiver, float amount, TransactionType transactionType)
         {
             using (var context = _factory.Invoke())

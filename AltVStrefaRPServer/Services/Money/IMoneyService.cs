@@ -9,6 +9,7 @@ namespace AltVStrefaRPServer.Services.Money
     {
         void GiveMoney(IMoney receiver, float amount);
         bool RemoveMoney(IMoney receiver, float amount);
+        Task<bool> RemoveMoneyFromBankAccountAsync(Character source, float amount, TransactionType transactionType);
         Task<bool> TransferMoneyFromEntityToEntityAsync(IMoney source, IMoney receiver, float amount, TransactionType transactionType);
         Task<bool> TransferMoneyFromBankAccountToEntityAsync(Character source, IMoney receiver, float amount, TransactionType transactionType);
     }

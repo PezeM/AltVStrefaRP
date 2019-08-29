@@ -77,7 +77,7 @@ namespace AltVStrefaRPServer.Modules.Money
                 return;
             }
 
-            await _bankAccountDatabaseService.AddNewBankAccount(character);
+            await _bankAccountDatabaseService.AddNewBankAccountAsync(character);
             await _notificationService.ShowSuccessNotificationAsync(player, "Nowe konto bankowe",
                 $"Otworzyłeś nowe konto w banku. Twój numer konta to: {character.BankAccount.AccountNumber}.", 7000);
             _logger.LogInformation("Character {characterName} CID({characterId}) created new bank account {bankAccountNumber} in {elapsedTime}ms",
@@ -164,7 +164,7 @@ namespace AltVStrefaRPServer.Modules.Money
         {
             if (!player.TryGetCharacter(out Character character)) return;
 
-            var bankTransactionHistory = await _bankAccountDatabaseService.GetTransferHistory(character);
+            var bankTransactionHistory = await _bankAccountDatabaseService.GetTransferHistoryAsync(character);
             if (bankTransactionHistory.Count <= 0)
             {
                 await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie posiadasz jeszcze żadnych transakcji");
