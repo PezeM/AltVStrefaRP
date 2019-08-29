@@ -200,7 +200,7 @@ namespace AltVStrefaRPServer
 
         public void SpawnVehicleComand(int vehicleId)
         {
-            if (!_vehiclesManager.TryGetVehicleModel(vehicleId, out VehicleModel vehicle))
+            if (!_vehiclesManager.TryGetVehicleModel(vehicleId, out var vehicle))
             {
                 Alt.Log($"Didn't found vehicle with ID {vehicleId}");
                 return;

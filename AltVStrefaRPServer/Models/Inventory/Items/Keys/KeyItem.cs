@@ -6,7 +6,7 @@ namespace AltVStrefaRPServer.Models.Inventory.Items.Keys
     {
         public string Model { get; protected set; }
 
-        protected KeyItem(string model)
+        protected KeyItem(string model, string name, int stackSize) : base(name, stackSize)
         {
             Model = model;
         }

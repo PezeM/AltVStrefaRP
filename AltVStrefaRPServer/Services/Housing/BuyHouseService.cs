@@ -18,7 +18,7 @@ namespace AltVStrefaRPServer.Services.Housing
         {
             _moneyService = moneyService;
             _itemFactory = itemFactory;
-            _inventoryDatabaseService = inventoryDatabaseService;
+            _inventoryDatabaseService = inventoryDatabaseService;    
             _houseDatabaseService = houseDatabaseService;
         }
         
@@ -36,8 +36,7 @@ namespace AltVStrefaRPServer.Services.Housing
             // Generate new house lock pattern
             house.CreateLockPattern();
             // Add key item to character inventory
-            await newOwner.Inventory.AddItemAsync(_itemFactory.CreateHouseKeyItem(house.LockPattern), 1,
-                _inventoryDatabaseService);
+            await newOwner.Inventory.AddItemAsync(_itemFactory.CreateHouseKeyItem(house.LockPattern), 1, _inventoryDatabaseService);
             house.ChangeOwner(newOwner);
             await _houseDatabaseService.UpdateHouseAsync(house);
             

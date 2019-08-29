@@ -31,7 +31,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Serilog;
 using Serilog.Events;
-using Serilog.Sinks.Elasticsearch;
 using System;
 using System.IO;
 using AltVStrefaRPServer.Modules.Core;
