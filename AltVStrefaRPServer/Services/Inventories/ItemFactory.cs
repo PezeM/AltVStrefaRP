@@ -36,10 +36,27 @@ namespace AltVStrefaRPServer.Services.Inventories
             sprunkItem.ChangeItemDescription(!description.IsNullOrEmpty() ? description : $"Sprunk odnawiający {thirstValue} napojenia");
             return sprunkItem;
         }
-        
-        public WeaponItem CreatePistol(int ammo = 20) => new WeaponItem("Pistolet", "w_pi_pistol", WeaponModel.Pistol, ammo, EquipmentSlot.LeftHand);
-        public WeaponItem CreateCombatPistol(int ammo = 40) => new WeaponItem("Pistolet bojowy", "w_pi_combatpistol", WeaponModel.CombatPistol, ammo, EquipmentSlot.LeftHand);
-        public WeaponItem CreatePumpShotgun(int ammo = 8) => new WeaponItem("Strzelba", "w_sg_pumpshotgun", WeaponModel.PumpShotgun, ammo, EquipmentSlot.LeftHand);
+
+        public WeaponItem CreatePistol(int ammo = 20)
+        {
+            var weaponItem = new WeaponItem("Pistolet", "w_pi_pistol", WeaponModel.Pistol, ammo, EquipmentSlot.LeftHand);
+            weaponItem.ChangeItemDescription("Najprostszy możliwy pistolet");
+            return weaponItem;
+        }
+
+        public WeaponItem CreateCombatPistol(int ammo = 40)
+        {
+            var weaponItem =  new WeaponItem("Pistolet bojowy", "w_pi_combatpistol", WeaponModel.CombatPistol, ammo, EquipmentSlot.LeftHand);
+            weaponItem.ChangeItemDescription("Ulepszona wersja pistoletu, potężny pistolet bojowy.");
+            return weaponItem;
+        }
+
+        public WeaponItem CreatePumpShotgun(int ammo = 8)
+        {
+            var weaponItem = new WeaponItem("Strzelba", "w_sg_pumpshotgun", WeaponModel.PumpShotgun, ammo, EquipmentSlot.LeftHand);
+            weaponItem.ChangeItemDescription("Podstawowa strzelba");
+            return weaponItem;
+        }
 
         public BaseItem CreateItem(ItemType item)
         {
