@@ -6,9 +6,11 @@ using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Core;
+using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Houses;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Services;
+using AltVStrefaRPServer.Services.Housing;
 using AltVStrefaRPServer.Services.Money;
 
 namespace AltVStrefaRPServer.Modules.HousingModule
@@ -17,19 +19,19 @@ namespace AltVStrefaRPServer.Modules.HousingModule
     {
         private readonly INotificationService _notificationService;
         private readonly IHousesManager _housesManager;
-        private readonly IMoneyService _moneyService;
+        private readonly IBuyHouseService _buyHouseService;
 
-        public HouseHandler(INotificationService notificationService, IHousesManager housesManager, IMoneyService moneyService)
+        public HouseHandler(INotificationService notificationService, IHousesManager housesManager, IBuyHouseService buyHouseService)
         {
             _notificationService = notificationService;
             _housesManager = housesManager;
-            _moneyService = moneyService;
+            _buyHouseService = buyHouseService;
             Alt.OnColShape += AltOnOnColShape;
             
             Alt.On<IStrefaPlayer>("HouseInteractionMenu", HouseInteractionMenu);
             Alt.On<IStrefaPlayer>("TryEnterHouse", TryEnterHouse);
             Alt.On<IStrefaPlayer>("TryLeaveHouse", TryLeaveHouse);
-            Alt.On<IStrefaPlayer>("TryBuyHouse", TryBuyHouse);
+            AltAsync.On<IStrefaPlayer, Task>("TryBuyHouse", TryBuyHouseAsync);
             AltAsync.On<IStrefaPlayer, int, int, Task>("TryToCreateNewHouse", TryToCreateNewHouseAsync);
         }
         
@@ -83,14 +85,16 @@ namespace AltVStrefaRPServer.Modules.HousingModule
             house.MovePlayerOutside(player);
         }
         
-        private void TryBuyHouse(IStrefaPlayer player)
+        private async Task TryBuyHouseAsync(IStrefaPlayer player)
         {
             if (player.HouseEnterColshape == 0) return;
             if (!_housesManager.TryGetHouse(player.HouseEnterColshape, out var house)) return;
-
+            if (!player.TryGetCharacter(out var character)) return;
+            
+            await _buyHouseService.BuyHouseAsync(character, house);
             if (!house.HasOwner())
             {
-                _notificationService.ShowErrorNotification(player, "Budynek zamieszkały", "Mieszkanie posiada już właściciela", 3500);
+                await _notificationService.ShowErrorNotificationAsync(player, "Budynek zamieszkały", "Mieszkanie posiada już właściciela", 3500);
                 return;
             }
         }
