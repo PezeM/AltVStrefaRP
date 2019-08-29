@@ -48,7 +48,7 @@ namespace AltVStrefaRPServer.Modules.Admin
         private readonly InventoryHandler _inventoryHandler;
         private readonly IInventoryDatabaseService _inventoryDatabaseService;
         private readonly ICharacterDatabaseService _characterDatabaseService;
-        private readonly ItemFactory _itemFactory;
+        private readonly IItemFactory _itemFactory;
         private readonly ILogger<AdminCommands> _logger;
 
         public AdminCommands(TemporaryChatHandler chatHandler, IVehiclesManager vehiclesManager, BankHandler bankHandler,
@@ -57,7 +57,7 @@ namespace AltVStrefaRPServer.Modules.Admin
             IFractionsManager fractionsManager,
             IFractionDatabaseService fractionDatabaseService, IMoneyService moneyService,
             InventoryHandler inventoryHandler, IInventoryDatabaseService inventoryDatabaseService, ICharacterDatabaseService characterDatabaseService,
-            ItemFactory itemFactory, ILogger<AdminCommands> logger)
+            IItemFactory itemFactory, ILogger<AdminCommands> logger)
         {
             _chatHandler = chatHandler;
             _vehiclesManager = vehiclesManager;

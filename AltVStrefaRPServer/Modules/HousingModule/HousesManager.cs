@@ -58,7 +58,7 @@ namespace AltVStrefaRPServer.Modules.HousingModule
                 _houses.Add(house.Id, house);
                 house.InitializeHouse();
             }
-            _logger.LogInformation("Loaded {housesCount} houses from database in {elapsedTime}", _houses.Count, Time.GetElapsedTime(startTime));
+            _logger.LogInformation("Loaded {housesCount} houses from database in {elapsedTime}ms", _houses.Count, Time.GetElapsedTime(startTime));
         }
     }
 }

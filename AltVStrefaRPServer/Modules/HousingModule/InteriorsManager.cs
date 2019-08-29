@@ -67,7 +67,7 @@ namespace AltVStrefaRPServer.Modules.HousingModule
                 {
                     _interiors.TryAdd(interior.Id, interior);
                 }
-                _logger.LogInformation("Created {interiorsCount} default interiorsgit");
+                _logger.LogInformation("Created {interiorsCount} default interiors", _interiors.Count);
             }
             catch (Exception e)
             {

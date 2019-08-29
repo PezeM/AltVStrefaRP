@@ -97,6 +97,7 @@ namespace AltVStrefaRPServer
             services.AddTransient<IVehicleShopsFactory, VehicleShopsFactory>();
             services.AddTransient<IFractionDatabaseService, FractionDatabaseService>();
             services.AddTransient<IFractionFactoryService, FractionFactoryService>();
+            services.AddTransient<IItemFactory, ItemFactory>();
             services.AddTransient<IInventoryDatabaseService, InventoryDatabaseService>();
             services.AddTransient<IInventoryTransferService, InventoryTransferService>();
             services.AddTransient<IInventoryEquipService, InventoryEquipService>();
@@ -137,7 +138,6 @@ namespace AltVStrefaRPServer
             services.AddTransient<TrashbinsController>();
             services.AddTransient<VehicleShopsHandler>();
             services.AddTransient<TownHallFractionHandler>();
-            services.AddTransient<ItemFactory>();
 
             services.AddSingleton<SerializatorTest>();
 
