@@ -6,12 +6,10 @@ using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Core;
-using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Houses;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Housing;
-using AltVStrefaRPServer.Services.Money;
 
 namespace AltVStrefaRPServer.Modules.HousingModule
 {
@@ -85,13 +83,28 @@ namespace AltVStrefaRPServer.Modules.HousingModule
             house.MovePlayerOutside(player);
         }
         
-        private async Task TryBuyHouseAsync(IStrefaPlayer player)
+        public async Task TryBuyHouseAsync(IStrefaPlayer player)
         {
             if (player.HouseEnterColshape == 0) return;
             if (!_housesManager.TryGetHouse(player.HouseEnterColshape, out var house)) return;
             if (!player.TryGetCharacter(out var character)) return;
             
-            var response =await _buyHouseService.BuyHouseAsync(character, house);
+            var response = await _buyHouseService.BuyHouseAsync(character, house);
+            switch (response)
+            {
+                case BuyHouseResponse.HouseHasOwner:
+                    _notificationService.ShowErrorNotificationLocked(player, "Mieszkanie zamieszkałe", "Mieszkanie posiada już właściciela", 3500);
+                    break;
+                case BuyHouseResponse.NotEnoughMoney:
+                    _notificationService.ShowErrorNotificationLocked(player, "Brak pieniędzy", "Nie posiadasz odpowiedniej ilości pieniędzy aby zakupić te mieszkanie");
+                    break;
+                case BuyHouseResponse.NotEnoughSpaceInInventoryForKey:
+                    _notificationService.ShowErrorNotificationLocked(player, "Brak miejsca", "Nie posiadasz wolnego miejsca w ekwipunku na klucze" );
+                    break;
+                case BuyHouseResponse.HouseBought:
+                    _notificationService.ShowSuccessNotificationLocked(player, "Kupiono mieszkanie", $"Pomyślnie zakupiłeś mieszkanie za {house.Price}$", 3500);
+                    break;
+            }
         }
         
         public async Task TryToCreateNewHouseAsync(IStrefaPlayer player, int price, int interiorId)

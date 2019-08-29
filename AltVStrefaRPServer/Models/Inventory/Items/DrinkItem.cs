@@ -6,7 +6,7 @@
 
         public override bool UseItem(Character character)
         {
-            // Decrease thirst or someshit
+            // Decrease thirst or some shit
             return true;
         }
 

@@ -82,7 +82,7 @@ namespace AltVStrefaRPServer.Models.Houses
             writer.Name("interiorName");
             writer.Value(Interior?.Name);
             writer.Name("position");
-            new PositionAdapter().ToMValue(GetPosition(), writer);
+            Adapters.PositionAdatper.ToMValue(GetPosition(), writer);
             writer.EndObject();
         }
     }

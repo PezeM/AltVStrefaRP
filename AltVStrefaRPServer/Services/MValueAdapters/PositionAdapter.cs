@@ -4,7 +4,6 @@ using AltVStrefaRPServer.Models.Core;
 
 namespace AltVStrefaRPServer.Services.MValueAdapters
 {
-
     public class PositionAdapter : IMValueAdapter<Position>
     {
         public Position FromMValue(IMValueReader reader)

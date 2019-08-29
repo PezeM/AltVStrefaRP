@@ -7,7 +7,7 @@ using Microsoft.Azure.KeyVault.Models;
 
 namespace AltVStrefaRPServer.Services.Inventories
 {
-    public class ItemFactory
+    public class ItemFactory : IItemFactory
     {
         public BaseItem CreateClothItem(string name, EquipmentSlot slot, int drawableId, int textureId, int paletteId, bool isProp = false,
             string model = "prop_ld_tshirt_02", string description = null)
