@@ -1,5 +1,4 @@
-﻿using AltV.Net;
-using AltVStrefaRPServer.Database;
+﻿using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Interfaces;
@@ -49,6 +48,8 @@ namespace AltVStrefaRPServer.Services.Money
             townHall.AddTax(tax);
 
             await _bankAccountDatabaseService.UpdateBankAccountAsync(source.BankAccount);
+            _logger.LogInformation("Removed {amount} money from {characterName} CID({characterId}) bank account {bankAccount}. Transaction type {transactionType}",
+                amount + tax, source.GetFullName(), source.Id, source.BankAccount.AccountNumber, transactionType);
             return true;
         }
         
@@ -66,7 +67,10 @@ namespace AltVStrefaRPServer.Services.Money
             if (!source.RemoveMoney(tax + amount)) return false;
             receiver.AddMoney(amount);
             townHall.AddTax(tax);
+            
             await SaveTransferAsync(source, receiver, amount, transactionType);
+            _logger.LogInformation("Transferred {amount} money from {moneySource} to {moneyReceiver}. Transaction type {transactionType}", 
+                amount + tax, source.MoneyTransactionDisplayName(), receiver.MoneyTransactionDisplayName(), transactionType);
             return true;
         }
 
@@ -78,6 +82,8 @@ namespace AltVStrefaRPServer.Services.Money
             townHall.AddTax(tax);
             
             await SaveTransferAsync(source, receiver, amount, transactionType);
+            _logger.LogInformation("Transferred {amount} money from {characterName} CID({characterId}) bank account {bankAccount} to {moneyReceiver}. Transaction type {transactionType}",
+                amount + tax, source.GetFullName(), source.Id, source.BankAccount.AccountNumber, receiver.MoneyTransactionDisplayName(), transactionType);
             return true;
         }
         
@@ -97,8 +103,8 @@ namespace AltVStrefaRPServer.Services.Money
                     }
                     catch (Exception e)
                     {
-                        Alt.Server.LogError($"Error in saving money transfer. Transaction rolled back. Transaction type: {transactionType} amount: {amount}. " +
-                                            $"Error: {e}");
+                        _logger.LogError(e, "Error in saving money transfer. Transaction rolled back. Transaction of type {transactionType} amount {amount}",
+                            transactionType, amount);
                         transaction.Rollback();
                         throw;
                     }
@@ -123,9 +129,8 @@ namespace AltVStrefaRPServer.Services.Money
                     }
                     catch (Exception e)
                     {
-                        Alt.Server.LogError($"Error in saving money transfer. Transaction rolled back. " +
-                                            $"Character: {source.Id} Transaction type: {transactionType} amount: {amount}. " +
-                                            $"Error: {e}");
+                        _logger.LogError(e, "Error in saving money transfer. Transaction rolled back. Character {characterName} CID({characterId}) " +
+                            "Transaction of type {transactionType} amount {amount}", source.GetFullName(), source.Id, transactionType, amount);
                         transaction.Rollback();
                         throw;
                     }
