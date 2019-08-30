@@ -51,7 +51,7 @@ namespace AltVStrefaRPServer.Modules.CharacterModule.Customization
             if (playerAccount != null)
                 character.Account = playerAccount;
 
-            await _characterCreatorService.SaveNewCharacter(character).ConfigureAwait(false);
+            await _characterCreatorService.SaveNewCharacterAsync(character).ConfigureAwait(false);
             if (CharacterManager.Instance.IntializeCharacter(player, character))
             {
                 await player.EmitAsync("characterCreatedSuccessfully").ConfigureAwait(false);

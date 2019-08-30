@@ -125,11 +125,12 @@ namespace AltVStrefaRPServer.Modules.Admin
                          if (character.Player != null && character.Player.Exists)
                          {
                              _ = _characterDatabaseService.UpdateCharacterAsync(character);
+                             savedCharacters++;
                          }
                      }
                  }
+                 _logger.LogInformation("Saved {characterCount} characters to databse in {elapsedTime}ms", savedCharacters, Time.GetElapsedTime(startTime));
              });
-            _logger.LogInformation("Saved {characterCount} characters to databse in {elapsedTime}", savedCharacters, Time.GetElapsedTime(startTime));
         }
 
         private void OpenVehicleShop(IPlayer player, string[] arg2)

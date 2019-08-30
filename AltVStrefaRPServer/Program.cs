@@ -38,8 +38,6 @@ namespace AltVStrefaRPServer
                 default:
                     throw new ArgumentOutOfRangeException(nameof(sig), sig, null);
             }
-
-            return true;
         }
     }
 }

@@ -53,7 +53,7 @@ namespace AltVStrefaRPServer.Models.Houses
         
         public Position GetPosition() => new Position(X, Y, Z);
 
-        public async Task DeleteInterior(IInteriorDatabaseService interiorDatabaseService)
+        public async Task DeleteInteriorAsync(IInteriorDatabaseService interiorDatabaseService)
         {
             Colshape.Remove();
             await interiorDatabaseService.RemoveInteriorAsync(this);

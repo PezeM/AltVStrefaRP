@@ -29,7 +29,7 @@ namespace AltVStrefaRPServer.Services.Characters.Customization
             }
         }
 
-        public async Task SaveNewCharacter(Character character)
+        public async Task SaveNewCharacterAsync(Character character)
         {
             using (var context = _factory.Invoke())
             {

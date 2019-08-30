@@ -28,7 +28,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Publish|AnyCPU'">
     <Optimize>true</Optimize>
   </PropertyGroup>
-
+  
   <ItemGroup>
     <PackageReference Include="AltV.Net" Version="1.12.3-beta" />
     <PackageReference Include="AltV.Net.Async" Version="1.12.3-beta" />
@@ -57,7 +57,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Data\vehiclesData.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
