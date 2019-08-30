@@ -27,20 +27,21 @@ using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using AltVStrefaRPServer.Modules.HousingModule;
 using VehicleModel = AltV.Net.Enums.VehicleModel;
 
 namespace AltVStrefaRPServer.Modules.Admin
 {
     public class AdminCommands
     {
-        private TemporaryChatHandler _chatHandler;
-        private IVehiclesManager _vehiclesManager;
-        private BankHandler _bankHandler;
-        private IBusinessesManager _businessesManager;
-        private BusinessHandler _businessHandler;
-        private INotificationService _notificationService;
-        private VehicleShopsManager _vehicleShopsManager;
-        private IVehicleSpawnService _vehicleSpawnService;
+        private readonly TemporaryChatHandler _chatHandler;
+        private readonly IVehiclesManager _vehiclesManager;
+        private readonly BankHandler _bankHandler;
+        private readonly IBusinessesManager _businessesManager;
+        private readonly BusinessHandler _businessHandler;
+        private readonly INotificationService _notificationService;
+        private readonly VehicleShopsManager _vehicleShopsManager;
+        private readonly IVehicleSpawnService _vehicleSpawnService;
         private readonly FractionHandler _fractionHandler;
         private readonly IFractionsManager _fractionsManager;
         private readonly IFractionDatabaseService _fractionDatabaseService;
@@ -49,15 +50,15 @@ namespace AltVStrefaRPServer.Modules.Admin
         private readonly IInventoryDatabaseService _inventoryDatabaseService;
         private readonly ICharacterDatabaseService _characterDatabaseService;
         private readonly IItemFactory _itemFactory;
+        private readonly HouseHandler _houseHandler;
         private readonly ILogger<AdminCommands> _logger;
 
         public AdminCommands(TemporaryChatHandler chatHandler, IVehiclesManager vehiclesManager, BankHandler bankHandler,
             IBusinessesManager businessesManager, BusinessHandler businessHandler, INotificationService notificationService,
             VehicleShopsManager vehicleShopsManager, IVehicleSpawnService vehicleSpawnService, FractionHandler fractionHandler,
-            IFractionsManager fractionsManager,
-            IFractionDatabaseService fractionDatabaseService, IMoneyService moneyService,
+            IFractionsManager fractionsManager, IFractionDatabaseService fractionDatabaseService, IMoneyService moneyService,
             InventoryHandler inventoryHandler, IInventoryDatabaseService inventoryDatabaseService, ICharacterDatabaseService characterDatabaseService,
-            IItemFactory itemFactory, ILogger<AdminCommands> logger)
+            IItemFactory itemFactory, HouseHandler houseHandler, ILogger<AdminCommands> logger)
         {
             _chatHandler = chatHandler;
             _vehiclesManager = vehiclesManager;
@@ -75,6 +76,7 @@ namespace AltVStrefaRPServer.Modules.Admin
             _inventoryDatabaseService = inventoryDatabaseService;
             _characterDatabaseService = characterDatabaseService;
             _itemFactory = itemFactory;
+            _houseHandler = houseHandler;
             _logger = logger;
 
             _logger.LogDebug("Admin commands initialized");
@@ -110,8 +112,9 @@ namespace AltVStrefaRPServer.Modules.Admin
             _chatHandler.RegisterCommand("removeItem", async (player, args) => await RemoveItemAsync(player, args));
             _chatHandler.RegisterCommand("lookupInventory", LookupInventory);
             _chatHandler.RegisterCommand("testSave", TestSave);
-        }
-
+            _chatHandler.RegisterCommand("createNewHouse", async (player, args) => await CreateNewHouseAsync(player, args));
+;        }
+        
         private void TestSave(IPlayer player, string[] args)
         {
             var startTime = Time.GetTimestampMs();
@@ -173,7 +176,7 @@ namespace AltVStrefaRPServer.Modules.Admin
 
             try
             {
-                if (!int.TryParse(args[0].ToString(), out int characterId))
+                if (!int.TryParse(args[0], out int characterId))
                 {
                     await _notificationService.ShowErrorNotificationAsync(player, "Błąd", $"Podano zły numer postaci.", 5000);
                     return;
@@ -185,7 +188,7 @@ namespace AltVStrefaRPServer.Modules.Admin
                     return;
                 }
 
-                if (!int.TryParse(args[1].ToString(), out int businessId))
+                if (!int.TryParse(args[1], out int businessId))
                 {
                     await _notificationService.ShowErrorNotificationAsync(player, "Błąd", $"Podano złe id biznesu.", 5000);
                     return;
@@ -233,7 +236,7 @@ namespace AltVStrefaRPServer.Modules.Admin
         {
             if (args == null || args.Length < 1 || !player.TryGetCharacter(out Character sender)) return;
             if (sender.Account.AdminLevel < AdminLevel.Admin) return;
-            if (!int.TryParse(args[0].ToString(), out int fractionId)) return;
+            if (!int.TryParse(args[0], out int fractionId)) return;
 
             await _fractionHandler.AcceptFractionInviteEventAsync(player, fractionId);
         }
@@ -245,7 +248,7 @@ namespace AltVStrefaRPServer.Modules.Admin
 
             try
             {
-                if (!int.TryParse(args[0].ToString(), out int characterId))
+                if (!int.TryParse(args[0], out int characterId))
                 {
                     await _notificationService.ShowErrorNotificationAsync(player, "Błąd", $"Podano zły numer postaci.", 5000);
                     return;
@@ -257,7 +260,7 @@ namespace AltVStrefaRPServer.Modules.Admin
                     return;
                 }
 
-                if (!int.TryParse(args[1].ToString(), out int fractionId))
+                if (!int.TryParse(args[1], out int fractionId))
                 {
                     await _notificationService.ShowErrorNotificationAsync(player, "Błąd", $"Podano złe id biznesu.", 5000);
                     return;
@@ -357,8 +360,8 @@ namespace AltVStrefaRPServer.Modules.Admin
         {
             if (args == null || args.Length < 2 || !player.TryGetCharacter(out Character character)) return;
             if (character.Account.AdminLevel < AdminLevel.SuperModerator) return;
-            if (!int.TryParse(args[0].ToString(), out int playerId)) return;
-            if (!float.TryParse(args[1].ToString(), out float money)) return;
+            if (!int.TryParse(args[0], out int playerId)) return;
+            if (!float.TryParse(args[1], out float money)) return;
             var characterToGiveMoneyTo = CharacterManager.Instance.GetCharacter(playerId);
             if (characterToGiveMoneyTo == null)
             {
@@ -377,7 +380,7 @@ namespace AltVStrefaRPServer.Modules.Admin
         {
             if (args == null || args.Length < 1 || !player.TryGetCharacter(out Character character)) return;
             if (character.Account.AdminLevel < AdminLevel.Support) return;
-            if (!int.TryParse(args[0].ToString(), out int playerId)) return;
+            if (!int.TryParse(args[0], out int playerId)) return;
             var playerToBring = Alt.GetAllPlayers().FirstOrDefault(p => p.Id == playerId);
             if (playerToBring == null)
             {
@@ -392,7 +395,7 @@ namespace AltVStrefaRPServer.Modules.Admin
         {
             if (args == null || args.Length < 1 || !player.TryGetCharacter(out Character character)) return;
             if (character.Account.AdminLevel < AdminLevel.TrialSupport) return;
-            if (!int.TryParse(args[0].ToString(), out int playerId)) return;
+            if (!int.TryParse(args[0], out int playerId)) return;
             var playerToTeleportTo = Alt.GetAllPlayers().FirstOrDefault(p => p.Id == playerId);
             if (playerToTeleportTo == null)
             {
@@ -427,7 +430,7 @@ namespace AltVStrefaRPServer.Modules.Admin
         {
             if (args == null || args.Length < 1 || !player.TryGetCharacter(out Character character)) return;
             if (character.Account.AdminLevel < AdminLevel.Moderator) return;
-            if (!int.TryParse(args[0].ToString(), out int playerId)) return;
+            if (!int.TryParse(args[0], out int playerId)) return;
             var characterToLook = CharacterManager.Instance.GetCharacter(playerId);
             if (characterToLook == null)
             {
@@ -464,8 +467,8 @@ namespace AltVStrefaRPServer.Modules.Admin
         {
             var startTime = Time.GetTimestampMs();
             if (args == null || args.Length < 2) return;
-            if (!int.TryParse(args[0].ToString(), out int itemID)) return;
-            if (!int.TryParse(args[1].ToString(), out int itemAmount)) return;
+            if (!int.TryParse(args[0], out int itemID)) return;
+            if (!int.TryParse(args[1], out int itemAmount)) return;
             if (!player.TryGetCharacter(out var character)) return;
             if (!Enum.IsDefined(typeof(ItemType), itemID))
             {
@@ -489,11 +492,11 @@ namespace AltVStrefaRPServer.Modules.Admin
         {
             var startTime = Time.GetTimestampMs();
             if (args == null || args.Length < 2) return;
-            if (!int.TryParse(args[0].ToString(), out int itemId))
+            if (!int.TryParse(args[0], out int itemId))
             {
                 return;
             }
-            if (!int.TryParse(args[1].ToString(), out int amount))
+            if (!int.TryParse(args[1], out int amount))
             {
                 return;
             }
@@ -505,7 +508,7 @@ namespace AltVStrefaRPServer.Modules.Admin
         {
             var startTime = Time.GetTimestampMs();
             if (args == null || args.Length < 1) return;
-            if (!int.TryParse(args[0].ToString(), out int itemId)) return;
+            if (!int.TryParse(args[0], out int itemId)) return;
             await _inventoryHandler.UseInventoryItemAsync(player, itemId);
             Alt.Log($"Used item in {Time.GetElapsedTime(startTime)}ms");
         }
@@ -513,19 +516,29 @@ namespace AltVStrefaRPServer.Modules.Admin
         private async Task RemoveItemAsync(IPlayer player, string[] args)
         {
             if (args == null || args.Length < 2) return;
-            if (!int.TryParse(args[0].ToString(), out int itemId)) return;
-            if (!int.TryParse(args[1].ToString(), out int amount)) return;
+            if (!int.TryParse(args[0], out int itemId)) return;
+            if (!int.TryParse(args[1], out int amount)) return;
             await _inventoryHandler.InventoryRemoveItemAsync(player, itemId, amount);
         }
 
         private void LookupInventory(IPlayer player, string[] args)
         {
             if (args == null || args.Length < 1) return;
-            if (!int.TryParse(args[0].ToString(), out int vehicleId)) return;
+            if (!int.TryParse(args[0], out int vehicleId)) return;
             if (!_vehiclesManager.TryGetVehicleModel(vehicleId, out var vehicle)) return;
 
             var inventory = JsonConvert.SerializeObject(vehicle.Inventory.Items, Formatting.Indented);
             Alt.Log(inventory);
+        }
+        
+        private async Task CreateNewHouseAsync(IPlayer player, string[] args)
+        {
+            if (!(player is StrefaPlayer strefaPlayer)) return;
+            if (args == null || args.Length < 2) return;
+            if (!int.TryParse(args[0], out int housePrice)) return;
+            if (!int.TryParse(args[1], out int houseInterior)) return;
+            
+            await _houseHandler.TryToCreateNewHouseAsync(strefaPlayer, housePrice, houseInterior);
         }
     }
 }
