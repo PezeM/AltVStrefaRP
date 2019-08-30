@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using AltV.Net;
 using AltV.Net.Async;
@@ -8,6 +9,7 @@ using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Core;
 using AltVStrefaRPServer.Models.Houses;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
+using AltVStrefaRPServer.Models.Inventory.Items.Keys;
 using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Housing;
 
@@ -29,10 +31,11 @@ namespace AltVStrefaRPServer.Modules.HousingModule
             Alt.On<IStrefaPlayer>("HouseInteractionMenu", HouseInteractionMenu);
             Alt.On<IStrefaPlayer>("TryEnterHouse", TryEnterHouse);
             Alt.On<IStrefaPlayer>("TryLeaveHouse", TryLeaveHouse);
+            Alt.On<IStrefaPlayer>("TryToggleHouseLock", TryToggleHouseLock);
             AltAsync.On<IStrefaPlayer, Task>("TryBuyHouse", TryBuyHouseAsync);
             AltAsync.On<IStrefaPlayer, int, int, Task>("TryToCreateNewHouse", TryToCreateNewHouseAsync);
         }
-        
+
         private void AltOnOnColShape(IColShape colshape, IEntity entity, bool entered)
         {
             if (!(entity is IStrefaPlayer player)) return;
@@ -81,6 +84,33 @@ namespace AltVStrefaRPServer.Modules.HousingModule
             if (!_housesManager.TryGetHouse(player.HouseId, out var house)) return;
             
             house.MovePlayerOutside(player);
+        }
+        
+        private void TryToggleHouseLock(IStrefaPlayer player)
+        {
+            if (!player.TryGetCharacter(out var charatcer)) return;
+            var houseId = player.HouseId == 0
+                ? player.HouseEnterColshape == 0 ? 0 : player.HouseEnterColshape
+                : player.HouseId;
+            if (houseId == 0) return;
+            if (!_housesManager.TryGetHouse(player.HouseId, out var house)) return;
+
+            var keys = charatcer.Inventory.GetItems<HouseKeyItem>();
+            if (keys == null)
+            {
+                _notificationService.ShowErrorNotification(player, "Brak kluczy", "Nie posiadasz przy sobie żadnych kluczy", 3500);
+                return;
+            }
+
+            var correctKeys = keys.FirstOrDefault(k => k.LockPattern == house.LockPattern);
+            if (correctKeys == null)
+            {
+                _notificationService.ShowErrorNotification(player, "Brak kluczy", "Nie posiadasz kluczy do tego mieszkania", 3500);
+                return;
+            }
+
+            house.ToggleLock();
+            player.Emit("succesfullyToggledHouseLock", house.IsLocked); // Play some sound and show notification
         }
         
         public async Task TryBuyHouseAsync(IStrefaPlayer player)

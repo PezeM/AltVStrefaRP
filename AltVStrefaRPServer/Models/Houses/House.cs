@@ -64,7 +64,12 @@ namespace AltVStrefaRPServer.Models.Houses
             player.Position = GetPosition();
             player.HouseId = 0;
         }
-
+        
+        public void ToggleLock()
+        {
+            IsLocked = !IsLocked;
+        }
+                
         public void CreateLockPattern()
         {
             LockPattern = AdvancedIdGenerator.Instance.Next;

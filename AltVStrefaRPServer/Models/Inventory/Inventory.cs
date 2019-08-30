@@ -55,9 +55,9 @@ namespace AltVStrefaRPServer.Models.Inventory
             return _items.FirstOrDefault(i => i.Item is TItem) != null;
         }
 
-        public IEnumerable<InventoryItem> GetItems<TItem>() where TItem : BaseItem
+        public IEnumerable<TItem> GetItems<TItem>() where TItem : BaseItem
         {
-            return _items.Where(i => i.Item is TItem);
+            return _items.Where(i => i.Item is TItem) as IEnumerable<TItem>;
         }
         
         public virtual AddItemResponse AddInventoryItem(InventoryItem item)

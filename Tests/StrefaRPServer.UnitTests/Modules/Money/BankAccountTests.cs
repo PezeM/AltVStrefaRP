@@ -91,15 +91,15 @@ namespace StrefaRPServer.UnitTests.Modules.Money
             Assert.That(_receiverBankAccount.Money, Is.EqualTo(0));
         }
 
-        [TestCase(100f, 120.50f)]
-        [TestCase(325.24f, 578.45f)]
-        public void TransferingAmountAfterTaxIncreasesReceiverBalanceByMoneyBeforeTax(float amountBeforeTax, float amountAfterTax)
+        [TestCase(100f, 20.50f)]
+        [TestCase(325.24f, 78.45f)]
+        public void TransferingAmountAfterTaxIncreasesReceiverBalanceByMoneyBeforeTax(float amountBeforeTax, float tax)
         {
             var startMoney = 1000f;
-            var moneyLeftInBankAccount = startMoney - amountAfterTax;
+            var moneyLeftInBankAccount = startMoney - amountBeforeTax - tax;
             _bankAccount.Money = startMoney;
 
-            var result = _bankAccount.TransferMoney(_receiverBankAccount, amountBeforeTax, amountAfterTax);
+            var result = _bankAccount.TransferMoney(_receiverBankAccount, amountBeforeTax, tax);
 
             Assert.That(result, Is.True);
             Assert.That(_bankAccount.Money, Is.EqualTo(moneyLeftInBankAccount));
