@@ -110,7 +110,7 @@ namespace AltVStrefaRPServer.Modules.HousingModule
             }
 
             house.ToggleLock();
-            player.Emit("succesfullyToggledHouseLock", house.IsLocked); // Play some sound and show notification
+            player.Emit("successfullyToggledHouseLock", house.IsLocked); // Play some sound and show notification
         }
         
         public async Task TryBuyHouseAsync(IStrefaPlayer player)
