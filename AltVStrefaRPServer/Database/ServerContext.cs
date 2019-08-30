@@ -65,8 +65,11 @@ namespace AltVStrefaRPServer.Database
         public DbSet<DroppedItem> DroppedItems { get; set; }
 
         // Housing
+        public DbSet<OldHouse> Houses { get; set; }
+        
         public DbSet<Interior> Interiors { get; set; }
-        public DbSet<House> Houses { get; set; }
+        public DbSet<HouseBuilding> HouseBuildings { get; set; }
+        public DbSet<Flat> Flats { get; set; }
         
         public ServerContext(DbContextOptions options) : base(options)
         {

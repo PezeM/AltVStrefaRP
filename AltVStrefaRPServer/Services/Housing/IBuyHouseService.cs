@@ -6,6 +6,6 @@ namespace AltVStrefaRPServer.Services.Housing
 {
     public interface IBuyHouseService
     {
-        Task<BuyHouseResponse> BuyHouseAsync(Character newOwner, House house);
+        Task<BuyHouseResponse> BuyHouseAsync(Character newOwner, OldHouse oldHouse);
     }
 }

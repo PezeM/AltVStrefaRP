@@ -5,9 +5,9 @@ namespace AltVStrefaRPServer.Services.Housing.Factories
 {
     public class HouseFactoryService : IHouseFactoryService
     {
-        public House CreateNewHouse(Position position, int price)
+        public OldHouse CreateNewHouse(Position position, int price)
         {
-            var newHouse = new House
+            var newHouse = new OldHouse
             {
                 X = position.X,
                 Y = position.Y,

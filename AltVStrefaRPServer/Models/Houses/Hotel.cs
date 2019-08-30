@@ -1,11 +1,12 @@
-﻿using AltV.Net;
+﻿using System.Collections.Generic;
+using AltV.Net;
 using AltVStrefaRPServer.Models.Core;
 
 namespace AltVStrefaRPServer.Models.Houses
 {
-    public class House : HouseBuilding
+    public class Hotel : HouseBuilding
     {
-        public Flat Flat { get; set; }
+        public ICollection<HotelRoom> HotelRooms { get; set; }
         
         public override void InitializeHouse()
         {

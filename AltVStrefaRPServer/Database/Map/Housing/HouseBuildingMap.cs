@@ -2,11 +2,11 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace AltVStrefaRPServer.Database.Map
+namespace AltVStrefaRPServer.Database.Map.Housing
 {
-    public class HouseMap : IEntityTypeConfiguration<House>
+    public class HouseBuildingMap : IEntityTypeConfiguration<HouseBuilding>
     {
-        public void Configure(EntityTypeBuilder<House> builder)
+        public void Configure(EntityTypeBuilder<HouseBuilding> builder)
         {
             builder.Ignore(h => h.Colshape);
         }

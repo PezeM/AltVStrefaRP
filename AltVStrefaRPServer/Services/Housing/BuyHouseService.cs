@@ -22,23 +22,23 @@ namespace AltVStrefaRPServer.Services.Housing
             _houseDatabaseService = houseDatabaseService;
         }
         
-        public async Task<BuyHouseResponse> BuyHouseAsync(Character newOwner, House house)
+        public async Task<BuyHouseResponse> BuyHouseAsync(Character newOwner, OldHouse oldHouse)
         {
             // Check if house has owner
-            if (house.HasOwner() && house.Owner?.Id != newOwner.Id) return BuyHouseResponse.HouseHasOwner;
+            if (oldHouse.HasOwner() && oldHouse.Owner?.Id != newOwner.Id) return BuyHouseResponse.HouseHasOwner;
             // Check if user has empty space for key item
             if (newOwner.Inventory.HasEmptySlots()) return BuyHouseResponse.NotEnoughSpaceInInventoryForKey;
 
             // Remove money from player
-            if (!await _moneyService.RemoveMoneyFromBankAccountAsync(newOwner, house.Price, TransactionType.PropertiesBuy))
+            if (!await _moneyService.RemoveMoneyFromBankAccountAsync(newOwner, oldHouse.Price, TransactionType.PropertiesBuy))
                 return BuyHouseResponse.NotEnoughMoney;
             
             // Generate new house lock pattern
-            house.CreateLockPattern();
+            oldHouse.CreateLockPattern();
             // Add key item to character inventory
-            await newOwner.Inventory.AddItemAsync(_itemFactory.CreateHouseKeyItem(house.LockPattern), 1, _inventoryDatabaseService);
-            house.ChangeOwner(newOwner);
-            await _houseDatabaseService.UpdateHouseAsync(house);
+            await newOwner.Inventory.AddItemAsync(_itemFactory.CreateHouseKeyItem(oldHouse.LockPattern), 1, _inventoryDatabaseService);
+            oldHouse.ChangeOwner(newOwner);
+            await _houseDatabaseService.UpdateHouseAsync(oldHouse);
             
             return BuyHouseResponse.HouseBought;
         }

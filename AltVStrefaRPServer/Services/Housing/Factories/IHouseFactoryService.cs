@@ -5,6 +5,6 @@ namespace AltVStrefaRPServer.Services.Housing.Factories
 {
     public interface IHouseFactoryService
     {
-        House CreateNewHouse(Position position, int price);
+        OldHouse CreateNewHouse(Position position, int price);
     }
 }

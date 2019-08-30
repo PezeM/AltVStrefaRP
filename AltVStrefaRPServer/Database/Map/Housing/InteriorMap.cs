@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace AltVStrefaRPServer.Database.Map
+namespace AltVStrefaRPServer.Database.Map.Housing
 {
     public class InteriorMap : IEntityTypeConfiguration<Interior>
     {
@@ -10,8 +10,9 @@ namespace AltVStrefaRPServer.Database.Map
         {
             builder.Ignore(i => i.Colshape);
 
-            builder.HasMany(i => i.Houses)
-                .WithOne(h => h.Interior);
+            builder.HasMany(i => i.Flats)
+                .WithOne(f => f.Interior)
+                .HasForeignKey(f => f.InteriorId);
         }
     }
 }

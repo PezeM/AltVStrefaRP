@@ -12,7 +12,7 @@ namespace AltVStrefaRPServer.Modules.HousingModule
 {
     public class HousesManager : IHousesManager
     {
-        private readonly Dictionary<int, House> _houses;
+        private readonly Dictionary<int, OldHouse> _houses;
         private readonly IHouseDatabaseService _houseDatabaseService;
         private readonly ILogger<HousesManager> _logger;
         private readonly IInteriorsManager _interiorsManager;
@@ -20,7 +20,7 @@ namespace AltVStrefaRPServer.Modules.HousingModule
 
         public HousesManager(IHouseDatabaseService houseDatabaseService, IHouseFactoryService houseFactoryService, IInteriorsManager interiorsManager, ILogger<HousesManager> logger)
         {
-            _houses = new Dictionary<int, House>();
+            _houses = new Dictionary<int, OldHouse>();
             _houseDatabaseService = houseDatabaseService;
             _houseFactoryService = houseFactoryService;
             _interiorsManager = interiorsManager;
@@ -29,11 +29,11 @@ namespace AltVStrefaRPServer.Modules.HousingModule
             InitializeHouses();
         }
 
-        public bool TryGetHouse(int houseId, out House house) => _houses.TryGetValue(houseId, out house);
+        public bool TryGetHouse(int houseId, out OldHouse oldHouse) => _houses.TryGetValue(houseId, out oldHouse);
 
         public bool CheckIfHouseExists(int houseId) => _houses.ContainsKey(houseId);
 
-        public House GetHouse(int houseId) => CheckIfHouseExists(houseId) ? _houses[houseId] : null;
+        public OldHouse GetHouse(int houseId) => CheckIfHouseExists(houseId) ? _houses[houseId] : null;
 
         public async Task<AddNewHouseResponse> AddNewHouseAsync(Position position, int price, int interiorId)
         {
@@ -42,8 +42,9 @@ namespace AltVStrefaRPServer.Modules.HousingModule
                 return AddNewHouseResponse.InteriorNotFound;
 
             var newHouse = _houseFactoryService.CreateNewHouse(position, price);
-            interior.Houses.Add(newHouse);
+//            interior.Houses.Add(newHouse);
             await _houseDatabaseService.AddNewHouseAsync(newHouse); // Don't know if it will work like that
+            newHouse.InitializeHouse();
             _houses.Add(newHouse.Id, newHouse);
             
             _logger.LogInformation("Created new house ID({houseId}) at position {position} with price {housePrice} and interior {interiorName}", newHouse.Id, position, price, interior.Name);

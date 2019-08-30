@@ -16,7 +16,7 @@ namespace AltVStrefaRPServer.Services.Housing
             _factory = factory;
         }
 
-        public IEnumerable<House> GetAllHouses()
+        public IEnumerable<OldHouse> GetAllHouses()
         {
             using (var context = _factory.Invoke())
             {
@@ -24,7 +24,7 @@ namespace AltVStrefaRPServer.Services.Housing
             }
         }
 
-        public async Task<House> GetHouseAsync(int houseId)
+        public async Task<OldHouse> GetHouseAsync(int houseId)
         {
             using (var context = _factory.Invoke())
             {
@@ -32,7 +32,7 @@ namespace AltVStrefaRPServer.Services.Housing
             }
         }
 
-        public House GetHouse(int houseId)
+        public OldHouse GetHouse(int houseId)
         {
             using (var context = _factory.Invoke())
             {
@@ -40,29 +40,29 @@ namespace AltVStrefaRPServer.Services.Housing
             }
         }
 
-        public async Task AddNewHouseAsync(House house)
+        public async Task AddNewHouseAsync(OldHouse oldHouse)
         {
             using (var context = _factory.Invoke())
             {
-                context.Houses.Add(house);
+                context.Houses.Add(oldHouse);
                 await context.SaveChangesAsync();
             }
         }
 
-        public async Task UpdateHouseAsync(House house)
+        public async Task UpdateHouseAsync(OldHouse oldHouse)
         {
             using (var context = _factory.Invoke())
             { 
-                context.Houses.Update(house);
+                context.Houses.Update(oldHouse);
                 await context.SaveChangesAsync();
             }
         }
 
-        public async Task RemoveHouseAsync(House house)
+        public async Task RemoveHouseAsync(OldHouse oldHouse)
         {
             using (var context = _factory.Invoke())
             { 
-                context.Houses.Remove(house);
+                context.Houses.Remove(oldHouse);
                 await context.SaveChangesAsync();
             }
         }

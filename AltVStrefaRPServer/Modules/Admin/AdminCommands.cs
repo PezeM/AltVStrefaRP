@@ -479,11 +479,7 @@ namespace AltVStrefaRPServer.Modules.Admin
             if (newItem == null) return;
             Alt.Log($"New item is of type {newItem.GetType()} and name {newItem.Name}");
             var response = await character.Inventory.AddItemAsync(newItem, itemAmount, _inventoryDatabaseService);
-            string itemIds = string.Empty;
-            foreach (var item in response.NewItems)
-            {
-                itemIds += $"{item.Id},";
-            }
+            string itemIds = response.NewItems.Aggregate(string.Empty, (current, item) => $"{current}{item.Id},");
 
             Alt.Log($"Added item id is {itemIds} in {Time.GetElapsedTime(startTime)}ms");
         }
