@@ -28,7 +28,7 @@ namespace AltVStrefaRPServer.Modules.HousingModule
             _buyHouseService = buyHouseService;
             Alt.OnColShape += AltOnOnColShape;
             
-            Alt.On<IStrefaPlayer>("HouseInteractionMenu", HouseInteractionMenu);
+            Alt.On<IStrefaPlayer>("HouseEnterInteractionMenu", HouseEnterInteractionMenu);
             Alt.On<IStrefaPlayer>("TryEnterHouse", TryEnterHouse);
             Alt.On<IStrefaPlayer>("TryLeaveHouse", TryLeaveHouse);
             Alt.On<IStrefaPlayer>("TryToggleHouseLock", TryToggleHouseLock);
@@ -46,12 +46,12 @@ namespace AltVStrefaRPServer.Modules.HousingModule
             player.Emit("inHouseEnterColshape", entered);
         }
         
-        private void HouseInteractionMenu(IStrefaPlayer player)
+        private void HouseEnterInteractionMenu(IStrefaPlayer player)
         {
             if (player.HouseEnterColshape == 0) return;
             if (!_housesManager.TryGetHouse(player.HouseEnterColshape, out var house)) return;
 
-            player.Emit("showHouseInteractionMenu", house);
+            player.Emit("showHouseEnterInteractionMenu", house);
         }
         
         private void TryEnterHouse(IStrefaPlayer player)
