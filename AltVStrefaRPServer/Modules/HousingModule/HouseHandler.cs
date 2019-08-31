@@ -119,29 +119,47 @@ namespace AltVStrefaRPServer.Modules.HousingModule
                 flat = house.Flat;
             }
             
+            ToggleHouseLock(player, charatcer, flat);
+        }
+
+        
+        private void TryToggleRoomHouseLock(IStrefaPlayer player, int hotelRoomNumber)
+        {
+            if (!player.TryGetCharacter(out var charatcer)) return;
+            Flat flat;
+            if (player.EnteredFlat != null) flat = player.EnteredFlat;
+            else
+            {
+                if(_housesManager.TryGetHouseBuilding(player.HouseEnterColshape, out var houseBuilding)) return;
+                if (!(houseBuilding is Hotel hotel)) return;
+                if (hotel.TryGetHotelRoom(hotelRoomNumber, out var hotelRoom)) return;
+                flat = hotelRoom;
+            }
+
+            ToggleHouseLock(player, charatcer, flat);
+        }
+        
+        private void ToggleHouseLock(IPlayer player, Character charatcer, Flat flat)
+        {
             var keys = charatcer.Inventory.GetItems<HouseKeyItem>();
             if (keys == null)
             {
-                _notificationService.ShowErrorNotification(player, "Brak kluczy", "Nie posiadasz przy sobie żadnych kluczy", 3500);
+                _notificationService.ShowErrorNotification(player, "Brak kluczy", "Nie posiadasz przy sobie żadnych kluczy",
+                    3500);
                 return;
             }
 
             var correctKeys = keys.FirstOrDefault(k => k.LockPattern == flat.LockPattern);
             if (correctKeys == null)
             {
-                _notificationService.ShowErrorNotification(player, "Brak kluczy", "Nie posiadasz kluczy do tego mieszkania", 3500);
+                _notificationService.ShowErrorNotification(player, "Brak kluczy", "Nie posiadasz kluczy do tego mieszkania",
+                    3500);
                 return;
             }
 
             flat.ToggleLock();
             player.Emit("successfullyToggledHouseLock", flat.IsLocked); // Play some sound and show notification
         }
-        
-        private void TryToggleRoomHouseLock(IStrefaPlayer arg1, int arg2)
-        {
-            throw new NotImplementedException();
-        }
-
         
         public async Task TryBuyHouseAsync(IStrefaPlayer player)
         {
