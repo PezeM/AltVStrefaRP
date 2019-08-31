@@ -11,5 +11,6 @@ namespace AltVStrefaRPServer.Models.Interfaces.Managers
         HouseBuilding GetHouse(int houseId);
         HotelRoom GetHotelRoom(int hotelRoom);
         Task<AddNewHouseResponse> AddNewHouseAsync(Position position, int price, int interiorId);
+        Task<AddNewHouseResponse> AddNewHotelAsync(Position position, int pricePerRoom, int rooms, int interiorId);
     }
 }

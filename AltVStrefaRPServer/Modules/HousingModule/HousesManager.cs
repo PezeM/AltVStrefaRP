@@ -66,7 +66,7 @@ namespace AltVStrefaRPServer.Modules.HousingModule
             return AddNewHouseResponse.HouseCreated;
         }
 
-        public async Task<AddNewHouseResponse> AddNewHotel(Position position, int pricePerRoom, int rooms, int interiorId)
+        public async Task<AddNewHouseResponse> AddNewHotelAsync(Position position, int pricePerRoom, int rooms, int interiorId)
         {
             if (interiorId <= 0) return AddNewHouseResponse.WrongInteriorId;
             if (_interiorsManager.TryGetInterior(interiorId, out var interior))
@@ -80,12 +80,12 @@ namespace AltVStrefaRPServer.Modules.HousingModule
                 interior.Flats.Add(hotelRoom);
             }
 
-            await _houseDatabaseService.AddNewHouseAsync(newHotel);
+            await _houseDatabaseService.AddNewHouseAsync(newHotel); // Don't know if it will work
             newHotel.InitializeHouse();
             _housesBuildings.Add(newHotel.Id, newHotel);
             
             _logger.LogInformation("Created new hotel ID({houseId}) at position {position} with {hotelRooms} rooms, price per room {housePrice} and interior {interiorName}", 
-                newHouse.Id, position, rooms, price, interior.Name);
+                newHotel.Id, position, rooms, pricePerRoom, interior.Name);
             return AddNewHouseResponse.HouseCreated;
         }
         
