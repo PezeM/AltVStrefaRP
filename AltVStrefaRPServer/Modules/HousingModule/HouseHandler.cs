@@ -38,6 +38,10 @@ namespace AltVStrefaRPServer.Modules.HousingModule
             Alt.On<IStrefaPlayer>("TryLeaveHouse", TryLeaveHouse);
             Alt.On<IStrefaPlayer>("TryToggleHouseLock", TryToggleHouseLock);            
             Alt.On<IStrefaPlayer, int>("TryToggleHouseLock", TryToggleRoomHouseLock);
+            Alt.On<IStrefaPlayer>("TryOpenHouseDoor", TryOpenHouseDoor);
+            Alt.On<IStrefaPlayer, int>("TryOpenHouseDoor", TryOpenHouseDoor);
+            Alt.On<IStrefaPlayer>("TryCloseHouseDoor", TryCloseHouseDoor);
+            Alt.On<IStrefaPlayer, int>("TryCloseHouseDoor", TryCloseHouseDoor);
             AltAsync.On<IStrefaPlayer, Task>("TryBuyHouse", TryBuyHouseAsync);
             AltAsync.On<IStrefaPlayer, int, Task>("TryRentHotelRoom", TryRentHotelRoom);
             AltAsync.On<IStrefaPlayer, int, int, Task>("TryToCreateNewHouse", TryToCreateNewHouseAsync);
@@ -169,7 +173,27 @@ namespace AltVStrefaRPServer.Modules.HousingModule
             flat.ToggleLock();
             player.Emit("successfullyToggledHouseLock", flat.IsLocked); // Play some sound and show notification
         }
-        
+
+        private void TryCloseHouseDoor(IStrefaPlayer arg1, int arg2)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void TryCloseHouseDoor(IStrefaPlayer obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void TryOpenHouseDoor(IStrefaPlayer arg1, int arg2)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void TryOpenHouseDoor(IStrefaPlayer obj)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task TryBuyHouseAsync(IStrefaPlayer player)
         {
             if (player.HouseEnterColshape == 0) return;
@@ -226,7 +250,37 @@ namespace AltVStrefaRPServer.Modules.HousingModule
                     break;
                 case AddNewHouseResponse.HouseCreated:
                     _notificationService.ShowErrorNotificationLocked(player, "Stworzono mieszkanie",
-                        $"Stworzono mieszkanie z cena {price} i interiorem ID({interiorId})", 3500);
+                        $"Stworzono mieszkanie z cena {price}$ i interiorem ID({interiorId})", 3500);
+                    break;
+            }
+        }
+
+        public async Task TryToCreateNewHotelAsync(IStrefaPlayer player, int price, int interiorId, int maxRooms)
+        {
+            if (!player.TryGetCharacter(out var character)) return;
+            if (character.Account.AdminLevel < AdminLevel.Admin)
+            {
+                _notificationService.ShowErrorNotificationLocked(player, "Brak uprawnień", "Nie posiadasz odpowiednich uprawnień do wykonania tej akcji");
+                return;
+            }
+
+            var result = await _housesManager.AddNewHotelAsync(player.Position, price, maxRooms, interiorId);
+            switch (result)
+            {
+                case AddNewHouseResponse.WrongInteriorId:
+                    _notificationService.ShowErrorNotificationLocked(player, "Błąd", "Podano złe id interioru", 3500);
+                    break;
+                case AddNewHouseResponse.InteriorNotFound:
+                    _notificationService.ShowErrorNotificationLocked(player, "Błąd",
+                        "Nie znaleziono interioru z podanym id", 3500);
+                    break;
+                case AddNewHouseResponse.CantCreateHouse:
+                    _notificationService.ShowErrorNotificationLocked(player, "Błąd",
+                        "Nie udało się tworzenie nowego mieszkania", 3500);
+                    break;
+                case AddNewHouseResponse.HouseCreated:
+                    _notificationService.ShowErrorNotificationLocked(player, "Stworzono hotel",
+                        $"Stworzono hotel z cena {price}$, interiorem ID({interiorId}) i {maxRooms} pokojami", 3500);
                     break;
             }
         }

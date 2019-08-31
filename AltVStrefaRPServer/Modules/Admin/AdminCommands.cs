@@ -113,7 +113,8 @@ namespace AltVStrefaRPServer.Modules.Admin
             _chatHandler.RegisterCommand("lookupInventory", LookupInventory);
             _chatHandler.RegisterCommand("testSave", TestSave);
             _chatHandler.RegisterCommand("createNewHouse", async (player, args) => await CreateNewHouseAsync(player, args));
-;        }
+            _chatHandler.RegisterCommand("createNewHotel", async (player, args) => await CreateNewHotelAsync(player, args));
+            ;        }
         
         private void TestSave(IPlayer player, string[] args)
         {
@@ -529,12 +530,23 @@ namespace AltVStrefaRPServer.Modules.Admin
         
         private async Task CreateNewHouseAsync(IPlayer player, string[] args)
         {
-            if (!(player is StrefaPlayer strefaPlayer)) return;
+            if (!(player is IStrefaPlayer strefaPlayer)) return;
             if (args == null || args.Length < 2) return;
             if (!int.TryParse(args[0], out int housePrice)) return;
             if (!int.TryParse(args[1], out int houseInterior)) return;
             
             await _houseHandler.TryToCreateNewHouseAsync(strefaPlayer, housePrice, houseInterior);
+        }
+
+        private async Task CreateNewHotelAsync(IPlayer player, string[] args)
+        {
+            if (!(player is IStrefaPlayer strefaPlayer)) return;
+            if (args == null || args.Length < 3) return;
+            if (!int.TryParse(args[0], out int hotelRoomPrice)) return;
+            if (!int.TryParse(args[1], out int interiorId)) return;
+            if (!int.TryParse(args[2], out int hotelMaxRooms)) return;
+
+            await _houseHandler.TryToCreateNewHotelAsync(strefaPlayer, hotelRoomPrice, interiorId, hotelMaxRooms);
         }
     }
 }
