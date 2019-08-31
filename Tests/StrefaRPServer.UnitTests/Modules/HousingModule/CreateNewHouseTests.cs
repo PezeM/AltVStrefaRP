@@ -17,7 +17,7 @@ namespace StrefaRPServer.UnitTests.Modules.HousingModule
         private int _interiorId = 2;
         private Mock<IInteriorsManager> _interiorsManagerMock;
         private Mock<IInterior> _interiorMock;
-        private IInterior _interior;
+        private Interior _interior;
         private HousesManager _housesManager;
         private HouseDatabaseService _houseDatabaseService;
         private HouseFactoryService _houseFactoryService;
@@ -29,9 +29,8 @@ namespace StrefaRPServer.UnitTests.Modules.HousingModule
             _interiorsManagerMock = new Mock<IInteriorsManager>();
             _houseFactoryService = new HouseFactoryService();
             _interiorMock = new Mock<IInterior>();
-            var co = _interiorMock.Object;
             
-            _interiorsManagerMock.Setup(i => i.TryGetInterior(_interiorId, out co)).Returns(true);
+            _interiorsManagerMock.Setup(i => i.TryGetInterior(_interiorId, out _interior)).Returns(true);
         }
 
         [SetUp]

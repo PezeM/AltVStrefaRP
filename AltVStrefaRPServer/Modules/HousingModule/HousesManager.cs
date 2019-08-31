@@ -93,12 +93,28 @@ namespace AltVStrefaRPServer.Modules.HousingModule
         private void InitializeHouses()
         {
             var startTime = Time.GetTimestampMs();
+            LoadHouses();
+            LoadHotels();
+            _logger.LogInformation("Loaded {housesCount} house buildings from database in {elapsedTime}ms", 
+                _housesBuildings.Count, Time.GetElapsedTime(startTime));
+        }
+
+        private void LoadHouses()
+        {
             foreach (var house in _houseDatabaseService.GetAllHouses())
             {
                 _housesBuildings.Add(house.Id, house);
                 house.InitializeHouse();
             }
-            _logger.LogInformation("Loaded {housesCount} houses from database in {elapsedTime}ms", _housesBuildings.Count, Time.GetElapsedTime(startTime));
+        }
+
+        private void LoadHotels()
+        {
+            foreach (var house in _houseDatabaseService.GetAllHotels())
+            {
+                _housesBuildings.Add(house.Id, house);
+                house.InitializeHouse();
+            }
         }
     }
 }
