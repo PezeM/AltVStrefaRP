@@ -39,9 +39,10 @@ namespace AltVStrefaRPServer.Modules.HousingModule
             Alt.On<IStrefaPlayer>("TryToggleHouseLock", TryToggleHouseLock);            
             Alt.On<IStrefaPlayer, int>("TryToggleHouseLock", TryToggleRoomHouseLock);
             AltAsync.On<IStrefaPlayer, Task>("TryBuyHouse", TryBuyHouseAsync);
+            AltAsync.On<IStrefaPlayer, int, Task>("TryRentHotelRoom", TryRentHotelRoom);
             AltAsync.On<IStrefaPlayer, int, int, Task>("TryToCreateNewHouse", TryToCreateNewHouseAsync);
         }
-        
+
         private void AltOnOnColShape(IColShape colshape, IEntity entity, bool entered)
         {
             if (!(entity is IStrefaPlayer player)) return;
@@ -50,7 +51,10 @@ namespace AltVStrefaRPServer.Modules.HousingModule
 
             player.HouseEnterColshape = entered ? strefaColshape.HouseId : 0;
             player.Emit("inHouseEnterColshape", entered);
-            _logger.LogDebug("Player interacted with house colshape with ID {houseColshapeId}", strefaColshape.HouseId);
+            _logger.LogDebug(
+                entered
+                    ? "Player entered house colshape with ID {houseColshapeId}"
+                    : "Player left house colshape with ID {houseColshapeId}", strefaColshape.HouseId);
         }
         
         private void HouseEnterInteractionMenu(IStrefaPlayer player)
@@ -190,7 +194,13 @@ namespace AltVStrefaRPServer.Modules.HousingModule
                     break;
             }
         }
-        
+
+        private Task TryRentHotelRoom(IStrefaPlayer arg1, int arg2)
+        {
+            throw new NotImplementedException();
+        }
+
+
         public async Task TryToCreateNewHouseAsync(IStrefaPlayer player, int price, int interiorId)
         {
             if (!player.TryGetCharacter(out var character)) return;
