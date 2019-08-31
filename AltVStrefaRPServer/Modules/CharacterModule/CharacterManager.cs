@@ -93,7 +93,7 @@ namespace AltVStrefaRPServer.Modules.CharacterModule
 
         private void EquipItems(Character character)
         {
-            foreach (InventoryItem item in character.Equipment.Items)
+            foreach (var item in character.Equipment.Items)
             {
                 item.Item.UseItem(character);
             }

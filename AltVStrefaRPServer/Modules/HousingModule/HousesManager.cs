@@ -57,7 +57,8 @@ namespace AltVStrefaRPServer.Modules.HousingModule
 
             var newHouse = _houseFactoryService.CreateNewHouse(position, price);
             interior.Flats.Add(newHouse.Flat);
-            await _houseDatabaseService.AddNewHouseAsync(newHouse); // Don't know if it will work like that
+            newHouse.Flat.Interior = interior;
+            await _houseDatabaseService.UpdateHouseAsync(newHouse); // Don't know if it will work like that
             newHouse.InitializeHouse();
             _housesBuildings.Add(newHouse.Id, newHouse);
             
@@ -80,7 +81,7 @@ namespace AltVStrefaRPServer.Modules.HousingModule
                 interior.Flats.Add(hotelRoom);
             }
 
-            await _houseDatabaseService.AddNewHouseAsync(newHotel); // Don't know if it will work
+            await _houseDatabaseService.UpdateHouseAsync(newHotel); // Don't know if it will work
             newHotel.InitializeHouse();
             _housesBuildings.Add(newHotel.Id, newHotel);
             

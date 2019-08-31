@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models.Houses;
+using Microsoft.EntityFrameworkCore;
 
 namespace AltVStrefaRPServer.Services.Housing
 {
@@ -16,7 +17,7 @@ namespace AltVStrefaRPServer.Services.Housing
             _factory = factory;
         }
 
-        public IEnumerable<HouseBuilding> GetAllHouses()
+        public IEnumerable<HouseBuilding> GetAllHouseBuildings()
         {
             using (var context = _factory.Invoke())
             {
@@ -24,7 +25,29 @@ namespace AltVStrefaRPServer.Services.Housing
             }
         }
 
-        public async Task<HouseBuilding> GetHouseAsync(int houseId)
+        public IEnumerable<Hotel> GetAllHotels()
+        {
+            using (var context = _factory.Invoke())
+            {
+                return context.Hotels
+                    .Include(h => h.HotelRooms)
+                        .ThenInclude(hr => hr.Interior)
+                    .ToList();
+            }
+        }
+
+        public IEnumerable<House> GetAllHouses()
+        {
+            using (var context = _factory.Invoke())
+            {
+                return context.Houses
+                    .Include(h => h.Flat)
+                    .ThenInclude(f => f.Interior)
+                    .ToList();
+            }
+        }
+
+        public async Task<HouseBuilding> GetHouseBuildingAsync(int houseId)
         {
             using (var context = _factory.Invoke())
             {
@@ -32,11 +55,33 @@ namespace AltVStrefaRPServer.Services.Housing
             }
         }
 
-        public HouseBuilding GetHouse(int houseId)
+        public HouseBuilding GetHouseBuilding(int houseId)
         {
             using (var context = _factory.Invoke())
             {
                 return context.HouseBuildings.Find(houseId);
+            }
+        }
+
+        public House GetHouse(int houseId)
+        {
+            using (var context = _factory.Invoke())
+            {
+                return context.Houses
+                    .Include(h => h.Flat)
+                        .ThenInclude(f => f.Interior)
+                    .FirstOrDefault(q => q.Id == houseId);
+            }
+        }
+
+        public async Task<House> GetHouseAsync(int houseId)
+        {
+            using (var context = _factory.Invoke())
+            {
+                return await context.Houses
+                    .Include(h => h.Flat)
+                    .ThenInclude(f => f.Interior)
+                    .FirstOrDefaultAsync(q => q.Id == houseId);
             }
         }
 
@@ -54,6 +99,24 @@ namespace AltVStrefaRPServer.Services.Housing
             using (var context = _factory.Invoke())
             { 
                 context.HouseBuildings.Update(oldHouse);
+                await context.SaveChangesAsync();
+            }
+        }
+
+        public async Task UpdateHouseAsync(House house)
+        {
+            using (var context = _factory.Invoke())
+            {
+                context.Houses.Update(house);
+                await context.SaveChangesAsync();
+            }
+        }
+
+        public async Task UpdateHotelAsync(Hotel hotel)
+        {
+            using (var context = _factory.Invoke())
+            {
+                context.Hotels.Update(hotel);
                 await context.SaveChangesAsync();
             }
         }

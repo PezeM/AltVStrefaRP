@@ -12,6 +12,7 @@ using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Models.Inventory.Items.Keys;
 using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Housing;
+using Microsoft.Extensions.Logging;
 
 namespace AltVStrefaRPServer.Modules.HousingModule
 {
@@ -20,12 +21,15 @@ namespace AltVStrefaRPServer.Modules.HousingModule
         private readonly INotificationService _notificationService;
         private readonly IHousesManager _housesManager;
         private readonly IBuyHouseService _buyHouseService;
+        private readonly ILogger<HouseHandler> _logger;
 
-        public HouseHandler(INotificationService notificationService, IHousesManager housesManager, IBuyHouseService buyHouseService)
+        public HouseHandler(INotificationService notificationService, IHousesManager housesManager, IBuyHouseService buyHouseService, 
+            ILogger<HouseHandler> logger)
         {
             _notificationService = notificationService;
             _housesManager = housesManager;
             _buyHouseService = buyHouseService;
+            _logger = logger;
             Alt.OnColShape += AltOnOnColShape;
             
             Alt.On<IStrefaPlayer>("HouseEnterInteractionMenu", HouseEnterInteractionMenu);
@@ -46,6 +50,7 @@ namespace AltVStrefaRPServer.Modules.HousingModule
 
             player.HouseEnterColshape = entered ? strefaColshape.HouseId : 0;
             player.Emit("inHouseEnterColshape", entered);
+            _logger.LogDebug("Player interacted with house colshape with ID {houseColshapeId}", strefaColshape.HouseId);
         }
         
         private void HouseEnterInteractionMenu(IStrefaPlayer player)

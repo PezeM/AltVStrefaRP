@@ -1,5 +1,4 @@
 ﻿using AltVStrefaRPServer.Helpers;
-using AltVStrefaRPServer.Models.Inventory;
 
 namespace AltVStrefaRPServer.Models.Houses
 {

@@ -70,7 +70,7 @@ namespace AltVStrefaRPServer.Services.Characters
             using (var context = _factory.Invoke())
             {
                 return await context.Characters
-                    .Include(c => c.BankAccount)
+                    .Include(c => c.BankAccount)    
                     .Include(c => c.Account)
                     .Include(c => c.Inventory)
                         .ThenInclude(i => i.Items)
@@ -78,6 +78,8 @@ namespace AltVStrefaRPServer.Services.Characters
                     .Include(c => c.Equipment)
                         .ThenInclude(i => i.Items)
                             .ThenInclude(i => i.Item)
+                    .Include(c => c.Flats)
+                        .ThenInclude(f => f.HouseBuilding)
                     .FirstOrDefaultAsync(c => c.Id == characterId);
             }
         }

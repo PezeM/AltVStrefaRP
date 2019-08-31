@@ -183,6 +183,12 @@ namespace AltVStrefaRPServer
                     SpawnVehicleComand(id);
                     break;
                 }
+                case "reload":
+                {
+                    Alt.Server.Resource.Reload();
+                    Alt.Log("Reloaded resource");
+                    break;
+                }
             }
             stopwatch.Stop();
             Alt.Log($"Executed console command in {stopwatch.Elapsed}");

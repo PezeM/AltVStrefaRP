@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models.Houses;
+using Microsoft.EntityFrameworkCore;
 
 namespace AltVStrefaRPServer.Services.Housing
 {
@@ -22,6 +23,8 @@ namespace AltVStrefaRPServer.Services.Housing
             {
                 return context
                     .Interiors
+                    .Include(i => i.Flats)
+                    .ThenInclude(f => f.HouseBuilding)
                     .ToList();
             }
         }
