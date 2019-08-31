@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
     <SignAssembly>false</SignAssembly>
     <Configurations>Debug;Release</Configurations>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
@@ -10,7 +10,7 @@
     <RootNamespace>AltVStrefaRPServer</RootNamespace>
     <Version>0.0.1</Version>
     <ApplicationIcon />
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <StartupObject />
     <Authors>PezeM</Authors>
     <Company>StrefaRp</Company>
@@ -30,9 +30,9 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="AltV.Net" Version="1.12.3-beta" />
-    <PackageReference Include="AltV.Net.Async" Version="1.12.3-beta" />
-    <PackageReference Include="AltV.Net.NetworkingEntity" Version="1.2.4-dev-preview" />
+    <PackageReference Include="AltV.Net" Version="1.13.1-alpha" />
+    <PackageReference Include="AltV.Net.Async" Version="1.13.1" />
+    <PackageReference Include="AltV.Net.NetworkingEntity" Version="1.3.1-dev-preview" />
     <PackageReference Include="EFCore.DbContextFactory" Version="1.0.2" />
     <PackageReference Include="MessagePack" Version="2.0.123-beta" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.6" />
@@ -41,7 +41,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3-beta1" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.2.1-preview1-final" />
-    <PackageReference Include="Serilog" Version="2.9.0-dev-01119" />
+    <PackageReference Include="Serilog" Version="2.9.0-dev-01124" />
     <PackageReference Include="Serilog.Enrichers.Thread" Version="3.1.1-dev-00745" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
     <PackageReference Include="Serilog.Sinks.Console" Version="3.1.2-dev-00823" />

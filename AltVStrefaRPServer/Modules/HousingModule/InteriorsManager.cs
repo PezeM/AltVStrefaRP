@@ -15,14 +15,14 @@ namespace AltVStrefaRPServer.Modules.HousingModule
 {
     public class InteriorsManager : IInteriorsManager
     {
-        private Dictionary<int, Interior> _interiors;
+        private readonly Dictionary<int, IInterior> _interiors;
         private readonly ILogger<InteriorsManager> _logger;
         private readonly IInteriorDatabaseService _interiorDatabaseService;
         private readonly IInteriorsFactoryService _interiorsFactoryService;
 
         public InteriorsManager(IInteriorDatabaseService interiorDatabaseService, IInteriorsFactoryService interiorsFactoryService, ILogger<InteriorsManager> logger)
         {
-            _interiors = new Dictionary<int, Interior>();
+            _interiors = new Dictionary<int, IInterior>();
             _interiorDatabaseService = interiorDatabaseService;
             _interiorsFactoryService = interiorsFactoryService;
             _logger = logger;
@@ -31,9 +31,9 @@ namespace AltVStrefaRPServer.Modules.HousingModule
             CreateDefaultInteriors();
         }
         
-        public bool TryGetInterior(int interiorId, out Interior interior) => _interiors.TryGetValue(interiorId, out interior);
+        public bool TryGetInterior(int interiorId, out IInterior interior) => _interiors.TryGetValue(interiorId, out interior);
 
-        public Interior GetInterior(int interiorId) =>
+        public IInterior GetInterior(int interiorId) =>
             _interiors.ContainsKey(interiorId) ? _interiors[interiorId] : null;
 
         public async Task<AddNewInteriorResponse> AddNewInteriorAsync(Position position, string name)
