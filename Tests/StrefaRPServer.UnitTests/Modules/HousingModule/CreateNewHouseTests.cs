@@ -50,5 +50,13 @@ namespace StrefaRPServer.UnitTests.Modules.HousingModule
             
             Assert.That(response, Is.EqualTo(AddNewHouseResponse.WrongInteriorId));
         }
+
+        [Test]
+        public async Task CantCreateHouseWithWrongInteriorIdAsync()
+        {
+            var response = await _housesManager.AddNewHouseAsync(_testPosition, 10, _interiorId - 1);
+            
+            Assert.That(response, Is.EqualTo(AddNewHouseResponse.InteriorNotFound));
+        }
     }
 }

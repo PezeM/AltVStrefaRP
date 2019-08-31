@@ -7,21 +7,17 @@ namespace AltVStrefaRPServer.Services.Housing.Factories
     {
         public Flat CreateNewFlat()
         {
-            var flat = new Flat
-            {
-                IsLocked = true,
-            };
-            
+            var flat = new Flat();
+
             flat.CreateLockPattern();
-            return new Flat();
+            return flat;
         }
 
-        public HotelRoom CreateNewHouseRoom(int roomNumber)
+        public HotelRoom CreateNewHotelRoom(int roomNumber)
         {
             return new HotelRoom
             {
 //                Interior = interior,
-                IsLocked = true,
                 HotelRoomNumber = roomNumber
             };
         }
