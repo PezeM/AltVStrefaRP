@@ -4,11 +4,12 @@ using AltVStrefaRPServer.Models.Houses;
 
 namespace AltVStrefaRPServer.Models.Interfaces.Managers
 {
-    public interface IHousesManager : IManager<OldHouse>
+    public interface IHousesManager : IManager<HouseBuilding>
     {
-        bool TryGetHouse(int houseId, out OldHouse oldHouse);
+        bool TryGetHouse(int houseId, out HouseBuilding oldHouse);
         bool CheckIfHouseExists(int houseId);
-        OldHouse GetHouse(int houseId);
+        HouseBuilding GetHouse(int houseId);
+        HotelRoom GetHotelRoom(int hotelRoom);
         Task<AddNewHouseResponse> AddNewHouseAsync(Position position, int price, int interiorId);
     }
 }

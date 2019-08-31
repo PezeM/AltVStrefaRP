@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AltV.Net.Data;
 using AltVStrefaRPServer.Helpers;
@@ -12,7 +13,7 @@ namespace AltVStrefaRPServer.Modules.HousingModule
 {
     public class HousesManager : IHousesManager
     {
-        private readonly Dictionary<int, OldHouse> _houses;
+        private readonly Dictionary<int, HouseBuilding> _housesBuildings;
         private readonly IHouseDatabaseService _houseDatabaseService;
         private readonly ILogger<HousesManager> _logger;
         private readonly IInteriorsManager _interiorsManager;
@@ -20,7 +21,7 @@ namespace AltVStrefaRPServer.Modules.HousingModule
 
         public HousesManager(IHouseDatabaseService houseDatabaseService, IHouseFactoryService houseFactoryService, IInteriorsManager interiorsManager, ILogger<HousesManager> logger)
         {
-            _houses = new Dictionary<int, OldHouse>();
+            _housesBuildings = new Dictionary<int, HouseBuilding>();
             _houseDatabaseService = houseDatabaseService;
             _houseFactoryService = houseFactoryService;
             _interiorsManager = interiorsManager;
@@ -29,12 +30,25 @@ namespace AltVStrefaRPServer.Modules.HousingModule
             InitializeHouses();
         }
 
-        public bool TryGetHouse(int houseId, out OldHouse oldHouse) => _houses.TryGetValue(houseId, out oldHouse);
+        public bool TryGetHouse(int houseId, out HouseBuilding oldHouse) => _housesBuildings.TryGetValue(houseId, out oldHouse);
 
-        public bool CheckIfHouseExists(int houseId) => _houses.ContainsKey(houseId);
+        public bool CheckIfHouseExists(int houseId) => _housesBuildings.ContainsKey(houseId);
 
-        public OldHouse GetHouse(int houseId) => CheckIfHouseExists(houseId) ? _houses[houseId] : null;
+        public HouseBuilding GetHouse(int houseId) => CheckIfHouseExists(houseId) ? _housesBuildings[houseId] : null;
 
+        public HotelRoom GetHotelRoom(int hotelRoom)
+        {
+            foreach (var housesBuilding in _housesBuildings)
+            {
+                if (housesBuilding.Value is Hotel hotel)
+                {
+                    return hotel.HotelRooms.FirstOrDefault(h => h.HotelRoomNumber == hotelRoom);
+                }
+            }
+
+            return null;
+        }
+        
         public async Task<AddNewHouseResponse> AddNewHouseAsync(Position position, int price, int interiorId)
         {
             if (interiorId <= 0) return AddNewHouseResponse.WrongInteriorId;
@@ -42,12 +56,36 @@ namespace AltVStrefaRPServer.Modules.HousingModule
                 return AddNewHouseResponse.InteriorNotFound;
 
             var newHouse = _houseFactoryService.CreateNewHouse(position, price);
-//            interior.Houses.Add(newHouse);
+            interior.Flats.Add(newHouse.Flat);
             await _houseDatabaseService.AddNewHouseAsync(newHouse); // Don't know if it will work like that
             newHouse.InitializeHouse();
-            _houses.Add(newHouse.Id, newHouse);
+            _housesBuildings.Add(newHouse.Id, newHouse);
             
-            _logger.LogInformation("Created new house ID({houseId}) at position {position} with price {housePrice} and interior {interiorName}", newHouse.Id, position, price, interior.Name);
+            _logger.LogInformation("Created new house ID({houseId}) at position {position} with price {housePrice} and interior {interiorName}", 
+                newHouse.Id, position, price, interior.Name);
+            return AddNewHouseResponse.HouseCreated;
+        }
+
+        public async Task<AddNewHouseResponse> AddNewHotel(Position position, int pricePerRoom, int rooms, int interiorId)
+        {
+            if (interiorId <= 0) return AddNewHouseResponse.WrongInteriorId;
+            if (_interiorsManager.TryGetInterior(interiorId, out var interior))
+                return AddNewHouseResponse.InteriorNotFound;
+
+            var newHotel = _houseFactoryService.CreateNewHotel(position, pricePerRoom, rooms);
+            for (var i = 0; i < rooms; i++)
+            {
+                var hotelRoom = _houseFactoryService.CreateNewHouseRoom(i + 1);
+                newHotel.HotelRooms.Add(hotelRoom);
+                interior.Flats.Add(hotelRoom);
+            }
+
+            await _houseDatabaseService.AddNewHouseAsync(newHotel);
+            newHotel.InitializeHouse();
+            _housesBuildings.Add(newHotel.Id, newHotel);
+            
+            _logger.LogInformation("Created new hotel ID({houseId}) at position {position} with {hotelRooms} rooms, price per room {housePrice} and interior {interiorName}", 
+                newHouse.Id, position, rooms, price, interior.Name);
             return AddNewHouseResponse.HouseCreated;
         }
         
@@ -56,10 +94,10 @@ namespace AltVStrefaRPServer.Modules.HousingModule
             var startTime = Time.GetTimestampMs();
             foreach (var house in _houseDatabaseService.GetAllHouses())
             {
-                _houses.Add(house.Id, house);
+                _housesBuildings.Add(house.Id, house);
                 house.InitializeHouse();
             }
-            _logger.LogInformation("Loaded {housesCount} houses from database in {elapsedTime}ms", _houses.Count, Time.GetElapsedTime(startTime));
+            _logger.LogInformation("Loaded {housesCount} houses from database in {elapsedTime}ms", _housesBuildings.Count, Time.GetElapsedTime(startTime));
         }
     }
 }

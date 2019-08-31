@@ -10,10 +10,10 @@ namespace AltVStrefaRPServer.Models.Houses
         public int? OwnerId { get; private set; }
         // public InventoryContainer InventoryContainer { get; set; }
 
-        public Interior Interior { get; private set; }
+        public Interior Interior { get; set; }
         public int InteriorId { get; private set; }
         public string LockPattern { get; private set; }
-        public bool IsLocked { get; private set; }
+        public bool IsLocked { get; set; } = true;
         
         public HouseBuilding HouseBuilding { get; set; }
         public int HouseBuildingId { get; set; }

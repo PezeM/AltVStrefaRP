@@ -5,6 +5,9 @@ namespace AltVStrefaRPServer.Services.Housing.Factories
 {
     public interface IHouseFactoryService
     {
-        OldHouse CreateNewHouse(Position position, int price);
+        Flat CreateNewFlat();
+        HotelRoom CreateNewHouseRoom(int roomNumber);
+        House CreateNewHouse(Position position, int price);
+        Hotel CreateNewHotel(Position position, int price, int maxRooms);
     }
 }

@@ -26,7 +26,7 @@ namespace AltVStrefaRPServer.Models.Houses
         /// <summary>
         /// Collection of flats using this interior
         /// </summary>
-        public ICollection<Flat> Flats { get; set; }
+        public ICollection<Flat> Flats { get; private set; }
         
         public IColShape Colshape { get; set; }
 
