@@ -36,8 +36,6 @@ namespace AltVStrefaRPServer.Modules.HousingModule
             Alt.On<IStrefaPlayer>("TryEnterHouse", TryEnterHouse);
             Alt.On<IStrefaPlayer, int>("TryEnterHouse", TryEnterHotelRoom);
             Alt.On<IStrefaPlayer>("TryLeaveHouse", TryLeaveHouse);
-            Alt.On<IStrefaPlayer>("TryToggleHouseLock", TryToggleHouseLock);            
-            Alt.On<IStrefaPlayer, int>("TryToggleHouseLock", TryToggleRoomHouseLock);
             Alt.On<IStrefaPlayer>("TryOpenHouseDoor", TryOpenHouseDoor);
             Alt.On<IStrefaPlayer, int>("TryOpenHouseDoor", TryOpenHouseDoor);
             Alt.On<IStrefaPlayer>("TryCloseHouseDoor", TryCloseHouseDoor);
@@ -119,10 +117,10 @@ namespace AltVStrefaRPServer.Modules.HousingModule
         {
             player.EnteredFlat?.MovePlayerOutside(player);            
         }
-        
-        private void TryToggleHouseLock(IStrefaPlayer player)
+
+        private void TryCloseHouseDoor(IStrefaPlayer player)
         {
-            if (!player.TryGetCharacter(out var charatcer)) return;
+            if (!player.TryGetCharacter(out var character)) return;
             Flat flat;
             if (player.EnteredFlat != null) flat = player.EnteredFlat;
             else
@@ -131,30 +129,32 @@ namespace AltVStrefaRPServer.Modules.HousingModule
                 if (!(houseBuilding is House house)) return;
                 flat = house.Flat;
             }
-            
-            ToggleHouseLock(player, charatcer, flat);
+
+            if (!flat.IsLocked) return;
+            CloseHouseDoor(player, character, flat);
         }
 
-        
-        private void TryToggleRoomHouseLock(IStrefaPlayer player, int hotelRoomNumber)
+        private void TryCloseHouseDoor(IStrefaPlayer player, int hotelRoomNumber)
         {
-            if (!player.TryGetCharacter(out var charatcer)) return;
+            if (!player.TryGetCharacter(out var character)) return;
             Flat flat;
             if (player.EnteredFlat != null) flat = player.EnteredFlat;
             else
             {
-                if(_housesManager.TryGetHouseBuilding(player.HouseEnterColshape, out var houseBuilding)) return;
+                if (_housesManager.TryGetHouseBuilding(player.HouseEnterColshape, out var houseBuilding)) return;
                 if (!(houseBuilding is Hotel hotel)) return;
                 if (hotel.TryGetHotelRoom(hotelRoomNumber, out var hotelRoom)) return;
                 flat = hotelRoom;
             }
 
-            ToggleHouseLock(player, charatcer, flat);
+            if (!flat.IsLocked) return;
+
+            CloseHouseDoor(player, character, flat);
         }
-        
-        private void ToggleHouseLock(IPlayer player, Character charatcer, Flat flat)
+
+        private void CloseHouseDoor(IPlayer player, Character character, Flat flat)
         {
-            var keys = charatcer.Inventory.GetItems<HouseKeyItem>();
+            var keys = character.Inventory.GetItems<HouseKeyItem>();
             if (keys == null)
             {
                 _notificationService.ShowErrorNotification(player, "Brak kluczy", "Nie posiadasz przy sobie żadnych kluczy",
@@ -170,28 +170,65 @@ namespace AltVStrefaRPServer.Modules.HousingModule
                 return;
             }
 
-            flat.ToggleLock();
+            flat.IsLocked = false;
+            player.Emit("successfullyToggledHouseLock", flat.IsLocked); // Play some sound and show notificati
+        }
+
+        private void TryOpenHouseDoor(IStrefaPlayer player)
+        {
+            if (!player.TryGetCharacter(out var character)) return;
+            Flat flat;
+            if (player.EnteredFlat != null) flat = player.EnteredFlat;
+            else
+            {
+                if (!_housesManager.TryGetHouseBuilding(player.HouseEnterColshape, out var houseBuilding)) return;
+                if (!(houseBuilding is House house)) return;
+                flat = house.Flat;
+            }
+
+            if (!flat.IsLocked) return;
+
+            OpenHouseDoor(player, character, flat);
+        }
+
+        private void TryOpenHouseDoor(IStrefaPlayer player, int hotelRoomNumber)
+        {
+            if (!player.TryGetCharacter(out var character)) return;
+            Flat flat;
+            if (player.EnteredFlat != null) flat = player.EnteredFlat;
+            else
+            {
+                if (_housesManager.TryGetHouseBuilding(player.HouseEnterColshape, out var houseBuilding)) return;
+                if (!(houseBuilding is Hotel hotel)) return;
+                if (hotel.TryGetHotelRoom(hotelRoomNumber, out var hotelRoom)) return;
+                flat = hotelRoom;
+            }
+
+            if (!flat.IsLocked) return;
+
+            OpenHouseDoor(player, character, flat);
+        }
+
+        private void OpenHouseDoor(IPlayer player, Character character, Flat flat)
+        {
+            var keys = character.Inventory.GetItems<HouseKeyItem>();
+            if (keys == null)
+            {
+                _notificationService.ShowErrorNotification(player, "Brak kluczy", "Nie posiadasz przy sobie żadnych kluczy",
+                    3500);
+                return;
+            }
+
+            var correctKeys = keys.FirstOrDefault(k => k.LockPattern == flat.LockPattern);
+            if (correctKeys == null)
+            {
+                _notificationService.ShowErrorNotification(player, "Brak kluczy", "Nie posiadasz kluczy do tego mieszkania",
+                    3500);
+                return;
+            }
+
+            flat.IsLocked = true;
             player.Emit("successfullyToggledHouseLock", flat.IsLocked); // Play some sound and show notification
-        }
-
-        private void TryCloseHouseDoor(IStrefaPlayer arg1, int arg2)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void TryCloseHouseDoor(IStrefaPlayer obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void TryOpenHouseDoor(IStrefaPlayer arg1, int arg2)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void TryOpenHouseDoor(IStrefaPlayer obj)
-        {
-            throw new NotImplementedException();
         }
 
         public async Task TryBuyHouseAsync(IStrefaPlayer player)
