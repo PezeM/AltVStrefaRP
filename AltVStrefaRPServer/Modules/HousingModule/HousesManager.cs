@@ -30,7 +30,7 @@ namespace AltVStrefaRPServer.Modules.HousingModule
             InitializeHouses();
         }
 
-        public bool TryGetHouse(int houseId, out HouseBuilding oldHouse) => _housesBuildings.TryGetValue(houseId, out oldHouse);
+        public bool TryGetHouseBuilding(int houseId, out HouseBuilding oldHouse) => _housesBuildings.TryGetValue(houseId, out oldHouse);
 
         public bool CheckIfHouseExists(int houseId) => _housesBuildings.ContainsKey(houseId);
 

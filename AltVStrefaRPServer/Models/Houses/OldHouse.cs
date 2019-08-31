@@ -56,7 +56,7 @@ namespace AltVStrefaRPServer.Models.Houses
             if(Interior == null) return;
             player.Dimension = (short) Id;
             player.Position = Interior.GetPosition();
-            player.HouseId = Id;
+//            player.HouseId = Id;
         }
 
         public void MovePlayerOutside(IStrefaPlayer player)
@@ -64,7 +64,7 @@ namespace AltVStrefaRPServer.Models.Houses
             if (IsLocked) return;
             player.Dimension = 0;
             player.Position = GetPosition();
-            player.HouseId = 0;
+//            player.HouseId = 0;
         }
         
         public void ToggleLock()

@@ -30,12 +30,14 @@ namespace AltVStrefaRPServer.Modules.HousingModule
             
             Alt.On<IStrefaPlayer>("HouseEnterInteractionMenu", HouseEnterInteractionMenu);
             Alt.On<IStrefaPlayer>("TryEnterHouse", TryEnterHouse);
+            Alt.On<IStrefaPlayer, int>("TryEnterHouse", TryEnterHotelRoom);
             Alt.On<IStrefaPlayer>("TryLeaveHouse", TryLeaveHouse);
-            Alt.On<IStrefaPlayer>("TryToggleHouseLock", TryToggleHouseLock);
+            Alt.On<IStrefaPlayer>("TryToggleHouseLock", TryToggleHouseLock);            
+            Alt.On<IStrefaPlayer, int>("TryToggleHouseLock", TryToggleRoomHouseLock);
             AltAsync.On<IStrefaPlayer, Task>("TryBuyHouse", TryBuyHouseAsync);
             AltAsync.On<IStrefaPlayer, int, int, Task>("TryToCreateNewHouse", TryToCreateNewHouseAsync);
         }
-
+        
         private void AltOnOnColShape(IColShape colshape, IEntity entity, bool entered)
         {
             if (!(entity is IStrefaPlayer player)) return;
@@ -49,7 +51,7 @@ namespace AltVStrefaRPServer.Modules.HousingModule
         private void HouseEnterInteractionMenu(IStrefaPlayer player)
         {
             if (player.HouseEnterColshape == 0) return;
-            if (!_housesManager.TryGetHouse(player.HouseEnterColshape, out var house)) return;
+            if (!_housesManager.TryGetHouseBuilding(player.HouseEnterColshape, out var house)) return;
 
             player.Emit("showHouseEnterInteractionMenu", house);
         }
@@ -62,39 +64,61 @@ namespace AltVStrefaRPServer.Modules.HousingModule
                 return;
             }
 
-            if (!_housesManager.TryGetHouse(player.HouseEnterColshape, out var house))
+            if (!_housesManager.TryGetHouseBuilding(player.HouseEnterColshape, out var houseBuilding) || !(houseBuilding is House house))
+            {
+                _notificationService.ShowErrorNotification(player, "Błąd", "Nie istnieje takie mieszkanie", 3500);
+                return;
+            }
+            
+            if (!house.Flat.MovePlayerInside(player))
+            {
+                _notificationService.ShowErrorNotification(player, "Zamknięte", "Mieszkanie jest zamknięte", 2500);
+            }
+        }
+
+        private void TryEnterHotelRoom(IStrefaPlayer player, int hotelRoomNumber)
+        {
+            if(player.HouseEnterColshape == 0)
+            {
+                _notificationService.ShowErrorNotification(player, "Błąd", "Brak wejścia do mieszkania w pobliżu", 3500);
+                return;
+            }
+
+            if (!_housesManager.TryGetHouseBuilding(player.HouseEnterColshape, out var houseBuilding) || !(houseBuilding is Hotel hotel))
             {
                 _notificationService.ShowErrorNotification(player, "Błąd", "Nie istnieje takie mieszkanie", 3500);
                 return;
             }
 
-            if (house.IsLocked)
+            if (hotel.TryGetHotelRoom(hotelRoomNumber, out var hotelRoom))
             {
-                _notificationService.ShowErrorNotification(player, "Zamknięte", "Mieszkanie jest zamknięte", 2500);
+                _notificationService.ShowErrorNotification(player, "Brak pokoju", "Nie znaleziono takiego pokoju", 3000);
                 return;
             }
 
-            house.MovePlayerInside(player);
+            if (hotelRoom.MovePlayerInside(player))
+            {
+                _notificationService.ShowErrorNotification(player, "Zamknięte", "Mieszkanie jest zamknięte", 2500);
+            }
         }
-
+        
         private void TryLeaveHouse(IStrefaPlayer player)
         {
-            // Player is not inside house
-            if (player.HouseId == 0) return;
-            if (!_housesManager.TryGetHouse(player.HouseId, out var house)) return;
-            
-            house.MovePlayerOutside(player);
+            player.EnteredFlat?.MovePlayerOutside(player);            
         }
         
         private void TryToggleHouseLock(IStrefaPlayer player)
         {
             if (!player.TryGetCharacter(out var charatcer)) return;
-            var houseId = player.HouseId == 0
-                ? player.HouseEnterColshape == 0 ? 0 : player.HouseEnterColshape
-                : player.HouseId;
-            if (houseId == 0) return;
-            if (!_housesManager.TryGetHouse(player.HouseId, out var house)) return;
-
+            Flat flat;
+            if (player.EnteredFlat != null) flat = player.EnteredFlat;
+            else
+            {
+                if (!_housesManager.TryGetHouseBuilding(player.HouseEnterColshape, out var houseBuilding)) return;
+                if (!(houseBuilding is House house)) return;
+                flat = house.Flat;
+            }
+            
             var keys = charatcer.Inventory.GetItems<HouseKeyItem>();
             if (keys == null)
             {
@@ -102,21 +126,28 @@ namespace AltVStrefaRPServer.Modules.HousingModule
                 return;
             }
 
-            var correctKeys = keys.FirstOrDefault(k => k.LockPattern == house.LockPattern);
+            var correctKeys = keys.FirstOrDefault(k => k.LockPattern == flat.LockPattern);
             if (correctKeys == null)
             {
                 _notificationService.ShowErrorNotification(player, "Brak kluczy", "Nie posiadasz kluczy do tego mieszkania", 3500);
                 return;
             }
 
-            house.ToggleLock();
-            player.Emit("successfullyToggledHouseLock", house.IsLocked); // Play some sound and show notification
+            flat.ToggleLock();
+            player.Emit("successfullyToggledHouseLock", flat.IsLocked); // Play some sound and show notification
         }
+        
+        private void TryToggleRoomHouseLock(IStrefaPlayer arg1, int arg2)
+        {
+            throw new NotImplementedException();
+        }
+
         
         public async Task TryBuyHouseAsync(IStrefaPlayer player)
         {
             if (player.HouseEnterColshape == 0) return;
-            if (!_housesManager.TryGetHouse(player.HouseEnterColshape, out var house)) return;
+            if (!_housesManager.TryGetHouseBuilding(player.HouseEnterColshape, out var houseBuilding)) return;
+            if (!(houseBuilding is House house)) return;
             if (!player.TryGetCharacter(out var character)) return;
             
             var response = await _buyHouseService.BuyHouseAsync(character, house);
@@ -144,7 +175,7 @@ namespace AltVStrefaRPServer.Modules.HousingModule
             {
                 _notificationService.ShowErrorNotificationLocked(player, "Brak uprawnień", "Nie posiadasz odpowiednich uprawnień do wykonania tej akcji");
                 return;
-            };
+            }
 
             var result = await _housesManager.AddNewHouseAsync(player.Position, price, interiorId);
             switch (result)

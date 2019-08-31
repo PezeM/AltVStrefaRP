@@ -6,7 +6,7 @@ namespace AltVStrefaRPServer.Models.Interfaces.Managers
 {
     public interface IHousesManager : IManager<HouseBuilding>
     {
-        bool TryGetHouse(int houseId, out HouseBuilding oldHouse);
+        bool TryGetHouseBuilding(int houseId, out HouseBuilding oldHouse);
         bool CheckIfHouseExists(int houseId);
         HouseBuilding GetHouse(int houseId);
         HotelRoom GetHotelRoom(int hotelRoom);

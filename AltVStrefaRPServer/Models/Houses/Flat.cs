@@ -20,25 +20,20 @@ namespace AltVStrefaRPServer.Models.Houses
         
         public bool HasOwner() => Owner != null;
         
-        public string ChangeLockPattern()
-        {
-            CreateLockPattern();
-            return LockPattern;
-        }
-
         public bool ChangeOwner(Character newOwner)
         {
-            if (newOwner.Id == Owner?.Id || Owner != null) return false;
+            if (newOwner.Id == Owner?.Id) return false;
             Owner = newOwner;
             return true;
         }
 
-        public void MovePlayerInside(IStrefaPlayer player)
+        public bool MovePlayerInside(IStrefaPlayer player)
         {
-            if(Interior == null) return;
+            if(Interior == null || IsLocked) return false; 
             player.Dimension = (short) Id;
             player.Position = Interior.GetPosition();
-            player.HouseId = HouseBuilding.Id;
+            player.EnteredFlat = this;
+            return true;
         }
 
         public void MovePlayerOutside(IStrefaPlayer player)
@@ -46,7 +41,7 @@ namespace AltVStrefaRPServer.Models.Houses
             if (IsLocked) return;
             player.Dimension = 0;
             player.Position = HouseBuilding.GetPosition();
-            player.HouseId = 0;
+            player.EnteredFlat = null;
         }
         
         public void ToggleLock()
@@ -57,6 +52,12 @@ namespace AltVStrefaRPServer.Models.Houses
         public void CreateLockPattern()
         {
             LockPattern = AdvancedIdGenerator.Instance.Next;
+        }
+        
+        public string ChangeLockPattern()
+        {
+            CreateLockPattern();
+            return LockPattern;
         }
     }
 }
