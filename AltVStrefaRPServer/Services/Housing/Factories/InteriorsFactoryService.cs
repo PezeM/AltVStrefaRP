@@ -18,8 +18,8 @@ namespace AltVStrefaRPServer.Services.Housing.Factories
         {
             return new List<Interior>
             {
-                new Interior("Małe mieszkanie", 265.0858f, -1000.888f, -99.00855f),
-                new Interior("Większe mieszkanie", 346.453f, -1002.456f, -99.19622f)
+                CreateNewInterior(new Position(265.0858f, -1000.888f, -99.00855f), "Małe mieszkanie"),
+                CreateNewInterior(new Position(346.453f, -1002.456f, -99.19622f), "Większe mieszkanie"),
             };
         }
 

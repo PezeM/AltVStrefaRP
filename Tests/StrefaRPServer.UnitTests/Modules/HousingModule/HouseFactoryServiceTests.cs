@@ -75,5 +75,41 @@ namespace StrefaRPServer.UnitTests.Modules.HousingModule
 
             Assert.That(newHotel.HotelRoomNumber, Is.EqualTo(roomNumber));
         }
+
+        [Test]
+        public void CreatesNewHotelAtCorrectPosition()
+        {
+            var newHotel = _houseFactoryService.CreateNewHotel(_housePosition, 10, 1);
+
+            var areEqual = _housePosition == newHotel.GetPosition();
+            
+            Assert.That(areEqual, Is.True);
+        }
+
+        [Test]
+        public void CreatesNewHotelWithCorrectPrice()
+        {
+            var hotelPrice = 2312;
+            var newHotel = _houseFactoryService.CreateNewHotel(_housePosition, hotelPrice, 1);
+            
+            Assert.That(newHotel.Price,Is.EqualTo(hotelPrice));
+        }
+
+        [Test]
+        public void CreatesNewHotelWithCorrectHotelRoomNumber()
+        {
+            var hotelRoomNumber = 321231;
+            var newHotel = _houseFactoryService.CreateNewHotel(_housePosition, 12, hotelRoomNumber);
+            
+            Assert.That(newHotel.MaximumNumberOfRooms, Is.EqualTo(hotelRoomNumber));
+        }
+
+        [Test]
+        public void CreatesNewHotelWithEmptyHotelRoomsList()
+        {
+            var newHotel = _houseFactoryService.CreateNewHotel(_housePosition, 12, 100);
+        
+            Assert.That(newHotel.HotelRooms.Count, Is.EqualTo(0));
+        }
     }
 }

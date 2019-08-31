@@ -28,15 +28,16 @@ namespace StrefaRPServer.UnitTests.Modules.HousingModule
         {
             _interiorsManagerMock = new Mock<IInteriorsManager>();
             _houseFactoryService = new HouseFactoryService();
-
-            _interiorsManagerMock.Setup(i => i.TryGetInterior(_interiorId, out _interior)).Returns(true);
+            _interiorMock = new Mock<IInterior>();
+            var co = _interiorMock.Object;
+            
+            _interiorsManagerMock.Setup(i => i.TryGetInterior(_interiorId, out co)).Returns(true);
         }
 
         [SetUp]
         public void SetUp()
         {
             _houseDatabaseService = new HouseDatabaseService(_mockFactory.Object);
-            _interiorMock = new Mock<IInterior>();
 
             _housesManager = new HousesManager(_houseDatabaseService, _houseFactoryService,
                 _interiorsManagerMock.Object, new Mock<ILogger<HousesManager>>().Object);

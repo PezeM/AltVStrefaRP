@@ -1,4 +1,5 @@
-﻿using AltV.Net.Data;
+﻿using System.Collections.Generic;
+using AltV.Net.Data;
 using AltVStrefaRPServer.Models.Houses;
 
 namespace AltVStrefaRPServer.Services.Housing.Factories
@@ -44,7 +45,8 @@ namespace AltVStrefaRPServer.Services.Housing.Factories
                 Y = position.Y,
                 Z = position.Z,
                 Price = price,
-                MaximumNumberOfRooms = maxRooms
+                MaximumNumberOfRooms = maxRooms,
+                HotelRooms = new List<HotelRoom>()
             };
             
             return newHotel;
