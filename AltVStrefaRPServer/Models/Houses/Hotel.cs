@@ -8,7 +8,7 @@ namespace AltVStrefaRPServer.Models.Houses
 {
     public class Hotel : HouseBuilding, IWritable
     {
-        public ICollection<HotelRoom> HotelRooms { get; private set; }
+        public ICollection<HotelRoom> HotelRooms { get; set; }
         public int MaximumNumberOfRooms { get; set; }
         
         public override void InitializeHouse()

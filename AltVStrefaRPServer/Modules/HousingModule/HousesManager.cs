@@ -52,7 +52,7 @@ namespace AltVStrefaRPServer.Modules.HousingModule
         public async Task<AddNewHouseResponse> AddNewHouseAsync(Position position, int price, int interiorId)
         {
             if (interiorId <= 0) return AddNewHouseResponse.WrongInteriorId;
-            if (_interiorsManager.TryGetInterior(interiorId, out var interior))
+            if (!_interiorsManager.TryGetInterior(interiorId, out var interior))
                 return AddNewHouseResponse.InteriorNotFound;
 
             var newHouse = _houseFactoryService.CreateNewHouse(position, price);
@@ -69,13 +69,13 @@ namespace AltVStrefaRPServer.Modules.HousingModule
         public async Task<AddNewHouseResponse> AddNewHotelAsync(Position position, int pricePerRoom, int rooms, int interiorId)
         {
             if (interiorId <= 0) return AddNewHouseResponse.WrongInteriorId;
-            if (_interiorsManager.TryGetInterior(interiorId, out var interior))
+            if (!_interiorsManager.TryGetInterior(interiorId, out var interior))
                 return AddNewHouseResponse.InteriorNotFound;
 
             var newHotel = _houseFactoryService.CreateNewHotel(position, pricePerRoom, rooms);
             for (var i = 0; i < rooms; i++)
             {
-                var hotelRoom = _houseFactoryService.CreateNewHouseRoom(i + 1);
+                var hotelRoom = _houseFactoryService.CreateNewHotelRoom(i + 1);
                 newHotel.HotelRooms.Add(hotelRoom);
                 interior.Flats.Add(hotelRoom);
             }
