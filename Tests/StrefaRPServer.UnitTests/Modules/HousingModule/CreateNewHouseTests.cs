@@ -16,7 +16,8 @@ namespace StrefaRPServer.UnitTests.Modules.HousingModule
     {
         private int _interiorId = 2;
         private Mock<IInteriorsManager> _interiorsManagerMock;
-        private Interior _interior;
+        private Mock<IInterior> _interiorMock;
+        private IInterior _interior;
         private HousesManager _housesManager;
         private HouseDatabaseService _houseDatabaseService;
         private HouseFactoryService _houseFactoryService;
@@ -35,14 +36,14 @@ namespace StrefaRPServer.UnitTests.Modules.HousingModule
         public void SetUp()
         {
             _houseDatabaseService = new HouseDatabaseService(_mockFactory.Object);
-            _interior = new Interior("Test interior", 1, 1, 1);
+            _interiorMock = new Mock<IInterior>();
 
             _housesManager = new HousesManager(_houseDatabaseService, _houseFactoryService,
                 _interiorsManagerMock.Object, new Mock<ILogger<HousesManager>>().Object);
         }
         
         [Test]
-        public async Task CantCreateHouseWithInteriorIdBelowOne()
+        public async Task CantCreateHouseWithInteriorIdBelowOneAsync()
         {
             var interiorId = 0;
             var response = await _housesManager.AddNewHouseAsync(_testPosition, 10, interiorId);

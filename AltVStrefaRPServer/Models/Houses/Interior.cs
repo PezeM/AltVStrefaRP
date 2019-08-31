@@ -8,7 +8,7 @@ using AltVStrefaRPServer.Services.Housing;
 
 namespace AltVStrefaRPServer.Models.Houses
 {
-    public class Interior : IPosition
+    public class Interior : IInterior
     {
         /// <summary>
         /// Database id of the interior
