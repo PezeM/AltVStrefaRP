@@ -1,0 +1,53 @@
+﻿using System.Threading.Tasks;
+using AltV.Net.Data;
+using AltVStrefaRPServer.Models.Houses;
+using AltVStrefaRPServer.Models.Interfaces.Managers;
+using AltVStrefaRPServer.Modules.HousingModule;
+using AltVStrefaRPServer.Services.Housing;
+using AltVStrefaRPServer.Services.Housing.Factories;
+using Microsoft.Extensions.Logging;
+using Moq;
+using NUnit.Framework;
+using StrefaRPServer.UnitTests.Core;
+
+namespace StrefaRPServer.UnitTests.Modules.HousingModule
+{
+    public class CreateNewHouseTests : ServerContextTestBase
+    {
+        private int _interiorId = 2;
+        private Mock<IInteriorsManager> _interiorsManagerMock;
+        private Interior _interior;
+        private HousesManager _housesManager;
+        private HouseDatabaseService _houseDatabaseService;
+        private HouseFactoryService _houseFactoryService;
+        private readonly Position _testPosition = new Position(1, 2, 3);
+        
+        [OneTimeSetUp]
+        public void OneTimeSetup()
+        {
+            _interiorsManagerMock = new Mock<IInteriorsManager>();
+            _houseFactoryService = new HouseFactoryService();
+
+            _interiorsManagerMock.Setup(i => i.TryGetInterior(_interiorId, out _interior)).Returns(true);
+        }
+
+        [SetUp]
+        public void SetUp()
+        {
+            _houseDatabaseService = new HouseDatabaseService(_mockFactory.Object);
+            _interior = new Interior("Test interior", 1, 1, 1);
+
+            _housesManager = new HousesManager(_houseDatabaseService, _houseFactoryService,
+                _interiorsManagerMock.Object, new Mock<ILogger<HousesManager>>().Object);
+        }
+        
+        [Test]
+        public async Task CantCreateHouseWithInteriorIdBelowOne()
+        {
+            var interiorId = 0;
+            var response = await _housesManager.AddNewHouseAsync(_testPosition, 10, interiorId);
+            
+            Assert.That(response, Is.EqualTo(AddNewHouseResponse.WrongInteriorId));
+        }
+    }
+}

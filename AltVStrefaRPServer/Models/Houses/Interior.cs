@@ -36,7 +36,7 @@ namespace AltVStrefaRPServer.Models.Houses
             X = x;
             Y = y;
             Z = z;
-            
+
             Colshape = Alt.CreateColShapeCylinder(GetPosition(), 1f, 1f);
 
             // Interior exit colshape 
