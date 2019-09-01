@@ -5,6 +5,7 @@ using AltVStrefaRPServer.Models.Fractions.Permissions;
 using AltVStrefaRPServer.Models.Houses;
 using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Models.Inventory.Items;
+using AltVStrefaRPServer.Models.Inventory.Items.Keys;
 using AltVStrefaRPServer.Models.Vehicles;
 using AltVStrefaRPServer.Modules.Vehicle;
 using Microsoft.EntityFrameworkCore;
@@ -61,6 +62,8 @@ namespace AltVStrefaRPServer.Database
         public DbSet<FoodItem> FoodItems { get; set; }
         public DbSet<WeaponItem> WeaponItems { get; set; }
         public DbSet<ClothItem> Clothes { get; set; }
+        public DbSet<KeyItem> Keys { get; set; }
+        public DbSet<HouseKeyItem> HouseKeys { get; set; }
         public DbSet<InventoryItem> InventoryItems { get; set; }
         public DbSet<DroppedItem> DroppedItems { get; set; }
 
