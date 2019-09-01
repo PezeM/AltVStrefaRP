@@ -130,7 +130,7 @@ namespace AltVStrefaRPServer.Modules.HousingModule
                 flat = house.Flat;
             }
 
-            if (!flat.IsLocked) return;
+            if (flat.IsLocked) return;
             CloseHouseDoor(player, character, flat);
         }
 
@@ -147,7 +147,7 @@ namespace AltVStrefaRPServer.Modules.HousingModule
                 flat = hotelRoom;
             }
 
-            if (!flat.IsLocked) return;
+            if (flat.IsLocked) return;
 
             CloseHouseDoor(player, character, flat);
         }
@@ -170,7 +170,7 @@ namespace AltVStrefaRPServer.Modules.HousingModule
                 return;
             }
 
-            flat.IsLocked = false;
+            flat.IsLocked = true;
             player.Emit("successfullyToggledHouseLock", flat.IsLocked); // Play some sound and show notificati
         }
 
@@ -227,7 +227,7 @@ namespace AltVStrefaRPServer.Modules.HousingModule
                 return;
             }
 
-            flat.IsLocked = true;
+            flat.IsLocked = false;
             player.Emit("successfullyToggledHouseLock", flat.IsLocked); // Play some sound and show notification
         }
 
@@ -260,7 +260,6 @@ namespace AltVStrefaRPServer.Modules.HousingModule
         {
             throw new NotImplementedException();
         }
-
 
         public async Task TryToCreateNewHouseAsync(IStrefaPlayer player, int price, int interiorId)
         {

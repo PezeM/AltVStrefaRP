@@ -16,8 +16,8 @@ namespace AltVStrefaRPServer.Models.Houses
         
         public HouseBuilding HouseBuilding { get; set; }
         public int HouseBuildingId { get; set; }
-        
-        public bool HasOwner() => Owner != null;
+
+        public bool HasOwner() => OwnerId > 0;
         
         public bool ChangeOwner(Character newOwner)
         {
