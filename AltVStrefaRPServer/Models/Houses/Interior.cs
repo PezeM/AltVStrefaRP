@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using AltV.Net;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
-using AltVStrefaRPServer.Models.Interfaces;
 using AltVStrefaRPServer.Services.Housing;
 
 namespace AltVStrefaRPServer.Models.Houses
@@ -23,6 +22,10 @@ namespace AltVStrefaRPServer.Models.Houses
         public float Y { get; set; }
         public float Z { get; set; }
         
+        public float EnterX { get; set; }
+        public float EnterY { get; set; }
+        public float EnterZ { get; set; }
+
         /// <summary>
         /// Collection of flats using this interior
         /// </summary>
@@ -30,12 +33,15 @@ namespace AltVStrefaRPServer.Models.Houses
         
         public IColShape Colshape { get; set; }
 
-        public Interior(string name, float x, float y, float z)
+        public Interior(string name, float x, float y, float z, float enterX, float enterY, float enterZ)
         {
             Name = name;
             X = x;
             Y = y;
             Z = z;
+            EnterX = enterX;
+            EnterY = enterY;
+            EnterZ = enterZ;
 
             Colshape = Alt.CreateColShapeCylinder(GetPosition(), 1f, 1f);
 
@@ -51,7 +57,17 @@ namespace AltVStrefaRPServer.Models.Houses
             // Create marker where player can access house inventory
         }
         
+        /// <summary>
+        /// Gets position of the interior exit
+        /// </summary>
+        /// <returns></returns>
         public Position GetPosition() => new Position(X, Y, Z);
+
+        /// <summary>
+        /// Gets position where will the player teleport
+        /// </summary>
+        /// <returns></returns>
+        public Position GetEnterPosition() => new Position(X, Y, Z);
 
         public async Task DeleteInteriorAsync(IInteriorDatabaseService interiorDatabaseService)
         {

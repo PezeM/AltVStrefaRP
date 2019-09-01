@@ -30,7 +30,7 @@ namespace AltVStrefaRPServer.Models.Houses
         {
             if(Interior == null || IsLocked) return false; 
             player.Dimension = (short) Id;
-            player.Position = Interior.GetPosition();
+            player.Position = Interior.GetEnterPosition();
             player.EnteredFlat = this;
             return true;
         }

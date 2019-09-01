@@ -18,19 +18,21 @@ namespace AltVStrefaRPServer.Services.Housing.Factories
         {
             return new List<Interior>
             {
-                CreateNewInterior(new Position(265.0858f, -1000.888f, -99.00855f), "Małe mieszkanie"),
-                CreateNewInterior(new Position(346.453f, -1002.456f, -99.19622f), "Większe mieszkanie"),
+                CreateNewInterior(new Position(265.0858f, -1000.888f, -99.00855f), new Position(65.0858f, -1000.888f, -99.00855f),  
+                    "Małe mieszkanie"),
+                CreateNewInterior(new Position(346.453f, -1002.456f, -99.19622f), new Position(346.453f, -1002.456f, -99.19622f),  
+                    "Większe mieszkanie"),
             };
         }
 
-        public Interior CreateNewInterior(Position position, string name)
+        public Interior CreateNewInterior(Position position, Position enterPosition, string name)
         {
-            return new Interior(name, position.X, position.Y, position.Z);
+            return new Interior(name, position.X, position.Y, position.Z, enterPosition.X, enterPosition.Y, enterPosition.Z);
         }
 
-        public async Task<Interior> CreateNewInteriorAsync(Position position, string name)
+        public async Task<Interior> CreateNewInteriorAsync(Position position, Position enterPosition, string name)
         {
-            var newInterior = CreateNewInterior(position, name);
+            var newInterior = CreateNewInterior(position, enterPosition, name);
             await _interiorDatabaseService.AddNewInteriorAsync(newInterior);
             return newInterior;
         }

@@ -32,6 +32,8 @@ namespace AltVStrefaRPServer.Services.Housing
                 return context.Hotels
                     .Include(h => h.HotelRooms)
                         .ThenInclude(hr => hr.Interior)
+                    .Include(h => h.HotelRooms)
+                        .ThenInclude(hr => hr.HouseBuilding)
                     .ToList();
             }
         }
@@ -42,7 +44,9 @@ namespace AltVStrefaRPServer.Services.Housing
             {
                 return context.Houses
                     .Include(h => h.Flat)
-                    .ThenInclude(f => f.Interior)
+                        .ThenInclude(f => f.Interior)
+                    .Include(h => h.Flat)
+                        .ThenInclude(f => f.HouseBuilding)
                     .ToList();
             }
         }

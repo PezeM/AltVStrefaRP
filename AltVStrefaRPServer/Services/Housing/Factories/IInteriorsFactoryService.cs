@@ -8,7 +8,7 @@ namespace AltVStrefaRPServer.Services.Housing.Factories
     public interface IInteriorsFactoryService
     {
         IEnumerable<Interior> CreateDefaultInteriors();
-        Interior CreateNewInterior(Position position, string name);
-        Task<Interior> CreateNewInteriorAsync(Position position, string name);
+        Interior CreateNewInterior(Position position, Position enterPosition, string name);
+        Task<Interior> CreateNewInteriorAsync(Position position, Position enterPosition, string name);
     }
 }

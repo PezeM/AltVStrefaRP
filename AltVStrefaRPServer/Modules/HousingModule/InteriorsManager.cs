@@ -36,11 +36,11 @@ namespace AltVStrefaRPServer.Modules.HousingModule
         public Interior GetInterior(int interiorId) =>
             _interiors.ContainsKey(interiorId) ? _interiors[interiorId] : null;
 
-        public async Task<AddNewInteriorResponse> AddNewInteriorAsync(Position position, string name)
+        public async Task<AddNewInteriorResponse> AddNewInteriorAsync(Position exitPosition, Position enterPosition, string name)
         {
             if (name.IsNullOrEmpty()) return AddNewInteriorResponse.WrongInteriorName;
             // Do some extra regex for interior name
-            await _interiorsFactoryService.CreateNewInteriorAsync(position, name);
+            await _interiorsFactoryService.CreateNewInteriorAsync(exitPosition, enterPosition, name);
             return AddNewInteriorResponse.InteriorCreated;
         }
         
