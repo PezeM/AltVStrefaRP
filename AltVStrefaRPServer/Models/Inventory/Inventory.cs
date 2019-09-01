@@ -7,6 +7,7 @@ using AltVStrefaRPServer.Services.Inventories;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AltV.Net;
 
 namespace AltVStrefaRPServer.Models.Inventory
 {
@@ -57,7 +58,7 @@ namespace AltVStrefaRPServer.Models.Inventory
 
         public IEnumerable<TItem> GetItems<TItem>() where TItem : BaseItem
         {
-            return _items.Where(i => i.Item is TItem) as IEnumerable<TItem>;
+            return _items.Select(i => i.Item).OfType<TItem>();
         }
         
         public virtual AddItemResponse AddInventoryItem(InventoryItem item)
