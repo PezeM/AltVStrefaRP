@@ -27,7 +27,7 @@ namespace AltVStrefaRPServer.Services.Housing
             // Check if house has owner
             if (house.Flat.HasOwner() && house.Flat.Owner?.Id != newOwner.Id) return BuyHouseResponse.HouseHasOwner;
             // Check if user has empty space for key item
-            if (newOwner.Inventory.HasEmptySlots()) return BuyHouseResponse.NotEnoughSpaceInInventoryForKey;
+            if (!newOwner.Inventory.HasEmptySlots()) return BuyHouseResponse.NotEnoughSpaceInInventoryForKey;
 
             // Remove money from player
             if (!await _moneyService.RemoveMoneyFromBankAccountAsync(newOwner, house.Price, TransactionType.PropertiesBuy))

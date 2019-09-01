@@ -25,7 +25,7 @@ namespace AltVStrefaRPServer.Services.Money
                 case TransactionType.BankDeposit:
                 case TransactionType.BankWithdraw:
                 case TransactionType.BankTransfer:
-                    return price;
+                    return 0;
                 case TransactionType.FurnitureBuy:
                 case TransactionType.PropertiesBuy:
                 case TransactionType.PropertiesSell:

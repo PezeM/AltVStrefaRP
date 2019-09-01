@@ -91,7 +91,7 @@ namespace AltVStrefaRPServer.Modules.HousingModule
         {
             if(player.HouseEnterColshape == 0)
             {
-                _notificationService.ShowErrorNotification(player, "Błąd", "Brak wejścia do mieszkania w pobliżu", 3500);
+                _notificationService.ShowErrorNotification(player, "Błąd", "Brak wejścia do hotelu w pobliżu", 3500);
                 return;
             }
 
