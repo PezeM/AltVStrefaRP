@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Threading.Tasks;
 using AltV.Net;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
+using AltVStrefaRPServer.Models.Core;
+using AltVStrefaRPServer.Modules.Core;
 using AltVStrefaRPServer.Services.Housing;
 
 namespace AltVStrefaRPServer.Models.Houses
@@ -32,6 +35,7 @@ namespace AltVStrefaRPServer.Models.Houses
         public ICollection<Flat> Flats { get; private set; } = new List<Flat>();
         
         public IColShape Colshape { get; set; }
+        public IMarker Marker { get; set; }
 
         public Interior(string name, float x, float y, float z, float enterX, float enterY, float enterZ)
         {
@@ -56,6 +60,9 @@ namespace AltVStrefaRPServer.Models.Houses
                 player.Emit("showInteriorExitMenu", state);
             };
 
+            // Marker on exit position
+            Marker = MarkerManager.Instance.AddMarker(1, GetPosition(), Color.FromArgb(255, 200,0,0), 
+                new Position(1, 1, 1), 5, 0);
             // Create marker where player can access house inventory
         }
 

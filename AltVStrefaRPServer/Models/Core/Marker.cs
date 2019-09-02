@@ -1,22 +1,13 @@
 ﻿using System.Drawing;
 using AltV.Net.Data;
-using AltVStrefaRPServer.Models.Interfaces;
 
 namespace AltVStrefaRPServer.Models.Core
 {
-    public class Marker : IPosition
+    public class Marker : IMarker
     {
-        /// <summary>
-        /// Marker type. https://wiki.rage.mp/index.php?title=Marker::Marker
-        /// </summary>
+        public int Id { get; set; }
         public int Type { get; set; }
-        /// <summary>
-        /// Range of the marker
-        /// </summary>
         public int Range { get; set; }
-        /// <summary>
-        /// Dimension of the marker. 0 for every dimension
-        /// </summary>
         public int Dimension { get; set; }
         public float X { get; set; }
         public float Y { get; set; }
@@ -29,8 +20,9 @@ namespace AltVStrefaRPServer.Models.Core
         public int Blue { get; set; }
         public int Alpha { get; set; }
 
-        public Marker(int type, Position position, Color color, Position scale, int range = 20, int dimension = 0)
+        public Marker(int id, int type, Position position, Color color, Position scale, int range = 20, int dimension = 0)
         {
+            Id = id;
             Type = type;
             X = position.X;
             Y = position.Y;
