@@ -11,8 +11,8 @@ namespace AltVStrefaRPServer.Modules.Inventory
 {
     public class InventoriesManager : IInventoriesManager
     {
-        private ConcurrentDictionary<int, DroppedItem> _droppedItems;
-        private ConcurrentDictionary<int, InventoryItem> _items;
+        private readonly ConcurrentDictionary<int, DroppedItem> _droppedItems;
+        private readonly ConcurrentDictionary<int, InventoryItem> _items;
         private readonly IInventoryDatabaseService _inventoryDatabaseService;
         private readonly INetworkingManager _networkingManager;
         private readonly ILogger<InventoriesManager> _logger;

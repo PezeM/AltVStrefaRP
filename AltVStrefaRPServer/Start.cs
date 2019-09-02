@@ -147,7 +147,6 @@ namespace AltVStrefaRPServer
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            if (args.Length < 1) return;
             switch (name)
             {
                 case "stop":
