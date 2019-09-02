@@ -50,7 +50,7 @@ namespace AltVStrefaRPServer.Models.Houses
 
         public void InitializeInterior()
         {
-            Colshape = Alt.CreateColShapeCylinder(GetPosition(), 1f, 1.5f);
+            Colshape = Alt.CreateColShapeCylinder(GetPosition(), 0.8f, 1.5f);
             // Interior exit colshape 
             Alt.OnColShape += (shape, entity, state) =>
             {
@@ -62,7 +62,7 @@ namespace AltVStrefaRPServer.Models.Houses
 
             // Marker on exit position
             Marker = MarkerManager.Instance.AddMarker(1, GetPosition(), Color.FromArgb(255, 200,0,0), 
-                new Position(1, 1, 1), 5, 0);
+                new Position(0.8f, 0.8f, 1), 5, 0);
             // Create marker where player can access house inventory
         }
 
@@ -76,7 +76,7 @@ namespace AltVStrefaRPServer.Models.Houses
         /// Gets position where will the player teleport
         /// </summary>
         /// <returns></returns>
-        public Position GetEnterPosition() => new Position(X, Y, Z);
+        public Position GetEnterPosition() => new Position(EnterX, EnterY, EnterZ);
 
         public async Task DeleteInteriorAsync(IInteriorDatabaseService interiorDatabaseService)
         {

@@ -106,7 +106,7 @@ namespace AltVStrefaRPServer.Modules.HousingModule
             if (!_interiorsManager.TryGetInterior(interiorId, out var interior))
                 return AddNewHouseResponse.InteriorNotFound;
 
-            var newHotel = _houseFactoryService.CreateNewHotel(position, pricePerRoom, rooms);
+            var newHotel = _houseFactoryService.CreateNewHotel(new Position(position.X, position.Y, position.Z - 1), pricePerRoom, rooms);
             for (var i = 0; i < rooms; i++)
             {
                 var hotelRoom = _houseFactoryService.CreateNewHotelRoom(i + 1);

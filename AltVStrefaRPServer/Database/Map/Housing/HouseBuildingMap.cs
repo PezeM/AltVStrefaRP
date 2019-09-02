@@ -9,6 +9,7 @@ namespace AltVStrefaRPServer.Database.Map.Housing
         public void Configure(EntityTypeBuilder<HouseBuilding> builder)
         {
             builder.Ignore(h => h.Colshape);
+            builder.Ignore(h => h.Marker);
         }
     }
 }

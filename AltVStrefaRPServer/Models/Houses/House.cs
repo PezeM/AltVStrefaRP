@@ -1,5 +1,8 @@
-﻿using AltV.Net;
+﻿using System.Drawing;
+using AltV.Net;
+using AltV.Net.Data;
 using AltVStrefaRPServer.Models.Core;
+using AltVStrefaRPServer.Modules.Core;
 using AltVStrefaRPServer.Services.MValueAdapters;
 
 namespace AltVStrefaRPServer.Models.Houses
@@ -10,8 +13,11 @@ namespace AltVStrefaRPServer.Models.Houses
         
         public override void InitializeHouse()
         {
-            Colshape = (IStrefaColshape) Alt.CreateColShapeCylinder(GetPosition(), 1f, 1f);
+            Colshape = (IStrefaColshape) Alt.CreateColShapeCylinder(GetPosition(), 1f, 1.5f);
             Colshape.HouseId = Id;
+
+            Marker = MarkerManager.Instance.AddMarker(21, GetPosition(), Color.FromArgb(255, 30, 40, 100),
+                new Position(0.8f, 0.8f, 1f), 10, 0);
         }
 
         public void OnWrite(IMValueWriter writer)

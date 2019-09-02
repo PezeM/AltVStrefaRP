@@ -16,11 +16,13 @@ namespace AltVStrefaRPServer.Services.Housing.Factories
 
         public HotelRoom CreateNewHotelRoom(int roomNumber)
         {
-            return new HotelRoom
+            var hotelRoom = new HotelRoom
             {
-//                Interior = interior,
-                HotelRoomNumber = roomNumber
+                HotelRoomNumber = 1
             };
+            hotelRoom.CreateLockPattern();
+
+            return hotelRoom;
         }
         
         public House CreateNewHouse(Position position, int price)

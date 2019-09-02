@@ -14,6 +14,7 @@ namespace AltVStrefaRPServer.Models.Houses
         public int Price { get; set; }
         
         public IStrefaColshape Colshape { get; protected set; }
+        public IMarker Marker { get; protected set; }
 
         public Position GetPosition() => new Position(X, Y, Z);
         

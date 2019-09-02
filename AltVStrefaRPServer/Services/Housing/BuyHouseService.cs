@@ -36,10 +36,10 @@ namespace AltVStrefaRPServer.Services.Housing
             
             // Generate new house lock pattern
             house.Flat.CreateLockPattern();
-            // Add key item to character inventory
-            await newOwner.Inventory.AddItemAsync(_itemFactory.CreateHouseKeyItem(house.Flat.LockPattern), 1, _inventoryDatabaseService);
             house.Flat.ChangeOwner(newOwner);
             await _houseDatabaseService.UpdateHouseAsync(house);
+            // Add key item to character inventory
+            await newOwner.Inventory.AddItemAsync(_itemFactory.CreateHouseKeyItem(house.Flat.LockPattern), 1, _inventoryDatabaseService);
             
             return BuyHouseResponse.HouseBought;
         }
