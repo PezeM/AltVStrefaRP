@@ -26,7 +26,7 @@ namespace AltVStrefaRPServer.Services.Housing
         public async Task<BuyHouseResponse> BuyHouseAsync(Character newOwner, House house)
         {
             // Check if house has owner
-            if (house.Flat.HasOwner() && house.Flat.Owner?.Id != newOwner.Id) return BuyHouseResponse.HouseHasOwner;
+            if (house.Flat.HasOwner()) return BuyHouseResponse.HouseHasOwner;
             // Check if user has empty space for key item
             if (!newOwner.Inventory.HasEmptySlots()) return BuyHouseResponse.NotEnoughSpaceInInventoryForKey;
 

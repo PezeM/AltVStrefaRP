@@ -116,7 +116,7 @@ namespace AltVStrefaRPServer.Modules.HousingModule
         
         private void TryLeaveHouse(IStrefaPlayer player)
         {
-            player.EnteredFlat?.MovePlayerOutside(player);            
+            player.EnteredFlat?.MovePlayerOutside(player);
         }
 
         private void TryCloseHouseDoor(IStrefaPlayer player)

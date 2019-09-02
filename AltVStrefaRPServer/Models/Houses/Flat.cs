@@ -36,12 +36,14 @@ namespace AltVStrefaRPServer.Models.Houses
             return true;
         }
 
-        public void MovePlayerOutside(IStrefaPlayer player)
+        public bool MovePlayerOutside(IStrefaPlayer player)
         {
-            if (IsLocked) return;
+            if (IsLocked) return false;
             player.Dimension = 0;
             player.Position = HouseBuilding.GetPosition();
             player.EnteredFlat = null;
+            player.Emit("showInteriorExitMenu", false);
+            return true;
         }
         
         public void ToggleLock()
