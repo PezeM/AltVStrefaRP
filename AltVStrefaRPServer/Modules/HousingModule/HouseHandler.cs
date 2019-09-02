@@ -171,7 +171,7 @@ namespace AltVStrefaRPServer.Modules.HousingModule
                 return;
             }
 
-            flat.IsLocked = true;
+            flat.Lock();
             player.Emit("successfullyToggledHouseLock", flat.IsLocked); // Play some sound and show notificati
         }
 
@@ -228,7 +228,7 @@ namespace AltVStrefaRPServer.Modules.HousingModule
                 return;
             }
 
-            flat.IsLocked = false;
+            flat.Unlock();
             player.Emit("successfullyToggledHouseLock", flat.IsLocked); // Play some sound and show notification
         }
 

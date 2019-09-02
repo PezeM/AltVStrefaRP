@@ -12,7 +12,7 @@ namespace AltVStrefaRPServer.Models.Houses
         public Interior Interior { get; set; }
         public int InteriorId { get; private set; }
         public string LockPattern { get; private set; }
-        public bool IsLocked { get; set; } = true;
+        public bool IsLocked { get; private set; } = true;
         
         public HouseBuilding HouseBuilding { get; set; }
         public int HouseBuildingId { get; set; }
@@ -46,11 +46,22 @@ namespace AltVStrefaRPServer.Models.Houses
             return true;
         }
         
-        public void ToggleLock()
+        public void Lock()
         {
-            IsLocked = !IsLocked;
+            IsLocked = true;
+            if(HouseBuilding == null || !(HouseBuilding is House house)) return;
+            if (house.Marker == null) return;
+            house.Marker.Red = 255;
         }
-                
+
+        public void Unlock()
+        {
+            IsLocked = false;
+            if (HouseBuilding == null || !(HouseBuilding is House house)) return;
+            if (house.Marker == null) return;
+            house.Marker.Red = 30;
+        }
+
         public void CreateLockPattern()
         {
             LockPattern = AdvancedIdGenerator.Instance.Next;

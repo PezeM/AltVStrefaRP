@@ -6,8 +6,9 @@ namespace AltVStrefaRPServer.Models.Core
 {
     public class Marker : IMarker
     {
+        private int _red;
         public int Id { get; set; }
-        public int NetworkingEntityId { get; set; }
+        public int NetworkingEntityId { get; set; } = -1;
         public int Type { get; set; }
         public int Range { get; set; }
         public int Dimension { get; set; }
@@ -17,7 +18,17 @@ namespace AltVStrefaRPServer.Models.Core
         public float ScaleX { get; set; }
         public float ScaleY { get; set; }
         public float ScaleZ { get; set; }
-        public int Red { get; set; }
+
+        public int Red
+        {
+            get => _red;
+            set
+            {
+                _red = value;
+                MarkerManager.Instance.ChangeMarkerColor(this);
+            }
+        }
+
         public int Green { get; set; }
         public int Blue { get; set; }
         public int Alpha { get; set; }

@@ -37,7 +37,12 @@ namespace AltVStrefaRPServer.Modules.Networking
 
         public bool DoesNetworkingEntityExists(int networkingEntityId) => _entities.ContainsKey((ulong)networkingEntityId);
 
-        public bool RemoveNetworkingEntity(int networkingItemId) => _entities.TryRemove((ulong)networkingItemId, out _);
+        public bool RemoveNetworkingEntity(int netorkingItemId)
+        {
+            if (!_entities.TryGetValue((ulong)netorkingItemId, out var networkingEntity)) return false;
+            networkingEntity.Remove();
+            return true;
+        }
 
         public INetworkingEntity AddNewDroppedItem(DroppedItem droppedItem, int streamingRange = 50, int dimension = 0)
         {

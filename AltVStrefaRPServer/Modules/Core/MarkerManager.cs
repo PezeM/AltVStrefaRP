@@ -58,7 +58,18 @@ namespace AltVStrefaRPServer.Modules.Core
             return true;
         }
 
-        private void OnMarkerRemove(Marker marker)
+        public void ChangeMarkerColor(Marker marker)
+        {
+            if (marker.NetworkingEntityId <= -1) return;
+            if (!NetworkingManager.Instance.TryGetNetworkingEntity(marker.NetworkingEntityId, out var networkingEntity)) return;
+            networkingEntity.IsDataNull("red");
+            if(networkingEntity.GetData("red", out long _))
+            {
+                networkingEntity.SetData("red", marker.Red);
+            }
+        }
+
+        private void OnMarkerRemove(IMarker marker)
         {
             NetworkingManager.Instance.RemoveNetworkingEntity(marker.NetworkingEntityId);
         }
