@@ -27,6 +27,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using AltVStrefaRPServer.Models;
+using AltVStrefaRPServer.Models.Server;
 using AltVStrefaRPServer.Modules.Core.Colshapes;
 using AltVStrefaRPServer.Modules.HousingModule;
 using Newtonsoft.Json;
@@ -52,6 +53,7 @@ namespace AltVStrefaRPServer
             AltAsync.OnPlayerEnterVehicle += OnPlayerEnterVehicleAsync;
             Alt.OnPlayerEvent += OnOnPlayerEvent;
 
+            NetworkingManager.Instance.InitializeNetworkingManager(AppSettings.Current);
             var playerConnectEvent = _startup.ServiceProvider.GetService<PlayerConnect>();
             var playerDiconnectEvent = _startup.ServiceProvider.GetService<PlayerDisconnect>();
             var vehicleHandler = _startup.ServiceProvider.GetService<VehicleHandler>();
@@ -62,7 +64,6 @@ namespace AltVStrefaRPServer
             var temporaryChatHandler = _startup.ServiceProvider.GetService<TemporaryChatHandler>();
             var timeManager = _startup.ServiceProvider.GetService<TimeController>();
             var objectSync = _startup.ServiceProvider.GetService<ObjectSync>();
-            var networkingTest = _startup.ServiceProvider.GetService<NetworkingManager>();
             _vehicleSpawnService = _startup.ServiceProvider.GetService<IVehicleSpawnService>();
 
             _vehiclesManager = _startup.ServiceProvider.GetService<IVehiclesManager>();

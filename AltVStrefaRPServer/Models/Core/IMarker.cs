@@ -6,6 +6,7 @@ namespace AltVStrefaRPServer.Models.Core
     public interface IMarker : IPosition
     {
         int Id { get; set; }
+        int NetworkingEntityId { get; set; }
 
         /// <summary>
         /// Marker type. https://wiki.rage.mp/index.php?title=Marker::Marker
@@ -29,5 +30,6 @@ namespace AltVStrefaRPServer.Models.Core
         int Green { get; set; }
         int Blue { get; set; }
         int Alpha { get; set; }
+        bool DestroyMarker();
     }
 }

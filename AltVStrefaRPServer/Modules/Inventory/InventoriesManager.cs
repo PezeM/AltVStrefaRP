@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AltVStrefaRPServer.Modules.Networking;
 
 namespace AltVStrefaRPServer.Modules.Inventory
 {
@@ -14,14 +15,11 @@ namespace AltVStrefaRPServer.Modules.Inventory
         private readonly ConcurrentDictionary<int, DroppedItem> _droppedItems;
         private readonly ConcurrentDictionary<int, InventoryItem> _items;
         private readonly IInventoryDatabaseService _inventoryDatabaseService;
-        private readonly INetworkingManager _networkingManager;
         private readonly ILogger<InventoriesManager> _logger;
 
-        public InventoriesManager(IInventoryDatabaseService inventoryDatabaseService, INetworkingManager networkingManager,
-            ILogger<InventoriesManager> logger)
+        public InventoriesManager(IInventoryDatabaseService inventoryDatabaseService, ILogger<InventoriesManager> logger)
         {
             _inventoryDatabaseService = inventoryDatabaseService;
-            _networkingManager = networkingManager;
             _logger = logger;
             _droppedItems = new ConcurrentDictionary<int, DroppedItem>();
             _items = new ConcurrentDictionary<int, InventoryItem>();
@@ -44,21 +42,21 @@ namespace AltVStrefaRPServer.Modules.Inventory
                 await _inventoryDatabaseService.RemoveItemAsync(droppedItem);
                 return false;
             }
-            _networkingManager.AddNewDroppedItem(droppedItem);
+            NetworkingManager.Instance.AddNewDroppedItem(droppedItem);
             return true;
         }
 
         public bool TryGetDroppedItem(int networkingEntityId, int droppedItemId, out DroppedItem droppedItem)
         {
             droppedItem = null;
-            return _networkingManager.DoesNetworkingEntityExists(networkingEntityId) && TryGetDroppedItem(droppedItemId, out droppedItem);
+            return NetworkingManager.Instance.DoesNetworkingEntityExists(networkingEntityId) && TryGetDroppedItem(droppedItemId, out droppedItem);
         }
 
         public async Task<bool> RemoveDroppedItemAsync(DroppedItem droppedItem, int networkingItemId, int itemsAddedCount)
         {
             if (!_droppedItems.ContainsKey(droppedItem.Id)) return false;
             droppedItem.Count -= itemsAddedCount;
-            _networkingManager.DescreaseDroppedItemQuantity(networkingItemId, itemsAddedCount);
+            NetworkingManager.Instance.DescreaseDroppedItemQuantity(networkingItemId, itemsAddedCount);
             if (droppedItem.Count <= 0)
             {
                 if (!_droppedItems.TryRemove(droppedItem.Id, out _)) return false;
@@ -84,9 +82,10 @@ namespace AltVStrefaRPServer.Modules.Inventory
             foreach (var droppedItem in _inventoryDatabaseService.GetAllDroppedItems())
             {
                 _droppedItems.TryAdd(droppedItem.Id, droppedItem);
-                _networkingManager.AddNewDroppedItem(droppedItem);
+                NetworkingManager.Instance.AddNewDroppedItem(droppedItem);
             }
-            _logger.LogInformation("Loaded {droppedItemsCount} dropped items from database in {elapsedTime}ms", _droppedItems.Count, Time.GetElapsedTime(startTime));
+            _logger.LogInformation("Loaded {droppedItemsCount} dropped items from database in {elapsedTime} ms",
+                _droppedItems.Count, Time.GetElapsedTime(startTime));
         }
     }
 }

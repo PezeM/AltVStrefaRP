@@ -5,6 +5,7 @@ using System.Drawing;
 using AltV.Net.Data;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models.Core;
+using AltVStrefaRPServer.Modules.Networking;
 using Serilog;
 
 namespace AltVStrefaRPServer.Modules.Core
@@ -42,6 +43,11 @@ namespace AltVStrefaRPServer.Modules.Core
         }
 
         private void OnAddMarker(Marker marker)
+        {
+            NetworkingManager.Instance.AddNewMarker(marker);
+        }
+
+        public bool RemoveMarker(Marker marker)
         {
             throw new NotImplementedException();
         }

@@ -127,7 +127,6 @@ namespace AltVStrefaRPServer
             services.AddSingleton<FractionHandler>();
             services.AddSingleton<IInventoriesManager, InventoriesManager>();
             services.AddSingleton<InventoryHandler>();
-            services.AddSingleton<INetworkingManager, NetworkingManager>();
             services.AddSingleton<VehiclesData>();
             services.AddSingleton<SoundManager>();
             services.AddSingleton<IInteriorsManager, InteriorsManager>();

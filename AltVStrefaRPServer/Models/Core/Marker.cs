@@ -1,11 +1,13 @@
 ﻿using System.Drawing;
 using AltV.Net.Data;
+using AltVStrefaRPServer.Modules.Core;
 
 namespace AltVStrefaRPServer.Models.Core
 {
     public class Marker : IMarker
     {
         public int Id { get; set; }
+        public int NetworkingEntityId { get; set; }
         public int Type { get; set; }
         public int Range { get; set; }
         public int Dimension { get; set; }
@@ -41,6 +43,10 @@ namespace AltVStrefaRPServer.Models.Core
         public Position GetPosition()
         {
             return new Position(X,Y,Z);
+        }
+        public bool DestroyMarker()
+        {
+            return MarkerManager.Instance.RemoveMarker(this);
         }
     }
 }

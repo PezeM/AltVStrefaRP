@@ -1,32 +1,31 @@
-﻿using AltV.Net;
-using AltV.Net.NetworkingEntity;
+﻿using AltV.Net.NetworkingEntity;
 using AltV.Net.NetworkingEntity.Elements.Entities;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Models.Server;
 using Entity;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Timers;
-using Timer = System.Timers.Timer;
+using AltVStrefaRPServer.Models.Core;
+using Serilog;
 
 namespace AltVStrefaRPServer.Modules.Networking
 {
-    public class NetworkingManager : INetworkingManager
+    public sealed class NetworkingManager : INetworkingManager
     {
+        private static readonly Lazy<NetworkingManager> lazy = new Lazy<NetworkingManager>(() => new NetworkingManager());
+        public static NetworkingManager Instance => lazy.Value;
         private ConcurrentDictionary<ulong, INetworkingEntity> _entities;
-        private readonly ILogger<NetworkingManager> _logger;
 
-        public NetworkingManager(AppSettings appSettings, ILogger<NetworkingManager> logger)
+        private NetworkingManager()
         {
-            _logger = logger;
             _entities = new ConcurrentDictionary<ulong, INetworkingEntity>();
+        }
+
+        public void InitializeNetworkingManager(AppSettings appSettings)
+        {
             ConfigureAltNetworking(appSettings);
 
             AltNetworking.OnEntityStreamIn = OnEntityStreamIn;
@@ -70,15 +69,33 @@ namespace AltVStrefaRPServer.Modules.Networking
                 networkingEntity.SetData("count", quantity);
             }
         }
+        public void AddNewMarker(Marker marker)
+        {
+            var networkingEntity = AltNetworking.CreateEntity(new Position{X = marker.X, Y = marker.Y, Z = marker.Z}, marker.Dimension, marker.Range, 
+                new Dictionary<string, object>
+            {
+                { "entityType", (long)NetworkingEntityTypes.Marker },
+                { "type", marker.Type },
+                { "scaleX", marker.ScaleX },
+                { "scaleY", marker.ScaleY },
+                { "scaleZ", marker.ScaleZ },
+                { "red", marker.Red },
+                { "green", marker.Green },
+                { "blue", marker.Blue },
+                { "alpha", marker.Alpha },
+            });
+            _entities.TryAdd(networkingEntity.Id, networkingEntity);
+            marker.NetworkingEntityId = (int) networkingEntity.Id;
+        }
 
         private void OnEntityStreamOut(INetworkingEntity entity, INetworkingClient client)
         {
-            _logger.LogDebug("Entity streamed out {networkingEntityId}", entity.Id);
+            Log.ForContext<NetworkingManager>().Debug("Entity streamed out {networkingEntityId}", entity.Id);
         }
 
         private void OnEntityStreamIn(INetworkingEntity entity, INetworkingClient client)
         {
-            _logger.LogDebug("Entity streamed in {networkingEntityId}", entity.Id);
+            Log.ForContext<NetworkingManager>().Debug("Entity streamed in {networkingEntityId}", entity.Id);
         }
 
         private void ConfigureAltNetworking(AppSettings appSettings)
@@ -93,7 +110,7 @@ namespace AltVStrefaRPServer.Modules.Networking
             }
             catch (Exception e)
             {
-                _logger.LogCritical(e, "Error in networking manager. Couldn't configure AltNetworking module.");
+                Log.ForContext<NetworkingManager>().Fatal(e, "Error in networking manager. Couldn't configure AltNetworking module.");
                 throw;
             }
         }
