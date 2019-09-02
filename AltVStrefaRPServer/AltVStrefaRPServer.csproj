@@ -43,6 +43,7 @@
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.2.1-preview1-final" />
     <PackageReference Include="Serilog" Version="2.9.0-dev-01124" />
     <PackageReference Include="Serilog.Enrichers.Thread" Version="3.1.1-dev-00745" />
+    <PackageReference Include="Serilog.Exceptions" Version="5.3.1" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
     <PackageReference Include="Serilog.Sinks.Console" Version="3.1.2-dev-00823" />
     <PackageReference Include="Serilog.Sinks.Elasticsearch" Version="8.1.0-alpha0002" />

@@ -37,6 +37,7 @@ using AltVStrefaRPServer.Modules.Core;
 using AltVStrefaRPServer.Modules.HousingModule;
 using AltVStrefaRPServer.Services.Housing;
 using AltVStrefaRPServer.Services.Housing.Factories;
+using Serilog.Exceptions;
 
 namespace AltVStrefaRPServer
 {
@@ -71,10 +72,11 @@ namespace AltVStrefaRPServer
             appSettings.Initialize();
 
             services.AddDbContextFactory<ServerContext>(options =>
-                options.UseMySql(appSettings.ConnectionString, mysqlOptions =>
-                {
-                    mysqlOptions.ServerVersion(new Version(10, 1, 37), ServerType.MariaDb);
-                }));
+            {
+                options.EnableSensitiveDataLogging();
+                options.UseMySql(appSettings.ConnectionString,
+                        mysqlOptions => { mysqlOptions.ServerVersion(new Version(10, 1, 37), ServerType.MariaDb); });
+            });
 
             AddLogging(services, appSettings.ElasticsearchOptions);
 
@@ -98,12 +100,12 @@ namespace AltVStrefaRPServer
             services.AddTransient<IFractionDatabaseService, FractionDatabaseService>();
             services.AddTransient<IFractionFactoryService, FractionFactoryService>();
             services.AddTransient<IItemFactory, ItemFactory>();
-            services.AddTransient<IInventoryDatabaseService, InventoryDatabaseService>();
+            services.AddScoped<IInventoryDatabaseService, InventoryDatabaseService>();
             services.AddTransient<IInventoryTransferService, InventoryTransferService>();
             services.AddTransient<IInventoryEquipService, InventoryEquipService>();
-            services.AddTransient<IInteriorDatabaseService, InteriorDatabaseService>();
+            services.AddScoped<IInteriorDatabaseService, InteriorDatabaseService>();
             services.AddTransient<IInteriorsFactoryService, InteriorsFactoryService>();
-            services.AddTransient<IHouseDatabaseService, HouseDatabaseService>();
+            services.AddScoped<IHouseDatabaseService, HouseDatabaseService>();
             services.AddTransient<IHouseFactoryService, HouseFactoryService>();
             services.AddTransient<IBuyHouseService, BuyHouseService>();
             
@@ -159,10 +161,11 @@ namespace AltVStrefaRPServer
                 .Enrich.WithThreadId()
                 .Enrich.WithThreadName()
                 .Enrich.FromLogContext()
+                .Enrich.WithExceptionDetails()
                 .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] <{ThreadId}><{ThreadName}> {Message:lj} {NewLine}{Exception}")
                 .WriteTo.File($"{logsPath}.log",
                     LogEventLevel.Verbose,
-                    outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] <{ThreadId}><{ThreadName}> {Message:lj} {NewLine}{Exception}",
+                    "[{Timestamp:HH:mm:ss} {Level:u3}] <{ThreadId}><{ThreadName}> {Message:lj} {NewLine}{Exception}",
                     rollingInterval: RollingInterval.Day,
                     retainedFileCountLimit: 100,
                     rollOnFileSizeLimit: true)

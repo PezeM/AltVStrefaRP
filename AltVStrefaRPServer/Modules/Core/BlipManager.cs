@@ -14,7 +14,7 @@ namespace AltVStrefaRPServer.Modules.Core
     public sealed class BlipManager : IBlipManager
     {
         private static readonly Lazy<BlipManager> lazy = new Lazy<BlipManager>(() => new BlipManager());
-        public static BlipManager Instance { get { return lazy.Value; } }
+        public static BlipManager Instance => lazy.Value;
         private readonly Dictionary<int, BlipWrapper> _blips;
         private readonly IIdGenerator _idGenerator;
         private MValue _blipsMValue;
@@ -100,7 +100,7 @@ namespace AltVStrefaRPServer.Modules.Core
             Alt.EmitAllClients("blipManagerAddedNewBlip", newBlip);
         }
 
-        private void OnBlipRemove(BlipWrapper removedBlip)
+        private void OnBlipRemove(IBlipWrapper removedBlip)
         {
             // Propably event to all players that specific blip was removed
             _blipsMValue = MValue.CreateFromObject(_blips.Values);

@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AltV.Net.Data;
+using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models.Houses;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
@@ -18,13 +20,16 @@ namespace AltVStrefaRPServer.Modules.HousingModule
         private readonly ILogger<HousesManager> _logger;
         private readonly IInteriorsManager _interiorsManager;
         private readonly IHouseFactoryService _houseFactoryService;
+        private Func<ServerContext> _factory;
 
-        public HousesManager(IHouseDatabaseService houseDatabaseService, IHouseFactoryService houseFactoryService, IInteriorsManager interiorsManager, ILogger<HousesManager> logger)
+        public HousesManager(IHouseDatabaseService houseDatabaseService, IHouseFactoryService houseFactoryService, IInteriorsManager interiorsManager,
+            Func<ServerContext> factory, ILogger<HousesManager> logger)
         {
             _housesBuildings = new Dictionary<int, HouseBuilding>();
             _houseDatabaseService = houseDatabaseService;
             _houseFactoryService = houseFactoryService;
             _interiorsManager = interiorsManager;
+            _factory = factory;
             _logger = logger;
 
             InitializeHouses();
@@ -55,16 +60,44 @@ namespace AltVStrefaRPServer.Modules.HousingModule
             if (!_interiorsManager.TryGetInterior(interiorId, out var interior))
                 return AddNewHouseResponse.InteriorNotFound;
 
-            var newHouse = _houseFactoryService.CreateNewHouse(position, price);
-            interior.Flats.Add(newHouse.Flat);
-            newHouse.Flat.Interior = interior;
-            await _houseDatabaseService.UpdateHouseAsync(newHouse); // Don't know if it will work like that
-            newHouse.InitializeHouse();
-            _housesBuildings.Add(newHouse.Id, newHouse);
+            using (var context = _factory.Invoke())
+            {
+                using (var transaction = await context.Database.BeginTransactionAsync())
+                {
+                    var newHouse = _houseFactoryService.CreateNewHouse(position, price);
+                    newHouse.Flat.Interior = interior;
+
+                    context.HouseBuildings.Update(newHouse);
+                    await context.SaveChangesAsync();
+
+                    newHouse.Flat.HouseBuilding = newHouse;
+                    interior.Flats.Add(newHouse.Flat);
+
+                    context.Houses.Update(newHouse);
+                    await context.SaveChangesAsync();
+
+                    transaction.Commit();
+                    newHouse.InitializeHouse();
+                    _housesBuildings.Add(newHouse.Id, newHouse);
+
+                    _logger.LogInformation("Created new house ID({houseId}) at position {position} with price {housePrice} and interior {interiorName}",
+                        newHouse.Id, position, price, interior.Name);
+                    return AddNewHouseResponse.HouseCreated;
+                }
+            }
+
+            //var newHouse = _houseFactoryService.CreateNewHouse(position, price);
+            //interior.Flats.Add(newHouse.Flat);
+            //newHouse.Flat.Interior = interior;
+            //await _houseDatabaseService.UpdateHouseAsync(newHouse); // Don't know if it will work like that
+            //newHouse.Flat.HouseBuilding = newHouse;
+            //await _houseDatabaseService.UpdateHouseAsync(newHouse);
+            //newHouse.InitializeHouse();
+            //_housesBuildings.Add(newHouse.Id, newHouse);
             
-            _logger.LogInformation("Created new house ID({houseId}) at position {position} with price {housePrice} and interior {interiorName}", 
-                newHouse.Id, position, price, interior.Name);
-            return AddNewHouseResponse.HouseCreated;
+            //_logger.LogInformation("Created new house ID({houseId}) at position {position} with price {housePrice} and interior {interiorName}", 
+            //    newHouse.Id, position, price, interior.Name);
+            //return AddNewHouseResponse.HouseCreated;
         }
 
         public async Task<AddNewHouseResponse> AddNewHotelAsync(Position position, int pricePerRoom, int rooms, int interiorId)

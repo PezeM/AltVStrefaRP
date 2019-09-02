@@ -9,6 +9,7 @@ using AltVStrefaRPServer.Models.Inventory.Items.Keys;
 using AltVStrefaRPServer.Models.Vehicles;
 using AltVStrefaRPServer.Modules.Vehicle;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace AltVStrefaRPServer.Database
 {

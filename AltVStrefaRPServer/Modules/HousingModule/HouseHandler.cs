@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AltV.Net;
 using AltV.Net.Async;
+using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Models;
@@ -300,7 +301,7 @@ namespace AltVStrefaRPServer.Modules.HousingModule
                 return;
             }
 
-            var result = await _housesManager.AddNewHotelAsync(player.Position, price, maxRooms, interiorId);
+            var result = await _housesManager.AddNewHotelAsync(new Position(player.Position.X, player.Position.Y, player.Position.Z - 1), price, maxRooms, interiorId);
             switch (result)
             {
                 case AddNewHouseResponse.WrongInteriorId:

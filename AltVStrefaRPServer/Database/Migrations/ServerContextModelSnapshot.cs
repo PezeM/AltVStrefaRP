@@ -379,36 +379,6 @@ namespace AltVStrefaRPServer.Database.Migrations
                     b.ToTable("Interiors");
                 });
 
-            modelBuilder.Entity("AltVStrefaRPServer.Models.Houses.OldHouse", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int>("InteriorId");
-
-                    b.Property<bool>("IsLocked");
-
-                    b.Property<string>("LockPattern");
-
-                    b.Property<int?>("OwnerId");
-
-                    b.Property<int>("Price");
-
-                    b.Property<float>("X");
-
-                    b.Property<float>("Y");
-
-                    b.Property<float>("Z");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("InteriorId");
-
-                    b.HasIndex("OwnerId");
-
-                    b.ToTable("OldHouse");
-                });
-
             modelBuilder.Entity("AltVStrefaRPServer.Models.Inventory.DroppedItem", b =>
                 {
                     b.Property<int>("Id")
@@ -714,7 +684,11 @@ namespace AltVStrefaRPServer.Database.Migrations
                 {
                     b.HasBaseType("AltVStrefaRPServer.Models.Houses.Flat");
 
+                    b.Property<int?>("HotelId");
+
                     b.Property<int>("HotelRoomNumber");
+
+                    b.HasIndex("HotelId");
 
                     b.HasDiscriminator().HasValue("HotelRoom");
                 });
@@ -937,18 +911,6 @@ namespace AltVStrefaRPServer.Database.Migrations
                         .HasForeignKey("OwnerId");
                 });
 
-            modelBuilder.Entity("AltVStrefaRPServer.Models.Houses.OldHouse", b =>
-                {
-                    b.HasOne("AltVStrefaRPServer.Models.Houses.Interior", "Interior")
-                        .WithMany()
-                        .HasForeignKey("InteriorId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("AltVStrefaRPServer.Models.Character", "Owner")
-                        .WithMany()
-                        .HasForeignKey("OwnerId");
-                });
-
             modelBuilder.Entity("AltVStrefaRPServer.Models.Inventory.DroppedItem", b =>
                 {
                     b.HasOne("AltVStrefaRPServer.Models.Inventory.Items.BaseItem", "Item")
@@ -989,9 +951,7 @@ namespace AltVStrefaRPServer.Database.Migrations
                 {
                     b.HasOne("AltVStrefaRPServer.Models.Houses.Hotel")
                         .WithMany("HotelRooms")
-                        .HasForeignKey("HouseBuildingId")
-                        .HasConstraintName("FK_Flats_HouseBuildings_HouseBuildingId2")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("HotelId");
                 });
 #pragma warning restore 612, 618
         }

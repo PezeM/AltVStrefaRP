@@ -42,9 +42,11 @@ namespace AltVStrefaRPServer.Models.Houses
             EnterX = enterX;
             EnterY = enterY;
             EnterZ = enterZ;
+        }
 
-            Colshape = Alt.CreateColShapeCylinder(GetPosition(), 1f, 1f);
-
+        public void InitializeInterior()
+        {
+            Colshape = Alt.CreateColShapeCylinder(GetPosition(), 1f, 1.5f);
             // Interior exit colshape 
             Alt.OnColShape += (shape, entity, state) =>
             {
@@ -53,10 +55,10 @@ namespace AltVStrefaRPServer.Models.Houses
 
                 player.Emit("showInteriorExitMenu", state);
             };
-            
+
             // Create marker where player can access house inventory
         }
-        
+
         /// <summary>
         /// Gets position of the interior exit
         /// </summary>

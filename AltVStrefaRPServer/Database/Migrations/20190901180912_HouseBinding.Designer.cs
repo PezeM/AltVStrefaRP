@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AltVStrefaRPServer.Database.Migrations
 {
     [DbContext(typeof(ServerContext))]
-    [Migration("20190901002647_NewItemsType")]
-    partial class NewItemsType
+    [Migration("20190901180912_HouseBinding")]
+    partial class HouseBinding
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -362,6 +362,12 @@ namespace AltVStrefaRPServer.Database.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<float>("EnterX");
+
+                    b.Property<float>("EnterY");
+
+                    b.Property<float>("EnterZ");
+
                     b.Property<string>("Name");
 
                     b.Property<float>("X");
@@ -373,36 +379,6 @@ namespace AltVStrefaRPServer.Database.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Interiors");
-                });
-
-            modelBuilder.Entity("AltVStrefaRPServer.Models.Houses.OldHouse", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int>("InteriorId");
-
-                    b.Property<bool>("IsLocked");
-
-                    b.Property<string>("LockPattern");
-
-                    b.Property<int?>("OwnerId");
-
-                    b.Property<int>("Price");
-
-                    b.Property<float>("X");
-
-                    b.Property<float>("Y");
-
-                    b.Property<float>("Z");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("InteriorId");
-
-                    b.HasIndex("OwnerId");
-
-                    b.ToTable("OldHouse");
                 });
 
             modelBuilder.Entity("AltVStrefaRPServer.Models.Inventory.DroppedItem", b =>
@@ -710,7 +686,11 @@ namespace AltVStrefaRPServer.Database.Migrations
                 {
                     b.HasBaseType("AltVStrefaRPServer.Models.Houses.Flat");
 
+                    b.Property<int?>("HotelId");
+
                     b.Property<int>("HotelRoomNumber");
+
+                    b.HasIndex("HotelId");
 
                     b.HasDiscriminator().HasValue("HotelRoom");
                 });
@@ -933,18 +913,6 @@ namespace AltVStrefaRPServer.Database.Migrations
                         .HasForeignKey("OwnerId");
                 });
 
-            modelBuilder.Entity("AltVStrefaRPServer.Models.Houses.OldHouse", b =>
-                {
-                    b.HasOne("AltVStrefaRPServer.Models.Houses.Interior", "Interior")
-                        .WithMany()
-                        .HasForeignKey("InteriorId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("AltVStrefaRPServer.Models.Character", "Owner")
-                        .WithMany()
-                        .HasForeignKey("OwnerId");
-                });
-
             modelBuilder.Entity("AltVStrefaRPServer.Models.Inventory.DroppedItem", b =>
                 {
                     b.HasOne("AltVStrefaRPServer.Models.Inventory.Items.BaseItem", "Item")
@@ -985,9 +953,7 @@ namespace AltVStrefaRPServer.Database.Migrations
                 {
                     b.HasOne("AltVStrefaRPServer.Models.Houses.Hotel")
                         .WithMany("HotelRooms")
-                        .HasForeignKey("HouseBuildingId")
-                        .HasConstraintName("FK_Flats_HouseBuildings_HouseBuildingId2")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("HotelId");
                 });
 #pragma warning restore 612, 618
         }

@@ -98,6 +98,15 @@ namespace AltVStrefaRPServer.Services.Housing
             }
         }
 
+        public async Task AddNewHouseAsync(House house)
+        {
+            using (var context = _factory.Invoke())
+            {
+                context.Houses.Add(house);
+                await context.SaveChangesAsync();
+            }
+        }
+
         public async Task UpdateHouseAsync(HouseBuilding oldHouse)
         {
             using (var context = _factory.Invoke())

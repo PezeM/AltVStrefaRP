@@ -39,7 +39,7 @@ namespace StrefaRPServer.UnitTests.Modules.HousingModule
             _houseDatabaseService = new HouseDatabaseService(_mockFactory.Object);
 
             _housesManager = new HousesManager(_houseDatabaseService, _houseFactoryService,
-                _interiorsManagerMock.Object, new Mock<ILogger<HousesManager>>().Object);
+                _interiorsManagerMock.Object, _mockFactory.Object, new Mock<ILogger<HousesManager>>().Object);
         }
         
         [Test]

@@ -14,7 +14,8 @@ namespace AltVStrefaRPServer.Services.Housing
         private readonly IInventoryDatabaseService _inventoryDatabaseService;
         private readonly IHouseDatabaseService _houseDatabaseService;
 
-        public BuyHouseService(IMoneyService moneyService, IItemFactory itemFactory, IInventoryDatabaseService inventoryDatabaseService, IHouseDatabaseService houseDatabaseService)
+        public BuyHouseService(IMoneyService moneyService, IItemFactory itemFactory, IInventoryDatabaseService inventoryDatabaseService,
+            IHouseDatabaseService houseDatabaseService)
         {
             _moneyService = moneyService;
             _itemFactory = itemFactory;

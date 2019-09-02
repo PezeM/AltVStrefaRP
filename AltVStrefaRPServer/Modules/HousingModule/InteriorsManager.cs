@@ -49,6 +49,7 @@ namespace AltVStrefaRPServer.Modules.HousingModule
             var startTime = Time.GetTimestampMs();
             foreach (var interior in _interiorDatabaseService.GetAllInteriors().ToList())
             {
+                interior.InitializeInterior();
                 _interiors.TryAdd(interior.Id, interior);
             }
             _logger.LogInformation("Loaded {interiorsCount} interiors from database in {elapsedTime} ms", _interiors.Count, Time.GetElapsedTime(startTime));
@@ -65,6 +66,7 @@ namespace AltVStrefaRPServer.Modules.HousingModule
                 _interiorDatabaseService.AddNewInteriors(newInteriors);
                 foreach (var interior in newInteriors)
                 {
+                    interior.InitializeInterior();
                     _interiors.TryAdd(interior.Id, interior);
                 }
                 _logger.LogInformation("Created {interiorsCount} default interiors", _interiors.Count);

@@ -32,6 +32,7 @@ namespace AltVStrefaRPServer.Models.Houses
             player.Dimension = (short) Id;
             player.Position = Interior.GetEnterPosition();
             player.EnteredFlat = this;
+            player.Emit("playerMovedInsideHouse");
             return true;
         }
 
