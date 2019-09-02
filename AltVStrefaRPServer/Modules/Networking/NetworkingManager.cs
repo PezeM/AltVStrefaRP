@@ -74,7 +74,7 @@ namespace AltVStrefaRPServer.Modules.Networking
             var networkingEntity = AltNetworking.CreateEntity(new Position{X = marker.X, Y = marker.Y, Z = marker.Z}, marker.Dimension, marker.Range, 
                 new Dictionary<string, object>
             {
-                { "entityType", (long)NetworkingEntityTypes.Marker },
+                { "entityType", (int)NetworkingEntityTypes.Marker },
                 { "type", marker.Type },
                 { "scaleX", marker.ScaleX },
                 { "scaleY", marker.ScaleY },

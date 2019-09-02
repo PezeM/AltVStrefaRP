@@ -32,13 +32,13 @@ namespace AltVStrefaRPServer.Modules.Core
                 if(_markers.TryAdd(marker.Id, marker))
                 {
                     OnAddMarker(marker);
-                    Log.Logger.ForContext<MarkerManager>().Debug("Created new marker ID ({markerId}) Type {markerType} at position {position}", 
+                    Log.ForContext<MarkerManager>().Debug("Created new marker ID ({markerId}) Type {markerType} at position {position}", 
                         marker.Id, marker.Type, position);
                     return marker;
                 }
             }
 
-            Log.Logger.ForContext<MarkerManager>().Error("Creating marker ID ({markerId}) at position {position} failed.", marker.Id, position);
+            Log.ForContext<MarkerManager>().Error("Creating marker ID ({markerId}) at position {position} failed.", marker.Id, position);
             return null;
         }
 
@@ -49,7 +49,19 @@ namespace AltVStrefaRPServer.Modules.Core
 
         public bool RemoveMarker(Marker marker)
         {
-            throw new NotImplementedException();
+            lock (_markers)
+            {
+                if (!_markers.Remove(marker.Id)) return false;
+            }
+
+            Log.ForContext<MarkerManager>().Debug("Removed marker ID({markerId})", marker.Id);
+            OnMarkerRemove(marker);
+            return true;
+        }
+
+        private void OnMarkerRemove(Marker marker)
+        {
+            NetworkingManager.Instance.RemoveNetworkingEntity(marker.NetworkingEntityId);
         }
     }
 }
