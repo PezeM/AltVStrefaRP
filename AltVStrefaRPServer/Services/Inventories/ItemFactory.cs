@@ -60,9 +60,10 @@ namespace AltVStrefaRPServer.Services.Inventories
             return weaponItem;
         }
 
+        // prop_cs_keys_01
         public HouseKeyItem CreateHouseKeyItem(string lockPatter, string model = "prop_cs_keys_01")
         {
-            var houseKeyItem = new HouseKeyItem(model, lockPatter);
+            var houseKeyItem = new HouseKeyItem("w_sg_pumpshotgun", lockPatter);
             houseKeyItem.ChangeItemDescription("Klucze do mieszkania");
             return houseKeyItem;
         }

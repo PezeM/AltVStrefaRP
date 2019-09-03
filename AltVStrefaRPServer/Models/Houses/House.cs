@@ -16,7 +16,7 @@ namespace AltVStrefaRPServer.Models.Houses
             Colshape = (IStrefaColshape) Alt.CreateColShapeCylinder(GetPosition(), 1f, 1.5f);
             Colshape.HouseId = Id;
 
-            Marker = MarkerManager.Instance.AddMarker(21, GetPosition(), Color.FromArgb(255, 30, 40, 100),
+            Marker = MarkerManager.Instance.AddMarker(21, GetPosition(), Color.FromArgb(255, Flat == null ? 255 : Flat.IsLocked ? 200 : 30, 40, 100),
                 new Position(0.8f, 0.8f, 1f), 10, 0);
         }
 

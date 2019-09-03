@@ -252,7 +252,10 @@ namespace AltVStrefaRPServer.Modules.HousingModule
                     _notificationService.ShowErrorNotificationLocked(player, "Brak miejsca", "Nie posiadasz wolnego miejsca w ekwipunku na klucze" );
                     break;
                 case BuyHouseResponse.HouseBought:
+                    _logger.LogInformation("Character {characterName} CID({characterId}) bought house ID({houseId}) for {housePrice}$", 
+                        character.GetFullName(), character.Id, house.Id, house.Price);
                     _notificationService.ShowSuccessNotificationLocked(player, "Kupiono mieszkanie", $"Pomyślnie zakupiłeś mieszkanie za {house.Price}$", 3500);
+                    player.EmitLocked("successfullyBoughtHouse", house.Id);
                     break;
             }
         }
@@ -286,7 +289,7 @@ namespace AltVStrefaRPServer.Modules.HousingModule
                         "Nie udało się tworzenie nowego mieszkania", 3500);
                     break;
                 case AddNewHouseResponse.HouseCreated:
-                    _notificationService.ShowErrorNotificationLocked(player, "Stworzono mieszkanie",
+                    _notificationService.ShowSuccessNotificationLocked(player, "Stworzono mieszkanie",
                         $"Stworzono mieszkanie z cena {price}$ i interiorem ID({interiorId})", 3500);
                     break;
             }
@@ -316,7 +319,7 @@ namespace AltVStrefaRPServer.Modules.HousingModule
                         "Nie udało się tworzenie nowego mieszkania", 3500);
                     break;
                 case AddNewHouseResponse.HouseCreated:
-                    _notificationService.ShowErrorNotificationLocked(player, "Stworzono hotel",
+                    _notificationService.ShowSuccessNotificationLocked(player, "Stworzono hotel",
                         $"Stworzono hotel z cena {price}$, interiorem ID({interiorId}) i {maxRooms} pokojami", 3500);
                     break;
             }

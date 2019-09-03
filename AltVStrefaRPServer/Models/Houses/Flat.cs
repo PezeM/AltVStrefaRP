@@ -51,7 +51,7 @@ namespace AltVStrefaRPServer.Models.Houses
             IsLocked = true;
             if(HouseBuilding == null || !(HouseBuilding is House house)) return;
             if (house.Marker == null) return;
-            house.Marker.Red = 255;
+            house.Marker.Red = 200;
         }
 
         public void Unlock()

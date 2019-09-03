@@ -78,6 +78,24 @@ namespace AltVStrefaRPServer.Database.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "HouseBuildings",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    X = table.Column<float>(nullable: false),
+                    Y = table.Column<float>(nullable: false),
+                    Z = table.Column<float>(nullable: false),
+                    Price = table.Column<int>(nullable: false),
+                    Discriminator = table.Column<string>(nullable: false),
+                    MaximumNumberOfRooms = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_HouseBuildings", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Interiors",
                 columns: table => new
                 {
@@ -481,6 +499,7 @@ namespace AltVStrefaRPServer.Database.Migrations
                     InteriorId = table.Column<int>(nullable: false),
                     LockPattern = table.Column<string>(nullable: true),
                     IsLocked = table.Column<bool>(nullable: false),
+                    HouseBuildingId1 = table.Column<int>(nullable: true),
                     HouseBuildingId = table.Column<int>(nullable: false),
                     Discriminator = table.Column<string>(nullable: false),
                     HotelRoomNumber = table.Column<int>(nullable: true),
@@ -489,6 +508,18 @@ namespace AltVStrefaRPServer.Database.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Flats", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Flats_HouseBuildings_HouseBuildingId",
+                        column: x => x.HouseBuildingId,
+                        principalTable: "HouseBuildings",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Flats_HouseBuildings_HouseBuildingId1",
+                        column: x => x.HouseBuildingId1,
+                        principalTable: "HouseBuildings",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Flats_Interiors_InteriorId",
                         column: x => x.InteriorId,
@@ -501,29 +532,10 @@ namespace AltVStrefaRPServer.Database.Migrations
                         principalTable: "Characters",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "HouseBuildings",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    X = table.Column<float>(nullable: false),
-                    Y = table.Column<float>(nullable: false),
-                    Z = table.Column<float>(nullable: false),
-                    Price = table.Column<int>(nullable: false),
-                    Discriminator = table.Column<string>(nullable: false),
-                    MaximumNumberOfRooms = table.Column<int>(nullable: true),
-                    FlatId = table.Column<int>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_HouseBuildings", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_HouseBuildings_Flats_FlatId",
-                        column: x => x.FlatId,
-                        principalTable: "Flats",
+                        name: "FK_Flats_HouseBuildings_HotelId",
+                        column: x => x.HotelId,
+                        principalTable: "HouseBuildings",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -581,7 +593,13 @@ namespace AltVStrefaRPServer.Database.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Flats_HouseBuildingId",
                 table: "Flats",
-                column: "HouseBuildingId");
+                column: "HouseBuildingId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Flats_HouseBuildingId1",
+                table: "Flats",
+                column: "HouseBuildingId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Flats_InteriorId",
@@ -609,11 +627,6 @@ namespace AltVStrefaRPServer.Database.Migrations
                 column: "FractionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HouseBuildings_FlatId",
-                table: "HouseBuildings",
-                column: "FlatId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_InventoryItems_BaseItemId",
                 table: "InventoryItems",
                 column: "BaseItemId",
@@ -634,38 +647,10 @@ namespace AltVStrefaRPServer.Database.Migrations
                 table: "Vehicles",
                 column: "InventoryId",
                 unique: true);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Flats_HouseBuildings_HouseBuildingId",
-                table: "Flats",
-                column: "HouseBuildingId",
-                principalTable: "HouseBuildings",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Flats_HouseBuildings_HotelId",
-                table: "Flats",
-                column: "HotelId",
-                principalTable: "HouseBuildings",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Flats_Characters_OwnerId",
-                table: "Flats");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Flats_HouseBuildings_HouseBuildingId",
-                table: "Flats");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Flats_HouseBuildings_HotelId",
-                table: "Flats");
-
             migrationBuilder.DropTable(
                 name: "BankAccounts");
 
@@ -674,6 +659,9 @@ namespace AltVStrefaRPServer.Database.Migrations
 
             migrationBuilder.DropTable(
                 name: "DroppedItems");
+
+            migrationBuilder.DropTable(
+                name: "Flats");
 
             migrationBuilder.DropTable(
                 name: "FractionPermissions");
@@ -694,6 +682,15 @@ namespace AltVStrefaRPServer.Database.Migrations
                 name: "BusinessesRanks");
 
             migrationBuilder.DropTable(
+                name: "HouseBuildings");
+
+            migrationBuilder.DropTable(
+                name: "Interiors");
+
+            migrationBuilder.DropTable(
+                name: "Characters");
+
+            migrationBuilder.DropTable(
                 name: "FractionRanks");
 
             migrationBuilder.DropTable(
@@ -703,28 +700,16 @@ namespace AltVStrefaRPServer.Database.Migrations
                 name: "VehicleShops");
 
             migrationBuilder.DropTable(
-                name: "Characters");
-
-            migrationBuilder.DropTable(
                 name: "Accounts");
 
             migrationBuilder.DropTable(
                 name: "Businesses");
 
             migrationBuilder.DropTable(
-                name: "Fractions");
-
-            migrationBuilder.DropTable(
                 name: "Inventories");
 
             migrationBuilder.DropTable(
-                name: "HouseBuildings");
-
-            migrationBuilder.DropTable(
-                name: "Flats");
-
-            migrationBuilder.DropTable(
-                name: "Interiors");
+                name: "Fractions");
         }
     }
 }

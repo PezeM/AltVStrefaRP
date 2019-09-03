@@ -80,7 +80,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
                 shop.GetRotationOfBoughtVehicles(), 0, character.Id, OwnerType.Character);
             await _notificationService.ShowSuccessNotificationAsync(player, "Zakupiono pojazd!",
                 $"Pomyślnie zakupiono pojazd {vehicleToBuy.VehicleModel.ToString()} za {vehicleToBuy.Price}$.");
-            _logger.LogInformation("Character CID({characterId}) {characterName} bought new vehicle {vehicleModel} for {vehiclePrice} in shop ID({vehicleShopId})",
+            _logger.LogInformation("Character CID({characterId}) {characterName} bought new vehicle {vehicleModel} for {vehiclePrice}$ in shop ID({vehicleShopId})",
                 character.Id, character.GetFullName(), vehicleToBuy.VehicleModel.ToString(), vehicleToBuy.Price, shop.VehicleShopId);
         }
     }

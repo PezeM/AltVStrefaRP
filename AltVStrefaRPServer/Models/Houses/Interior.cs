@@ -61,7 +61,7 @@ namespace AltVStrefaRPServer.Models.Houses
             };
 
             // Marker on exit position
-            Marker = MarkerManager.Instance.AddMarker(1, GetPosition(), Color.FromArgb(255, 200,0,0), 
+            Marker = MarkerManager.Instance.AddMarker(27, GetPosition(), Color.FromArgb(255, 200,0,0), 
                 new Position(0.8f, 0.8f, 1), 5, 0);
             // Create marker where player can access house inventory
         }

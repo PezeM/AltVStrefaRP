@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AltVStrefaRPServer.Database.Migrations
 {
     [DbContext(typeof(ServerContext))]
-    [Migration("20190901180912_HouseBinding")]
-    partial class HouseBinding
+    [Migration("20190903181819_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -909,7 +909,7 @@ namespace AltVStrefaRPServer.Database.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("AltVStrefaRPServer.Models.Character", "Owner")
-                        .WithMany("Flats")
+                        .WithMany("Houses")
                         .HasForeignKey("OwnerId");
                 });
 

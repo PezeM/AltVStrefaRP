@@ -64,14 +64,15 @@ namespace AltVStrefaRPServer.Modules.HousingModule
             {
                 using (var transaction = await context.Database.BeginTransactionAsync())
                 {
+
                     var newHouse = _houseFactoryService.CreateNewHouse(position, price);
+
                     newHouse.Flat.Interior = interior;
-
-                    context.HouseBuildings.Update(newHouse);
-                    await context.SaveChangesAsync();
-
                     newHouse.Flat.HouseBuilding = newHouse;
-                    interior.Flats.Add(newHouse.Flat);
+                    //interior.Houses.Add(newHouse.Flat);
+
+                    //context.Houses.Update(newHouse.Flat);
+                    //await context.SaveChangesAsync();
 
                     context.Houses.Update(newHouse);
                     await context.SaveChangesAsync();
@@ -85,19 +86,6 @@ namespace AltVStrefaRPServer.Modules.HousingModule
                     return AddNewHouseResponse.HouseCreated;
                 }
             }
-
-            //var newHouse = _houseFactoryService.CreateNewHouse(position, price);
-            //interior.Flats.Add(newHouse.Flat);
-            //newHouse.Flat.Interior = interior;
-            //await _houseDatabaseService.UpdateHouseAsync(newHouse); // Don't know if it will work like that
-            //newHouse.Flat.HouseBuilding = newHouse;
-            //await _houseDatabaseService.UpdateHouseAsync(newHouse);
-            //newHouse.InitializeHouse();
-            //_housesBuildings.Add(newHouse.Id, newHouse);
-            
-            //_logger.LogInformation("Created new house ID({houseId}) at position {position} with price {housePrice} and interior {interiorName}", 
-            //    newHouse.Id, position, price, interior.Name);
-            //return AddNewHouseResponse.HouseCreated;
         }
 
         public async Task<AddNewHouseResponse> AddNewHotelAsync(Position position, int pricePerRoom, int rooms, int interiorId)

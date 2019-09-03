@@ -2,7 +2,7 @@
 using AltVStrefaRPServer.Models.Businesses;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
+    
 namespace AltVStrefaRPServer.Database.Map
 {
     public class CharacterMap : IEntityTypeConfiguration<Character>
@@ -36,10 +36,9 @@ namespace AltVStrefaRPServer.Database.Map
             builder.HasOne(c => c.Equipment)
                 .WithOne(e => e.Owner)
                 .HasForeignKey<Character>(c => c.EquipmentId);
-            
-            builder.HasMany(c => c.Flats)
-                .WithOne(f => f.Owner)
-                .HasForeignKey(f => f.OwnerId);
+
+            builder.HasMany(c => c.Houses)
+                .WithOne(f => f.Owner);
         }
     }
 }

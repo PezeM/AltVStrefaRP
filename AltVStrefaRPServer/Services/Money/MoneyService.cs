@@ -48,7 +48,7 @@ namespace AltVStrefaRPServer.Services.Money
             townHall.AddTax(tax);
 
             await _bankAccountDatabaseService.UpdateBankAccountAsync(source.BankAccount);
-            _logger.LogInformation("Removed {amount} money from {characterName} CID({characterId}) bank account {bankAccount}. Transaction type {transactionType}",
+            _logger.LogInformation("Removed {amount}$ money from {characterName} CID({characterId}) bank account {bankAccount}. Transaction type {transactionType}",
                 amount + tax, source.GetFullName(), source.Id, source.BankAccount.AccountNumber, transactionType);
             return true;
         }

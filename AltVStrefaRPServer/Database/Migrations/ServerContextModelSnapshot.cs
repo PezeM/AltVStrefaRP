@@ -907,7 +907,7 @@ namespace AltVStrefaRPServer.Database.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("AltVStrefaRPServer.Models.Character", "Owner")
-                        .WithMany("Flats")
+                        .WithMany("Houses")
                         .HasForeignKey("OwnerId");
                 });
 
