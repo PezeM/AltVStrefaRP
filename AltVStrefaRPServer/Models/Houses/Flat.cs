@@ -23,6 +23,7 @@ namespace AltVStrefaRPServer.Models.Houses
         {
             if (newOwner.Id == Owner?.Id) return false;
             Owner = newOwner;
+            OwnerId = newOwner.Id;
             return true;
         }
 

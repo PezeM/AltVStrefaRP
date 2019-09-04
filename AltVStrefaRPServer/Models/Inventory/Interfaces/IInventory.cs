@@ -18,7 +18,7 @@ namespace AltVStrefaRPServer.Models.Inventory.Interfaces
         InventoryItem GetInventoryItem(int itemId);
 
         AddItemResponse AddInventoryItem(InventoryItem item);
-        bool RemoveItem(InventoryItem item);
+        bool RemoveItemCompletly(InventoryItem item);
         Task<bool> RemoveItemAsync(InventoryItem item, IInventoryDatabaseService inventoryDatabaseService);
         InventoryRemoveResponse RemoveItem(int id, int amount);
         InventoryRemoveResponse RemoveItem(InventoryItem item, int amount);
@@ -31,5 +31,10 @@ namespace AltVStrefaRPServer.Models.Inventory.Interfaces
              IInventoryDatabaseService inventoryDatabaseService);
 
         Task UpdateInventoryAsync(IInventoryDatabaseService inventoryDatabaseService);
+        InventoryUseResponse UseItem(Character character, int itemId, int quantity = 1);
+        InventoryUseResponse UseItem(Character character, InventoryItem item, int quantity = 1);
+        Task<InventoryUseResponse> UseItemAsync(Character character, InventoryItem item, IInventoryDatabaseService inventoryDatabaseService, int quantity = 1);
+        Task<InventoryUseResponse> UseItemAsync(Character character, int itemId,
+            IInventoryDatabaseService inventoryDatabaseService);
     }
 }

@@ -1,4 +1,5 @@
-﻿using AltV.Net;
+﻿using System;
+using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Extensions;
@@ -52,6 +53,24 @@ namespace AltVStrefaRPServer.Modules.Inventory
             AltAsync.On<IStrefaPlayer, int, int, int, Task>("InventoryTryEquipItem", InventoryTryEquipItemAsync);
             AltAsync.On<IStrefaPlayer, int, int, int, int, Task>("InventoryTryUnequipItem", InventoryTryUnequipItemAsync);
             AltAsync.On<IStrefaPlayer, int, int, int, int, int, int, Task>("InventoryTrySwapItems", InventoryTrySwapItemsAsync);
+            AltAsync.On<IStrefaPlayer, int, int, Task>("InventoryTryUseItem", InventoryTryUseItemAsync);
+        }
+
+        private async Task InventoryTryUseItemAsync(IStrefaPlayer player, int inventoryId, int itemId)
+        {
+            if (!player.TryGetCharacter(out var character)) return;
+
+            var inventory = InventoriesHelper.GetCorrectInventory(player, character, inventoryId);
+            var response = await inventory.UseItemAsync(character, itemId, _inventoryDatabaseService);
+            switch (response)
+            {
+                case InventoryUseResponse.ItemNotFound:
+                    _notificationService.ShowErrorNotificationLocked(player, "Błąd", "Nie posiadasz takiego przedmiotu", 3000);
+                    break;
+                case InventoryUseResponse.ItemNotUsed:
+                    _notificationService.ShowErrorNotificationLocked(player, "Błąd", "Nie udało się użyć przedmiotu", 3000);
+                    break;
+            }
         }
 
         private void GetPlayerInventory(IPlayer player)

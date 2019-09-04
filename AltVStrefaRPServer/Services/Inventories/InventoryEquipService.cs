@@ -35,7 +35,7 @@ namespace AltVStrefaRPServer.Services.Inventories
                     var response = playerEquipment.EquipItem(itemToEquip);
                     if (response != InventoryEquipItemResponse.ItemEquipped) return response;
 
-                    if (inventory.RemoveItem(itemToEquip))
+                    if (inventory.RemoveItemCompletly(itemToEquip))
                     {
                         context.InventoryContainers.Update(inventory);
                         await context.SaveChangesAsync();

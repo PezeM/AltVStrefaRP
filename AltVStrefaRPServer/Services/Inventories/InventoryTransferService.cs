@@ -98,12 +98,12 @@ namespace AltVStrefaRPServer.Services.Inventories
                 if (!inventory.HasItem(selectedItem) || selectedItem.SlotId != selectedItemSlotId) return response;
                 if (!inventoryToSwap.HasItem(itemToSwap) || itemToSwap.SlotId != itemToSwapSlotId) return response;
 
-                if (!inventory.RemoveItem(selectedItem))
+                if (!inventory.RemoveItemCompletly(selectedItem))
                 {
                     response.Type = InventorySwapItemResponseType.CouldntRemoveItem;
                     return response;
                 }
-                if (!inventoryToSwap.RemoveItem(itemToSwap))
+                if (!inventoryToSwap.RemoveItemCompletly(itemToSwap))
                 {
                     inventory.AddInventoryItem(selectedItem, selectedItemSlotId);
                     response.Type = InventorySwapItemResponseType.CouldntRemoveItem;

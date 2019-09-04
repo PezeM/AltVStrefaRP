@@ -122,9 +122,9 @@ namespace AltVStrefaRPServer.Models.Core
         private void UpdateNetworkingEntity(string dataName, object newValue)
         {
             if (NetworkingEntity == null) return;
-            if (NetworkingEntity.GetData("green", out long _))
+            if (NetworkingEntity.GetData(dataName, out long _))
             {
-                NetworkingEntity.SetData("green", newValue);
+                NetworkingEntity.SetData(dataName, newValue);
             }
         }
     }

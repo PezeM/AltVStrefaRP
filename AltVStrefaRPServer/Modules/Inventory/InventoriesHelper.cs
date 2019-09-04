@@ -12,7 +12,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
         /// <param name="player">Player</param>
         /// <param name="character">Character</param>
         /// <param name="inventoryId">Id of the inventory we want to check</param>
-        /// <returns>Returns <see cref="IInventoryController"/> if found inventory otherwise null</returns>
+        /// <returns>Returns <see cref="IInventoryContainer"/> if found inventory otherwise null</returns>
         public static IInventoryContainer GetCorrectInventory(IStrefaPlayer player, Character character, int inventoryId)
         {
             if (character.InventoryId == inventoryId) return character.Inventory;

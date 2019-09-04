@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AltV.Net;
+using AltV.Net.Async;
 
 namespace AltVStrefaRPServer.Models.Inventory
 {
@@ -71,14 +72,14 @@ namespace AltVStrefaRPServer.Models.Inventory
             return response;
         }
 
-        public bool RemoveItem(InventoryItem item)
+        public bool RemoveItemCompletly(InventoryItem item)
         {
             return _items.Remove(item);
         }
 
         public async Task<bool> RemoveItemAsync(InventoryItem item, IInventoryDatabaseService inventoryDatabaseService)
         {
-            if (!RemoveItem(item))
+            if (!RemoveItemCompletly(item))
                 return false;
 
             await inventoryDatabaseService.UpdateInventoryAsync(this);
@@ -97,7 +98,7 @@ namespace AltVStrefaRPServer.Models.Inventory
             item.RemoveQuantity(amount);
             if (item.Quantity <= 0)
             {
-                RemoveItem(item);
+                RemoveItemCompletly(item);
                 return InventoryRemoveResponse.ItemRemovedCompletly;
             }
 
@@ -143,6 +144,35 @@ namespace AltVStrefaRPServer.Models.Inventory
         public async Task UpdateInventoryAsync(IInventoryDatabaseService inventoryDatabaseService)
         {
             await inventoryDatabaseService.UpdateInventoryAsync(this);
+        }
+
+        public InventoryUseResponse UseItem(Character character, int itemId, int quantity = 1)
+        {
+            if (!HasItem(itemId, out var item)) return InventoryUseResponse.ItemNotFound;
+            return UseItem(character, item, quantity);
+        }
+
+        public InventoryUseResponse UseItem(Character character, InventoryItem item, int quantity = 1)
+        {
+            if (!item.Item.UseItem(character)) return InventoryUseResponse.ItemNotUsed;
+            RemoveItem(item, quantity);
+            character.Player?.EmitLocked("usedItemSuccessfully", Id, item.Id, item.Quantity);
+            return InventoryUseResponse.ItemUsed;
+        }
+
+        public async Task<InventoryUseResponse> UseItemAsync(Character character, InventoryItem item, IInventoryDatabaseService inventoryDatabaseService,
+            int quantity = 1)
+        {
+            if (!item.Item.UseItem(character)) return InventoryUseResponse.ItemNotUsed;
+            await RemoveItemAsync(item, quantity, inventoryDatabaseService).ConfigureAwait(false);
+            character.Player?.EmitLocked("usedItemSuccessfully", Id, item.Id, item.Quantity);
+            return InventoryUseResponse.ItemUsed;
+        }
+
+        public async Task<InventoryUseResponse> UseItemAsync(Character character, int itemId, IInventoryDatabaseService inventoryDatabaseService)
+        {
+            if (!HasItem(itemId, out var item)) return InventoryUseResponse.ItemNotFound;
+            return await UseItemAsync(character, item, inventoryDatabaseService).ConfigureAwait(false);
         }
     }
 }

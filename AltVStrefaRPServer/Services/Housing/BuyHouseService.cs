@@ -48,7 +48,7 @@ namespace AltVStrefaRPServer.Services.Housing
 
             // Generate new house lock pattern
             house.Flat.CreateLockPattern();
-            // house.Flat.ChangeOwner(newOwner); // This is causing error, updating owner of the flat
+            house.Flat.ChangeOwner(newOwner); // This is causing error, updating owner of the flat
 
             // This or update flat or detach interior
             using (var context = _factory.Invoke())
@@ -63,10 +63,11 @@ namespace AltVStrefaRPServer.Services.Housing
 
                 //context.Entry(house.Flat).State = EntityState.Modified;
 
-                context.Flats.Update(house.Flat);
+                //context.Flats.Update(house.Flat);
                 //context.Houses.Update(house);
                 //context.Characters.Update(newOwner);
-                await _characterDatabaseService.UpdateCharacterAsync(newOwner);
+                //await _characterDatabaseService.UpdateCharacterAsync(newOwner);
+                //newOwner.Houses.Add(house.Flat);
                 await context.SaveChangesAsync();
 
                 // Add key item to character inventory
