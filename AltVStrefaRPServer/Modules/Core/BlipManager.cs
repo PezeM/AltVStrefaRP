@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using AltV.Net;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models.Core;
@@ -29,7 +30,10 @@ namespace AltVStrefaRPServer.Modules.Core
             BlipAdapter = new BlipWrapperAdapter();
         }
 
-        public MValue GetBlips() => _blipsMValue;
+        public List<BlipWrapper> GetBlips()
+        {
+            return _blips.Values.ToList();
+        }
 
         public IBlipWrapper CreateBlip(string blipName, int blipSprite, int blipColor, Position position, float scale = 1)
         {
