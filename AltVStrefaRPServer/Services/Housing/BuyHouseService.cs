@@ -10,6 +10,7 @@ using AltVStrefaRPServer.Services.Characters;
 using AltVStrefaRPServer.Services.Inventories;
 using AltVStrefaRPServer.Services.Money;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic.ApplicationServices;
 
 namespace AltVStrefaRPServer.Services.Housing
 {
@@ -32,7 +33,7 @@ namespace AltVStrefaRPServer.Services.Housing
             _factory = factory;
             _characterDatabaseService = characterDatabaseService;
         }
-        
+
         public async Task<BuyHouseResponse> BuyHouseAsync(Character newOwner, House house)
         {
             // Check if house has owner

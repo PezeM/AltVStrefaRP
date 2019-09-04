@@ -95,7 +95,7 @@ namespace StrefaRPServer.UnitTests.Modules.Inventory
 
             var response = _playerEquipment.UnequipItem(_itemToEquip);
 
-            Assert.That(response, Is.EqualTo(InventoryUnequipItemResponse.ItemUnequipped));
+            Assert.That(response, Is.EqualTo(InventoryUnequipItemResponseType.ItemUnequipped));
         }
 
         [Test]
@@ -124,7 +124,7 @@ namespace StrefaRPServer.UnitTests.Modules.Inventory
         {
             var response = _playerEquipment.UnequipItem(_itemToEquip);
 
-            Assert.That(response, Is.EqualTo(InventoryUnequipItemResponse.NoItemAtThatSlot));
+            Assert.That(response, Is.EqualTo(InventoryUnequipItemResponseType.NoItemAtThatSlot));
         }
 
         [Test]
@@ -135,7 +135,7 @@ namespace StrefaRPServer.UnitTests.Modules.Inventory
 
             var response = _playerEquipment.UnequipItem(itemSlot);
 
-            Assert.That(response, Is.EqualTo(InventoryUnequipItemResponse.ItemUnequipped));
+            Assert.That(response, Is.EqualTo(InventoryUnequipItemResponseType.ItemUnequipped));
         }
     }
 }

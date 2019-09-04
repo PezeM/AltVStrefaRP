@@ -7,7 +7,7 @@ namespace AltVStrefaRPServer.Models.Inventory.Interfaces
         Character Owner { get; }
 
         InventoryEquipItemResponse EquipItem(InventoryItem item);
-        InventoryUnequipItemResponse UnequipItem(EquipmentSlot slot);
-        InventoryUnequipItemResponse UnequipItem(InventoryItem inventoryItem);
+        InventoryUnequipItemResponseType UnequipItem(EquipmentSlot slot);
+        InventoryUnequipItemResponseType UnequipItem(InventoryItem inventoryItem);
     }
 }

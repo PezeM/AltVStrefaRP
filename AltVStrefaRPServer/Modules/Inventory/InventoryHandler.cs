@@ -120,7 +120,8 @@ namespace AltVStrefaRPServer.Modules.Inventory
             var response = InventoryDropResponse.ItemNotFound;
             if (inventory != null)
             {
-                response = await inventory.DropItemAsync(itemId, amount, player.Position, _inventoriesManager, _inventoryDatabaseService).ConfigureAwait(false);
+                response = await inventory.DropItemAsync(itemId, amount, player.Position, _inventoriesManager, _inventoryDatabaseService)
+                    .ConfigureAwait(false);
             }
 
             await DropItemResponseAsync(player, itemId, character, response).ConfigureAwait(false);
@@ -329,27 +330,27 @@ namespace AltVStrefaRPServer.Modules.Inventory
             }
         }
 
-        private void TryUnequipResponse(IStrefaPlayer player, InventoryUnequipItemResponse response)
+        private void TryUnequipResponse(IPlayer player, InventoryUnequipItemResponse response)
         {
-            switch (response)
+            switch (response.Type)
             {
-                case InventoryUnequipItemResponse.ItemNotFound:
+                case InventoryUnequipItemResponseType.ItemNotFound:
                     _notificationService.ShowErrorNotification(player, "Błąd", "Nie znaleziono takiego przedmiotu");
-                    player.EmitLocked("inventoryTryEquipItemResponse", false);
+                    player.EmitLocked("inventoryTryEquipItemResponse", false, response.UnequipedItemNewSlotId);
                     break;
-                case InventoryUnequipItemResponse.EquipmentInventoryNotFound:
-                case InventoryUnequipItemResponse.ItemNotEquipmentable:
-                case InventoryUnequipItemResponse.NoItemAtThatSlot:
-                case InventoryUnequipItemResponse.InventoryIsFull:
-                    player.EmitLocked("inventoryTryUnequipItemResponse", false);
+                case InventoryUnequipItemResponseType.EquipmentInventoryNotFound:
+                case InventoryUnequipItemResponseType.ItemNotEquipmentable:
+                case InventoryUnequipItemResponseType.NoItemAtThatSlot:
+                case InventoryUnequipItemResponseType.InventoryIsFull:
+                    player.EmitLocked("inventoryTryUnequipItemResponse", false, response.UnequipedItemNewSlotId);
                     break;
-                case InventoryUnequipItemResponse.ItemUnequipped:
-                    player.EmitLocked("inventoryTryUnequipItemResponse", true);
+                case InventoryUnequipItemResponseType.ItemUnequipped:
+                    player.EmitLocked("inventoryTryUnequipItemResponse", true, response.UnequipedItemNewSlotId);
                     break;
             }
         }
 
-        private void InventoryTryTranferItemResponse(IStrefaPlayer player, InventoryTransferItemResponse response)
+        private void InventoryTryTranferItemResponse(IPlayer player, InventoryTransferItemResponse response)
         {
             switch (response)
             {
@@ -363,7 +364,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
             }
         }
 
-        private void InventoryTryMoveItemResponse(IStrefaPlayer player, InventoryMoveItemResponse response)
+        private void InventoryTryMoveItemResponse(IPlayer player, InventoryMoveItemResponse response)
         {
             switch (response)
             {
@@ -381,7 +382,7 @@ namespace AltVStrefaRPServer.Modules.Inventory
             }
         }
 
-        private static void InventorySwapItemRespone(IStrefaPlayer player, InventorySwapItemResponse response)
+        private static void InventorySwapItemRespone(IPlayer player, InventorySwapItemResponse response)
         {
             switch (response.Type)
             {

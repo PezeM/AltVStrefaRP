@@ -1,6 +1,12 @@
 ﻿namespace AltVStrefaRPServer.Models.Inventory.Responses
 {
-    public enum InventoryUnequipItemResponse
+    public struct InventoryUnequipItemResponse
+    {
+        public int UnequipedItemNewSlotId { get; set; }
+        public InventoryUnequipItemResponseType Type { get; set; }
+    }
+
+    public enum InventoryUnequipItemResponseType
     {
         EquipmentInventoryNotFound,
         ItemNotFound,

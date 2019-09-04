@@ -52,7 +52,8 @@ namespace AltVStrefaRPServer.Services.Inventories
 
         public async Task<InventoryUnequipItemResponse> UnequipItemAsync(InventoryContainer inventory, PlayerEquipment playerEquipment, EquipmentSlot slotId)
         {
-            if (!playerEquipment.EquippedItems.TryGetValue(slotId, out var itemToUnequip)) return InventoryUnequipItemResponse.ItemNotFound;
+            if (!playerEquipment.EquippedItems.TryGetValue(slotId, out var itemToUnequip))
+                return new InventoryUnequipItemResponse { Type = InventoryUnequipItemResponseType.ItemNotFound };
             return await UnequipItemAsync(inventory, playerEquipment, itemToUnequip.Id);
         }
 
@@ -60,7 +61,7 @@ namespace AltVStrefaRPServer.Services.Inventories
             int itemToEquipId, int newSlotId)
         {
             if (character.Equipment?.Id != playerEquipmentId)
-                return InventoryUnequipItemResponse.EquipmentInventoryNotFound;
+                return new InventoryUnequipItemResponse{ Type = InventoryUnequipItemResponseType.EquipmentInventoryNotFound};
 
             return await UnequipItemAsync(inventory, character.Equipment, itemToEquipId, newSlotId);
         }
@@ -68,7 +69,8 @@ namespace AltVStrefaRPServer.Services.Inventories
         public async Task<InventoryUnequipItemResponse> UnequipItemAsync(InventoryContainer inventory, PlayerEquipment playerEquipment, int itemToUnequipId,
             int newSlotId = -1)
         {
-            if (!playerEquipment.HasItem(itemToUnequipId, out var itemToUnequip)) return InventoryUnequipItemResponse.ItemNotFound;
+            if (!playerEquipment.HasItem(itemToUnequipId, out var itemToUnequip))
+                return new InventoryUnequipItemResponse{Type = InventoryUnequipItemResponseType.ItemNotFound};
             return await UnequipItemAsync(inventory, playerEquipment, itemToUnequip, newSlotId);
         }
 
@@ -79,13 +81,31 @@ namespace AltVStrefaRPServer.Services.Inventories
             {
                 using (var transaction = await context.Database.BeginTransactionAsync())
                 {
+                    var response = new InventoryUnequipItemResponse();
                     // If called by method with item id it's called multiple times, but we still have to make check if inventory contains item.. 
-                    if (!playerEquipment.HasItem(itemToUnequip)) return InventoryUnequipItemResponse.ItemNotFound;
-                    if (!inventory.HasEmptySlots()) return InventoryUnequipItemResponse.InventoryIsFull;
-                    if (newSlotId > -1 && !inventory.IsSlotEmpty(newSlotId)) return InventoryUnequipItemResponse.InventoryIsFull;
+                    if (!playerEquipment.HasItem(itemToUnequip))
+                    {
+                        response.Type = InventoryUnequipItemResponseType.ItemNotFound;
+                        return response;
+                    }
+                    if (!inventory.HasEmptySlots())
+                    {
+                        response.Type = InventoryUnequipItemResponseType.InventoryIsFull;
+                        return response;
+                    }
+
+                    if (newSlotId > -1 && !inventory.IsSlotEmpty(newSlotId))
+                    {
+                        response.Type = InventoryUnequipItemResponseType.InventoryIsFull;
+                        return response;
+                    }
 
                     var unequipItemResponse = playerEquipment.UnequipItem(itemToUnequip);
-                    if (unequipItemResponse != InventoryUnequipItemResponse.ItemUnequipped) return unequipItemResponse;
+                    if (unequipItemResponse != InventoryUnequipItemResponseType.ItemUnequipped)
+                    {
+                        response.Type = unequipItemResponse;
+                        return response;
+                    }
 
                     if (newSlotId > -1)
                         inventory.AddInventoryItem(itemToUnequip, newSlotId);
@@ -97,7 +117,9 @@ namespace AltVStrefaRPServer.Services.Inventories
                     await context.SaveChangesAsync();
 
                     transaction.Commit();
-                    return InventoryUnequipItemResponse.ItemUnequipped;
+                    response.UnequipedItemNewSlotId = itemToUnequip.SlotId;
+                    response.Type = InventoryUnequipItemResponseType.ItemUnequipped;
+                    return response;
                 }
             }
         }

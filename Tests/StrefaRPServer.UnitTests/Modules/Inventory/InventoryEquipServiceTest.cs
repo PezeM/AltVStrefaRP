@@ -118,7 +118,7 @@ namespace StrefaRPServer.UnitTests.Modules.Inventory
 
             var response = await _inventoryEquipService.UnequipItemAsync(_inventoryContainer, _playerEquipment, _itemToEquip.Id);
 
-            Assert.That(response, Is.EqualTo(InventoryUnequipItemResponse.ItemUnequipped));
+            Assert.That(response.Type, Is.EqualTo(InventoryUnequipItemResponseType.ItemUnequipped));
         }
 
         [Test]
@@ -187,7 +187,7 @@ namespace StrefaRPServer.UnitTests.Modules.Inventory
 
             var response = await _inventoryEquipService.UnequipItemAsync(_inventoryContainer, _playerEquipment, equipmentSlot);
 
-            Assert.That(response, Is.EqualTo(InventoryUnequipItemResponse.ItemUnequipped));
+            Assert.That(response.Type, Is.EqualTo(InventoryUnequipItemResponseType.ItemUnequipped));
         }
     }
 }
