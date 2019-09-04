@@ -255,7 +255,7 @@ namespace AltVStrefaRPServer.Modules.HousingModule
                     _logger.LogInformation("Character {characterName} CID({characterId}) bought house ID({houseId}) for {housePrice}$", 
                         character.GetFullName(), character.Id, house.Id, house.Price);
                     _notificationService.ShowSuccessNotificationLocked(player, "Kupiono mieszkanie", $"Pomyślnie zakupiłeś mieszkanie za {house.Price}$", 3500);
-                    player.EmitLocked("successfullyBoughtHouse", house.Id);
+                    player.EmitLocked("successfullyBoughtHouse", house.Id, house.Price);
                     break;
             }
         }

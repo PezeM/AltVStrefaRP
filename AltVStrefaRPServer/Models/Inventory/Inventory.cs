@@ -156,7 +156,7 @@ namespace AltVStrefaRPServer.Models.Inventory
         {
             if (!item.Item.UseItem(character)) return InventoryUseResponse.ItemNotUsed;
             RemoveItem(item, quantity);
-            character.Player?.EmitLocked("usedItemSuccessfully", Id, item.Id, item.Quantity);
+            character.Player?.EmitLocked("inventoryUsedItemSuccessfully", Id, item.Id, item.Quantity);
             return InventoryUseResponse.ItemUsed;
         }
 
@@ -165,7 +165,7 @@ namespace AltVStrefaRPServer.Models.Inventory
         {
             if (!item.Item.UseItem(character)) return InventoryUseResponse.ItemNotUsed;
             await RemoveItemAsync(item, quantity, inventoryDatabaseService).ConfigureAwait(false);
-            character.Player?.EmitLocked("usedItemSuccessfully", Id, item.Id, item.Quantity);
+            character.Player?.EmitLocked("inventoryUsedItemSuccessfully", Id, item.Id, item.Quantity);
             return InventoryUseResponse.ItemUsed;
         }
 
