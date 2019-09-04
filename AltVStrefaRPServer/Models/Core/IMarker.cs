@@ -1,4 +1,5 @@
 ﻿using AltV.Net.Data;
+using AltV.Net.NetworkingEntity.Elements.Entities;
 using AltVStrefaRPServer.Models.Interfaces;
 
 namespace AltVStrefaRPServer.Models.Core
@@ -6,7 +7,7 @@ namespace AltVStrefaRPServer.Models.Core
     public interface IMarker : IPosition
     {
         int Id { get; set; }
-        int NetworkingEntityId { get; set; }
+        INetworkingEntity NetworkingEntity { get; set; }
 
         /// <summary>
         /// Marker type. https://wiki.rage.mp/index.php?title=Marker::Marker

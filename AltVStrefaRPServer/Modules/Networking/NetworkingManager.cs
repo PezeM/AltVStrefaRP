@@ -44,6 +44,13 @@ namespace AltVStrefaRPServer.Modules.Networking
             return true;
         }
 
+        public bool RemoveNetworkingEntity(INetworkingEntity networkingEntity)
+        {
+            if (networkingEntity == null) return false;
+            networkingEntity.Remove();
+            return true;
+        }
+
         public INetworkingEntity AddNewDroppedItem(DroppedItem droppedItem, int streamingRange = 50, int dimension = 0)
         {
             var networkingEntity = AltNetworking.CreateEntity(new Position { X = droppedItem.X, Y = droppedItem.Y, Z = droppedItem.Z },
@@ -90,7 +97,7 @@ namespace AltVStrefaRPServer.Modules.Networking
                 { "alpha", marker.Alpha },
             });
             _entities.TryAdd(networkingEntity.Id, networkingEntity);
-            marker.NetworkingEntityId = (int) networkingEntity.Id;
+            marker.NetworkingEntity = networkingEntity;
         }
 
         private void OnEntityStreamOut(INetworkingEntity entity, INetworkingClient client)

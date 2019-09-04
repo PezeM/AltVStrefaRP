@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using AltV.Net.Data;
+using AltV.Net.NetworkingEntity.Elements.Entities;
 using AltVStrefaRPServer.Modules.Core;
 
 namespace AltVStrefaRPServer.Models.Core
@@ -7,17 +8,50 @@ namespace AltVStrefaRPServer.Models.Core
     public class Marker : IMarker
     {
         private int _red;
+        private int _green;
+        private int _blue;
+        private int _alpha;
+        private float _scaleX;
+        private float _scaleY;
+        private float _scaleZ;
         public int Id { get; set; }
-        public int NetworkingEntityId { get; set; } = -1;
+        public INetworkingEntity NetworkingEntity { get; set; }
         public int Type { get; set; }
         public int Range { get; set; }
         public int Dimension { get; set; }
         public float X { get; set; }
         public float Y { get; set; }
         public float Z { get; set; }
-        public float ScaleX { get; set; }
-        public float ScaleY { get; set; }
-        public float ScaleZ { get; set; }
+
+        public float ScaleX
+        {
+            get => _scaleX;
+            set
+            {
+                _scaleX = value;
+                UpdateNetworkingEntity("scaleX", _scaleX);
+            }
+        }
+
+        public float ScaleY
+        {
+            get => _scaleY;
+            set
+            {
+                _scaleY = value;
+                UpdateNetworkingEntity("scaleY", _scaleY);
+            }
+        }
+
+        public float ScaleZ
+        {
+            get => _scaleZ;
+            set
+            {
+                _scaleZ = value;
+                UpdateNetworkingEntity("scaleZ", _scaleZ);
+            }
+        }
 
         public int Red
         {
@@ -25,13 +59,39 @@ namespace AltVStrefaRPServer.Models.Core
             set
             {
                 _red = value;
-                MarkerManager.Instance.ChangeMarkerColor(this);
+                UpdateNetworkingEntity("red", _red);
             }
         }
 
-        public int Green { get; set; }
-        public int Blue { get; set; }
-        public int Alpha { get; set; }
+        public int Green
+        {
+            get => _green;
+            set
+            {
+                _green = value;
+                UpdateNetworkingEntity("green", _green);
+            } 
+        }
+
+        public int Blue
+        {
+            get => _blue;
+            set
+            {
+                _blue = value;
+                UpdateNetworkingEntity("blue", _blue);
+            }
+        }
+
+        public int Alpha
+        {
+            get => _alpha;
+            set
+            {
+                _alpha = value;
+                UpdateNetworkingEntity("alpha", _alpha);
+            }
+        }
 
         public Marker(int id, int type, Position position, Color color, Position scale, int range = 20, int dimension = 0)
         {
@@ -58,6 +118,14 @@ namespace AltVStrefaRPServer.Models.Core
         public bool DestroyMarker()
         {
             return MarkerManager.Instance.RemoveMarker(this);
+        }
+        private void UpdateNetworkingEntity(string dataName, object newValue)
+        {
+            if (NetworkingEntity == null) return;
+            if (NetworkingEntity.GetData("green", out long _))
+            {
+                NetworkingEntity.SetData("green", newValue);
+            }
         }
     }
 }

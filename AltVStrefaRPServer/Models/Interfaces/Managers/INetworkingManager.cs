@@ -10,9 +10,10 @@ namespace AltVStrefaRPServer.Models.Interfaces.Managers
         void InitializeNetworkingManager(AppSettings appSettings);
         bool TryGetNetworkingEntity(int networkignEntityId, out INetworkingEntity networkingEntity);
         bool DoesNetworkingEntityExists(int networkingEntityId);
+        bool RemoveNetworkingEntity(int networkingItemId);
+        bool RemoveNetworkingEntity(INetworkingEntity networkingEntity);
         INetworkingEntity AddNewDroppedItem(DroppedItem droppedItem, int streamingRange = 50, int dimension = 0);
         void AddNewMarker(Marker marker);
         void DescreaseDroppedItemQuantity(int networkingItemId, int itemsToRemove);
-        bool RemoveNetworkingEntity(int networkingItemId);
     }
 }
