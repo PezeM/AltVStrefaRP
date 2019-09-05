@@ -1,6 +1,8 @@
 ﻿using System.Threading.Tasks;
 using AltV.Net.Data;
 using AltVStrefaRPServer.Models.Houses;
+using AltVStrefaRPServer.Models.Houses.Interfaces;
+using AltVStrefaRPServer.Models.Houses.Responses;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Modules.HousingModule;
 using AltVStrefaRPServer.Services.Housing;

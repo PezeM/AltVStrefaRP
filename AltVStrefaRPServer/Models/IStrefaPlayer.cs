@@ -1,5 +1,5 @@
 ﻿using AltV.Net.Elements.Entities;
-using AltVStrefaRPServer.Models.Houses;
+using AltVStrefaRPServer.Models.Houses.Interfaces;
 using AltVStrefaRPServer.Models.Inventory.Interfaces;
 
 namespace AltVStrefaRPServer.Models
@@ -15,6 +15,6 @@ namespace AltVStrefaRPServer.Models
         /// <summary>
         /// Flat the player is in. Returns null if player is not inside any flat
         /// </summary>
-        Flat EnteredFlat { get; set; }
+        IHouse EnteredHouse { get; set; }
     }
 }

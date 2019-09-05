@@ -114,7 +114,8 @@ namespace AltVStrefaRPServer.Modules.Admin
             _chatHandler.RegisterCommand("testSave", TestSave);
             _chatHandler.RegisterCommand("createNewHouse", async (player, args) => await CreateNewHouseAsync(player, args));
             _chatHandler.RegisterCommand("createNewHotel", async (player, args) => await CreateNewHotelAsync(player, args));
-            ;        }
+            _chatHandler.RegisterCommand("testChange", async (player, args) => await TestChangeAsync(player, args));
+        }
         
         private void TestSave(IPlayer player, string[] args)
         {
@@ -547,6 +548,11 @@ namespace AltVStrefaRPServer.Modules.Admin
             if (!int.TryParse(args[2], out int hotelMaxRooms)) return;
 
             await _houseHandler.TryToCreateNewHotelAsync(strefaPlayer, hotelRoomPrice, interiorId, hotelMaxRooms);
+        }
+
+        private async Task TestChangeAsync(IPlayer player, string[] args)
+        {
+            await _houseHandler.TestChangeAsync(player);
         }
     }
 }

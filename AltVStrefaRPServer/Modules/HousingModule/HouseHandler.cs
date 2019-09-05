@@ -9,6 +9,8 @@ using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Core;
 using AltVStrefaRPServer.Models.Houses;
+using AltVStrefaRPServer.Models.Houses.Interfaces;
+using AltVStrefaRPServer.Models.Houses.Responses;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Models.Inventory.Items.Keys;
 using AltVStrefaRPServer.Services;
@@ -82,7 +84,7 @@ namespace AltVStrefaRPServer.Modules.HousingModule
                 return;
             }
             
-            if (!house.Flat.MovePlayerInside(player))
+            if (!house.MovePlayerInside(player))
             {
                 _notificationService.ShowErrorNotification(player, "Zamknięte", "Mieszkanie jest zamknięte", 2500);
             }
@@ -116,44 +118,44 @@ namespace AltVStrefaRPServer.Modules.HousingModule
         
         private void TryLeaveHouse(IStrefaPlayer player)
         {
-            player.EnteredFlat?.MovePlayerOutside(player);
+            player.EnteredHouse?.MovePlayerOutside(player);
         }
 
         private void TryCloseHouseDoor(IStrefaPlayer player)
         {
             if (!player.TryGetCharacter(out var character)) return;
-            Flat flat;
-            if (player.EnteredFlat != null) flat = player.EnteredFlat;
+            IHouse house;
+            if (player.EnteredHouse != null) house = player.EnteredHouse;
             else
             {
                 if (!_housesManager.TryGetHouseBuilding(player.HouseEnterColshape, out var houseBuilding)) return;
-                if (!(houseBuilding is House house)) return;
-                flat = house.Flat;
+                if (!(houseBuilding is House houseObject)) return;
+                house = houseObject;
             }
 
-            if (flat.IsLocked) return;
-            CloseHouseDoor(player, character, flat);
+            if (house.IsLocked) return;
+            CloseHouseDoor(player, character, house);
         }
 
         private void TryCloseHouseDoor(IStrefaPlayer player, int hotelRoomNumber)
         {
             if (!player.TryGetCharacter(out var character)) return;
-            Flat flat;
-            if (player.EnteredFlat != null) flat = player.EnteredFlat;
+            IHouse house;
+            if (player.EnteredHouse != null) house = player.EnteredHouse;
             else
             {
                 if (_housesManager.TryGetHouseBuilding(player.HouseEnterColshape, out var houseBuilding)) return;
                 if (!(houseBuilding is Hotel hotel)) return;
                 if (hotel.TryGetHotelRoom(hotelRoomNumber, out var hotelRoom)) return;
-                flat = hotelRoom;
+                house = hotelRoom;
             }
 
-            if (flat.IsLocked) return;
+            if (house.IsLocked) return;
 
-            CloseHouseDoor(player, character, flat);
+            CloseHouseDoor(player, character, house);
         }
 
-        private void CloseHouseDoor(IPlayer player, Character character, Flat flat)
+        private void CloseHouseDoor(IPlayer player, Character character, IHouse house)
         {
             var keys = character.Inventory.GetItems<HouseKeyItem>();
             if (keys == null)
@@ -163,7 +165,7 @@ namespace AltVStrefaRPServer.Modules.HousingModule
                 return;
             }
 
-            var correctKeys = keys.FirstOrDefault(k => k.LockPattern == flat.LockPattern);
+            var correctKeys = keys.FirstOrDefault(k => k.LockPattern == house.LockPattern);
             if (correctKeys == null)
             {
                 _notificationService.ShowErrorNotification(player, "Brak kluczy", "Nie posiadasz kluczy do tego mieszkania",
@@ -171,46 +173,46 @@ namespace AltVStrefaRPServer.Modules.HousingModule
                 return;
             }
 
-            flat.Lock();
-            player.Emit("successfullyToggledHouseLock", flat.IsLocked); // Play some sound and show notificati
+            house.LockDoors();
+            player.Emit("successfullyToggledHouseLock", house.IsLocked); // Play some sound and show notificati
         }
 
         private void TryOpenHouseDoor(IStrefaPlayer player)
         {
             if (!player.TryGetCharacter(out var character)) return;
-            Flat flat;
-            if (player.EnteredFlat != null) flat = player.EnteredFlat;
+            IHouse house;
+            if (player.EnteredHouse != null) house = player.EnteredHouse;
             else
             {
                 if (!_housesManager.TryGetHouseBuilding(player.HouseEnterColshape, out var houseBuilding)) return;
-                if (!(houseBuilding is House house)) return;
-                flat = house.Flat;
+                if (!(houseBuilding is House houseObject)) return;
+                house = houseObject;
             }
 
-            if (!flat.IsLocked) return;
+            if (!house.IsLocked) return;
 
-            OpenHouseDoor(player, character, flat);
+            OpenHouseDoor(player, character, house);
         }
 
         private void TryOpenHouseDoor(IStrefaPlayer player, int hotelRoomNumber)
         {
             if (!player.TryGetCharacter(out var character)) return;
-            Flat flat;
-            if (player.EnteredFlat != null) flat = player.EnteredFlat;
+            IHouse house;
+            if (player.EnteredHouse != null) house = player.EnteredHouse;
             else
             {
                 if (_housesManager.TryGetHouseBuilding(player.HouseEnterColshape, out var houseBuilding)) return;
                 if (!(houseBuilding is Hotel hotel)) return;
                 if (hotel.TryGetHotelRoom(hotelRoomNumber, out var hotelRoom)) return;
-                flat = hotelRoom;
+                house = hotelRoom;
             }
 
-            if (!flat.IsLocked) return;
+            if (!house.IsLocked) return;
 
-            OpenHouseDoor(player, character, flat);
+            OpenHouseDoor(player, character, house);
         }
 
-        private void OpenHouseDoor(IPlayer player, Character character, Flat flat)
+        private void OpenHouseDoor(IPlayer player, Character character, IHouse house)
         {
             var keys = character.Inventory.GetItems<HouseKeyItem>();
             if (keys == null)
@@ -220,7 +222,7 @@ namespace AltVStrefaRPServer.Modules.HousingModule
                 return;
             }
 
-            var correctKeys = keys.FirstOrDefault(k => k.LockPattern == flat.LockPattern);
+            var correctKeys = keys.FirstOrDefault(k => k.LockPattern == house.LockPattern);
             if (correctKeys == null)
             {
                 _notificationService.ShowErrorNotification(player, "Brak kluczy", "Nie posiadasz kluczy do tego mieszkania",
@@ -228,8 +230,8 @@ namespace AltVStrefaRPServer.Modules.HousingModule
                 return;
             }
 
-            flat.Unlock();
-            player.Emit("successfullyToggledHouseLock", flat.IsLocked); // Play some sound and show notification
+            house.UnlockDoors();
+            player.Emit("successfullyToggledHouseLock", house.IsLocked); // Play some sound and show notification
         }
 
         public async Task TryBuyHouseAsync(IStrefaPlayer player)
@@ -323,6 +325,14 @@ namespace AltVStrefaRPServer.Modules.HousingModule
                         $"Stworzono hotel z cena {price}$, interiorem ID({interiorId}) i {maxRooms} pokojami", 3500);
                     break;
             }
+        }
+
+        public async Task TestChangeAsync(IPlayer player)
+        {
+            var houseBuilding = _housesManager.GetLatestHouseBuilding();
+            if (!(houseBuilding is House house)) return;
+
+            await _buyHouseService.TestChange(house);
         }
     }
 }

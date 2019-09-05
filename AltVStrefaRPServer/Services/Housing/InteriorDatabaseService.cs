@@ -23,8 +23,8 @@ namespace AltVStrefaRPServer.Services.Housing
             {
                 return context
                     .Interiors
-                    .Include(i => i.Flats)
-                    .ThenInclude(f => f.HouseBuilding)
+                    .Include(i => i.Houses)
+                    .Include(i => i.HotelRooms)
                     .ToList();
             }
         }

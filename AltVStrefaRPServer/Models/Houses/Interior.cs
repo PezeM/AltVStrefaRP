@@ -5,6 +5,7 @@ using AltV.Net;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Models.Core;
+using AltVStrefaRPServer.Models.Houses.Interfaces;
 using AltVStrefaRPServer.Modules.Core;
 using AltVStrefaRPServer.Services.Housing;
 
@@ -29,11 +30,9 @@ namespace AltVStrefaRPServer.Models.Houses
         public float EnterY { get; set; }
         public float EnterZ { get; set; }
 
-        /// <summary>
-        /// Collection of flats using this interior
-        /// </summary>
-        public ICollection<Flat> Flats { get; private set; } = new List<Flat>();
-        
+        public ICollection<House> Houses { get; private set; }
+        public ICollection<HotelRoom> HotelRooms { get; private set; }
+
         public IColShape Colshape { get; set; }
         public IMarker Marker { get; set; }
 

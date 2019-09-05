@@ -79,7 +79,7 @@ namespace AltVStrefaRPServer.Services.Characters
                         .ThenInclude(i => i.Items)
                             .ThenInclude(i => i.Item)
                     .Include(c => c.Houses)
-                        .ThenInclude(f => f.HouseBuilding)
+                    .Include(c => c.HotelRooms)
                     .FirstOrDefaultAsync(c => c.Id == characterId);
             }
         }

@@ -6,18 +6,14 @@ namespace AltVStrefaRPServer.Services.Housing
 {
     public interface IHouseDatabaseService
     {
-        IEnumerable<HouseBuilding> GetAllHouseBuildings();
         IEnumerable<Hotel> GetAllHotels();
         IEnumerable<House> GetAllHouses();
-        Task<HouseBuilding> GetHouseBuildingAsync(int houseId);
-        HouseBuilding GetHouseBuilding(int houseId);
         House GetHouse(int houseId);
         Task<House> GetHouseAsync(int houseId);
-        Task AddNewHouseAsync(HouseBuilding oldHouse);
+        Hotel GetHotel(int hotelId);
+        Task<Hotel> GetHotelAsync(int hotelId);
         Task AddNewHouseAsync(House house);
-        Task UpdateHouseAsync(HouseBuilding oldHouse);
         Task UpdateHouseAsync(House house);
         Task UpdateHotelAsync(Hotel hotel);
-        Task RemoveHouseAsync(HouseBuilding oldHouse);
     }
 }

@@ -6,6 +6,7 @@ using AltV.Net.Data;
 using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models.Houses;
+using AltVStrefaRPServer.Models.Houses.Responses;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Services.Housing;
 using AltVStrefaRPServer.Services.Housing.Factories;

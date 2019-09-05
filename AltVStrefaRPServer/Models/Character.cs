@@ -53,8 +53,9 @@ namespace AltVStrefaRPServer.Models
         public Fraction Fraction { get; set; }
         public int FractionRank { get; set; }
 
-        public ICollection<Flat> Houses { get; private set; }
-        
+        public ICollection<House> Houses { get; set; }
+        public ICollection<HotelRoom> HotelRooms { get; set; }
+
         public string GetFullName()
         {
             return string.Join(' ', FirstName, LastName);

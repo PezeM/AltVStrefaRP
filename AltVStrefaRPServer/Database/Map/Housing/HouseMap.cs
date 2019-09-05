@@ -8,9 +8,8 @@ namespace AltVStrefaRPServer.Database.Map.Housing
     {
         public void Configure(EntityTypeBuilder<House> builder)
         {
-            builder.HasOne(h => h.Flat)
-                .WithOne()
-                .HasForeignKey<Flat>(f => f.HouseBuildingId);
+            builder.Ignore(h => h.Colshape);
+            builder.Ignore(h => h.Marker);
         }
     }
 }

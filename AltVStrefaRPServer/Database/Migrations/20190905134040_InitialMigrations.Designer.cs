@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AltVStrefaRPServer.Database.Migrations
 {
     [DbContext(typeof(ServerContext))]
-    [Migration("20190903181819_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20190905134040_InitialMigrations")]
+    partial class InitialMigrations
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -298,49 +298,12 @@ namespace AltVStrefaRPServer.Database.Migrations
                     b.HasDiscriminator<string>("Discriminator").HasValue("FractionPermission");
                 });
 
-            modelBuilder.Entity("AltVStrefaRPServer.Models.Houses.Flat", b =>
+            modelBuilder.Entity("AltVStrefaRPServer.Models.Houses.Hotel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired();
-
-                    b.Property<int>("HouseBuildingId");
-
-                    b.Property<int?>("HouseBuildingId1");
-
-                    b.Property<int>("InteriorId");
-
-                    b.Property<bool>("IsLocked");
-
-                    b.Property<string>("LockPattern");
-
-                    b.Property<int?>("OwnerId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("HouseBuildingId")
-                        .IsUnique();
-
-                    b.HasIndex("HouseBuildingId1");
-
-                    b.HasIndex("InteriorId");
-
-                    b.HasIndex("OwnerId");
-
-                    b.ToTable("Flats");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("Flat");
-                });
-
-            modelBuilder.Entity("AltVStrefaRPServer.Models.Houses.HouseBuilding", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired();
+                    b.Property<int>("MaximumNumberOfHotelRooms");
 
                     b.Property<int>("Price");
 
@@ -352,9 +315,65 @@ namespace AltVStrefaRPServer.Database.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("HouseBuildings");
+                    b.ToTable("Hotels");
+                });
 
-                    b.HasDiscriminator<string>("Discriminator").HasValue("HouseBuilding");
+            modelBuilder.Entity("AltVStrefaRPServer.Models.Houses.HotelRoom", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("HotelId");
+
+                    b.Property<int>("HotelRoomNumber");
+
+                    b.Property<int>("InteriorId");
+
+                    b.Property<bool>("IsLocked");
+
+                    b.Property<string>("LockPattern");
+
+                    b.Property<int?>("OwnerId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HotelId");
+
+                    b.HasIndex("InteriorId");
+
+                    b.HasIndex("OwnerId");
+
+                    b.ToTable("HotelRooms");
+                });
+
+            modelBuilder.Entity("AltVStrefaRPServer.Models.Houses.House", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("InteriorId");
+
+                    b.Property<bool>("IsLocked");
+
+                    b.Property<string>("LockPattern");
+
+                    b.Property<int?>("OwnerId");
+
+                    b.Property<int>("Price");
+
+                    b.Property<float>("X");
+
+                    b.Property<float>("Y");
+
+                    b.Property<float>("Z");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InteriorId");
+
+                    b.HasIndex("OwnerId");
+
+                    b.ToTable("Houses");
                 });
 
             modelBuilder.Entity("AltVStrefaRPServer.Models.Houses.Interior", b =>
@@ -682,35 +701,6 @@ namespace AltVStrefaRPServer.Database.Migrations
                     b.HasDiscriminator().HasValue("VehiclePermission");
                 });
 
-            modelBuilder.Entity("AltVStrefaRPServer.Models.Houses.HotelRoom", b =>
-                {
-                    b.HasBaseType("AltVStrefaRPServer.Models.Houses.Flat");
-
-                    b.Property<int?>("HotelId");
-
-                    b.Property<int>("HotelRoomNumber");
-
-                    b.HasIndex("HotelId");
-
-                    b.HasDiscriminator().HasValue("HotelRoom");
-                });
-
-            modelBuilder.Entity("AltVStrefaRPServer.Models.Houses.Hotel", b =>
-                {
-                    b.HasBaseType("AltVStrefaRPServer.Models.Houses.HouseBuilding");
-
-                    b.Property<int>("MaximumNumberOfRooms");
-
-                    b.HasDiscriminator().HasValue("Hotel");
-                });
-
-            modelBuilder.Entity("AltVStrefaRPServer.Models.Houses.House", b =>
-                {
-                    b.HasBaseType("AltVStrefaRPServer.Models.Houses.HouseBuilding");
-
-                    b.HasDiscriminator().HasValue("House");
-                });
-
             modelBuilder.Entity("AltVStrefaRPServer.Models.Inventory.InventoryContainer", b =>
                 {
                     b.HasBaseType("AltVStrefaRPServer.Models.Inventory.Inventory");
@@ -892,19 +882,27 @@ namespace AltVStrefaRPServer.Database.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("AltVStrefaRPServer.Models.Houses.Flat", b =>
+            modelBuilder.Entity("AltVStrefaRPServer.Models.Houses.HotelRoom", b =>
                 {
-                    b.HasOne("AltVStrefaRPServer.Models.Houses.House")
-                        .WithOne("Flat")
-                        .HasForeignKey("AltVStrefaRPServer.Models.Houses.Flat", "HouseBuildingId")
+                    b.HasOne("AltVStrefaRPServer.Models.Houses.Hotel", "Hotel")
+                        .WithMany("HotelRooms")
+                        .HasForeignKey("HotelId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("AltVStrefaRPServer.Models.Houses.HouseBuilding", "HouseBuilding")
-                        .WithMany()
-                        .HasForeignKey("HouseBuildingId1");
-
                     b.HasOne("AltVStrefaRPServer.Models.Houses.Interior", "Interior")
-                        .WithMany("Flats")
+                        .WithMany("HotelRooms")
+                        .HasForeignKey("InteriorId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("AltVStrefaRPServer.Models.Character", "Owner")
+                        .WithMany("HotelRooms")
+                        .HasForeignKey("OwnerId");
+                });
+
+            modelBuilder.Entity("AltVStrefaRPServer.Models.Houses.House", b =>
+                {
+                    b.HasOne("AltVStrefaRPServer.Models.Houses.Interior", "Interior")
+                        .WithMany("Houses")
                         .HasForeignKey("InteriorId")
                         .OnDelete(DeleteBehavior.Cascade);
 
@@ -947,13 +945,6 @@ namespace AltVStrefaRPServer.Database.Migrations
                         .WithOne("Owner")
                         .HasForeignKey("AltVStrefaRPServer.Models.Vehicles.VehicleModel", "InventoryId")
                         .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("AltVStrefaRPServer.Models.Houses.HotelRoom", b =>
-                {
-                    b.HasOne("AltVStrefaRPServer.Models.Houses.Hotel")
-                        .WithMany("HotelRooms")
-                        .HasForeignKey("HotelId");
                 });
 #pragma warning restore 612, 618
         }

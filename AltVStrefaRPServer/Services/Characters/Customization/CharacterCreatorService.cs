@@ -5,7 +5,9 @@ using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Models.Server;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using AltVStrefaRPServer.Models.Houses;
 
 namespace AltVStrefaRPServer.Services.Characters.Customization
 {
@@ -55,6 +57,8 @@ namespace AltVStrefaRPServer.Services.Characters.Customization
                 Equipment = new PlayerEquipment(),
                 Gender = (Gender)gender,
                 Dimension = 0,
+                Houses = new List<House>(),
+                HotelRooms = new List<HotelRoom>(),
                 X = AppSettings.Current.ServerConfig.SpawnPosition.X,
                 Y = AppSettings.Current.ServerConfig.SpawnPosition.Y,
                 Z = AppSettings.Current.ServerConfig.SpawnPosition.Z,

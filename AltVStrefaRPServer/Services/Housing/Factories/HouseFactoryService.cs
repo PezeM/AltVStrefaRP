@@ -6,25 +6,6 @@ namespace AltVStrefaRPServer.Services.Housing.Factories
 {
     public class HouseFactoryService : IHouseFactoryService
     {
-        public Flat CreateNewFlat()
-        {
-            var flat = new Flat();
-
-            flat.CreateLockPattern();
-            return flat;
-        }
-
-        public HotelRoom CreateNewHotelRoom(int roomNumber)
-        {
-            var hotelRoom = new HotelRoom
-            {
-                HotelRoomNumber = 1
-            };
-            hotelRoom.CreateLockPattern();
-
-            return hotelRoom;
-        }
-        
         public House CreateNewHouse(Position position, int price)
         {
             var newHouse = new House
@@ -33,10 +14,27 @@ namespace AltVStrefaRPServer.Services.Housing.Factories
                 Y = position.Y,
                 Z = position.Z,
                 Price = price,
-                Flat = CreateNewFlat(),
             };
-
+            newHouse.CreateLockPattern();
             return newHouse;
+        }
+
+        public House CreateNewHouse(Position position, int price, Interior interior)
+        {
+            var newHouse = CreateNewHouse(position, price);
+            newHouse.Interior = interior;
+            return newHouse;
+        }
+
+        public HotelRoom CreateNewHotelRoom(int roomNumber)
+        {
+            var hotelRoom = new HotelRoom
+            {
+                HotelRoomNumber = roomNumber
+            };
+            hotelRoom.CreateLockPattern();
+
+            return hotelRoom;
         }
 
         public Hotel CreateNewHotel(Position position, int price, int maxRooms)
@@ -47,10 +45,11 @@ namespace AltVStrefaRPServer.Services.Housing.Factories
                 Y = position.Y,
                 Z = position.Z,
                 Price = price,
-                MaximumNumberOfRooms = maxRooms,
+                MaximumNumberOfHotelRooms = maxRooms,
                 HotelRooms = new List<HotelRoom>()
             };
-            
+            newHotel.AddNewHotelRoom(CreateNewHotelRoom(1));
+
             return newHotel;
         }
     }

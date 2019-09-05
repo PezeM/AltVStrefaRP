@@ -11,9 +11,13 @@ namespace AltVStrefaRPServer.Database.Map.Housing
             builder.Ignore(i => i.Colshape);
             builder.Ignore(i => i.Marker);
 
-            builder.HasMany(i => i.Flats)
-                .WithOne(f => f.Interior)
+            builder.HasMany(i => i.Houses)
+                .WithOne(h => h.Interior)
                 .HasForeignKey(f => f.InteriorId);
+
+            builder.HasMany(i => i.HotelRooms)
+                .WithOne(hR => hR.Interior)
+                .HasForeignKey(hR => hR.InteriorId);
         }
     }
 }

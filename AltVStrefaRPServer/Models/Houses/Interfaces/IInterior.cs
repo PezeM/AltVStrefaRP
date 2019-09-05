@@ -4,7 +4,7 @@ using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Models.Interfaces;
 using AltVStrefaRPServer.Services.Housing;
 
-namespace AltVStrefaRPServer.Models.Houses
+namespace AltVStrefaRPServer.Models.Houses.Interfaces
 {
     public interface IInterior : IPosition
     {
@@ -18,10 +18,8 @@ namespace AltVStrefaRPServer.Models.Houses
         /// </summary>
         string Name { get; set; }
 
-        /// <summary>
-        /// Collection of flats using this interior
-        /// </summary>
-        ICollection<Flat> Flats { get; }
+        ICollection<House> Houses { get; }
+        ICollection<HotelRoom> HotelRooms { get; }
 
         IColShape Colshape { get; set; }
         Task DeleteInteriorAsync(IInteriorDatabaseService interiorDatabaseService);

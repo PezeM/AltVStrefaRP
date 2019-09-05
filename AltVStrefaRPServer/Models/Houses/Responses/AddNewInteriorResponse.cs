@@ -1,4 +1,4 @@
-﻿namespace AltVStrefaRPServer.Models.Houses
+﻿namespace AltVStrefaRPServer.Models.Houses.Responses
 {
     public enum AddNewInteriorResponse
     {

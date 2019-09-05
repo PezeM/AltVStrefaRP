@@ -70,11 +70,10 @@ namespace AltVStrefaRPServer.Database
 
         // Housing
         public DbSet<Interior> Interiors { get; set; }
-        public DbSet<HouseBuilding> HouseBuildings { get; set; }
         public DbSet<Hotel> Hotels { get; set; }
+        public DbSet<HotelRoom> HotelRooms { get; set; }
         public DbSet<House> Houses { get; set; }
-        public DbSet<Flat> Flats { get; set; }
-        
+
         public ServerContext(DbContextOptions options) : base(options)
         {
         }
