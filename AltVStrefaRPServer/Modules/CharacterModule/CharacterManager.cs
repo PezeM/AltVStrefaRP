@@ -60,6 +60,7 @@ namespace AltVStrefaRPServer.Modules.CharacterModule
                 player.SetSyncedMetaData(MetaData.PLAYER_NAME, character.GetFullName());
                 player.SetSyncedMetaData(MetaData.REMOTE_ID, character.Id);
                 character.Equipment.InitializeEquipment();
+                SetAdminLevel(character);
 
                 // TODO: Setting skin and shared data
                 player.SetPosition(character.X, character.Y, character.Z);
@@ -95,6 +96,13 @@ namespace AltVStrefaRPServer.Modules.CharacterModule
             foreach (var item in character.Equipment.Items)
             {
                 item.Item.UseItem(character);
+            }
+        }
+        private static void SetAdminLevel(Character character)
+        {
+            if (character.Account != null)
+            {
+                character.Player.SetSyncedMetaData(MetaData.PLAYER_ADMIN_LEVEL, (int)character.Account.AdminLevel);
             }
         }
     }

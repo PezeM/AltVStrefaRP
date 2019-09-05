@@ -15,6 +15,8 @@
         public static readonly string SYNCED_VEHICLE_FUEL = "vehicleFuel";
         public static readonly string SYNCED_VEHICLE_MILEAGE = "vehicleMileage";
 
+        public static readonly string PLAYER_ADMIN_LEVEL = "playerAdminLevel";
+
         #endregion
 
         public static readonly string COLSHAPE_HOUSE_ID = "colshapeHouseId";
