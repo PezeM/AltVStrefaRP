@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AltV.Net.Data;
-using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models.Houses;
 using AltVStrefaRPServer.Models.Houses.Interfaces;
@@ -22,16 +20,14 @@ namespace AltVStrefaRPServer.Modules.HousingModule
         private readonly ILogger<HousesManager> _logger;
         private readonly IInteriorsManager _interiorsManager;
         private readonly IHouseFactoryService _houseFactoryService;
-        private IInteriorDatabaseService _interiorDatabaseService;
 
-        public HousesManager(IHouseDatabaseService houseDatabaseService, IHouseFactoryService houseFactoryService, IInteriorsManager interiorsManager,
-            IInteriorDatabaseService interiorDatabaseService, ILogger<HousesManager> logger)
+        public HousesManager(IHouseDatabaseService houseDatabaseService, IHouseFactoryService houseFactoryService, IInteriorsManager interiorsManager, 
+            ILogger<HousesManager> logger)
         {
             _houseBuildings = new Dictionary<int, IHouseBuilding>();
             _houseDatabaseService = houseDatabaseService;
             _houseFactoryService = houseFactoryService;
             _interiorsManager = interiorsManager;
-            _interiorDatabaseService = interiorDatabaseService;
             _logger = logger;
 
             InitializeHouses();

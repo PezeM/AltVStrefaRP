@@ -24,6 +24,7 @@
         public float StartingPlayerMoney { get; set; } = 250.0f;
         public int ChangeWeatherInterval { get; set; } = 30;
         public int OneMinuteIrlToGameTime { get; set; } = 20;
+        public int WeatherTransitionDuration { get; set; } = 10_000;
     }
 
     public class ConfigPosition

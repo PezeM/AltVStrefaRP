@@ -154,8 +154,8 @@ namespace AltVStrefaRPServer.Handlers
             player.Spawn(new Position(_appSettings.ServerConfig.LoginPosition.X, _appSettings.ServerConfig.LoginPosition.Y,
                 _appSettings.ServerConfig.LoginPosition.Z));
 
-            player.SetDateTime(_timeController.GameTime.Days, 0, 0, _timeController.GameTime.Hours, _timeController.GameTime.Minutes, 0);
-            player.SetWeather(_timeController.CurrentWeather);
+            player.Emit("setGlobalTime", _timeController.GameTime.Hours, _timeController.GameTime.Minutes, 0);
+            player.Emit("setWeatherNow", _timeController.CurrentWeather.Weather);
             //player.Emit("showAuthenticateWindow");
         }
     }
