@@ -132,7 +132,8 @@ namespace AltVStrefaRPServer
             services.AddSingleton<IInteriorsManager, InteriorsManager>();
             services.AddSingleton<IHousesManager, HousesManager>();
             services.AddSingleton<HouseHandler>();
-            
+            services.AddSingleton<AdminMenuHandler>();
+
             services.AddTransient<AdminCommands>();
             services.AddTransient<CharacterCreator>();
             services.AddTransient<SittingHandler>();
