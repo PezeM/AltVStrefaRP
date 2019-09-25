@@ -8,6 +8,7 @@ using AltVStrefaRPServer.Models.Houses.Responses;
 using AltVStrefaRPServer.Services.Characters;
 using AltVStrefaRPServer.Services.Inventories;
 using AltVStrefaRPServer.Services.Money;
+using BuyHouseResponse = AltVStrefaRPServer.Models.Houses.Responses.BuyHouseResponse;
 
 namespace AltVStrefaRPServer.Services.Housing
 {

@@ -16,6 +16,8 @@ using AltVStrefaRPServer.Models.Inventory.Items.Keys;
 using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Housing;
 using Microsoft.Extensions.Logging;
+using AddNewHouseResponse = AltVStrefaRPServer.Models.Houses.Responses.AddNewHouseResponse;
+using BuyHouseResponse = AltVStrefaRPServer.Models.Houses.Responses.BuyHouseResponse;
 
 namespace AltVStrefaRPServer.Modules.HousingModule
 {

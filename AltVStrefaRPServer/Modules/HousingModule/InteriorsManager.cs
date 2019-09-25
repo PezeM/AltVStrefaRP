@@ -11,6 +11,7 @@ using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Services.Housing;
 using AltVStrefaRPServer.Services.Housing.Factories;
 using Microsoft.Extensions.Logging;
+using AddNewInteriorResponse = AltVStrefaRPServer.Models.Houses.Responses.AddNewInteriorResponse;
 
 namespace AltVStrefaRPServer.Modules.HousingModule
 {

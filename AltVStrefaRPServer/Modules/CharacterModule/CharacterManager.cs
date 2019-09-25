@@ -7,7 +7,6 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Modules.Core;
 
 namespace AltVStrefaRPServer.Modules.CharacterModule

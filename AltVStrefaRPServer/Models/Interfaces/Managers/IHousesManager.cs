@@ -4,6 +4,7 @@ using AltV.Net.Data;
 using AltVStrefaRPServer.Models.Houses;
 using AltVStrefaRPServer.Models.Houses.Interfaces;
 using AltVStrefaRPServer.Models.Houses.Responses;
+using AddNewHouseResponse = AltVStrefaRPServer.Models.Houses.Responses.AddNewHouseResponse;
 
 namespace AltVStrefaRPServer.Models.Interfaces.Managers
 {

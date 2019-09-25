@@ -81,6 +81,7 @@ namespace AltVStrefaRPServer.Modules.Networking
                 networkingEntity.SetData("count", quantity);
             }
         }
+
         public void AddNewMarker(Marker marker)
         {
             var networkingEntity = AltNetworking.CreateEntity(new Position{X = marker.X, Y = marker.Y, Z = marker.Z}, marker.Dimension, marker.Range, 
