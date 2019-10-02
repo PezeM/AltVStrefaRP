@@ -30,8 +30,8 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="AltV.Net" Version="1.15.4-beta" />
-    <PackageReference Include="AltV.Net.Async" Version="1.15.2-beta" />
+    <PackageReference Include="AltV.Net" Version="1.16.3-beta" />
+    <PackageReference Include="AltV.Net.Async" Version="1.16.0-beta" />
     <PackageReference Include="AltV.Net.NetworkingEntity" Version="1.4.3-dev-preview" />
     <PackageReference Include="EFCore.DbContextFactory" Version="1.0.2" />
     <PackageReference Include="MessagePack" Version="2.0.123-beta" />
