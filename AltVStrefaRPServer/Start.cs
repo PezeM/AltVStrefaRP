@@ -111,6 +111,10 @@ namespace AltVStrefaRPServer
                     }
                 }
             });
+
+            Alt.On<IPlayer>("TattooShop-GetPlayerTattoos", (player) => {
+                player.Emit("TattooShop-OpenShop", new int[5]);
+            });
         }
 
 

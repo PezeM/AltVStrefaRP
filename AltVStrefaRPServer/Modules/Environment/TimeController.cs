@@ -36,13 +36,13 @@ namespace AltVStrefaRPServer.Modules.Environment
                 Minutes = 0
             };
 
-            _gameTimeTimer = new Timer
-            {
-                Interval = TimerInterval
-            };
-            _gameTimeTimer.Elapsed += GameTimerOnElapsed;
-            _gameTimeTimer.AutoReset = true;
-            _gameTimeTimer.Start();
+            //_gameTimeTimer = new Timer
+            //{
+            //    Interval = TimerInterval
+            //};
+            //_gameTimeTimer.Elapsed += GameTimerOnElapsed;
+            //_gameTimeTimer.AutoReset = true;
+            //_gameTimeTimer.Start();
 
             _logger.LogInformation("Time manager initialized");
         }
