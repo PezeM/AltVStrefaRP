@@ -10,6 +10,7 @@ namespace AltVStrefaRPServer.Models.Vehicles
         public float Fuel { get; set; } = 50f;
 
         public float Oil { get; set; } = 50f;
+        public float Mileage { get; set; } = 0f;
 
         public string Owner { get; set; }
 

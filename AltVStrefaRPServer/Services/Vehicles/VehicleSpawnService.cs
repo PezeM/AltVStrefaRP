@@ -132,7 +132,7 @@ namespace AltVStrefaRPServer.Services.Vehicles
             vehicleModel.VehicleHandle.SetSyncedMetaData(MetaData.SYNCED_VEHICLE_ID, vehicleModel.Id);
             vehicleModel.VehicleHandle.SetSyncedMetaData(MetaData.SYNCED_VEHICLE_FUEL, vehicleModel.Fuel);
             vehicleModel.VehicleHandle.SetSyncedMetaData(MetaData.SYNCED_VEHICLE_OIL, vehicleModel.Oil);
-            vehicleModel.VehicleHandle.SetSyncedMetaData(MetaData.SYNCED_VEHICLE_MILEAGE, vehicleModel.Mileage);
+            //vehicleModel.VehicleHandle.SetSyncedMetaData(MetaData.SYNCED_VEHICLE_MILEAGE, vehicleModel.Mileage);
             vehicleModel.VehicleHandle.NumberplateText = vehicleModel.PlateText;
             vehicleModel.VehicleHandle.NumberplateIndex = vehicleModel.PlateNumber;
             vehicleModel.IsSpawned = true;

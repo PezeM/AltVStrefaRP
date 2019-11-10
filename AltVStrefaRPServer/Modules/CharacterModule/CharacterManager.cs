@@ -69,6 +69,7 @@ namespace AltVStrefaRPServer.Modules.CharacterModule
 
                 character.LastPlayed = DateTime.Now;
                 character.Player.Emit("blipManagerLoadAllBlips", BlipManager.Instance.GetBlips());
+                character.Player.Emit("Player-CharacterReady");
 
                 _characters.Add(player.Id, character);
                 Log.ForContext<CharacterManager>().Information("Initialized character {characterName} CID({characterId}) ID({playerId}) in the world",

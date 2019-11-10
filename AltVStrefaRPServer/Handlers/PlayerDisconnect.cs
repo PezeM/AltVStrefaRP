@@ -36,11 +36,11 @@ namespace AltVStrefaRPServer.Handlers
 
                 character.TimePlayed += (DateTime.Now - character.LastPlayed).Minutes;
                 character.LastPlayed = DateTime.Now;
+                _logger.LogInformation("Character {characterName} CID({characterId}) left the server. Reason {reason}. ID({playerId})",
+                    character.GetFullName(), character.Id, reason, player.Id);
+                CharacterManager.Instance.RemoveCharacterDataFromServer(character);
             });
 
-            _logger.LogInformation("Character {characterName} CID({characterId}) left the server. Reason {reason}. ID({playerId})",
-                character.GetFullName(), character.Id, reason, player.Id);
-            CharacterManager.Instance.RemoveCharacterDataFromServer(character);
             await _characterDatabaseService.UpdateCharacterAsync(character);
         }
     }

@@ -27,7 +27,9 @@ using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Modules.HousingModule;
+using AltVStrefaRPServer.Modules.Networking;
 using VehicleModel = AltV.Net.Enums.VehicleModel;
 
 namespace AltVStrefaRPServer.Modules.Admin
@@ -115,8 +117,9 @@ namespace AltVStrefaRPServer.Modules.Admin
             _chatHandler.RegisterCommand("createNewHouse", async (player, args) => await CreateNewHouseAsync(player, args));
             _chatHandler.RegisterCommand("createNewHotel", async (player, args) => await CreateNewHotelAsync(player, args));
             _chatHandler.RegisterCommand("testChange", async (player, args) => await TestChangeAsync(player, args));
+            _chatHandler.RegisterCommand("testStreamer", TestStreamer);
         }
-        
+
         private void TestSave(IPlayer player, string[] args)
         {
             var startTime = Time.GetTimestampMs();
@@ -553,6 +556,44 @@ namespace AltVStrefaRPServer.Modules.Admin
         private async Task TestChangeAsync(IPlayer player, string[] args)
         {
             await _houseHandler.TestChangeAsync(player);
+        }
+
+        private void TestStreamer(IPlayer player, string[] args)
+        {
+            var startTime = Time.GetTimestampMs();
+            _logger.LogInformation("Starting creating test objects.");
+            var idGenerator = new IdGenerator();
+            NetworkingManager.Instance.RemoveAllNetworkingEntities();
+            _logger.LogInformation($"Deleted all networking entities in {Time.GetElapsedTime(startTime)}ms.");
+
+            var offset = 10;
+            if (args != null && args.Length > 0)
+            {
+                int.TryParse(args[0], out offset);
+            }
+
+            string propModel = "bkr_prop_coke_pallet_01a";
+            var newBaseItem = new DrinkItem("picie", 1, "bkr_prop_coke_pallet_01a", 10);
+
+            for (int i = -4000; i <= 4000; i += offset)
+            {
+                for (int y = -4000; y <= 4000; y += offset)
+                {
+                    NetworkingManager.Instance.AddNewDroppedItem(new DroppedItem
+                    {
+                        Id = idGenerator.GetNextId(),
+                        Count = 1,
+                        Model = propModel,
+                        X = i,
+                        Y = y,
+                        Z = 500,
+                        Item = newBaseItem
+                    }, 100);
+                }
+            }
+
+            _logger.LogInformation(
+                $"Created {NetworkingManager.Instance.GetAllEntitiesCount()} entities in {Time.GetElapsedTime(startTime)}ms.");
         }
     }
 }

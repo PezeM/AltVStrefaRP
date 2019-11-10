@@ -26,10 +26,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
+using AltVStrefaRPServer.Models.Inventory;
+using AltVStrefaRPServer.Models.Inventory.Items;
 using AltVStrefaRPServer.Models.Server;
 using AltVStrefaRPServer.Modules.Core.Colshapes;
 using AltVStrefaRPServer.Modules.HousingModule;
+using AltVStrefaRPServer.Modules.Tests;
 using Newtonsoft.Json;
 
 namespace AltVStrefaRPServer
@@ -68,6 +72,7 @@ namespace AltVStrefaRPServer
 
             var adminMenuHandler = _startup.ServiceProvider.GetService<AdminMenuHandler>();
             _vehiclesManager = _startup.ServiceProvider.GetService<IVehiclesManager>();
+            //var vehicleMileageHandler = _startup.ServiceProvider.GetService<VehicleMileageHandler>();
             var vehicleShopManager = _startup.ServiceProvider.GetService<VehicleShopsManager>();
             var businessesManager = _startup.ServiceProvider.GetService<BusinessesManager>();
             var businessHandler = _startup.ServiceProvider.GetServices<BusinessHandler>();
@@ -84,7 +89,9 @@ namespace AltVStrefaRPServer
             var housesManager = _startup.ServiceProvider.GetService<HousesManager>();
             var interiorsManager = _startup.ServiceProvider.GetService<InteriorsManager>();
             var houseHandler = _startup.ServiceProvider.GetService<HouseHandler>();
-            
+            // Tests
+            var trainController = _startup.ServiceProvider.GetService<TrainController>();
+
             Alt.On<IPlayer, ulong>("bigNumber", (player, number) =>
             {
                 Alt.Log($"ULONG BIGNUMBER VALUE: {number.ToString()}");
@@ -149,7 +156,6 @@ namespace AltVStrefaRPServer
 
         private async Task OnConsoleCommandAsync(string name, string[] args)
         {
-            Alt.Log($"[CONSOLE COMMAND] Name: {name} args: {args}");
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
@@ -186,6 +192,46 @@ namespace AltVStrefaRPServer
                         return;
                     }
                     SpawnVehicleComand(id);
+                    break;
+                }
+                case "testStreamer":
+                {
+                    var startTime = Time.GetTimestampMs();
+                    _logger.LogInformation("Started creating test objects.");
+                    var idGenerator = new IdGenerator();
+                    NetworkingManager.Instance.RemoveAllNetworkingEntities();
+                    _logger.LogInformation($"Deleted all networking entities in {Time.GetElapsedTime(startTime)}ms.");
+
+                    var offset = 10;
+                    if (args != null && args.Length > 0)
+                    {
+                        int.TryParse(args[0], out offset);
+                    }
+
+                    string propModel = "imp_prop_ship_01a";
+                        //string propModel = "prop_metal_plates01";
+
+                    var newBaseItem = new DrinkItem("picie", 1, propModel, 10);
+
+                    for (int i = -4000; i <= 4000; i += offset)
+                    {
+                        for (int y = -4000; y <= 4000; y += offset)
+                        {
+                            NetworkingManager.Instance.AddNewDroppedItem(new DroppedItem
+                            {
+                                Id = idGenerator.GetNextId(),
+                                Count = 1,
+                                Model = propModel,
+                                X = i,
+                                Y = y,
+                                Z = 500,
+                                Item = newBaseItem
+                            }, 40);
+                        }
+                    }
+
+                    _logger.LogInformation(
+                        $"Created {NetworkingManager.Instance.GetAllEntitiesCount()} entities in {Time.GetElapsedTime(startTime)}ms.");
                     break;
                 }
             }

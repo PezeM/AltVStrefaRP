@@ -35,6 +35,7 @@ using System;
 using System.IO;
 using AltVStrefaRPServer.Modules.Core;
 using AltVStrefaRPServer.Modules.HousingModule;
+using AltVStrefaRPServer.Modules.Tests;
 using AltVStrefaRPServer.Services.Housing;
 using AltVStrefaRPServer.Services.Housing.Factories;
 using Serilog.Exceptions;
@@ -140,8 +141,10 @@ namespace AltVStrefaRPServer
             services.AddTransient<TrashbinsController>();
             services.AddTransient<VehicleShopsHandler>();
             services.AddTransient<TownHallFractionHandler>();
+            services.AddSingleton<VehicleMileageHandler>();
 
             services.AddSingleton<SerializatorTest>();
+            services.AddSingleton<TrainController>();
 
             // Build provider
             ServiceProvider = services.BuildServiceProvider();
