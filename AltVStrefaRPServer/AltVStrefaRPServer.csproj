@@ -34,7 +34,7 @@
     <PackageReference Include="AltV.Net.Async" Version="1.10.0" />
     <PackageReference Include="AltV.Net.NetworkingEntity" Version="1.2.4-dev-preview" />
     <PackageReference Include="EFCore.DbContextFactory" Version="1.0.2" />
-    <PackageReference Include="MessagePack" Version="2.0.123-beta" />
+    <PackageReference Include="MessagePack" Version="2.1.80" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.2.4" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="2.2.4" />
