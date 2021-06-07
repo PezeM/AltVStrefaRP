@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using AltVStrefaRPServer.Models.Fractions.Permissions;
+﻿using AltVStrefaRPServer.Models.Fractions.Permissions;
+using System.Collections.Generic;
 
 namespace AltVStrefaRPServer.Models.Dto.Fractions
 {

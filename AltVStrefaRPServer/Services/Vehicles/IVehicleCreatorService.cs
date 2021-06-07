@@ -1,7 +1,6 @@
 ﻿using AltV.Net.Data;
-using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Enums;
-using System.Threading.Tasks;
+using AltVStrefaRPServer.Models.Vehicles;
 
 namespace AltVStrefaRPServer.Services.Vehicles
 {

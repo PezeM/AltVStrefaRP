@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using AltV.Net;
+﻿using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Extensions;
@@ -8,12 +7,12 @@ using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Dto;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
-using AltVStrefaRPServer.Modules.CharacterModule;
 using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Money;
 using AltVStrefaRPServer.Services.Money.Bank;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 namespace AltVStrefaRPServer.Modules.Money
 {
@@ -25,7 +24,7 @@ namespace AltVStrefaRPServer.Modules.Money
         private readonly IBankAccountManager _bankAccountManager;
         private readonly ILogger<BankHandler> _logger;
 
-        public BankHandler(IMoneyService moneyService, INotificationService notificationService, IBankAccountDatabaseService banklAccountDatabaseService, 
+        public BankHandler(IMoneyService moneyService, INotificationService notificationService, IBankAccountDatabaseService banklAccountDatabaseService,
             IBankAccountManager bankAccountManager, ILogger<BankHandler> logger)
         {
             _moneyService = moneyService;
@@ -78,11 +77,11 @@ namespace AltVStrefaRPServer.Modules.Money
                 return;
             }
 
-            await _bankAccountDatabaseService.AddNewBankAccount(character);
+            await _bankAccountDatabaseService.AddNewBankAccountAsync(character);
             await _notificationService.ShowSuccessNotificationAsync(player, "Nowe konto bankowe",
                 $"Otworzyłeś nowe konto w banku. Twój numer konta to: {character.BankAccount.AccountNumber}.", 7000);
-            _logger.LogInformation("Character CID({characterId}) created new bank account {@bankAccount} in {elapsedTime}", 
-                character.Id, character.BankAccount, Time.GetElapsedTime(startTime));
+            _logger.LogInformation("Character {characterName} CID({characterId}) created new bank account {bankAccountNumber} in {elapsedTime}ms",
+                character.GetFullName(), character.Id, character.BankAccount.AccountNumber, Time.GetElapsedTime(startTime));
         }
 
         public void TryToOpenBankMenu(IPlayer player)
@@ -104,7 +103,7 @@ namespace AltVStrefaRPServer.Modules.Money
             if (!player.TryGetCharacter(out Character character)) return;
             if (character.BankAccount == null) return;
 
-            if(await _moneyService.TransferMoneyFromEntityToEntityAsync(character.BankAccount, character, money, TransactionType.BankWithdraw))
+            if (await _moneyService.TransferMoneyFromEntityToEntityAsync(character.BankAccount, character, money, TransactionType.BankWithdraw))
             {
                 await player.EmitAsync("updateBankMoneyWithNotification",
                     $"Pomyślnie wypłacono {money}$ z konta. Obecny stan konta wynosi {character.BankAccount.Money}$.",
@@ -152,7 +151,7 @@ namespace AltVStrefaRPServer.Modules.Money
                     $"Pomyślnie przesłano {money}$ na konto o numerze {receiverBankAccount}. <br>" +
                     $"Twój aktualny stan konta wynosi {character.BankAccount.Money}$.",
                     character.BankAccount.Money).ConfigureAwait(false);
-                _logger.LogInformation("Character {characterName} CID({characterId}) transfered {money}$ to bank account {@bankAccount}", 
+                _logger.LogInformation("Character {characterName} CID({characterId}) transfered {money}$ to bank account {@bankAccount}",
                     character.GetFullName(), character.Id, money, receiverBankAccount);
             }
             else
@@ -165,7 +164,7 @@ namespace AltVStrefaRPServer.Modules.Money
         {
             if (!player.TryGetCharacter(out Character character)) return;
 
-            var bankTransactionHistory = await _bankAccountDatabaseService.GetTransferHistory(character);
+            var bankTransactionHistory = await _bankAccountDatabaseService.GetTransferHistoryAsync(character);
             if (bankTransactionHistory.Count <= 0)
             {
                 await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie posiadasz jeszcze żadnych transakcji");

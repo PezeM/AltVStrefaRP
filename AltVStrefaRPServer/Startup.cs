@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using AltVStrefaRPServer.Data;
 using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Handlers;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
@@ -20,7 +19,7 @@ using AltVStrefaRPServer.Services.Characters;
 using AltVStrefaRPServer.Services.Characters.Accounts;
 using AltVStrefaRPServer.Services.Characters.Customization;
 using AltVStrefaRPServer.Services.Fractions;
-using AltVStrefaRPServer.Services.Inventory;
+using AltVStrefaRPServer.Services.Inventories;
 using AltVStrefaRPServer.Services.Money;
 using AltVStrefaRPServer.Services.Money.Bank;
 using AltVStrefaRPServer.Services.Vehicles;
@@ -32,7 +31,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Serilog;
 using Serilog.Events;
-using Serilog.Sinks.Elasticsearch;
+using System;
+using System.IO;
+using AltVStrefaRPServer.Modules.Core;
+using AltVStrefaRPServer.Modules.HousingModule;
+using AltVStrefaRPServer.Modules.Tests;
+using AltVStrefaRPServer.Services.Housing;
+using AltVStrefaRPServer.Services.Housing.Factories;
+using Serilog.Exceptions;
 
 namespace AltVStrefaRPServer
 {
@@ -42,7 +48,7 @@ namespace AltVStrefaRPServer
     public class Startup
     {
         public IConfiguration Configuration { get; set; }
-        public ServiceProvider ServiceProvider { get; set; }
+        public ServiceProvider ServiceProvider { get; private set; }
 
         public Startup()
         {
@@ -67,11 +73,11 @@ namespace AltVStrefaRPServer
             appSettings.Initialize();
 
             services.AddDbContextFactory<ServerContext>(options =>
-                options.UseMySql(appSettings.ConnectionString, mysqlOptions =>
-                {
-                    mysqlOptions.ServerVersion(new Version(10, 1, 37), ServerType.MariaDb);
-                }));
-
+            {
+                options.EnableSensitiveDataLogging();
+                options.UseMySql(appSettings.ConnectionString,
+                        mysqlOptions => { mysqlOptions.ServerVersion(new Version(10, 1, 37), ServerType.MariaDb); });
+            });
 
             AddLogging(services, appSettings.ElasticsearchOptions);
 
@@ -94,8 +100,16 @@ namespace AltVStrefaRPServer
             services.AddTransient<IVehicleShopsFactory, VehicleShopsFactory>();
             services.AddTransient<IFractionDatabaseService, FractionDatabaseService>();
             services.AddTransient<IFractionFactoryService, FractionFactoryService>();
-            services.AddTransient<IInventoryDatabaseService, InventoryDatabaseService>();
-
+            services.AddTransient<IItemFactory, ItemFactory>();
+            services.AddScoped<IInventoryDatabaseService, InventoryDatabaseService>();
+            services.AddTransient<IInventoryTransferService, InventoryTransferService>();
+            services.AddTransient<IInventoryEquipService, InventoryEquipService>();
+            services.AddScoped<IInteriorDatabaseService, InteriorDatabaseService>();
+            services.AddTransient<IInteriorsFactoryService, InteriorsFactoryService>();
+            services.AddScoped<IHouseDatabaseService, HouseDatabaseService>();
+            services.AddTransient<IHouseFactoryService, HouseFactoryService>();
+            services.AddTransient<IBuyHouseService, BuyHouseService>();
+            
             services.AddTransient<PlayerConnect>();
             services.AddTransient<PlayerDisconnect>();
             services.AddTransient<VehicleHandler>();
@@ -114,7 +128,12 @@ namespace AltVStrefaRPServer
             services.AddSingleton<FractionHandler>();
             services.AddSingleton<IInventoriesManager, InventoriesManager>();
             services.AddSingleton<InventoryHandler>();
-            services.AddSingleton<INetworkingManager, NetworkingManager>();
+            services.AddSingleton<VehiclesData>();
+            services.AddSingleton<SoundManager>();
+            services.AddSingleton<IInteriorsManager, InteriorsManager>();
+            services.AddSingleton<IHousesManager, HousesManager>();
+            services.AddSingleton<HouseHandler>();
+            services.AddSingleton<AdminMenuHandler>();
 
             services.AddTransient<AdminCommands>();
             services.AddTransient<CharacterCreator>();
@@ -122,15 +141,16 @@ namespace AltVStrefaRPServer
             services.AddTransient<TrashbinsController>();
             services.AddTransient<VehicleShopsHandler>();
             services.AddTransient<TownHallFractionHandler>();
-            services.AddTransient<ItemFactory>();
+            services.AddSingleton<VehicleMileageHandler>();
 
             services.AddSingleton<SerializatorTest>();
+            services.AddSingleton<TrainController>();
 
             // Build provider
             ServiceProvider = services.BuildServiceProvider();
         }
 
-        private static void AddLogging(ServiceCollection services, ElasticsearchOptions options)
+        private static void AddLogging(IServiceCollection services, ElasticsearchOptions options)
         {
             services.AddLogging(builder =>
             {
@@ -144,18 +164,19 @@ namespace AltVStrefaRPServer
                 .Enrich.WithThreadId()
                 .Enrich.WithThreadName()
                 .Enrich.FromLogContext()
+                .Enrich.WithExceptionDetails()
                 .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] <{ThreadId}><{ThreadName}> {Message:lj} {NewLine}{Exception}")
-                .WriteTo.File(logsPath + ".log",
-                    LogEventLevel.Verbose, 
-                    outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] <{ThreadId}><{ThreadName}> {Message:lj} {NewLine}{Exception}", 
-                    rollingInterval: RollingInterval.Day, 
-                    retainedFileCountLimit: 100, 
+                .WriteTo.File($"{logsPath}.log",
+                    LogEventLevel.Verbose,
+                    "[{Timestamp:HH:mm:ss} {Level:u3}] <{ThreadId}><{ThreadName}> {Message:lj} {NewLine}{Exception}",
+                    rollingInterval: RollingInterval.Day,
+                    retainedFileCountLimit: 100,
                     rollOnFileSizeLimit: true)
-                .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(options.Uri))
-                {
-                    AutoRegisterTemplate = options.AutoRegisterTemplate,
-                    ModifyConnectionSettings = x => x.BasicAuthentication(options.Username, options.Password)
-                })
+                //.WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(options.Uri))
+                //{
+                //    AutoRegisterTemplate = options.AutoRegisterTemplate,
+                //    ModifyConnectionSettings = x => x.BasicAuthentication(options.Username, options.Password)
+                //})
                 .CreateLogger();
         }
     }

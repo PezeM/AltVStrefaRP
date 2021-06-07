@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Linq;
-using AltV.Net;
-using AltV.Net.Elements.Entities;
+﻿using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Services.Money.Bank;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Concurrent;
+using System.Linq;
 
 namespace AltVStrefaRPServer.Modules.Money
 {
@@ -43,8 +42,8 @@ namespace AltVStrefaRPServer.Modules.Money
         public bool TryGetBankAccount(IPlayer player, out BankAccount bankAccount)
         {
             bankAccount = null;
-            if(!player.TryGetCharacter(out var character)) return false;
-            if(character.BankAccount == null) return false;
+            if (!player.TryGetCharacter(out var character)) return false;
+            if (character.BankAccount == null) return false;
             bankAccount = character.BankAccount;
             return true;
         }

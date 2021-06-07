@@ -1,8 +1,7 @@
-﻿using System;
-using AltVStrefaRPServer.Database;
+﻿using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Businesses;
-using System.Threading.Tasks;
+using System;
 
 namespace AltVStrefaRPServer.Services.Businesses
 {

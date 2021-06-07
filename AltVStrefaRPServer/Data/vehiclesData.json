@@ -1,0 +1,3337 @@
+{
+  "ninef": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "ninef2": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "blista": {
+    "InventorySlots": 3,
+    "MaxFuel": 30.0,
+    "MaxOil": 4.0
+  },
+  "asea": {
+    "InventorySlots": 9,
+    "MaxFuel": 50.0,
+    "MaxOil": 5.0
+  },
+  "asea2": {
+    "InventorySlots": 9,
+    "MaxFuel": 50.0,
+    "MaxOil": 5.0
+  },
+  "boattrailer": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "bus": {
+    "InventorySlots": 15,
+    "MaxFuel": 90.0,
+    "MaxOil": 15.0
+  },
+  "armytanker": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "armytrailer": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "armytrailer2": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "freighttrailer": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "coach": {
+    "InventorySlots": 15,
+    "MaxFuel": 90.0,
+    "MaxOil": 15.0
+  },
+  "airbus": {
+    "InventorySlots": 15,
+    "MaxFuel": 90.0,
+    "MaxOil": 15.0
+  },
+  "asterope": {
+    "InventorySlots": 9,
+    "MaxFuel": 50.0,
+    "MaxOil": 5.0
+  },
+  "airtug": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "ambulance": {
+    "InventorySlots": 15,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "barracks": {
+    "InventorySlots": 24,
+    "MaxFuel": 200.0,
+    "MaxOil": 30.0
+  },
+  "barracks2": {
+    "InventorySlots": 24,
+    "MaxFuel": 200.0,
+    "MaxOil": 30.0
+  },
+  "baller": {
+    "InventorySlots": 15,
+    "MaxFuel": 65.0,
+    "MaxOil": 8.0
+  },
+  "baller2": {
+    "InventorySlots": 15,
+    "MaxFuel": 65.0,
+    "MaxOil": 8.0
+  },
+  "bjxl": {
+    "InventorySlots": 15,
+    "MaxFuel": 65.0,
+    "MaxOil": 8.0
+  },
+  "banshee": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "benson": {
+    "InventorySlots": 18,
+    "MaxFuel": 100.0,
+    "MaxOil": 20.0
+  },
+  "bfinjection": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "biff": {
+    "InventorySlots": 18,
+    "MaxFuel": 100.0,
+    "MaxOil": 20.0
+  },
+  "blazer": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "blazer2": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "blazer3": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "bison": {
+    "InventorySlots": 18,
+    "MaxFuel": 70.0,
+    "MaxOil": 6.0
+  },
+  "bison2": {
+    "InventorySlots": 18,
+    "MaxFuel": 70.0,
+    "MaxOil": 6.0
+  },
+  "bison3": {
+    "InventorySlots": 18,
+    "MaxFuel": 70.0,
+    "MaxOil": 6.0
+  },
+  "boxville": {
+    "InventorySlots": 18,
+    "MaxFuel": 70.0,
+    "MaxOil": 6.0
+  },
+  "boxville2": {
+    "InventorySlots": 18,
+    "MaxFuel": 70.0,
+    "MaxOil": 6.0
+  },
+  "boxville3": {
+    "InventorySlots": 18,
+    "MaxFuel": 70.0,
+    "MaxOil": 6.0
+  },
+  "bobcatxl": {
+    "InventorySlots": 18,
+    "MaxFuel": 70.0,
+    "MaxOil": 6.0
+  },
+  "bodhi2": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "buccaneer": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "buffalo": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "buffalo2": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "bulldozer": {
+    "InventorySlots": 24,
+    "MaxFuel": 200.0,
+    "MaxOil": 20.0
+  },
+  "bullet": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "blimp": {
+    "InventorySlots": 24,
+    "MaxFuel": 500.0,
+    "MaxOil": 50.0
+  },
+  "burrito": {
+    "InventorySlots": 18,
+    "MaxFuel": 70.0,
+    "MaxOil": 6.0
+  },
+  "burrito2": {
+    "InventorySlots": 18,
+    "MaxFuel": 70.0,
+    "MaxOil": 6.0
+  },
+  "burrito3": {
+    "InventorySlots": 18,
+    "MaxFuel": 70.0,
+    "MaxOil": 6.0
+  },
+  "burrito4": {
+    "InventorySlots": 18,
+    "MaxFuel": 70.0,
+    "MaxOil": 6.0
+  },
+  "burrito5": {
+    "InventorySlots": 18,
+    "MaxFuel": 70.0,
+    "MaxOil": 6.0
+  },
+  "cavalcade": {
+    "InventorySlots": 15,
+    "MaxFuel": 65.0,
+    "MaxOil": 8.0
+  },
+  "cavalcade2": {
+    "InventorySlots": 15,
+    "MaxFuel": 65.0,
+    "MaxOil": 8.0
+  },
+  "policet": {
+    "InventorySlots": 15,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "gburrito": {
+    "InventorySlots": 18,
+    "MaxFuel": 70.0,
+    "MaxOil": 6.0
+  },
+  "cablecar": {
+    "InventorySlots": 0,
+    "MaxFuel": 0.0,
+    "MaxOil": 0.0
+  },
+  "caddy": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "caddy2": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "camper": {
+    "InventorySlots": 18,
+    "MaxFuel": 70.0,
+    "MaxOil": 6.0
+  },
+  "carbonizzare": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "cheetah": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "comet2": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "cogcabrio": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 5.0
+  },
+  "coquette": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "cutter": {
+    "InventorySlots": 24,
+    "MaxFuel": 200.0,
+    "MaxOil": 20.0
+  },
+  "gresley": {
+    "InventorySlots": 15,
+    "MaxFuel": 65.0,
+    "MaxOil": 8.0
+  },
+  "dilettante": {
+    "InventorySlots": 3,
+    "MaxFuel": 30.0,
+    "MaxOil": 4.0
+  },
+  "dilettante2": {
+    "InventorySlots": 3,
+    "MaxFuel": 30.0,
+    "MaxOil": 4.0
+  },
+  "dune": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "dune2": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "hotknife": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "dloader": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "dubsta": {
+    "InventorySlots": 15,
+    "MaxFuel": 65.0,
+    "MaxOil": 8.0
+  },
+  "dubsta2": {
+    "InventorySlots": 15,
+    "MaxFuel": 65.0,
+    "MaxOil": 8.0
+  },
+  "dump": {
+    "InventorySlots": 24,
+    "MaxFuel": 200.0,
+    "MaxOil": 20.0
+  },
+  "rubble": {
+    "InventorySlots": 24,
+    "MaxFuel": 200.0,
+    "MaxOil": 20.0
+  },
+  "docktug": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "dominator": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "emperor": {
+    "InventorySlots": 9,
+    "MaxFuel": 50.0,
+    "MaxOil": 5.0
+  },
+  "emperor2": {
+    "InventorySlots": 9,
+    "MaxFuel": 50.0,
+    "MaxOil": 5.0
+  },
+  "emperor3": {
+    "InventorySlots": 9,
+    "MaxFuel": 50.0,
+    "MaxOil": 5.0
+  },
+  "entityxf": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "exemplar": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 5.0
+  },
+  "elegy2": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "f620": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 5.0
+  },
+  "fbi": {
+    "InventorySlots": 15,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "fbi2": {
+    "InventorySlots": 15,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "felon": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 5.0
+  },
+  "felon2": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 5.0
+  },
+  "feltzer2": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "firetruk": {
+    "InventorySlots": 15,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "flatbed": {
+    "InventorySlots": 24,
+    "MaxFuel": 200.0,
+    "MaxOil": 20.0
+  },
+  "forklift": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "fq2": {
+    "InventorySlots": 15,
+    "MaxFuel": 65.0,
+    "MaxOil": 8.0
+  },
+  "fusilade": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "fugitive": {
+    "InventorySlots": 9,
+    "MaxFuel": 50.0,
+    "MaxOil": 5.0
+  },
+  "futo": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "granger": {
+    "InventorySlots": 15,
+    "MaxFuel": 65.0,
+    "MaxOil": 8.0
+  },
+  "gauntlet": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "habanero": {
+    "InventorySlots": 15,
+    "MaxFuel": 65.0,
+    "MaxOil": 8.0
+  },
+  "hauler": {
+    "InventorySlots": 18,
+    "MaxFuel": 100.0,
+    "MaxOil": 20.0
+  },
+  "handler": {
+    "InventorySlots": 24,
+    "MaxFuel": 200.0,
+    "MaxOil": 20.0
+  },
+  "infernus": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "ingot": {
+    "InventorySlots": 9,
+    "MaxFuel": 50.0,
+    "MaxOil": 5.0
+  },
+  "intruder": {
+    "InventorySlots": 9,
+    "MaxFuel": 50.0,
+    "MaxOil": 5.0
+  },
+  "issi2": {
+    "InventorySlots": 3,
+    "MaxFuel": 30.0,
+    "MaxOil": 4.0
+  },
+  "Jackal": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 5.0
+  },
+  "journey": {
+    "InventorySlots": 18,
+    "MaxFuel": 70.0,
+    "MaxOil": 6.0
+  },
+  "jb700": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 8.0
+  },
+  "khamelion": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "landstalker": {
+    "InventorySlots": 15,
+    "MaxFuel": 65.0,
+    "MaxOil": 8.0
+  },
+  "lguard": {
+    "InventorySlots": 15,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "manana": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 8.0
+  },
+  "mesa": {
+    "InventorySlots": 15,
+    "MaxFuel": 65.0,
+    "MaxOil": 8.0
+  },
+  "mesa2": {
+    "InventorySlots": 15,
+    "MaxFuel": 65.0,
+    "MaxOil": 8.0
+  },
+  "mesa3": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "crusader": {
+    "InventorySlots": 24,
+    "MaxFuel": 200.0,
+    "MaxOil": 30.0
+  },
+  "minivan": {
+    "InventorySlots": 18,
+    "MaxFuel": 70.0,
+    "MaxOil": 6.0
+  },
+  "mixer": {
+    "InventorySlots": 24,
+    "MaxFuel": 200.0,
+    "MaxOil": 20.0
+  },
+  "mixer2": {
+    "InventorySlots": 24,
+    "MaxFuel": 200.0,
+    "MaxOil": 20.0
+  },
+  "monroe": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 8.0
+  },
+  "mower": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "mule": {
+    "InventorySlots": 18,
+    "MaxFuel": 100.0,
+    "MaxOil": 20.0
+  },
+  "mule2": {
+    "InventorySlots": 18,
+    "MaxFuel": 100.0,
+    "MaxOil": 20.0
+  },
+  "oracle": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 5.0
+  },
+  "oracle2": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 5.0
+  },
+  "packer": {
+    "InventorySlots": 18,
+    "MaxFuel": 100.0,
+    "MaxOil": 20.0
+  },
+  "patriot": {
+    "InventorySlots": 15,
+    "MaxFuel": 65.0,
+    "MaxOil": 8.0
+  },
+  "pbus": {
+    "InventorySlots": 15,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "penumbra": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "peyote": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 8.0
+  },
+  "phantom": {
+    "InventorySlots": 18,
+    "MaxFuel": 100.0,
+    "MaxOil": 20.0
+  },
+  "phoenix": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "picador": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "pounder": {
+    "InventorySlots": 18,
+    "MaxFuel": 100.0,
+    "MaxOil": 20.0
+  },
+  "police": {
+    "InventorySlots": 15,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "police4": {
+    "InventorySlots": 15,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "police2": {
+    "InventorySlots": 15,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "police3": {
+    "InventorySlots": 15,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "policeold1": {
+    "InventorySlots": 15,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "policeold2": {
+    "InventorySlots": 15,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "pony": {
+    "InventorySlots": 18,
+    "MaxFuel": 70.0,
+    "MaxOil": 6.0
+  },
+  "pony2": {
+    "InventorySlots": 18,
+    "MaxFuel": 70.0,
+    "MaxOil": 6.0
+  },
+  "prairie": {
+    "InventorySlots": 3,
+    "MaxFuel": 30.0,
+    "MaxOil": 4.0
+  },
+  "pranger": {
+    "InventorySlots": 15,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "premier": {
+    "InventorySlots": 9,
+    "MaxFuel": 50.0,
+    "MaxOil": 5.0
+  },
+  "primo": {
+    "InventorySlots": 9,
+    "MaxFuel": 50.0,
+    "MaxOil": 5.0
+  },
+  "proptrailer": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "rancherxl": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "rancherxl2": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "rapidgt": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "rapidgt2": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "radi": {
+    "InventorySlots": 15,
+    "MaxFuel": 65.0,
+    "MaxOil": 8.0
+  },
+  "ratloader": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "rebel": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "regina": {
+    "InventorySlots": 9,
+    "MaxFuel": 50.0,
+    "MaxOil": 5.0
+  },
+  "rebel2": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "rentalbus": {
+    "InventorySlots": 15,
+    "MaxFuel": 90.0,
+    "MaxOil": 15.0
+  },
+  "ruiner": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "rumpo": {
+    "InventorySlots": 18,
+    "MaxFuel": 70.0,
+    "MaxOil": 6.0
+  },
+  "rumpo2": {
+    "InventorySlots": 18,
+    "MaxFuel": 70.0,
+    "MaxOil": 6.0
+  },
+  "rhino": {
+    "InventorySlots": 24,
+    "MaxFuel": 200.0,
+    "MaxOil": 30.0
+  },
+  "riot": {
+    "InventorySlots": 15,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "ripley": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "rocoto": {
+    "InventorySlots": 15,
+    "MaxFuel": 65.0,
+    "MaxOil": 8.0
+  },
+  "romero": {
+    "InventorySlots": 9,
+    "MaxFuel": 50.0,
+    "MaxOil": 5.0
+  },
+  "sabregt": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "sadler": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "sadler2": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "sandking": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "sandking2": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "schafter2": {
+    "InventorySlots": 9,
+    "MaxFuel": 50.0,
+    "MaxOil": 5.0
+  },
+  "schwarzer": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "scrap": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "seminole": {
+    "InventorySlots": 15,
+    "MaxFuel": 65.0,
+    "MaxOil": 8.0
+  },
+  "sentinel": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 5.0
+  },
+  "sentinel2": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 5.0
+  },
+  "zion": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 5.0
+  },
+  "zion2": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 5.0
+  },
+  "serrano": {
+    "InventorySlots": 15,
+    "MaxFuel": 65.0,
+    "MaxOil": 8.0
+  },
+  "sheriff": {
+    "InventorySlots": 15,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "sheriff2": {
+    "InventorySlots": 15,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "speedo": {
+    "InventorySlots": 18,
+    "MaxFuel": 70.0,
+    "MaxOil": 6.0
+  },
+  "speedo2": {
+    "InventorySlots": 18,
+    "MaxFuel": 70.0,
+    "MaxOil": 6.0
+  },
+  "stanier": {
+    "InventorySlots": 9,
+    "MaxFuel": 50.0,
+    "MaxOil": 5.0
+  },
+  "stinger": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 8.0
+  },
+  "stingergt": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 8.0
+  },
+  "stockade": {
+    "InventorySlots": 18,
+    "MaxFuel": 100.0,
+    "MaxOil": 20.0
+  },
+  "stockade3": {
+    "InventorySlots": 18,
+    "MaxFuel": 100.0,
+    "MaxOil": 20.0
+  },
+  "stratum": {
+    "InventorySlots": 9,
+    "MaxFuel": 50.0,
+    "MaxOil": 5.0
+  },
+  "sultan": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "superd": {
+    "InventorySlots": 9,
+    "MaxFuel": 50.0,
+    "MaxOil": 5.0
+  },
+  "surano": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "surfer": {
+    "InventorySlots": 18,
+    "MaxFuel": 70.0,
+    "MaxOil": 6.0
+  },
+  "surfer2": {
+    "InventorySlots": 18,
+    "MaxFuel": 70.0,
+    "MaxOil": 6.0
+  },
+  "surge": {
+    "InventorySlots": 9,
+    "MaxFuel": 50.0,
+    "MaxOil": 5.0
+  },
+  "taco": {
+    "InventorySlots": 18,
+    "MaxFuel": 70.0,
+    "MaxOil": 6.0
+  },
+  "tailgater": {
+    "InventorySlots": 9,
+    "MaxFuel": 50.0,
+    "MaxOil": 5.0
+  },
+  "taxi": {
+    "InventorySlots": 15,
+    "MaxFuel": 90.0,
+    "MaxOil": 15.0
+  },
+  "trash": {
+    "InventorySlots": 15,
+    "MaxFuel": 90.0,
+    "MaxOil": 15.0
+  },
+  "tractor": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "tractor2": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "tractor3": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "graintrailer": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "baletrailer": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "tiptruck": {
+    "InventorySlots": 24,
+    "MaxFuel": 200.0,
+    "MaxOil": 20.0
+  },
+  "tiptruck2": {
+    "InventorySlots": 24,
+    "MaxFuel": 200.0,
+    "MaxOil": 20.0
+  },
+  "tornado": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 8.0
+  },
+  "tornado2": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 8.0
+  },
+  "tornado3": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 8.0
+  },
+  "tornado4": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 8.0
+  },
+  "tourbus": {
+    "InventorySlots": 15,
+    "MaxFuel": 90.0,
+    "MaxOil": 15.0
+  },
+  "towtruck": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "towtruck2": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "utillitruck": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "utillitruck2": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "utillitruck3": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "voodoo2": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "washington": {
+    "InventorySlots": 9,
+    "MaxFuel": 50.0,
+    "MaxOil": 5.0
+  },
+  "stretch": {
+    "InventorySlots": 9,
+    "MaxFuel": 50.0,
+    "MaxOil": 5.0
+  },
+  "youga": {
+    "InventorySlots": 18,
+    "MaxFuel": 70.0,
+    "MaxOil": 6.0
+  },
+  "ztype": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 8.0
+  },
+  "sanchez": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "sanchez2": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "scorcher": {
+    "InventorySlots": 1,
+    "MaxFuel": 0.0,
+    "MaxOil": 0.0
+  },
+  "tribike": {
+    "InventorySlots": 1,
+    "MaxFuel": 0.0,
+    "MaxOil": 0.0
+  },
+  "tribike2": {
+    "InventorySlots": 1,
+    "MaxFuel": 0.0,
+    "MaxOil": 0.0
+  },
+  "tribike3": {
+    "InventorySlots": 1,
+    "MaxFuel": 0.0,
+    "MaxOil": 0.0
+  },
+  "fixter": {
+    "InventorySlots": 1,
+    "MaxFuel": 0.0,
+    "MaxOil": 0.0
+  },
+  "cruiser": {
+    "InventorySlots": 1,
+    "MaxFuel": 0.0,
+    "MaxOil": 0.0
+  },
+  "BMX": {
+    "InventorySlots": 1,
+    "MaxFuel": 0.0,
+    "MaxOil": 0.0
+  },
+  "policeb": {
+    "InventorySlots": 15,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "akuma": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "carbonrs": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "bagger": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "bati": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "bati2": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "ruffian": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "daemon": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "double": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "pcj": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "vader": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "vigero": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "faggio2": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "hexer": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "annihilator": {
+    "InventorySlots": 10,
+    "MaxFuel": 500.0,
+    "MaxOil": 20.0
+  },
+  "buzzard": {
+    "InventorySlots": 10,
+    "MaxFuel": 500.0,
+    "MaxOil": 20.0
+  },
+  "buzzard2": {
+    "InventorySlots": 10,
+    "MaxFuel": 500.0,
+    "MaxOil": 20.0
+  },
+  "cargobob": {
+    "InventorySlots": 10,
+    "MaxFuel": 500.0,
+    "MaxOil": 20.0
+  },
+  "cargobob2": {
+    "InventorySlots": 10,
+    "MaxFuel": 500.0,
+    "MaxOil": 20.0
+  },
+  "cargobob3": {
+    "InventorySlots": 10,
+    "MaxFuel": 500.0,
+    "MaxOil": 20.0
+  },
+  "skylift": {
+    "InventorySlots": 10,
+    "MaxFuel": 500.0,
+    "MaxOil": 20.0
+  },
+  "polmav": {
+    "InventorySlots": 10,
+    "MaxFuel": 500.0,
+    "MaxOil": 20.0
+  },
+  "maverick": {
+    "InventorySlots": 10,
+    "MaxFuel": 500.0,
+    "MaxOil": 20.0
+  },
+  "nemesis": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "frogger": {
+    "InventorySlots": 10,
+    "MaxFuel": 500.0,
+    "MaxOil": 20.0
+  },
+  "frogger2": {
+    "InventorySlots": 10,
+    "MaxFuel": 500.0,
+    "MaxOil": 20.0
+  },
+  "cuban800": {
+    "InventorySlots": 24,
+    "MaxFuel": 500.0,
+    "MaxOil": 50.0
+  },
+  "duster": {
+    "InventorySlots": 24,
+    "MaxFuel": 500.0,
+    "MaxOil": 50.0
+  },
+  "stunt": {
+    "InventorySlots": 24,
+    "MaxFuel": 500.0,
+    "MaxOil": 50.0
+  },
+  "mammatus": {
+    "InventorySlots": 24,
+    "MaxFuel": 500.0,
+    "MaxOil": 50.0
+  },
+  "jet": {
+    "InventorySlots": 24,
+    "MaxFuel": 500.0,
+    "MaxOil": 50.0
+  },
+  "shamal": {
+    "InventorySlots": 24,
+    "MaxFuel": 500.0,
+    "MaxOil": 50.0
+  },
+  "luxor": {
+    "InventorySlots": 24,
+    "MaxFuel": 500.0,
+    "MaxOil": 50.0
+  },
+  "titan": {
+    "InventorySlots": 24,
+    "MaxFuel": 500.0,
+    "MaxOil": 50.0
+  },
+  "lazer": {
+    "InventorySlots": 24,
+    "MaxFuel": 500.0,
+    "MaxOil": 50.0
+  },
+  "cargoplane": {
+    "InventorySlots": 24,
+    "MaxFuel": 500.0,
+    "MaxOil": 50.0
+  },
+  "squalo": {
+    "InventorySlots": 10,
+    "MaxFuel": 150.0,
+    "MaxOil": 10.0
+  },
+  "marquis": {
+    "InventorySlots": 10,
+    "MaxFuel": 150.0,
+    "MaxOil": 10.0
+  },
+  "dinghy": {
+    "InventorySlots": 10,
+    "MaxFuel": 150.0,
+    "MaxOil": 10.0
+  },
+  "dinghy2": {
+    "InventorySlots": 10,
+    "MaxFuel": 150.0,
+    "MaxOil": 10.0
+  },
+  "jetmax": {
+    "InventorySlots": 10,
+    "MaxFuel": 150.0,
+    "MaxOil": 10.0
+  },
+  "predator": {
+    "InventorySlots": 10,
+    "MaxFuel": 150.0,
+    "MaxOil": 10.0
+  },
+  "tropic": {
+    "InventorySlots": 10,
+    "MaxFuel": 150.0,
+    "MaxOil": 10.0
+  },
+  "seashark": {
+    "InventorySlots": 10,
+    "MaxFuel": 150.0,
+    "MaxOil": 10.0
+  },
+  "seashark2": {
+    "InventorySlots": 10,
+    "MaxFuel": 150.0,
+    "MaxOil": 10.0
+  },
+  "submersible": {
+    "InventorySlots": 10,
+    "MaxFuel": 150.0,
+    "MaxOil": 10.0
+  },
+  "freightcar": {
+    "InventorySlots": 0,
+    "MaxFuel": 0.0,
+    "MaxOil": 0.0
+  },
+  "freight": {
+    "InventorySlots": 0,
+    "MaxFuel": 0.0,
+    "MaxOil": 0.0
+  },
+  "freightcont1": {
+    "InventorySlots": 0,
+    "MaxFuel": 0.0,
+    "MaxOil": 0.0
+  },
+  "freightcont2": {
+    "InventorySlots": 0,
+    "MaxFuel": 0.0,
+    "MaxOil": 0.0
+  },
+  "freightgrain": {
+    "InventorySlots": 0,
+    "MaxFuel": 0.0,
+    "MaxOil": 0.0
+  },
+  "tankercar": {
+    "InventorySlots": 0,
+    "MaxFuel": 0.0,
+    "MaxOil": 0.0
+  },
+  "metrotrain": {
+    "InventorySlots": 0,
+    "MaxFuel": 0.0,
+    "MaxOil": 0.0
+  },
+  "docktrailer": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "trailers": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "trailers2": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "trailers3": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "tvtrailer": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "raketrailer": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "tanker": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "trailerlogs": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "tr2": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "tr3": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "tr4": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "trflat": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "trailersmall": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "velum": {
+    "InventorySlots": 24,
+    "MaxFuel": 500.0,
+    "MaxOil": 50.0
+  },
+  "adder": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "voltic": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "vacca": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "suntrap": {
+    "InventorySlots": 10,
+    "MaxFuel": 150.0,
+    "MaxOil": 10.0
+  },
+  "elegy": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "tempesta": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "italigtb": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "italigtb2": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "nero": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "nero2": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "specter": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "specter2": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "diablous": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "diablous2": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "blazer5": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "ruiner2": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "dune4": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "dune5": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "phantom2": {
+    "InventorySlots": 18,
+    "MaxFuel": 100.0,
+    "MaxOil": 20.0
+  },
+  "voltic2": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "penetrator": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "boxville5": {
+    "InventorySlots": 18,
+    "MaxFuel": 70.0,
+    "MaxOil": 6.0
+  },
+  "wastelander": {
+    "InventorySlots": 15,
+    "MaxFuel": 90.0,
+    "MaxOil": 15.0
+  },
+  "technical2": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "fcr": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "fcr2": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "comet3": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "ruiner3": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "monster": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "sovereign": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "sultanrs": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "banshee2": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "faction3": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "minivan2": {
+    "InventorySlots": 18,
+    "MaxFuel": 70.0,
+    "MaxOil": 6.0
+  },
+  "sabregt2": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "slamvan3": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "tornado5": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 8.0
+  },
+  "virgo2": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "virgo3": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "innovation": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "hakuchou": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "furoregt": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "swift2": {
+    "InventorySlots": 10,
+    "MaxFuel": 500.0,
+    "MaxOil": 20.0
+  },
+  "luxor2": {
+    "InventorySlots": 24,
+    "MaxFuel": 500.0,
+    "MaxOil": 50.0
+  },
+  "feltzer3": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 8.0
+  },
+  "osiris": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "virgo": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "windsor": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 5.0
+  },
+  "coquette3": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "vindicator": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "t20": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "brawler": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "toro": {
+    "InventorySlots": 10,
+    "MaxFuel": 150.0,
+    "MaxOil": 10.0
+  },
+  "chino": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "miljet": {
+    "InventorySlots": 24,
+    "MaxFuel": 500.0,
+    "MaxOil": 50.0
+  },
+  "besra": {
+    "InventorySlots": 24,
+    "MaxFuel": 500.0,
+    "MaxOil": 50.0
+  },
+  "coquette2": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 8.0
+  },
+  "swift": {
+    "InventorySlots": 10,
+    "MaxFuel": 500.0,
+    "MaxOil": 20.0
+  },
+  "lynx": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "gargoyle": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "tyrus": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "sheava": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "omnis": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "le7b": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "contender": {
+    "InventorySlots": 15,
+    "MaxFuel": 65.0,
+    "MaxOil": 8.0
+  },
+  "trophytruck": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "trophytruck2": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "rallytruck": {
+    "InventorySlots": 15,
+    "MaxFuel": 90.0,
+    "MaxOil": 15.0
+  },
+  "cliffhanger": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "bf400": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "tropos": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "brioso": {
+    "InventorySlots": 3,
+    "MaxFuel": 30.0,
+    "MaxOil": 4.0
+  },
+  "tampa2": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "btype": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 8.0
+  },
+  "verlierer2": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "nightshade": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "mamba": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 8.0
+  },
+  "limo2": {
+    "InventorySlots": 9,
+    "MaxFuel": 50.0,
+    "MaxOil": 5.0
+  },
+  "schafter3": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "schafter4": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "schafter5": {
+    "InventorySlots": 9,
+    "MaxFuel": 50.0,
+    "MaxOil": 5.0
+  },
+  "schafter6": {
+    "InventorySlots": 9,
+    "MaxFuel": 50.0,
+    "MaxOil": 5.0
+  },
+  "cog55": {
+    "InventorySlots": 9,
+    "MaxFuel": 50.0,
+    "MaxOil": 5.0
+  },
+  "cog552": {
+    "InventorySlots": 9,
+    "MaxFuel": 50.0,
+    "MaxOil": 5.0
+  },
+  "cognoscenti": {
+    "InventorySlots": 9,
+    "MaxFuel": 50.0,
+    "MaxOil": 5.0
+  },
+  "cognoscenti2": {
+    "InventorySlots": 9,
+    "MaxFuel": 50.0,
+    "MaxOil": 5.0
+  },
+  "baller3": {
+    "InventorySlots": 15,
+    "MaxFuel": 65.0,
+    "MaxOil": 8.0
+  },
+  "baller4": {
+    "InventorySlots": 15,
+    "MaxFuel": 65.0,
+    "MaxOil": 8.0
+  },
+  "baller5": {
+    "InventorySlots": 15,
+    "MaxFuel": 65.0,
+    "MaxOil": 8.0
+  },
+  "baller6": {
+    "InventorySlots": 15,
+    "MaxFuel": 65.0,
+    "MaxOil": 8.0
+  },
+  "toro2": {
+    "InventorySlots": 10,
+    "MaxFuel": 150.0,
+    "MaxOil": 10.0
+  },
+  "seashark3": {
+    "InventorySlots": 10,
+    "MaxFuel": 150.0,
+    "MaxOil": 10.0
+  },
+  "dinghy4": {
+    "InventorySlots": 10,
+    "MaxFuel": 150.0,
+    "MaxOil": 10.0
+  },
+  "tropic2": {
+    "InventorySlots": 10,
+    "MaxFuel": 150.0,
+    "MaxOil": 10.0
+  },
+  "speeder2": {
+    "InventorySlots": 10,
+    "MaxFuel": 150.0,
+    "MaxOil": 10.0
+  },
+  "cargobob4": {
+    "InventorySlots": 10,
+    "MaxFuel": 500.0,
+    "MaxOil": 20.0
+  },
+  "supervolito": {
+    "InventorySlots": 10,
+    "MaxFuel": 500.0,
+    "MaxOil": 20.0
+  },
+  "supervolito2": {
+    "InventorySlots": 10,
+    "MaxFuel": 500.0,
+    "MaxOil": 20.0
+  },
+  "valkyrie2": {
+    "InventorySlots": 10,
+    "MaxFuel": 500.0,
+    "MaxOil": 20.0
+  },
+  "submersible2": {
+    "InventorySlots": 10,
+    "MaxFuel": 150.0,
+    "MaxOil": 10.0
+  },
+  "dukes": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "dukes2": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "buffalo3": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "dominator2": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "dodo": {
+    "InventorySlots": 24,
+    "MaxFuel": 500.0,
+    "MaxOil": 50.0
+  },
+  "marshall": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "blimp2": {
+    "InventorySlots": 24,
+    "MaxFuel": 500.0,
+    "MaxOil": 50.0
+  },
+  "gauntlet2": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "stalion": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "stalion2": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "blista2": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "blista3": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "tornado6": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 8.0
+  },
+  "faggio3": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "faggio": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "raptor": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "vortex": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "avarus": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "sanctus": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "youga2": {
+    "InventorySlots": 18,
+    "MaxFuel": 70.0,
+    "MaxOil": 6.0
+  },
+  "hakuchou2": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "nightblade": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "chimera": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "esskey": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "wolfsbane": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "zombiea": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "zombieb": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "defiler": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "daemon2": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "ratbike": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "shotaro": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "manchez": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "blazer4": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "jester2": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "massacro2": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "ratloader2": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "slamvan": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "nimbus": {
+    "InventorySlots": 24,
+    "MaxFuel": 500.0,
+    "MaxOil": 50.0
+  },
+  "xls": {
+    "InventorySlots": 15,
+    "MaxFuel": 65.0,
+    "MaxOil": 8.0
+  },
+  "xls2": {
+    "InventorySlots": 15,
+    "MaxFuel": 65.0,
+    "MaxOil": 8.0
+  },
+  "seven70": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "fmj": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "bestiagts": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "pfister811": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "brickade": {
+    "InventorySlots": 15,
+    "MaxFuel": 90.0,
+    "MaxOil": 15.0
+  },
+  "rumpo3": {
+    "InventorySlots": 18,
+    "MaxFuel": 70.0,
+    "MaxOil": 6.0
+  },
+  "volatus": {
+    "InventorySlots": 10,
+    "MaxFuel": 500.0,
+    "MaxOil": 20.0
+  },
+  "prototipo": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "reaper": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "tug": {
+    "InventorySlots": 10,
+    "MaxFuel": 150.0,
+    "MaxOil": 10.0
+  },
+  "windsor2": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 5.0
+  },
+  "trailers4": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "xa21": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "caddy3": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "vagner": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "phantom3": {
+    "InventorySlots": 18,
+    "MaxFuel": 100.0,
+    "MaxOil": 20.0
+  },
+  "nightshark": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "cheetah2": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 8.0
+  },
+  "torero": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 8.0
+  },
+  "hauler2": {
+    "InventorySlots": 18,
+    "MaxFuel": 100.0,
+    "MaxOil": 20.0
+  },
+  "trailerlarge": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "technical3": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "insurgent3": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "apc": {
+    "InventorySlots": 24,
+    "MaxFuel": 200.0,
+    "MaxOil": 30.0
+  },
+  "tampa3": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "dune3": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "trailersmall2": {
+    "InventorySlots": 24,
+    "MaxFuel": 200.0,
+    "MaxOil": 30.0
+  },
+  "halftrack": {
+    "InventorySlots": 24,
+    "MaxFuel": 200.0,
+    "MaxOil": 30.0
+  },
+  "ardent": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 8.0
+  },
+  "oppressor": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "Lurcher": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "btype2": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 8.0
+  },
+  "mule3": {
+    "InventorySlots": 18,
+    "MaxFuel": 100.0,
+    "MaxOil": 20.0
+  },
+  "velum2": {
+    "InventorySlots": 24,
+    "MaxFuel": 500.0,
+    "MaxOil": 50.0
+  },
+  "tanker2": {
+    "InventorySlots": 12,
+    "MaxFuel": 80.0,
+    "MaxOil": 10.0
+  },
+  "casco": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 8.0
+  },
+  "boxville4": {
+    "InventorySlots": 18,
+    "MaxFuel": 70.0,
+    "MaxOil": 6.0
+  },
+  "hydra": {
+    "InventorySlots": 24,
+    "MaxFuel": 500.0,
+    "MaxOil": 50.0
+  },
+  "insurgent": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "insurgent2": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "gburrito2": {
+    "InventorySlots": 18,
+    "MaxFuel": 70.0,
+    "MaxOil": 6.0
+  },
+  "technical": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "dinghy3": {
+    "InventorySlots": 10,
+    "MaxFuel": 150.0,
+    "MaxOil": 10.0
+  },
+  "savage": {
+    "InventorySlots": 10,
+    "MaxFuel": 500.0,
+    "MaxOil": 20.0
+  },
+  "enduro": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "guardian": {
+    "InventorySlots": 24,
+    "MaxFuel": 200.0,
+    "MaxOil": 20.0
+  },
+  "lectro": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "kuruma": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "kuruma2": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "trash2": {
+    "InventorySlots": 15,
+    "MaxFuel": 90.0,
+    "MaxOil": 15.0
+  },
+  "barracks3": {
+    "InventorySlots": 24,
+    "MaxFuel": 200.0,
+    "MaxOil": 30.0
+  },
+  "valkyrie": {
+    "InventorySlots": 10,
+    "MaxFuel": 500.0,
+    "MaxOil": 20.0
+  },
+  "slamvan2": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "bifta": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "speeder": {
+    "InventorySlots": 10,
+    "MaxFuel": 150.0,
+    "MaxOil": 10.0
+  },
+  "kalahari": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "paradise": {
+    "InventorySlots": 18,
+    "MaxFuel": 70.0,
+    "MaxOil": 6.0
+  },
+  "faction": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "faction2": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "moonbeam": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "moonbeam2": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "primo2": {
+    "InventorySlots": 9,
+    "MaxFuel": 50.0,
+    "MaxOil": 5.0
+  },
+  "chino2": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "buccaneer2": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "voodoo": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "turismo2": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 8.0
+  },
+  "infernus2": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 8.0
+  },
+  "gp1": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "ruston": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "btype3": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 8.0
+  },
+  "tampa": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "jester": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "turismor": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "alpha": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "vestra": {
+    "InventorySlots": 24,
+    "MaxFuel": 500.0,
+    "MaxOil": 50.0
+  },
+  "zentorno": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "massacro": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "huntley": {
+    "InventorySlots": 15,
+    "MaxFuel": 65.0,
+    "MaxOil": 8.0
+  },
+  "thrust": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "rhapsody": {
+    "InventorySlots": 3,
+    "MaxFuel": 30.0,
+    "MaxOil": 4.0
+  },
+  "warrener": {
+    "InventorySlots": 9,
+    "MaxFuel": 50.0,
+    "MaxOil": 5.0
+  },
+  "blade": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "glendale": {
+    "InventorySlots": 9,
+    "MaxFuel": 50.0,
+    "MaxOil": 5.0
+  },
+  "panto": {
+    "InventorySlots": 3,
+    "MaxFuel": 30.0,
+    "MaxOil": 4.0
+  },
+  "dubsta3": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "pigalle": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 8.0
+  },
+  "stafford": {
+    "InventorySlots": 9,
+    "MaxFuel": 50.0,
+    "MaxOil": 5.0
+  },
+  "scramjet": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "strikeforce": {
+    "InventorySlots": 24,
+    "MaxFuel": 500.0,
+    "MaxOil": 50.0
+  },
+  "terbyte": {
+    "InventorySlots": 18,
+    "MaxFuel": 100.0,
+    "MaxOil": 20.0
+  },
+  "pbus2": {
+    "InventorySlots": 15,
+    "MaxFuel": 90.0,
+    "MaxOil": 15.0
+  },
+  "oppressor2": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "pounder2": {
+    "InventorySlots": 18,
+    "MaxFuel": 100.0,
+    "MaxOil": 20.0
+  },
+  "speedo4": {
+    "InventorySlots": 18,
+    "MaxFuel": 70.0,
+    "MaxOil": 6.0
+  },
+  "freecrawler": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "mule4": {
+    "InventorySlots": 18,
+    "MaxFuel": 100.0,
+    "MaxOil": 20.0
+  },
+  "menacer": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "blimp3": {
+    "InventorySlots": 24,
+    "MaxFuel": 500.0,
+    "MaxOil": 50.0
+  },
+  "swinger": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 8.0
+  },
+  "patriot2": {
+    "InventorySlots": 15,
+    "MaxFuel": 65.0,
+    "MaxOil": 8.0
+  },
+  "impaler3": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "monster4": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "monster5": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "slamvan6": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "issi6": {
+    "InventorySlots": 3,
+    "MaxFuel": 30.0,
+    "MaxOil": 4.0
+  },
+  "cerberus2": {
+    "InventorySlots": 18,
+    "MaxFuel": 100.0,
+    "MaxOil": 20.0
+  },
+  "cerberus3": {
+    "InventorySlots": 18,
+    "MaxFuel": 100.0,
+    "MaxOil": 20.0
+  },
+  "deathbike2": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "dominator6": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "deathbike3": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "impaler4": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "slamvan4": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "slamvan5": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "brutus": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "brutus2": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "brutus3": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "deathbike": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "dominator4": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "dominator5": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "bruiser": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "bruiser2": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "bruiser3": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "rcbandito": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "italigto": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "cerberus": {
+    "InventorySlots": 18,
+    "MaxFuel": 100.0,
+    "MaxOil": 20.0
+  },
+  "impaler2": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "monster3": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "tulip": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "scarab": {
+    "InventorySlots": 24,
+    "MaxFuel": 200.0,
+    "MaxOil": 30.0
+  },
+  "scarab2": {
+    "InventorySlots": 24,
+    "MaxFuel": 200.0,
+    "MaxOil": 30.0
+  },
+  "scarab3": {
+    "InventorySlots": 24,
+    "MaxFuel": 200.0,
+    "MaxOil": 30.0
+  },
+  "issi4": {
+    "InventorySlots": 3,
+    "MaxFuel": 30.0,
+    "MaxOil": 4.0
+  },
+  "issi5": {
+    "InventorySlots": 3,
+    "MaxFuel": 30.0,
+    "MaxOil": 4.0
+  },
+  "clique": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "deveste": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "vamos": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "imperator": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "imperator2": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "imperator3": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "toros": {
+    "InventorySlots": 15,
+    "MaxFuel": 65.0,
+    "MaxOil": 8.0
+  },
+  "deviant": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "schlagen": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "impaler": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "zr380": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "zr3802": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "zr3803": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "z190": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 8.0
+  },
+  "viseris": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 8.0
+  },
+  "comet5": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "raiden": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "riata": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "sc1": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "autarch": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "savestra": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 8.0
+  },
+  "gt500": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 8.0
+  },
+  "comet4": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "neon": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "sentinel3": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "khanjali": {
+    "InventorySlots": 24,
+    "MaxFuel": 200.0,
+    "MaxOil": 30.0
+  },
+  "barrage": {
+    "InventorySlots": 24,
+    "MaxFuel": 200.0,
+    "MaxOil": 30.0
+  },
+  "volatol": {
+    "InventorySlots": 24,
+    "MaxFuel": 500.0,
+    "MaxOil": 50.0
+  },
+  "akula": {
+    "InventorySlots": 10,
+    "MaxFuel": 500.0,
+    "MaxOil": 20.0
+  },
+  "deluxo": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 8.0
+  },
+  "stromberg": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 8.0
+  },
+  "chernobog": {
+    "InventorySlots": 24,
+    "MaxFuel": 200.0,
+    "MaxOil": 30.0
+  },
+  "riot2": {
+    "InventorySlots": 15,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "avenger": {
+    "InventorySlots": 24,
+    "MaxFuel": 500.0,
+    "MaxOil": 50.0
+  },
+  "avenger2": {
+    "InventorySlots": 24,
+    "MaxFuel": 500.0,
+    "MaxOil": 50.0
+  },
+  "thruster": {
+    "InventorySlots": 24,
+    "MaxFuel": 200.0,
+    "MaxOil": 30.0
+  },
+  "yosemite": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "hermes": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "hustler": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "streiter": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "revolter": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "pariah": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "kamacho": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "entity2": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "cheburek": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 8.0
+  },
+  "jester3": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "caracara": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "hotring": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "seasparrow": {
+    "InventorySlots": 10,
+    "MaxFuel": 500.0,
+    "MaxOil": 20.0
+  },
+  "flashgt": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "ellie": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "michelli": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 8.0
+  },
+  "fagaloa": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 8.0
+  },
+  "dominator3": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "tyrant": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "tezeract": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "gb200": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "issi3": {
+    "InventorySlots": 3,
+    "MaxFuel": 30.0,
+    "MaxOil": 4.0
+  },
+  "taipan": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "vigilante": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "bombushka": {
+    "InventorySlots": 24,
+    "MaxFuel": 500.0,
+    "MaxOil": 50.0
+  },
+  "alphaz1": {
+    "InventorySlots": 24,
+    "MaxFuel": 500.0,
+    "MaxOil": 50.0
+  },
+  "seabreeze": {
+    "InventorySlots": 24,
+    "MaxFuel": 500.0,
+    "MaxOil": 50.0
+  },
+  "tula": {
+    "InventorySlots": 24,
+    "MaxFuel": 500.0,
+    "MaxOil": 50.0
+  },
+  "havok": {
+    "InventorySlots": 10,
+    "MaxFuel": 500.0,
+    "MaxOil": 20.0
+  },
+  "hunter": {
+    "InventorySlots": 10,
+    "MaxFuel": 500.0,
+    "MaxOil": 20.0
+  },
+  "microlight": {
+    "InventorySlots": 24,
+    "MaxFuel": 500.0,
+    "MaxOil": 50.0
+  },
+  "rogue": {
+    "InventorySlots": 24,
+    "MaxFuel": 500.0,
+    "MaxOil": 50.0
+  },
+  "pyro": {
+    "InventorySlots": 24,
+    "MaxFuel": 500.0,
+    "MaxOil": 50.0
+  },
+  "howard": {
+    "InventorySlots": 24,
+    "MaxFuel": 500.0,
+    "MaxOil": 50.0
+  },
+  "mogul": {
+    "InventorySlots": 24,
+    "MaxFuel": 500.0,
+    "MaxOil": 50.0
+  },
+  "starling": {
+    "InventorySlots": 24,
+    "MaxFuel": 500.0,
+    "MaxOil": 50.0
+  },
+  "nokota": {
+    "InventorySlots": 24,
+    "MaxFuel": 500.0,
+    "MaxOil": 50.0
+  },
+  "molotok": {
+    "InventorySlots": 24,
+    "MaxFuel": 500.0,
+    "MaxOil": 50.0
+  },
+  "rapidgt3": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 8.0
+  },
+  "retinue": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 8.0
+  },
+  "cyclone": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "visione": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "paragon": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "paragon2": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "jugular": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "rrocket": {
+    "InventorySlots": 1,
+    "MaxFuel": 10.0,
+    "MaxOil": 2.0
+  },
+  "neo": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "krieger": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "peyote2": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "gauntlet4": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "s80": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "caracara2": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "thrax": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "Novak": {
+    "InventorySlots": 15,
+    "MaxFuel": 65.0,
+    "MaxOil": 8.0
+  },
+  "zorrusso": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "issi7": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "locust": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  },
+  "emerus": {
+    "InventorySlots": 4,
+    "MaxFuel": 90.0,
+    "MaxOil": 12.0
+  },
+  "hellion": {
+    "InventorySlots": 15,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "Dynasty": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 8.0
+  },
+  "gauntlet3": {
+    "InventorySlots": 6,
+    "MaxFuel": 60.0,
+    "MaxOil": 8.0
+  },
+  "nebula": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 8.0
+  },
+  "zion3": {
+    "InventorySlots": 6,
+    "MaxFuel": 45.0,
+    "MaxOil": 8.0
+  },
+  "drafter": {
+    "InventorySlots": 6,
+    "MaxFuel": 55.0,
+    "MaxOil": 8.0
+  }
+}

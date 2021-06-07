@@ -1,30 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AltV.Net.Async;
+﻿using AltV.Net.Async;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
+using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Models.Dto;
 using AltVStrefaRPServer.Models.Dto.Fractions;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Fractions.Permissions;
 using AltVStrefaRPServer.Services.Fractions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using AltVStrefaRPServer.Models.Core;
+using AltVStrefaRPServer.Modules.Core;
 
 namespace AltVStrefaRPServer.Models.Fractions
 {
-    public class Fraction : IMoney, IPosition, IHaveBlip
+    public class Fraction : IFraction
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
 
-        public float Money { get; protected set; }
+        public float Money { get; private set; }
 
         public DateTime CreationDate { get; set; }
-        public virtual float X { get; set; }
-        public virtual float Y { get; set; }
-        public virtual float Z { get; set; }
+        public float X { get; set; }
+        public float Y { get; set; }
+        public float Z { get; set; }
 
         protected List<Character> _employees;
         public IReadOnlyCollection<Character> Employees => _employees;
@@ -36,8 +39,8 @@ namespace AltVStrefaRPServer.Models.Fractions
         public virtual string BlipName { get; protected set; }
         public virtual int BlipColor { get; protected set; }
         public virtual int BlipSprite { get; protected set; }
-        public virtual IBlip Blip { get; set; }
-        public List<int> Invites { get; private set; } = new List<int>(); 
+        public virtual IBlipWrapper Blip { get; set; }
+        public List<int> Invites { get; } = new List<int>();
 
         protected Fraction()
         {
@@ -45,7 +48,7 @@ namespace AltVStrefaRPServer.Models.Fractions
             _fractionRanks = new List<FractionRank>();
         }
 
-        public Fraction(string name, string description, float money, Position position)
+        protected Fraction(string name, string description, float money, Position position)
         {
             Name = name;
             Description = description;
@@ -65,20 +68,25 @@ namespace AltVStrefaRPServer.Models.Fractions
 
         public string MoneyTransactionDisplayName() => Name;
 
-        public bool HasPermission<TPermission>(Character character) where TPermission : FractionPermission 
+        public void CreateBlip()
+        {
+            Blip = BlipManager.Instance.CreateBlip(BlipName, BlipSprite, BlipColor, GetPosition());
+        }
+
+        public bool HasPermission<TPermission>(Character character) where TPermission : FractionPermission
             => GetEmployeeRank(character)?.HasPermission<TPermission>() ?? false;
 
-        public FractionPermission GetPermission<TPermission>(Character character) where TPermission : FractionPermission 
+        public FractionPermission GetPermission<TPermission>(Character character) where TPermission : FractionPermission
             => GetEmployeeRank(character)?.GetPermission<TPermission>();
 
-        public ICollection<FractionPermission> GetEmployeePermissions(Character employee) 
-            => _fractionRanks.FirstOrDefault(q => q.Id == employee.FractionRank)?.Permissions;
+        public ICollection<FractionPermission> GetEmployeePermissions(Character employee)
+            => _fractionRanks.Find(q => q.Id == employee.FractionRank)?.Permissions;
 
-        public FractionRank GetDefaultRank() => _fractionRanks.FirstOrDefault(r => r.RankType == RankType.Default);
+        public FractionRank GetDefaultRank() => _fractionRanks.Find(r => r.RankType == RankType.Default);
 
-        public FractionRank GetHighestRank() => _fractionRanks.FirstOrDefault(r => r.RankType == RankType.Highest);
+        public FractionRank GetHighestRank() => _fractionRanks.Find(r => r.RankType == RankType.Highest);
 
-        public FractionRank GetEmployeeRank(Character employee) => _fractionRanks.FirstOrDefault(q => q.Id == employee.FractionRank);
+        public FractionRank GetEmployeeRank(Character employee) => _fractionRanks.Find(q => q.Id == employee.FractionRank);
 
         public FractionRank GetRankById(int rankId) => _fractionRanks.Find(r => r.Id == rankId);
 
@@ -87,15 +95,14 @@ namespace AltVStrefaRPServer.Models.Fractions
         public Character GetOwner()
         {
             var highestRank = GetHighestRank();
-            if (highestRank == null) return null;
-            return Employees.FirstOrDefault(e => e.FractionRank == highestRank.Id);
+            return highestRank == null ? null : _employees.Find(e => e.FractionRank == highestRank.Id);
         }
 
         public void SetEmployeeRank(Character employee, FractionRank defaultRank) => employee.FractionRank = defaultRank.Id;
 
         public void AddMoney(float amount)
         {
-            // Also maybe own list of transactions and notify owner but propably not
+            // Also maybe own list of transactions and notify owner but probably not
             Money += amount;
         }
 
@@ -114,7 +121,7 @@ namespace AltVStrefaRPServer.Models.Fractions
 
             employee.CurrentFractionId = null;
             employee.FractionRank = 0;
-            await fractionDatabaseService.UpdateFractionAsync(this);
+            await fractionDatabaseService.UpdateFractionAsync(this).ConfigureAwait(false);
             return true;
         }
 
@@ -143,7 +150,7 @@ namespace AltVStrefaRPServer.Models.Fractions
             {
                 Invites.Remove(newEmployee.Id);
             }
-            await fractionDatabaseService.UpdateFractionAsync(this);
+            await fractionDatabaseService.UpdateFractionAsync(this).ConfigureAwait(false);
             return true;
         }
 
@@ -151,7 +158,7 @@ namespace AltVStrefaRPServer.Models.Fractions
         {
             lock (Invites)
             {
-                return Invites.Contains(employee.Id) ? Invites.Remove(employee.Id) : false;
+                return Invites.Contains(employee.Id) && Invites.Remove(employee.Id);
             }
         }
 
@@ -166,7 +173,7 @@ namespace AltVStrefaRPServer.Models.Fractions
             if (_fractionRanks.Remove(rank))
             {
                 var employeesWithRank = GetEmployeesWithRank(rank);
-                if (employeesWithRank.Count() > 0)
+                if (employeesWithRank.Any())
                 {
                     var defaultRank = GetDefaultRank();
                     foreach (var employee in employeesWithRank)
@@ -175,13 +182,11 @@ namespace AltVStrefaRPServer.Models.Fractions
                     }
                 }
 
-                await fractionDatabaseService.RemoveFractionRankAsync(rank);
+                await fractionDatabaseService.RemoveFractionRankAsync(rank).ConfigureAwait(false);
                 return true;
             }
-            else
-            {
-                return false;
-            }
+
+            return false;
         }
 
         public async Task<bool> UpdateEmployeeRankAsync(Character employeeChangingRank, int employeeId, int newRankId, IFractionDatabaseService fractionDatabaseService)
@@ -193,12 +198,12 @@ namespace AltVStrefaRPServer.Models.Fractions
 
             if (newRank.RankType == RankType.Highest)
             {
-                return await SetFractionOwnerAsync(employee, fractionDatabaseService);
+                return await SetFractionOwnerAsync(employee, fractionDatabaseService).ConfigureAwait(false);
             }
             else
             {
                 SetEmployeeRank(employee, newRank);
-                await fractionDatabaseService.UpdateFractionAsync(this);
+                await fractionDatabaseService.UpdateFractionAsync(this).ConfigureAwait(false);
                 return true;
             }
         }
@@ -211,7 +216,7 @@ namespace AltVStrefaRPServer.Models.Fractions
 
             if (!newFractionRank.SetPriority(newRank.Priority)) return false;
             _fractionRanks.Add(newFractionRank);
-            await fractionDatabaseService.UpdateFractionAsync(this);
+            await fractionDatabaseService.UpdateFractionAsync(this).ConfigureAwait(false);
             return true;
         }
 
@@ -220,7 +225,7 @@ namespace AltVStrefaRPServer.Models.Fractions
             var rankToUpdate = GetRankById(updatedRank.Id);
             if (rankToUpdate == null || updatedRank.Permissions == null) return false;
             var updatingEmployeeRank = GetEmployeeRank(updatingEmployee);
-            if (updatingEmployeeRank == null || !updatingEmployeeRank.HasHigherPriority(rankToUpdate)) return false;
+            if (updatingEmployeeRank?.HasHigherPriority(rankToUpdate) != true) return false;
 
             if (!rankToUpdate.SetPriority(updatedRank.Priority)) return false;
             rankToUpdate.RankName = updatedRank.RankName;
@@ -228,17 +233,14 @@ namespace AltVStrefaRPServer.Models.Fractions
             {
                 foreach (var updatedPermission in updatedRank.Permissions)
                 {
-                    if (updatedPermission.Id == permission.Id)
+                    if (updatedPermission.Id == permission.Id && updatedPermission.HasPermission != permission.HasPermission)
                     {
-                        if (updatedPermission.HasPermission != permission.HasPermission)
-                        {
-                            permission.HasPermission = updatedPermission.HasPermission;
-                        }
+                        permission.HasPermission = updatedPermission.HasPermission;
                     }
                 }
             }
 
-            await fractionDatabaseService.UpdateFractionAsync(this);
+            await fractionDatabaseService.UpdateFractionAsync(this).ConfigureAwait(false);
             return true;
         }
 
@@ -256,7 +258,7 @@ namespace AltVStrefaRPServer.Models.Fractions
             }
 
             SetEmployeeRank(newOwner, highestRank);
-            await fractionDatabaseService.UpdateFractionAsync(this);
+            await fractionDatabaseService.UpdateFractionAsync(this).ConfigureAwait(false);
             return true;
         }
 
@@ -268,18 +270,18 @@ namespace AltVStrefaRPServer.Models.Fractions
                 if (defaultRank == null) return false;
                 _employees.Add(newOwner);
                 SetEmployeeRank(newOwner, defaultRank);
-                await fractionDatabaseService.UpdateFractionAsync(this);
-                return await SetFractionOwnerAsync(newOwner, fractionDatabaseService);
+                await fractionDatabaseService.UpdateFractionAsync(this).ConfigureAwait(false);
+                return await SetFractionOwnerAsync(newOwner, fractionDatabaseService).ConfigureAwait(false);
             }
             else
             {
-                return await SetFractionOwnerAsync(newOwner, fractionDatabaseService);
+                return await SetFractionOwnerAsync(newOwner, fractionDatabaseService).ConfigureAwait(false);
             }
         }
 
         protected virtual bool IsCharacterEmployee(int characterId, out Character character)
         {
-            character = _employees.FirstOrDefault(q => q.Id == characterId);
+            character = _employees.Find(q => q.Id == characterId);
             return character != null;
         }
 
@@ -289,8 +291,8 @@ namespace AltVStrefaRPServer.Models.Fractions
             if (employeeRank == null) return false;
             var characterRemovingRank = GetEmployeeRank(characterRemoving);
             if (characterRemovingRank == null) return false;
-            else if (!characterRemovingRank.HasHigherPriority(employeeRank)) return false;
-            else return !(employeeRank.RankType == RankType.Highest);
+            if (!characterRemovingRank.HasHigherPriority(employeeRank)) return false;
+            return employeeRank.RankType != RankType.Highest;
         }
 
         protected virtual bool CanAddNewEmployee(Character newEmployee)
@@ -329,17 +331,10 @@ namespace AltVStrefaRPServer.Models.Fractions
 
         private bool CanAddRank(NewFractionRankDto newRank)
         {
-            if (!_fractionRanks.Any(r => r.RankName == newRank.RankName))
-            {
-                if (_fractionRanks.Any(r => r.Priority == newRank.Priority)) return false;
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return _fractionRanks.None(r => r.RankName == newRank.RankName) && _fractionRanks.None(r => r.Priority == newRank.Priority);
         }
 
+        // TODO: Change it to virualt method so every fraction has to create own default permissions
         protected static List<FractionPermission> GenerateNewPermissions()
         {
             return new List<FractionPermission>

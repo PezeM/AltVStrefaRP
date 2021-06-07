@@ -9,5 +9,6 @@
         FoodItem_Water,
         FoodItem_Sprunk,
         Cloth_Pants = 10000,
+        HouseKeys = 15000,
     }
 }

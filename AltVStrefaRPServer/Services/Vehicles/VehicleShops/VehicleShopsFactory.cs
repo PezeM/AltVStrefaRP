@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using AltV.Net.Data;
+﻿using AltV.Net.Data;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Modules.Vehicle;
+using System.Collections.Generic;
 using VehicleModel = AltV.Net.Enums.VehicleModel;
 
 namespace AltVStrefaRPServer.Services.Vehicles.VehicleShops
@@ -25,7 +25,7 @@ namespace AltVStrefaRPServer.Services.Vehicles.VehicleShops
             };
         }
 
-        private VehicleShop CreateLuxuryVehicleShop()
+        private static VehicleShop CreateLuxuryVehicleShop()
         {
             return new VehicleShop(1, new Position(-35, -1103, 26),
                 new List<VehiclePrice>
@@ -44,7 +44,7 @@ namespace AltVStrefaRPServer.Services.Vehicles.VehicleShops
                 }, new Position(-35, -1103, 26), new Rotation(0, 0, 0));
         }
 
-        private VehicleShop CreatePlanesShop()
+        private static VehicleShop CreatePlanesShop()
         {
             return new VehicleShop(2, new Position(-986.62817f, -2947.9396f, 13.9450f),
                 new List<VehiclePrice>
@@ -58,7 +58,7 @@ namespace AltVStrefaRPServer.Services.Vehicles.VehicleShops
                 }, new Position(-986.62817f, -2947.9396f, 13.9450f), new Rotation(0, 0, 0));
         }
 
-        private VehicleShop CreateClassicCarsShop()
+        private static VehicleShop CreateClassicCarsShop()
         {
             return new VehicleShop(3, new Position(-182.4818f, -1383.7307f, 31.2663f),
                 new List<VehiclePrice>

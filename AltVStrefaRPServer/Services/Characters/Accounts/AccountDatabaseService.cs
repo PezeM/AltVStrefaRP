@@ -1,9 +1,9 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using AltVStrefaRPServer.Database;
+﻿using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace AltVStrefaRPServer.Services.Characters.Accounts
 {
@@ -25,7 +25,18 @@ namespace AltVStrefaRPServer.Services.Characters.Accounts
         {
             using (var context = _factory.Invoke())
             {
-                return await context.Accounts.AsNoTracking().FirstOrDefaultAsync(a => a.Username == username);
+                return await context.Accounts
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(a => a.Username == username);
+            }
+        }
+
+        public async Task<Account> GetAccountAsync(int accountId)
+        {
+            using (var context = _factory.Invoke())
+            {
+                return await context.Accounts
+                    .FindAsync(accountId);
             }
         }
 
@@ -38,7 +49,9 @@ namespace AltVStrefaRPServer.Services.Characters.Accounts
         {
             using (var context = _factory.Invoke())
             {
-                return await context.Accounts.Where(a => a.Username == username).CountAsync();
+                return await context.Accounts
+                    .Where(a => a.Username == username)
+                    .CountAsync();
             }
         }
 

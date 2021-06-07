@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using AltV.Net.Data;
+﻿using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Models.Enums;
+using AltVStrefaRPServer.Models.Vehicles;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AltVStrefaRPServer.Models.Interfaces.Managers
 {
@@ -11,7 +12,7 @@ namespace AltVStrefaRPServer.Models.Interfaces.Managers
         bool TryGetVehicleModel(int vehicleId, out VehicleModel vehicleModel);
         bool TryGetVehicleModel(IMyVehicle vehicle, out VehicleModel vehicleModel);
         bool TryGetVehicleModel(IVehicle vehicle, out VehicleModel vehicleModel);
-        VehicleModel GetVehicleModel(ushort vehicleID);
+        VehicleModel GetVehicleModel(ushort vehicleId);
         bool RemoveVehicle(int vehicleId);
         bool RemoveVehicle(VehicleModel vehicle);
         Task<bool> RemoveVehicleFromWorldAsync(VehicleModel vehicle);

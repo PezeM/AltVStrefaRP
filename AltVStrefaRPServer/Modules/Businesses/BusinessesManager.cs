@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AltV.Net.Data;
+﻿using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Helpers;
@@ -13,12 +10,15 @@ using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Services.Businesses;
 using AltVStrefaRPServer.Services.Characters;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace AltVStrefaRPServer.Modules.Businesses
 {
     public class BusinessesManager : IBusinessesManager
     {
-        private Dictionary<int, Business> _businesses;
+        private readonly Dictionary<int, Business> _businesses;
 
         private readonly IBusinessService _businessService;
         private readonly IBusinessDatabaseService _businessDatabaseService;
@@ -26,7 +26,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
         private readonly BusinessFactory _businessFactory;
         private readonly ILogger<BusinessesManager> _logger;
 
-        public BusinessesManager(IBusinessService businessService, IBusinessDatabaseService businessDatabaseService, ICharacterDatabaseService characterDatabaseService, 
+        public BusinessesManager(IBusinessService businessService, IBusinessDatabaseService businessDatabaseService, ICharacterDatabaseService characterDatabaseService,
             ILogger<BusinessesManager> logger)
         {
             _businesses = new Dictionary<int, Business>();
@@ -75,7 +75,6 @@ namespace AltVStrefaRPServer.Modules.Businesses
                 if (nearestBusiness == null)
                 {
                     nearestBusiness = business;
-                    break;
                 }
                 else
                 {
@@ -93,11 +92,13 @@ namespace AltVStrefaRPServer.Modules.Businesses
         /// </summary>
         /// <param name="businessName"></param>
         /// <returns></returns>
-        public bool CheckIfBusinessExists(string businessName) => _businesses.Values.Any(b => b.BusinessName == businessName);
+        public bool CheckIfBusinessExists(string businessName) => _businesses.Values.Any(b =>
+            string.Equals(b.BusinessName, businessName, System.StringComparison.CurrentCultureIgnoreCase));
 
         /// <summary>
         /// Create new business and save it to database
         /// </summary>
+        /// <param name="ownerId">Id of the character owning the business</param>
         /// <param name="businessType">Type of the business <see cref="BusinessType"/></param>
         /// <param name="position">Position where the business will be located</param>
         /// <param name="name">Name of the business</param>
@@ -110,8 +111,14 @@ namespace AltVStrefaRPServer.Modules.Businesses
 
             var business = _businessFactory.CreateNewBusiness(ownerId, businessType, position, name);
             await _businessDatabaseService.AddNewBusinessAsync(business).ConfigureAwait(false);
-            _businesses.Add(business.Id, business);
-            _logger.LogInformation("Character ID({characterId}) created new business {@business} in {elapsedTime} ms", ownerId, business, Time.GetElapsedTime(startTime));
+
+            lock (_businesses)
+            {
+                _businesses.Add(business.Id, business);
+                _logger.LogInformation("Character ID({characterId}) created new business {businessName} ID({businessId}) in {elapsedTime} ms",
+                    ownerId, business.BusinessName, business.Id, Time.GetElapsedTime(startTime));
+            }
+
             return true;
         }
 
@@ -192,7 +199,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
             if (!business.RemoveEmployee(employee)) return false;
             employee.BusinessRank = 0;
 
-            await Task.WhenAll(_businessDatabaseService.UpdateBusinessAsync(business), _characterDatabaseService.UpdateCharacterAsync(employee));
+            await Task.WhenAll(_businessDatabaseService.UpdateBusinessAsync(business), _characterDatabaseService.UpdateCharacterAsync(employee)).ConfigureAwait(false);
             return true;
         }
 
@@ -207,14 +214,15 @@ namespace AltVStrefaRPServer.Modules.Businesses
             if (!business.RemoveRank(rankId)) return false;
 
             var employeesToChange = business.GetEmployeesWithRank(rankId);
-            if (employeesToChange.Count() > 0)
+            if (employeesToChange.Any())
             {
                 foreach (var character in employeesToChange)
                 {
                     business.SetDefaultRank(character);
                 }
 
-                await Task.WhenAll(_businessDatabaseService.UpdateBusinessAsync(business), _characterDatabaseService.UpdateCharactersAsync(employeesToChange));
+                await Task.WhenAll(_businessDatabaseService.UpdateBusinessAsync(business), _characterDatabaseService.UpdateCharactersAsync(employeesToChange))
+                    .ConfigureAwait(false);
             }
             else
             {
@@ -245,6 +253,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
             {
                 //_businesses.TryAdd(business.Id, _businessFactory.CreateNewBusiness(business));
                 _businesses.TryAdd(business.Id, business);
+                business.CreateBlip();
                 //_businessFactory.CreateBusiness(business);
             }
             _logger.LogInformation("Loaded {businessesCount} businesses from databse in {elapsedTime} ms", _businesses.Count, Time.GetElapsedTime(startTime));

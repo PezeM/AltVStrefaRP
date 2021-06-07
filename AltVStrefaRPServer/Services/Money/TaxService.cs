@@ -13,22 +13,27 @@ namespace AltVStrefaRPServer.Services.Money
             _fractionsManager = fractionsManager;
         }
 
-        public float CalculatePriceAfterTax(float price, TransactionType transactionType)
+        public float CalculateTax(float price, TransactionType transactionType, out TownHallFraction townHall)
         {
-            if (!_fractionsManager.TryToGetTownHallFraction(out TownHallFraction townHall)) return price;
+            if (!_fractionsManager.TryToGetTownHallFraction(out townHall)) return price;
 
             switch (transactionType)
             {
-                case TransactionType.VehicleSell: case TransactionType.VehicleBuy:
-                    return townHall.PriceAfterTax(price, townHall.VehicleTax);
-                case TransactionType.BankDeposit: case TransactionType.BankWithdraw: case TransactionType.BankTransfer:
-                    return price;
-                case TransactionType.BuyingFurnitures: case TransactionType.BuyingProperties:
-                    return townHall.PriceAfterTax(price, townHall.PropertyTax);
+                case TransactionType.VehicleSell:
+                case TransactionType.VehicleBuy:
+                    return townHall.CalculateTax(price, townHall.VehicleTax);
+                case TransactionType.BankDeposit:
+                case TransactionType.BankWithdraw:
+                case TransactionType.BankTransfer:
+                    return 0;
+                case TransactionType.FurnitureBuy:
+                case TransactionType.PropertiesBuy:
+                case TransactionType.PropertiesSell:
+                    return townHall.CalculateTax(price, townHall.PropertyTax);
                 case TransactionType.BuyingGuns:
-                    return townHall.PriceAfterTax(price, townHall.GunTax);
+                    return townHall.CalculateTax(price, townHall.GunTax);
                 default:
-                    return townHall.PriceAfterTax(price, townHall.GlobalTax);
+                    return townHall.CalculateTax(price, townHall.GlobalTax);
             }
         }
     }

@@ -5,22 +5,29 @@
         public int Id { get; set; }
         public string Name { get; protected set; }
         public int StackSize { get; protected set; }
+        public virtual string Description { get; protected set; } = "Brak opisu";
 
-        protected BaseItem(){}
+        protected BaseItem() { }
 
-        public BaseItem(string name, int stackSize)
+        protected BaseItem(string name, int stackSize)
         {
             Name = name;
             StackSize = stackSize;
         }
-
-        public BaseItem(BaseItem baseItem)
+        
+        protected BaseItem(BaseItem baseItem)
         {
             Id = baseItem.Id;
             Name = baseItem.Name;
             StackSize = baseItem.StackSize;
+            ChangeItemDescription(baseItem.Description);
         }
 
+        public void ChangeItemDescription(string description)
+        {
+            Description = description;
+        }
+        
         public abstract bool UseItem(Character character);
 
         public BaseItem ShallowClone()

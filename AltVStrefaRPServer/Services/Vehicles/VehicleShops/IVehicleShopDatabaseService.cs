@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using AltVStrefaRPServer.Modules.Vehicle;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using AltVStrefaRPServer.Modules.Vehicle;
 
 namespace AltVStrefaRPServer.Services.Vehicles.VehicleShops
 {

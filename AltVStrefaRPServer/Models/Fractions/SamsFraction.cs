@@ -1,12 +1,16 @@
-﻿using System.Collections.Generic;
-using AltV.Net.Data;
+﻿using AltV.Net.Data;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Fractions.Permissions;
+using System.Collections.Generic;
 
 namespace AltVStrefaRPServer.Models.Fractions
 {
     public class SamsFraction : Fraction
     {
+        public override int BlipColor { get; protected set; } = 1;
+        public override int BlipSprite { get; protected set; } = 61;
+        public override string BlipName { get; protected set; } = "SAMS";
+
         protected SamsFraction() : base() { }
         public SamsFraction(string name, string description, float money, Position position) : base(name, description, money, position) { }
 

@@ -1,12 +1,16 @@
 ﻿using AltV.Net.Data;
-using System.Collections.Generic;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Fractions.Permissions;
+using System.Collections.Generic;
 
 namespace AltVStrefaRPServer.Models.Fractions
 {
     public class PoliceFraction : Fraction
     {
+        public override int BlipColor { get; protected set; } = 1;
+        public override int BlipSprite { get; protected set; } = 60;
+        public override string BlipName { get; protected set; } = "Policja";
+
         protected PoliceFraction() : base() { }
         public PoliceFraction(string name, string description, float money, Position position) : base(name, description, money, position) { }
 

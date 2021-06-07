@@ -6,6 +6,6 @@
         public override string Description { get; set; } = "Możliwość otworzenia menu z podatkami.";
         public override bool HasPermission { get; set; } = true;
 
-        public OpenTaxesPagePermission(bool hasPermission) : base(hasPermission){}
+        public OpenTaxesPagePermission(bool hasPermission) : base(hasPermission) { }
     }
 }

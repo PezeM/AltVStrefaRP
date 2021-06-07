@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AltV.Net;
+﻿using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Extensions;
@@ -18,6 +14,10 @@ using AltVStrefaRPServer.Services;
 using AltVStrefaRPServer.Services.Fractions;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using FractionRankDto = AltVStrefaRPServer.Models.Dto.Fractions.FractionRankDto;
 
 namespace AltVStrefaRPServer.Modules.Fractions
@@ -29,7 +29,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
         private readonly IFractionDatabaseService _fractionDatabaseService;
         private readonly ILogger<FractionHandler> _logger;
 
-        public FractionHandler (IFractionsManager fractionsManager, INotificationService notificationService,
+        public FractionHandler(IFractionsManager fractionsManager, INotificationService notificationService,
             IFractionDatabaseService fractionDatabaseService, ILogger<FractionHandler> logger)
         {
             _fractionsManager = fractionsManager;
@@ -38,10 +38,10 @@ namespace AltVStrefaRPServer.Modules.Fractions
             _logger = logger;
 
             Alt.On<IPlayer, int>("TryToOpenFractionEmployeesPage", TryToOpenFractionEmployeesPage);
-            Alt.On<IPlayer, int, string, string> ("InviteEmployeeToFraction", InviteEmployeeToFractionEvent);
+            Alt.On<IPlayer, int, string, string>("InviteEmployeeToFraction", InviteEmployeeToFractionEvent);
             AltAsync.On<IPlayer, int, Task>("AcceptFractionInvite", AcceptFractionInviteEventAsync);
             Alt.On<IPlayer, int>("CancelFractionInvite", CancelFractionInvite);
-            AltAsync.On<IPlayer, int, int, Task>("TryToRemoveEmployeeFromFraction",  RemoveEmployeeFromFractionEventAsync);
+            AltAsync.On<IPlayer, int, int, Task>("TryToRemoveEmployeeFromFraction", RemoveEmployeeFromFractionEventAsync);
             Alt.On<IPlayer, int>("TryToOpenFractionRanksPage", TryToOpenFractionRanksPage);
             AltAsync.On<IPlayer, int, int, Task>("TryToDeleteFractionRank", DeleteFractionRankEventAsync);
             AltAsync.On<IPlayer, int, int, int, Task>("UpdateFractionEmployeeRank", UpdateFractionEmployeeRankEventAsync);
@@ -49,11 +49,11 @@ namespace AltVStrefaRPServer.Modules.Fractions
             AltAsync.On<IPlayer, int, string, Task>("TryToUpdateFractionRank", UpdateFractionRankEventAsync);
         }
 
-        public void OpenFractionMenu (Character character)
+        public void OpenFractionMenu(Character character)
         {
-            if (!_fractionsManager.TryToGetFraction (character, out Fraction fraction))
+            if (!_fractionsManager.TryToGetFraction(character, out var fraction))
             {
-                _notificationService.ShowErrorNotification (character.Player, "Brak frakcji", "Nie jesteś zatrudniony w żadnej frakcji.");
+                _notificationService.ShowErrorNotification(character.Player, "Brak frakcji", "Nie jesteś zatrudniony w żadnej frakcji.");
                 return;
             }
             if (!fraction.HasPermission<OpenMenuPermission>(character))
@@ -64,11 +64,11 @@ namespace AltVStrefaRPServer.Modules.Fractions
 
             if (fraction is PoliceFraction)
             {
-                character.Player.Emit ("openFractionMenu", (int)FractionsEnum.Police, null);
+                character.Player.Emit("openFractionMenu", (int)FractionsEnum.Police, null);
             }
             else if (fraction is SamsFraction)
             {
-                character.Player.Emit ("openFractionMenu", (int)FractionsEnum.Sams, null);
+                character.Player.Emit("openFractionMenu", (int)FractionsEnum.Sams, null);
             }
             else if (fraction is TownHallFraction townHallFraction)
             {
@@ -89,11 +89,11 @@ namespace AltVStrefaRPServer.Modules.Fractions
             player.Emit("openFractionEmployeesPage", GetFractionEmloyeesDto(fraction));
         }
 
-        public void InviteEmployeeToFractionEvent (IPlayer player, int fractionId, string firstName, string lastName)
+        public void InviteEmployeeToFractionEvent(IPlayer player, int fractionId, string firstName, string lastName)
         {
             if ((firstName == null || firstName.Length < 3) || (lastName == null || lastName.Length < 3)) return;
-            if (!player.TryGetCharacter (out Character character)) return;
-            if (!_fractionsManager.TryToGetFraction (fractionId, out Fraction fraction)) return;
+            if (!player.TryGetCharacter(out Character character)) return;
+            if (!_fractionsManager.TryToGetFraction(fractionId, out Fraction fraction)) return;
             if (!fraction.HasPermission<ManageEmployeesPermission>(character))
             {
                 _notificationService.ShowErrorNotification(player, "Brak uprawnień",
@@ -101,10 +101,10 @@ namespace AltVStrefaRPServer.Modules.Fractions
                 return;
             }
 
-            var newEmployee = CharacterManager.Instance.GetCharacter (firstName, lastName);
+            var newEmployee = CharacterManager.Instance.GetCharacter(firstName, lastName);
             if (newEmployee == null)
             {
-                _notificationService.ShowErrorNotification (player, "Błąd!", $"Nie znaleziono nikogo z takim imieniem i nazwiskiem", 6000);
+                _notificationService.ShowErrorNotification(player, "Błąd!", $"Nie znaleziono nikogo z takim imieniem i nazwiskiem", 6000);
                 return;
             }
 
@@ -113,18 +113,18 @@ namespace AltVStrefaRPServer.Modules.Fractions
                 _notificationService.ShowSuccessNotification(player, "Wysłano zaprosznie",
                     $"Pomyślnie wysłano zaproszenie do frakcji do {newEmployee.GetFullName()}", 6000);
 
-                _logger.LogInformation("Character {characterName} CID({characterId}) invited new employee {employeeName} CID({employeeId}) to fraction {fractionName}", 
+                _logger.LogInformation("Character {characterName} CID({characterId}) invited new employee {employeeName} CID({employeeId}) to fraction {fractionName}",
                     character.GetFullName(), character.Id, newEmployee.GetFullName(), newEmployee.Id, fraction.Name);
             }
             else
             {
-                _notificationService.ShowErrorNotification (player, "Błąd!", $"Nie udało się zaprosić {newEmployee.GetFullName()} do frakcji.", 6000);
+                _notificationService.ShowErrorNotification(player, "Błąd!", $"Nie udało się zaprosić {newEmployee.GetFullName()} do frakcji.", 6000);
             }
         }
 
         private void CancelFractionInvite(IPlayer player, int fractionId)
         {
-            if(!player.TryGetCharacter(out Character character)) return;
+            if (!player.TryGetCharacter(out Character character)) return;
             if (!_fractionsManager.TryToGetFraction(fractionId, out Fraction fraction)) return;
 
             if (fraction.CancelFractionInvite(character))
@@ -135,13 +135,13 @@ namespace AltVStrefaRPServer.Modules.Fractions
 
         public async Task AcceptFractionInviteEventAsync(IPlayer player, int fractionId)
         {
-            if(!player.TryGetCharacter(out Character character)) return;
+            if (!player.TryGetCharacter(out Character character)) return;
             if (!_fractionsManager.TryToGetFraction(fractionId, out Fraction fraction)) return;
 
             if (await fraction.AddNewEmployeeAsync(character, _fractionDatabaseService))
             {
                 await _notificationService.ShowSuccessNotificationAsync(player, "Sukces", $"Pomyślnie dołączono do frakcji {fraction.Name}.");
-                _logger.LogInformation("Character {characterName} CID({characterId}) joined fraction {fractionName}", 
+                _logger.LogInformation("Character {characterName} CID({characterId}) joined fraction {fractionName}",
                     character.GetFullName(), character.Id, fraction.Name);
             }
             else
@@ -153,7 +153,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
         private async Task RemoveEmployeeFromFractionEventAsync(IPlayer player, int fractionId, int employeeId)
         {
             if (!player.TryGetCharacter(out Character character)) return;
-            if(!_fractionsManager.TryToGetFraction(fractionId, out Fraction fraction)) return;
+            if (!_fractionsManager.TryToGetFraction(fractionId, out Fraction fraction)) return;
             if (!fraction.HasPermission<ManageEmployeesPermission>(character))
             {
                 await _notificationService.ShowErrorNotificationAsync(player, "Brak uprawnień",
@@ -165,7 +165,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
             {
                 // Maybe send some notification to user that he has been removed
                 await player.EmitAsync("succesfullyRemovedEmployeeFromFraction", employeeId);
-                _logger.LogInformation("Character {characterName} CID({characterId}) removed employee ID({employeeId}) from fraction {fractionName}", 
+                _logger.LogInformation("Character {characterName} CID({characterId}) removed employee ID({employeeId}) from fraction {fractionName}",
                     character.GetFullName(), character.Id, employeeId, fraction.Name);
             }
             else
@@ -189,8 +189,8 @@ namespace AltVStrefaRPServer.Modules.Fractions
 
         private async Task DeleteFractionRankEventAsync(IPlayer player, int fractionId, int rankId)
         {
-            if (!player.TryGetCharacter (out Character character)) return;
-            if (!_fractionsManager.TryToGetFraction (fractionId, out Fraction fraction)) return;
+            if (!player.TryGetCharacter(out Character character)) return;
+            if (!_fractionsManager.TryToGetFraction(fractionId, out Fraction fraction)) return;
             if (!fraction.HasPermission<ManageRanksPermission>(character))
             {
                 await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie posiadasz odpowiednich uprawnień.");
@@ -200,7 +200,7 @@ namespace AltVStrefaRPServer.Modules.Fractions
             if (await fraction.RemoveRankAsync(character, rankId, _fractionDatabaseService))
             {
                 await player.EmitAsync("succesfullyDeletedFractionRank", rankId);
-                _logger.LogInformation("Character {characterName} CID({characterId}) removed rank ID({rankId}) from fraction {fractionName}", 
+                _logger.LogInformation("Character {characterName} CID({characterId}) removed rank ID({rankId}) from fraction {fractionName}",
                     character.GetFullName(), character.Id, rankId, fraction.Name);
             }
             else
@@ -211,8 +211,8 @@ namespace AltVStrefaRPServer.Modules.Fractions
 
         public async Task UpdateFractionEmployeeRankEventAsync(IPlayer player, int fractionId, int employeeId, int newRankId)
         {
-            if (!player.TryGetCharacter (out Character character)) return;
-            if (!_fractionsManager.TryToGetFraction (fractionId, out Fraction fraction)) return;
+            if (!player.TryGetCharacter(out Character character)) return;
+            if (!_fractionsManager.TryToGetFraction(fractionId, out Fraction fraction)) return;
             if (!fraction.HasPermission<ManageEmployeesPermission>(character))
             {
                 await _notificationService.ShowErrorNotificationAsync(player, "Brak uprawnień",
@@ -234,8 +234,8 @@ namespace AltVStrefaRPServer.Modules.Fractions
 
         private async Task AddNewFractionRankEventAsync(IPlayer player, int fractionId, string newRankString)
         {
-            if (!player.TryGetCharacter (out Character character)) return;
-            if (!_fractionsManager.TryToGetFraction (fractionId, out Fraction fraction)) return;
+            if (!player.TryGetCharacter(out Character character)) return;
+            if (!_fractionsManager.TryToGetFraction(fractionId, out Fraction fraction)) return;
             if (!fraction.HasPermission<ManageRanksPermission>(character))
             {
                 await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie posiadasz odpowiednich uprawnień.");
@@ -252,12 +252,12 @@ namespace AltVStrefaRPServer.Modules.Fractions
                 _logger.LogError(e, "Error in deserializing fraction rank. New rank string = {newRankString}", newRankString);
                 return;
             }
-            if(newRank == null) return;
+            if (newRank == null) return;
 
             if (await fraction.AddNewRankAsync(newRank, _fractionDatabaseService))
             {
                 player.EmitLocked("succesfullyAddedNewFractionRank", newRank.RankName, JsonConvert.SerializeObject(GetAllFractionRanks(fraction)));
-                _logger.LogInformation("Character {characterName} CID({characterId}) added new rank {@newRank} to fraction {fractionName}", 
+                _logger.LogInformation("Character {characterName} CID({characterId}) added new rank {@newRank} to fraction {fractionName}",
                     character.GetFullName(), character.Id, newRank, fraction.Name);
 
             }
@@ -267,11 +267,11 @@ namespace AltVStrefaRPServer.Modules.Fractions
             }
         }
 
-        
+
         private async Task UpdateFractionRankEventAsync(IPlayer player, int fractionId, string updatedRankString)
         {
-            if (!player.TryGetCharacter (out Character character)) return;
-            if (!_fractionsManager.TryToGetFraction (fractionId, out Fraction fraction)) return;
+            if (!player.TryGetCharacter(out Character character)) return;
+            if (!_fractionsManager.TryToGetFraction(fractionId, out Fraction fraction)) return;
             if (!fraction.HasPermission<ManageRanksPermission>(character))
             {
                 await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie posiadasz odpowiednich uprawnień.");
@@ -288,12 +288,12 @@ namespace AltVStrefaRPServer.Modules.Fractions
                 _logger.LogError(e, "Error in deserializing fraction rank. updated rank string = {updatedRank}", updatedRankString);
                 return;
             }
-            if(updatedRank == null) return;
+            if (updatedRank == null) return;
 
             if (await fraction.UpdateRankAsync(character, updatedRank, _fractionDatabaseService))
             {
                 await player.EmitAsync("succesfullyUpdatedFractionRank", JsonConvert.SerializeObject(updatedRank));
-                _logger.LogInformation("Character {characterName} CID({characterId}) updated rank {rankName} in fraction {fractionName}", 
+                _logger.LogInformation("Character {characterName} CID({characterId}) updated rank {rankName} in fraction {fractionName}",
                     character.GetFullName(), character.Id, updatedRank.RankName, fraction.Name);
             }
             else

@@ -7,6 +7,6 @@ namespace AltVStrefaRPServer.Services.Characters.Customization
     {
         Task<bool> CheckIfCharacterExistsAsync(string firstName, string lastName);
         Character CreateNewCharacter(int accountId, string firstName, string lastName, int age, int gender);
-        Task SaveNewCharacter(Character character);
+        Task SaveNewCharacterAsync(Character character);
     }
 }

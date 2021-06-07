@@ -3,7 +3,7 @@
     public enum AdminLevel
     {
         None = 0,
-        
+
         TrialSupport = 70,
         Support = 71,
 

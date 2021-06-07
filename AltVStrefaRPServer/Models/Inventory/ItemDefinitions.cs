@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using AltV.Net.Enums;
+﻿using AltV.Net.Enums;
 using AltVStrefaRPServer.Models.Inventory.Items;
+using System.Collections.Generic;
 
 namespace AltVStrefaRPServer.Models.Inventory
 {

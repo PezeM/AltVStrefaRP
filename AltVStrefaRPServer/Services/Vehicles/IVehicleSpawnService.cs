@@ -1,5 +1,5 @@
-﻿using System.Threading.Tasks;
-using AltVStrefaRPServer.Models;
+﻿using AltVStrefaRPServer.Models.Vehicles;
+using System.Threading.Tasks;
 
 namespace AltVStrefaRPServer.Services.Vehicles
 {

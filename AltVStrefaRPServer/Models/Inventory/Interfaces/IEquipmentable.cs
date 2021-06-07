@@ -1,6 +1,4 @@
-﻿using AltVStrefaRPServer.Models.Inventory;
-
-namespace AltVStrefaRPServer.Models.Interfaces.Inventory
+﻿namespace AltVStrefaRPServer.Models.Inventory.Interfaces
 {
     public interface IEquipmentable
     {

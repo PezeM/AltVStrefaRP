@@ -2,11 +2,12 @@
 using AltV.Net.Async;
 using AltV.Net.Data;
 using AltV.Net.Enums;
+using AltVStrefaRPServer.Data;
+using AltVStrefaRPServer.Models.Vehicles;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
-using AltVStrefaRPServer.Models;
-using Microsoft.Extensions.Logging;
-using VehicleModel = AltVStrefaRPServer.Models.VehicleModel;
+using VehicleModel = AltVStrefaRPServer.Models.Vehicles.VehicleModel;
 
 namespace AltVStrefaRPServer.Services.Vehicles
 {
@@ -23,12 +24,12 @@ namespace AltVStrefaRPServer.Services.Vehicles
 
         public async Task SpawnVehicleAsync(VehicleModel vehicleModel)
         {
-            if(!CanSpawnVehicle(vehicleModel)) return;
+            if (!CanSpawnVehicle(vehicleModel)) return;
 
             try
             {
                 vehicleModel.VehicleHandle = await AltAsync.CreateVehicle(vehicleModel.Model,
-                    new Position(vehicleModel.X, vehicleModel.Y, vehicleModel.Z), 
+                    new Position(vehicleModel.X, vehicleModel.Y, vehicleModel.Z),
                     new Rotation(vehicleModel.Roll, vehicleModel.Pitch, vehicleModel.Yaw)).ConfigureAwait(false);
             }
             catch (Exception e)
@@ -43,12 +44,12 @@ namespace AltVStrefaRPServer.Services.Vehicles
 
         public void SpawnVehicle(VehicleModel vehicleModel)
         {
-            if(!CanSpawnVehicle(vehicleModel)) return;
+            if (!CanSpawnVehicle(vehicleModel)) return;
 
             try
             {
                 vehicleModel.VehicleHandle = Alt.CreateVehicle(vehicleModel.Model,
-                    new Position(vehicleModel.X, vehicleModel.Y, vehicleModel.Z), 
+                    new Position(vehicleModel.X, vehicleModel.Y, vehicleModel.Z),
                     new Rotation(vehicleModel.Roll, vehicleModel.Pitch, vehicleModel.Yaw));
             }
             catch (Exception e)
@@ -123,15 +124,15 @@ namespace AltVStrefaRPServer.Services.Vehicles
                 myVehicle.DatabaseId = vehicleModel.Id;
             }
 
-            vehicleModel.VehicleHandle.ManualEngineControl = true;
+            //vehicleModel.VehicleHandle.ManualEngineControl = true; // Set on client
             vehicleModel.VehicleHandle.Dimension = vehicleModel.Dimension;
             vehicleModel.IsLocked = false;
             vehicleModel.VehicleHandle.LockState = VehicleLockState.Unlocked;
-            vehicleModel.VehicleHandle.SetData("vehicleId", vehicleModel.Id);
-            vehicleModel.VehicleHandle.SetSyncedMetaData("vehicleId", vehicleModel.Id);
-            vehicleModel.VehicleHandle.SetSyncedMetaData("fuel", vehicleModel.Fuel);
-            vehicleModel.VehicleHandle.SetSyncedMetaData("oil", vehicleModel.Oil);
-            vehicleModel.VehicleHandle.SetSyncedMetaData("mileage", vehicleModel.Mileage);
+            vehicleModel.VehicleHandle.SetData(MetaData.VEHICLE_ID, vehicleModel.Id);
+            vehicleModel.VehicleHandle.SetSyncedMetaData(MetaData.SYNCED_VEHICLE_ID, vehicleModel.Id);
+            vehicleModel.VehicleHandle.SetSyncedMetaData(MetaData.SYNCED_VEHICLE_FUEL, vehicleModel.Fuel);
+            vehicleModel.VehicleHandle.SetSyncedMetaData(MetaData.SYNCED_VEHICLE_OIL, vehicleModel.Oil);
+            //vehicleModel.VehicleHandle.SetSyncedMetaData(MetaData.SYNCED_VEHICLE_MILEAGE, vehicleModel.Mileage);
             vehicleModel.VehicleHandle.NumberplateText = vehicleModel.PlateText;
             vehicleModel.VehicleHandle.NumberplateIndex = vehicleModel.PlateNumber;
             vehicleModel.IsSpawned = true;

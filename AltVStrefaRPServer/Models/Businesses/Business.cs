@@ -1,13 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using AltV.Net.Data;
+﻿using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Models.Enums;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using AltVStrefaRPServer.Modules.Core;
 
 namespace AltVStrefaRPServer.Models.Businesses
 {
-    public class Business : IMoney, IPosition, IHaveBlip
+    public class Business : IBusiness
     {
         public int Id { get; set; }
         public int OwnerId { get; set; }
@@ -43,6 +44,11 @@ namespace AltVStrefaRPServer.Models.Businesses
             Z = position.Z;
         }
 
+        public void CreateBlip()
+        {
+            BlipManager.Instance.CreateBlip(BlipName, BlipSprite, BlipColor, GetPosition());
+        }
+
         /// <summary>
         /// Checks if business can have more members
         /// </summary>
@@ -51,8 +57,7 @@ namespace AltVStrefaRPServer.Models.Businesses
         public bool CanAddNewMember(Character newEmployee)
         {
             if (EmployeesCount >= MaxMembersCount || newEmployee.CurrentBusinessId > 0) return false;
-            if (newEmployee.Business != null && newEmployee.Business == this) return false;
-            return true;
+            return newEmployee.Business == null || newEmployee.Business != this;
         }
 
         public void AddNewMember(Character newEmployee)
@@ -130,7 +135,7 @@ namespace AltVStrefaRPServer.Models.Businesses
         /// </summary>
         /// <param name="rankId"></param>
         /// <returns></returns>
-        public IEnumerable<Character> GetEmployeesWithRank(int rankId) 
+        public IEnumerable<Character> GetEmployeesWithRank(int rankId)
             => Employees.Where(q => q.BusinessRank == rankId);
 
         public bool RemoveEmployee(Character employee)
@@ -141,8 +146,7 @@ namespace AltVStrefaRPServer.Models.Businesses
 
         public bool CanRemoveRank(BusinessRank rank)
         {
-            if (rank.IsOwnerRank || rank.IsDefaultRank) return false;
-            else return true;
+            return !rank.IsOwnerRank && !rank.IsDefaultRank;
         }
 
         public bool RemoveRank(int rankId)

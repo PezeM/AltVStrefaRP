@@ -1,16 +1,17 @@
 ﻿using AltV.Net.Elements.Entities;
 using AltV.Net.Enums;
+using AltVStrefaRPServer.Data;
 using AltVStrefaRPServer.Models;
+using AltVStrefaRPServer.Models.Interfaces.Managers;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using AltVStrefaRPServer.Data;
-using AltVStrefaRPServer.Models.Interfaces.Managers;
-using Serilog;
+using AltVStrefaRPServer.Modules.Core;
 
 namespace AltVStrefaRPServer.Modules.CharacterModule
 {
-    public class CharacterManager : ICharacterManager
+    public sealed class CharacterManager : ICharacterManager
     {
         private static readonly Lazy<CharacterManager> lazy = new Lazy<CharacterManager>(() => new CharacterManager());
         public static CharacterManager Instance { get { return lazy.Value; } }
@@ -57,16 +58,21 @@ namespace AltVStrefaRPServer.Modules.CharacterModule
                 character.Player = player;
                 player.SetSyncedMetaData(MetaData.PLAYER_NAME, character.GetFullName());
                 player.SetSyncedMetaData(MetaData.REMOTE_ID, character.Id);
+                character.Equipment.InitializeEquipment();
+                SetAdminLevel(character);
 
                 // TODO: Setting skin and shared data
                 player.SetPosition(character.X, character.Y, character.Z);
-                //player.Spawn(character.GetPosition());
                 player.Model = character.Gender == 0 ? (uint)PedModel.FreemodeMale01 : (uint)PedModel.FreemodeFemale01;
                 player.Dimension = character.Dimension;
+                EquipItems(character);
+
                 character.LastPlayed = DateTime.Now;
+                character.Player.Emit("blipManagerLoadAllBlips", BlipManager.Instance.GetBlips());
+                character.Player.Emit("Player-CharacterReady");
 
                 _characters.Add(player.Id, character);
-                Log.ForContext<CharacterManager>().Information("Initialized character {characterName} CID({characterId}) ID({playerId}) in the world", 
+                Log.ForContext<CharacterManager>().Information("Initialized character {characterName} CID({characterId}) ID({playerId}) in the world",
                     character.GetFullName(), character.Id, player.Id);
                 return true;
             }
@@ -78,10 +84,25 @@ namespace AltVStrefaRPServer.Modules.CharacterModule
         /// <param name="character"></param>
         public void RemoveCharacterDataFromServer(Character character)
         {
-            lock (_characters)
+            lock (character)
             {
                 _characters.Remove(character.Player.Id);
                 Log.ForContext<CharacterManager>().Information("Removed character {characterName} CID({characterId}) from server", character.GetFullName(), character.Id);
+            }
+        }
+
+        private void EquipItems(Character character)
+        {
+            foreach (var item in character.Equipment.Items)
+            {
+                item.Item.UseItem(character);
+            }
+        }
+        private static void SetAdminLevel(Character character)
+        {
+            if (character.Account != null)
+            {
+                character.Player.SetSyncedMetaData(MetaData.PLAYER_ADMIN_LEVEL, (int)character.Account.AdminLevel);
             }
         }
     }

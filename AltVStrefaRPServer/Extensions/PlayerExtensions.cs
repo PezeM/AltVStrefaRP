@@ -11,7 +11,7 @@ namespace AltVStrefaRPServer.Extensions
         /// </summary>
         /// <param name="player"></param>
         /// <returns></returns>
-        public static Character GetCharacter(this IPlayer player) 
+        public static Character GetCharacter(this IPlayer player)
             => CharacterManager.Instance.GetCharacter(player);
 
         /// <summary>
@@ -20,7 +20,7 @@ namespace AltVStrefaRPServer.Extensions
         /// <param name="player"></param>
         /// <param name="character"></param>
         /// <returns></returns>
-        public static bool TryGetCharacter(this IPlayer player, out Character character) 
+        public static bool TryGetCharacter(this IPlayer player, out Character character)
             => CharacterManager.Instance.TryGetCharacter(player, out character);
 
         public static void PlayAnimation(this IPlayer player, string animationName) =>

@@ -1,21 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using AltV.Net;
+﻿using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Helpers;
 using AltVStrefaRPServer.Models;
+using AltVStrefaRPServer.Models.Businesses;
 using AltVStrefaRPServer.Models.Dto;
 using AltVStrefaRPServer.Models.Enums;
+using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Modules.CharacterModule;
 using AltVStrefaRPServer.Services;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AltVStrefaRPServer.Models.Businesses;
-using AltVStrefaRPServer.Models.Interfaces.Managers;
-using Microsoft.Extensions.Logging;
 
 namespace AltVStrefaRPServer.Modules.Businesses
 {
@@ -32,7 +32,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
             _logger = logger;
 
             Alt.On<IPlayer, int>("GetBusinessEmployees", GetBusinessEmployeesEvent);
-            AltAsync.On<IPlayer, int, int, int, Task>("UpdateEmployeeRank", (player, employeeId, newRankId, businessId) 
+            AltAsync.On<IPlayer, int, int, int, Task>("UpdateEmployeeRank", (player, employeeId, newRankId, businessId)
                 => UpdateEmployeeRankEventAsync(player, employeeId, newRankId, businessId));
             Alt.On<IPlayer, string, string, int>("AddNewEmployee", AddNewEmployeeEvent);
             AltAsync.On<IPlayer, int, Task>("AcceptInviteToBusiness", AcceptInviteToBusinessEventAsync);
@@ -92,7 +92,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
             }
 
             character.Player.Emit("openBusinessMenu", JsonConvert.SerializeObject(GetBusinessInfoDto(business)));
-            _logger.LogDebug("Character {characterName} CID({characterId}) opened business menu in {elapsedTime}ms", 
+            _logger.LogDebug("Character {characterName} CID({characterId}) opened business menu in {elapsedTime}ms",
                 character.Id, character.GetFullName(), Time.GetElapsedTime(startTime));
         }
 
@@ -181,7 +181,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
             //player.Emit("showConfirmModal", "Oferta pracy", $"Otrzymałeś zaproszenie do firmy {business.BusinessName}. " +
             //                                                $"Czy chcesz je przyjąć?", (int)ConfirmModalType.BusinessInvite, business.Id);
 
-            _notificationService.ShowSuccessNotification(player, "Wysłano zaproszenie", 
+            _notificationService.ShowSuccessNotification(player, "Wysłano zaproszenie",
                                                         $"Zaproszenie do firmy zostało wysłane do {newEmployee.GetFullName()}.", 6500);
 
             _logger.LogInformation("Character {characterName} CID({characterId}) invited {newEmployeeName} CID({newEmployeeId}) " +
@@ -209,7 +209,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
                 return;
             }
 
-            _logger.LogInformation("Character {characterName} CID({characterId}) joined business {businessName} ID({businessId})", 
+            _logger.LogInformation("Character {characterName} CID({characterId}) joined business {businessName} ID({businessId})",
                 character.GetFullName(), character.Id, business.BusinessName, business.Id);
         }
 
@@ -247,7 +247,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
                 await _notificationService.ShowErrorNotificationAsync(player, "Błąd", "Nie znaleziono takiego biznesu.", 4000);
                 return;
             }
-            
+
             if (!business.GetBusinessRankForEmployee(character, out BusinessRank businessRank))
             {
                 await _notificationService.ShowErrorNotificationAsync(character.Player, "Błąd", "Nie masz ustalonych żadnych możliwości w biznesie.", 6000);
@@ -278,8 +278,8 @@ namespace AltVStrefaRPServer.Modules.Businesses
             }
 
             await _businessesManager.UpdateBusinessRankAsync(businessRankToUpdate, newPermissions).ConfigureAwait(false);
-            _notificationService.ShowSuccessNotification(player, "Zaktualizowano stanowisko", "Pomyślnie zaktualizowano stanowisko.");
-            _logger.LogDebug("Character {characterName} CID({characterId}) changed permissions of rank RankId({rankId}) in {elapsedTime}ms", 
+            await _notificationService.ShowSuccessNotificationAsync(player, "Zaktualizowano stanowisko", "Pomyślnie zaktualizowano stanowisko.");
+            _logger.LogDebug("Character {characterName} CID({characterId}) changed permissions of rank RankId({rankId}) in {elapsedTime}ms",
                 character.GetFullName(), character.Id, businessRank.Id, Time.GetElapsedTime(startTime));
         }
 
@@ -317,11 +317,11 @@ namespace AltVStrefaRPServer.Modules.Businesses
                 throw;
             }
 
-            if(newRank == null) return;
+            if (newRank == null) return;
             if (await _businessesManager.AddNewBusinessRankAsync(business, newRank).ConfigureAwait(false))
             {
                 await _notificationService.ShowSuccessNotificationAsync(player, "Zaktualizowano stanowisko", "Pomyślnie zaktualizowano stanowisko");
-                _logger.LogInformation("Character {characterName} CID({characterId}) added new rank {@newRank} to business {businessName} ID({businessId}) in {elapsedTime}ms", 
+                _logger.LogInformation("Character {characterName} CID({characterId}) added new rank {@newRank} to business {businessName} ID({businessId}) in {elapsedTime}ms",
                     character.GetFullName(), character.Id, newRank, business.BusinessName, business.Id, Time.GetElapsedTime(startTime));
             }
             else
@@ -401,7 +401,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
             if (await _businessesManager.RemoveRankAsync(business, rankId))
             {
                 await _notificationService.ShowSuccessNotificationAsync(player, "Usunięto stanowisko", $"Pomyślnie usunięto stanowisko.", 5000);
-                _logger.LogInformation("Character {characterName} CID({characterId}) deleted rank {rankName} ID({rankId}) from business {businessName} ID({businessId}) in {elapsedTime}ms", 
+                _logger.LogInformation("Character {characterName} CID({characterId}) deleted rank {rankName} ID({rankId}) from business {businessName} ID({businessId}) in {elapsedTime}ms",
                     character.GetFullName(), character.Id, businessRank.RankName, businessRank.Id, business.Id, business.BusinessName, Time.GetElapsedTime(startTime));
             }
             else
@@ -436,7 +436,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
             if (await _businessesManager.DeleteBusinessAsync(business))
             {
                 await _notificationService.ShowSuccessNotificationAsync(player, "Usunięto biznes", $"Pomyślnie usunięto biznes {business.BusinessName}.", 5000);
-                _logger.LogInformation("Character {characterName} CID({characterId}) deleted business {businessName} ID({businessId}) in {elapsedTime}ms", 
+                _logger.LogInformation("Character {characterName} CID({characterId}) deleted business {businessName} ID({businessId}) in {elapsedTime}ms",
                     character.GetFullName(), character.Id, business.BusinessName, business.Id, Time.GetTimestamp() - startTime);
             }
             else
@@ -487,7 +487,7 @@ namespace AltVStrefaRPServer.Modules.Businesses
             };
         }
 
-        private static List<BusinessPermissionsDto> GetBusinessRanksInfo(Models.Businesses.Business business)
+        private static List<BusinessPermissionsDto> GetBusinessRanksInfo(Business business)
         {
             return business.BusinessRanks.Select(q => new BusinessPermissionsDto
             {

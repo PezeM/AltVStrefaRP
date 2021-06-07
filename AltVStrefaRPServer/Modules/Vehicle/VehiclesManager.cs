@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AltV.Net;
+﻿using AltV.Net;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Helpers;
@@ -11,9 +7,13 @@ using AltVStrefaRPServer.Models.Businesses;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Fractions.Permissions;
 using AltVStrefaRPServer.Models.Interfaces.Managers;
+using AltVStrefaRPServer.Models.Vehicles;
 using AltVStrefaRPServer.Services.Vehicles;
 using Microsoft.Extensions.Logging;
-using VehicleModel = AltVStrefaRPServer.Models.VehicleModel;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace AltVStrefaRPServer.Modules.Vehicle
 {
@@ -44,11 +44,11 @@ namespace AltVStrefaRPServer.Modules.Vehicle
         /// <summary>
         /// Gets VehicleModel by vehicleHandle id
         /// </summary>
-        /// <param name="vehicleID">Id of vehicle handle</param>
+        /// <param name="vehicleId">Id of vehicle handle</param>
         /// <returns></returns>
-        public VehicleModel GetVehicleModel(ushort vehicleID) => _vehicles.Values.FirstOrDefault(v => v.VehicleHandle?.Id == vehicleID);
+        public VehicleModel GetVehicleModel(ushort vehicleId) => _vehicles.Values.FirstOrDefault(v => v.VehicleHandle?.Id == vehicleId);
 
-        public bool TryGetVehicleModel(IMyVehicle vehicle, out VehicleModel vehicleModel) 
+        public bool TryGetVehicleModel(IMyVehicle vehicle, out VehicleModel vehicleModel)
             => _vehicles.TryGetValue(vehicle.DatabaseId, out vehicleModel);
 
         /// <summary>
@@ -172,7 +172,7 @@ namespace AltVStrefaRPServer.Modules.Vehicle
             return vehicle;
         }
 
-        public VehicleModel CreateVehicle(string vehicleModel, Position position, Rotation rotation, short dimension, int ownerId, 
+        public VehicleModel CreateVehicle(string vehicleModel, Position position, Rotation rotation, short dimension, int ownerId,
             OwnerType ownerType)
         {
             var vehicle = _vehicleCreator.CreateVehicle(vehicleModel, position, rotation, dimension, ownerId, ownerType);

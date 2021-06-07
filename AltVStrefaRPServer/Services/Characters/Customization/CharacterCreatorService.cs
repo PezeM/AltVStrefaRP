@@ -1,11 +1,13 @@
-﻿using System;
-using System.Threading.Tasks;
-using AltVStrefaRPServer.Database;
+﻿using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Models.Server;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using AltVStrefaRPServer.Models.Houses;
 
 namespace AltVStrefaRPServer.Services.Characters.Customization
 {
@@ -22,16 +24,19 @@ namespace AltVStrefaRPServer.Services.Characters.Customization
         {
             using (var context = _factory.Invoke())
             {
-                return await context.Characters.AsNoTracking()
-                    .AnyAsync(c => c.FirstName.ToLower() == firstName&& c.LastName.ToLower() == lastName);
+                return await context.Characters
+                    .AsNoTracking()
+                    .AnyAsync(c => c.FirstName.ToLower() == firstName
+                                   && c.LastName.ToLower() == lastName);
             }
         }
 
-        public async Task SaveNewCharacter(Character character)
+        public async Task SaveNewCharacterAsync(Character character)
         {
             using (var context = _factory.Invoke())
             {
-                await context.AddAsync(character).ConfigureAwait(false);
+                context.Attach(character.Account);
+                context.Update(character);
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
         }
@@ -48,9 +53,12 @@ namespace AltVStrefaRPServer.Services.Characters.Customization
                 AccountId = accountId,
                 BankAccount = null,
                 Age = age,
-                Inventory = new InventoryController(50),
+                Inventory = new PlayerInventoryContainer(18),
+                Equipment = new PlayerEquipment(),
                 Gender = (Gender)gender,
                 Dimension = 0,
+                Houses = new List<House>(),
+                HotelRooms = new List<HotelRoom>(),
                 X = AppSettings.Current.ServerConfig.SpawnPosition.X,
                 Y = AppSettings.Current.ServerConfig.SpawnPosition.Y,
                 Z = AppSettings.Current.ServerConfig.SpawnPosition.Z,
@@ -62,11 +70,11 @@ namespace AltVStrefaRPServer.Services.Characters.Customization
                 FractionRank = 0,
                 CanDriveVehicles = true,
                 IsBanned = false,
-                IsMuted = true,
+                IsMuted = false,
             };
             newCharacter.AddMoney(AppSettings.Current.ServerConfig.StartingPlayerMoney);
 
             return newCharacter;
-        } 
+        }
     }
 }

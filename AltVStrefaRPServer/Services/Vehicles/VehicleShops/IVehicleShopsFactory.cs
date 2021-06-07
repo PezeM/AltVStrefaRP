@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using AltVStrefaRPServer.Modules.Vehicle;
+﻿using AltVStrefaRPServer.Modules.Vehicle;
+using System.Collections.Generic;
 
 namespace AltVStrefaRPServer.Services.Vehicles.VehicleShops
 {

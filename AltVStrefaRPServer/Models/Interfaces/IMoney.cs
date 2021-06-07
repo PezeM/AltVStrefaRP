@@ -1,4 +1,4 @@
-﻿namespace AltVStrefaRPServer.Models
+﻿namespace AltVStrefaRPServer.Models.Interfaces
 {
     public interface IMoney
     {

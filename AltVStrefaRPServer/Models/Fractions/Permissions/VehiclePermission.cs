@@ -6,6 +6,6 @@
         public override string Description { get; set; } = "Czy posiada możliwość korzystania z pojazdów";
         public override bool HasPermission { get; set; } = true;
 
-        public VehiclePermission(bool hasPermission) : base(hasPermission){}
+        public VehiclePermission(bool hasPermission) : base(hasPermission) { }
     }
 }

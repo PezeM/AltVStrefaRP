@@ -1,9 +1,10 @@
-﻿using System;
+﻿using AltVStrefaRPServer.Database;
+using AltVStrefaRPServer.Models.Vehicles;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AltVStrefaRPServer.Database;
-using AltVStrefaRPServer.Models;
 
 namespace AltVStrefaRPServer.Services.Vehicles
 {
@@ -20,7 +21,11 @@ namespace AltVStrefaRPServer.Services.Vehicles
         {
             using (var context = _factory())
             {
-                return context.Vehicles.ToList();
+                return context.Vehicles
+                    .Include(v => v.Inventory)
+                        .ThenInclude(i => i.Items)
+                            .ThenInclude(i => i.Item)
+                    .ToList();
             }
         }
 

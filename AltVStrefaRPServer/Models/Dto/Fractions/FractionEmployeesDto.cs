@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using AltV.Net;
+﻿using AltV.Net;
 using AltV.Net.Elements.Args;
+using System.Collections.Generic;
 
 namespace AltVStrefaRPServer.Models.Dto.Fractions
 {
@@ -30,7 +30,7 @@ namespace AltVStrefaRPServer.Models.Dto.Fractions
             List<FractionEmployeeDto> employees = null;
             List<FractionRankDto> ranks = null;
             while (reader.HasNext())
-            { 
+            {
                 switch (reader.NextName())
                 {
                     case "employees":
@@ -65,16 +65,16 @@ namespace AltVStrefaRPServer.Models.Dto.Fractions
             writer.EndObject();
         }
 
-        public void ToMValue(object obj, IMValueWriter writer) 
-        { 
-            if (obj is FractionEmployeesDto value) 
-            { 
+        public void ToMValue(object obj, IMValueWriter writer)
+        {
+            if (obj is FractionEmployeesDto value)
+            {
                 ToMValue(value, writer);
             }
         }
 
-        object IMValueBaseAdapter.FromMValue(IMValueReader reader) 
-        { 
+        object IMValueBaseAdapter.FromMValue(IMValueReader reader)
+        {
             return FromMValue(reader);
         }
     }

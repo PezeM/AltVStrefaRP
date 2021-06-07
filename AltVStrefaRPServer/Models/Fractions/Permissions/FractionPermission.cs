@@ -7,7 +7,7 @@
         public virtual string Description { get; set; }
         public virtual bool HasPermission { get; set; }
 
-        private FractionPermission(){}
+        private FractionPermission() { }
 
         protected FractionPermission(bool hasPermission)
         {

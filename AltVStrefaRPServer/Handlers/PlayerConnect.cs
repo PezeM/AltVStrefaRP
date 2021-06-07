@@ -1,11 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
-using AltV.Net;
+﻿using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltVStrefaRPServer.Extensions;
 using AltVStrefaRPServer.Helpers;
+using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Server;
 using AltVStrefaRPServer.Modules.CharacterModule;
 using AltVStrefaRPServer.Modules.Environment;
@@ -13,6 +12,8 @@ using AltVStrefaRPServer.Services.Characters;
 using AltVStrefaRPServer.Services.Characters.Accounts;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System;
+using System.Threading.Tasks;
 
 namespace AltVStrefaRPServer.Handlers
 {
@@ -26,8 +27,8 @@ namespace AltVStrefaRPServer.Handlers
         private readonly ILogger<PlayerConnect> _logger;
         private readonly TimeController _timeController;
 
-        public PlayerConnect(AppSettings appSettings, ILogin loginService, ICharacterDatabaseService characterDatabaseService, 
-            IAccountDatabaseService accountDatabaseService, IAccountFactoryService accountFactoryService, TimeController timeController, 
+        public PlayerConnect(AppSettings appSettings, ILogin loginService, ICharacterDatabaseService characterDatabaseService,
+            IAccountDatabaseService accountDatabaseService, IAccountFactoryService accountFactoryService, TimeController timeController,
             ILogger<PlayerConnect> logger)
         {
             _appSettings = appSettings;
@@ -39,16 +40,16 @@ namespace AltVStrefaRPServer.Handlers
             _logger = logger;
 
             Alt.OnPlayerConnect += OnPlayerConnect;
-            AltAsync.On<IPlayer, string, string, Task>("loginAccount", LoginAccountAsync);
-            AltAsync.On<IPlayer, string, string, Task>("registerAccount", RegisterAccountAsync);
-            AltAsync.On<IPlayer, int, Task>("tryToLoadCharacter", TryToLoadCharacterAsync);
+            AltAsync.On<IStrefaPlayer, string, string, Task>("LoginAccount", LoginAccountAsync);
+            AltAsync.On<IStrefaPlayer, string, string, Task>("RegisterAccount", RegisterAccountAsync);
+            AltAsync.On<IStrefaPlayer, int, Task>("TryToLoadCharacter", TryToLoadCharacterAsync);
         }
 
-        private async Task TryToLoadCharacterAsync(IPlayer player, int characterId)
+        private async Task TryToLoadCharacterAsync(IStrefaPlayer player, int characterId)
         {
             try
             {
-                var character = await _characterDatabaseService.GetCharacterById(characterId);
+                var character = await _characterDatabaseService.GetCharacterByIdAsync(characterId).ConfigureAwait(false);
                 if (character == null)
                 {
                     // TODO: Emit event to player that cound't find character with given ID
@@ -64,7 +65,7 @@ namespace AltVStrefaRPServer.Handlers
                     }
                     else
                     {
-                        // Emit another event and enable button to choose character
+                        player.Kick("Wystąpił błąd poczas wyboru postaci.");
                     }
                 });
             }
@@ -74,7 +75,7 @@ namespace AltVStrefaRPServer.Handlers
             }
         }
 
-        private async Task RegisterAccountAsync(IPlayer player, string login, string password)
+        private async Task RegisterAccountAsync(IStrefaPlayer player, string login, string password)
         {
             try
             {
@@ -108,7 +109,7 @@ namespace AltVStrefaRPServer.Handlers
             }
         }
 
-        private async Task LoginAccountAsync(IPlayer player, string login, string password)
+        private async Task LoginAccountAsync(IStrefaPlayer player, string login, string password)
         {
             try
             {
@@ -134,9 +135,9 @@ namespace AltVStrefaRPServer.Handlers
                     return;
                 }
 
-                await player.SetMetaDataAsync("accountId", account.AccountId).ConfigureAwait(false);
-                await player.EmitAsync("loginSuccesfully", JsonConvert.SerializeObject(await _characterDatabaseService.GetCharacterList(account.AccountId)));
-                _logger.LogInformation("Loging in account {accountName} ID({accountId}) completed in {elapsedTime}", account.Username, account.AccountId,
+                player.AccountId = account.AccountId;
+                await player.EmitAsync("loggedInSuccesfully", JsonConvert.SerializeObject(await _characterDatabaseService.GetCharacterListAsync(account.AccountId)));
+                _logger.LogInformation("Account {accountName} ID({accountId}) logged in successfully in completed in {elapsedTime}ms", account.Username, account.AccountId,
                     Time.GetElapsedTime(startTime));
             }
             catch (Exception e)
@@ -147,15 +148,15 @@ namespace AltVStrefaRPServer.Handlers
 
         private void OnPlayerConnect(IPlayer player, string reason)
         {
-            _logger.LogInformation("New player connected to the server. ID({playerId}) Name {playerName} Ip {playerIp} Hardwarehash {hardwareHash}", 
-                player.Id, player.Name, player.Ip, player.HardwareIdHash);
+            _logger.LogInformation("New player connected to the server. ID({playerId}) Name {playerName} Ip {playerIp}",
+                player.Id, player.Name, player.Ip);
 
             player.Spawn(new Position(_appSettings.ServerConfig.LoginPosition.X, _appSettings.ServerConfig.LoginPosition.Y,
                 _appSettings.ServerConfig.LoginPosition.Z));
 
-            player.SetDateTime(_timeController.GameTime.Days, 0, 0, _timeController.GameTime.Hours, _timeController.GameTime.Minutes, 0);
-            player.SetWeather(_timeController.CurrentWeather);
-            player.Emit("showAuthenticateWindow");
+            player.Emit("setGlobalTime", _timeController.GameTime.Hours, _timeController.GameTime.Minutes, 0);
+            player.Emit("setWeatherNow", _timeController.CurrentWeather.Weather);
+            //player.Emit("showAuthenticateWindow");
         }
     }
 }

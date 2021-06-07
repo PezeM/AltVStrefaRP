@@ -1,15 +1,15 @@
-﻿using System;
-using AltV.Net;
+﻿using AltV.Net;
+using AltVStrefaRPServer.Models.Interfaces;
 using AltVStrefaRPServer.Models.Inventory.Items;
-using AltVStrefaRPServer.Services.Inventory;
+using AltVStrefaRPServer.Services.Inventories;
+using System;
 using Position = AltV.Net.Data.Position;
 
 namespace AltVStrefaRPServer.Models.Inventory
 {
-    // Todo save to database
     public class DroppedItem : IMValueConvertible, IPosition
     {
-        public int Id { get;set; }
+        public int Id { get; set; }
         public string Name => Item.Name;
         public int Count { get; set; }
         public string Model { get; set; }
@@ -20,7 +20,7 @@ namespace AltVStrefaRPServer.Models.Inventory
         public BaseItem Item { get; set; }
         public int BaseItemId { get; protected set; }
 
-        public DroppedItem(){}
+        public DroppedItem() { }
 
         public DroppedItem(int count, string model, BaseItem item, Position position)
         {
@@ -42,7 +42,7 @@ namespace AltVStrefaRPServer.Models.Inventory
 
         public Position GetPosition()
         {
-            return new Position(X,Y,Z);
+            return new Position(X, Y, Z);
         }
     }
 }

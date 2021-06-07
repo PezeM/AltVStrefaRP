@@ -6,6 +6,6 @@
         public override string Description { get; set; } = "Czy ma możliwość otworzenia menu frakcji";
         public override bool HasPermission { get; set; } = true;
 
-        public OpenMenuPermission(bool hasPermission) : base(hasPermission){}
+        public OpenMenuPermission(bool hasPermission) : base(hasPermission) { }
     }
 }

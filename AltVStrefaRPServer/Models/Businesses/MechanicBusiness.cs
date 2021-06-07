@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace AltVStrefaRPServer.Models.Businesses
+﻿namespace AltVStrefaRPServer.Models.Businesses
 {
     public class MechanicBusiness : Business
     {

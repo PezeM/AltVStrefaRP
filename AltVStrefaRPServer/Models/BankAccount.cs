@@ -1,4 +1,5 @@
-﻿using AltVStrefaRPServer.Services;
+﻿using AltVStrefaRPServer.Models.Interfaces;
+using AltVStrefaRPServer.Services;
 
 namespace AltVStrefaRPServer.Models
 {
@@ -24,9 +25,9 @@ namespace AltVStrefaRPServer.Models
             return true;
         }
 
-        public bool TransferMoney(IMoney receiver, float amount, float amountAfterTax)
+        public bool TransferMoney(IMoney receiver, float amount, float tax)
         {
-            if (!RemoveMoney(amountAfterTax)) return false;
+            if (!RemoveMoney(amount + tax)) return false;
             receiver.AddMoney(amount);
             return true;
         }
@@ -38,11 +39,11 @@ namespace AltVStrefaRPServer.Models
             return true;
         }
 
-        public override string ToString() => $"BankAccount {AccountNumber}";
+        public override string ToString() => $"BankAccount {AccountNumber.ToString()}";
 
         public string MoneyTransactionDisplayName()
         {
-            return $"BankAccount {AccountNumber}";
+            return $"BankAccount {AccountNumber.ToString()}";
         }
 
         public void NotifyOnMoneyTransfer(IMoney source, int money, INotificationService notificationService)

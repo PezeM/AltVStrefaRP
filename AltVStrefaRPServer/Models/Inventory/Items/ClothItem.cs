@@ -1,6 +1,4 @@
-﻿using AltVStrefaRPServer.Models.Interfaces.Inventory;
-using AltVStrefaRPServer.Models.Interfaces.Items;
-using AltVStrefaRPServer.Models.Inventory.Interfaces;
+﻿using AltVStrefaRPServer.Models.Inventory.Interfaces;
 
 namespace AltVStrefaRPServer.Models.Inventory.Items
 {
@@ -10,7 +8,7 @@ namespace AltVStrefaRPServer.Models.Inventory.Items
         public int TextureId { get; set; }
         public int PaletteId { get; set; }
         public bool IsProp { get; set; }
-        public string Model { get; set; }
+        public string Model { get; private set; }
 
         public ClothItem(string name, EquipmentSlot equipmentSlot, int drawableId, int textureId, int paletteId, bool isProp, string model)
             : base(name, equipmentSlot)
@@ -28,12 +26,17 @@ namespace AltVStrefaRPServer.Models.Inventory.Items
             return true;
         }
 
+        public override bool UnequipItem(Character character)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public override BaseItem Copy()
         {
             return (ClothItem)MemberwiseClone();
         }
 
-        // Usefull models
+        // Useful models
         // p_lazlow_shirt_s, p_laz_j01_s, prop_ld_tshirt_01, prop_ld_tshirt_02
         // p_jewel_necklace_02, p_jimmyneck_03_s, p_jewel_necklace02_s
         // p_ld_heist_bag_01

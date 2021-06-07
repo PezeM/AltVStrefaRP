@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AltVStrefaRPServer.Database;
+﻿using AltVStrefaRPServer.Database;
 using AltVStrefaRPServer.Models;
 using AltVStrefaRPServer.Models.Dto;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace AltVStrefaRPServer.Services.Characters
 {
@@ -49,7 +49,7 @@ namespace AltVStrefaRPServer.Services.Characters
             }
         }
 
-        public async Task<List<CharacterSelectDto>> GetCharacterList(int accountId)
+        public async Task<List<CharacterSelectDto>> GetCharacterListAsync(int accountId)
         {
             using (var context = _factory.Invoke())
             {
@@ -65,19 +65,21 @@ namespace AltVStrefaRPServer.Services.Characters
             }
         }
 
-        public async Task<Character> GetCharacterById(int characterId)
+        public async Task<Character> GetCharacterByIdAsync(int characterId)
         {
             using (var context = _factory.Invoke())
             {
                 return await context.Characters
-                    .Include(c => c.BankAccount)
+                    .Include(c => c.BankAccount)    
                     .Include(c => c.Account)
                     .Include(c => c.Inventory)
                         .ThenInclude(i => i.Items)
                             .ThenInclude(i => i.Item)
-                    .Include(c => c.Inventory)
-                        .ThenInclude(i => i.EquippedItems)
+                    .Include(c => c.Equipment)
+                        .ThenInclude(i => i.Items)
                             .ThenInclude(i => i.Item)
+                    .Include(c => c.Houses)
+                    .Include(c => c.HotelRooms)
                     .FirstOrDefaultAsync(c => c.Id == characterId);
             }
         }

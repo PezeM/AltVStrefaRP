@@ -2,8 +2,8 @@
   "profiles": {
     "AltVStrefaRPServer": {
       "commandName": "Executable",
-      "executablePath": "E:\\AltVServer\\windows\\altv-server.exe",
-      "workingDirectory": "E:\\AltVServer\\windows"
+      "executablePath": "C:\\AltVServer\\windows\\altv-server.exe",
+      "workingDirectory": "C:\\AltVServer\\windows"
     }
   }
 }

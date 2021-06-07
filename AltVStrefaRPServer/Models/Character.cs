@@ -1,11 +1,14 @@
 ﻿using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
-using System;
 using AltVStrefaRPServer.Data;
 using AltVStrefaRPServer.Models.Businesses;
 using AltVStrefaRPServer.Models.Enums;
 using AltVStrefaRPServer.Models.Fractions;
+using AltVStrefaRPServer.Models.Interfaces;
 using AltVStrefaRPServer.Models.Inventory;
+using System;
+using System.Collections.Generic;
+using AltVStrefaRPServer.Models.Houses;
 
 namespace AltVStrefaRPServer.Models
 {
@@ -15,10 +18,13 @@ namespace AltVStrefaRPServer.Models
         public int AccountId { get; set; }
         public Account Account { get; set; }
         public BankAccount BankAccount { get; set; }
-        public bool IsBanned {get; set; }
+        public bool IsBanned { get; set; }
         public bool IsMuted { get; set; }
         public bool CanDriveVehicles { get; set; }
-        public InventoryController Inventory { get; set; }
+        public PlayerInventoryContainer Inventory { get; set; }
+        public int InventoryId { get; set; }
+        public PlayerEquipment Equipment { get; set; }
+        public int EquipmentId { get; set; }
         public string ProfileImage { get; set; }
 
         public float X { get; set; }
@@ -46,6 +52,9 @@ namespace AltVStrefaRPServer.Models
         public int? CurrentFractionId { get; set; }
         public Fraction Fraction { get; set; }
         public int FractionRank { get; set; }
+
+        public ICollection<House> Houses { get; set; }
+        public ICollection<HotelRoom> HotelRooms { get; set; }
 
         public string GetFullName()
         {

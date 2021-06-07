@@ -1,11 +1,20 @@
 ﻿using AltV.Net.Data;
+using AltVStrefaRPServer.Data;
 using AltVStrefaRPServer.Models.Enums;
-using VehicleModel = AltVStrefaRPServer.Models.VehicleModel;
+using AltVStrefaRPServer.Models.Inventory;
+using AltVStrefaRPServer.Models.Vehicles;
 
 namespace AltVStrefaRPServer.Services.Vehicles
 {
     public class VehicleCreatorService : IVehicleCreatorService
     {
+        private readonly VehiclesData _vehiclesData;
+
+        public VehicleCreatorService(VehiclesData vehiclesData)
+        {
+            _vehiclesData = vehiclesData;
+        }
+
         /// <summary>
         /// Creates <see cref="VehicleModel"/> with default values
         /// </summary>
@@ -17,7 +26,7 @@ namespace AltVStrefaRPServer.Services.Vehicles
         /// <returns></returns>
         public VehicleModel CreateVehicle(string vehicleModel, Position position, Rotation rotation, short dimension, int ownerId, OwnerType ownerType)
         {
-            return new VehicleModel
+            var vehicle = new VehicleModel
             {
                 Owner = ownerId,
                 Model = vehicleModel,
@@ -32,16 +41,41 @@ namespace AltVStrefaRPServer.Services.Vehicles
                 PlateNumber = 0,
                 PlateText = "BRAK", // Change it to unique plate text
                 // Temporary values
-                MaxFuel = 50.0f,
-                Fuel = 50.0f,
-                MaxOil = 10.0f,
-                Oil = 5.0f,
                 Mileage = 0.0f,
                 IsBlocked = false,
                 IsJobVehicle = false,
                 IsLocked = false,
                 IsSpawned = false
             };
+
+            if (_vehiclesData.Data.TryGetValue(vehicleModel, out var vehicleData))
+            {
+                GenerateValuesFromVehicleData(vehicle, vehicleData);
+            }
+            else
+            {
+                GenerateDefaultValues(vehicle);
+            }
+
+            return vehicle;
+        }
+
+        private void GenerateValuesFromVehicleData(VehicleModel vehicle, VehicleData vehicleData)
+        {
+            vehicle.Inventory = new VehicleInventoryContainer(vehicleData.InventorySlots);
+            vehicle.MaxFuel = vehicleData.MaxFuel;
+            vehicle.Fuel = vehicleData.MaxFuel;
+            vehicle.MaxOil = vehicleData.MaxOil;
+            vehicle.Oil = vehicleData.MaxOil;
+        }
+
+        private void GenerateDefaultValues(VehicleModel vehicle)
+        {
+            vehicle.Inventory = new VehicleInventoryContainer(0);
+            vehicle.MaxFuel = 30f;
+            vehicle.Fuel = 30f;
+            vehicle.MaxOil = 5f;
+            vehicle.Oil = 5f;
         }
     }
 }

@@ -1,64 +1,82 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Timers;
-using AltV.Net;
-using AltV.Net.NetworkingEntity;
+﻿using AltV.Net.NetworkingEntity;
 using AltV.Net.NetworkingEntity.Elements.Entities;
-using Timer = System.Timers.Timer;
-using Entity;
 using AltVStrefaRPServer.Models.Enums;
+using AltVStrefaRPServer.Models.Interfaces.Managers;
 using AltVStrefaRPServer.Models.Inventory;
 using AltVStrefaRPServer.Models.Server;
-using AltVStrefaRPServer.Models.Interfaces.Managers;
-using Microsoft.Extensions.Logging;
+using Entity;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using AltVStrefaRPServer.Models.Core;
+using Serilog;
 
 namespace AltVStrefaRPServer.Modules.Networking
 {
-    public class NetworkingManager : INetworkingManager
+    public sealed class NetworkingManager : INetworkingManager
     {
+        private static readonly Lazy<NetworkingManager> lazy = new Lazy<NetworkingManager>(() => new NetworkingManager());
+        public static NetworkingManager Instance => lazy.Value;
         private ConcurrentDictionary<ulong, INetworkingEntity> _entities;
-        private readonly Random _rng;
-        private readonly ILogger<NetworkingManager> _logger;
-        private Timer _testTimer;
 
-        public NetworkingManager(AppSettings appSettings, ILogger<NetworkingManager> logger)
+        private NetworkingManager()
         {
-            _rng = new Random();
-            _logger = logger;
             _entities = new ConcurrentDictionary<ulong, INetworkingEntity>();
-            ConfigureAltNetworking(appSettings);
-
-            AltNetworking.OnEntityStreamIn = OnEntityStreamIn;
-            AltNetworking.OnEntityStreamOut = OnEntityStreamOut;
-
-            CreateRandomItems();
-            CreateRandomPeds();
         }
+
+        public void InitializeNetworkingManager(AppSettings appSettings)
+        {
+            //ConfigureAltNetworking(appSettings);
+
+            //AltNetworking.OnEntityStreamIn = OnEntityStreamIn;
+            //AltNetworking.OnEntityStreamOut = OnEntityStreamOut;
+        }
+
+        public int GetAllEntitiesCount() => _entities.Count;
 
         public bool TryGetNetworkingEntity(int networkignEntityId, out INetworkingEntity networkingEntity)
             => _entities.TryGetValue((ulong)networkignEntityId, out networkingEntity);
 
         public bool DoesNetworkingEntityExists(int networkingEntityId) => _entities.ContainsKey((ulong)networkingEntityId);
 
-        public bool RemoveNetworkingEntity(int networkingItemId) => _entities.TryRemove((ulong)networkingItemId, out _);
+        public bool RemoveNetworkingEntity(int netorkingItemId)
+        {
+            if (!_entities.TryGetValue((ulong)netorkingItemId, out var networkingEntity)) return false;
+            networkingEntity.Remove();
+            return true;
+        }
+
+        public bool RemoveNetworkingEntity(INetworkingEntity networkingEntity)
+        {
+            if (networkingEntity == null) return false;
+            networkingEntity.Remove();
+            return true;
+        }
+
+        public void RemoveAllNetworkingEntities()
+        {
+            foreach (var keyValuePair in _entities)
+            {
+                keyValuePair.Value.Remove();
+            }
+
+            _entities.Clear();
+        }
 
         public INetworkingEntity AddNewDroppedItem(DroppedItem droppedItem, int streamingRange = 50, int dimension = 0)
         {
-            var networkingEntity = AltNetworking.CreateEntity(new Position { X = droppedItem.X, Y = droppedItem.Y, Z = droppedItem.Z },
-                dimension, streamingRange, new Dictionary<string, object>
-                {
-                    { "entityType", (long)NetworkingEntityTypes.Item },
-                    { "id", droppedItem.Id },
-                    { "name", droppedItem.Name },
-                    { "count", droppedItem.Count },
-                    { "model", droppedItem.Model }
-                });
-            _entities.TryAdd(networkingEntity.Id, networkingEntity);
-            return networkingEntity;
+            //var networkingEntity = AltNetworking.CreateEntity(new Position { X = droppedItem.X, Y = droppedItem.Y, Z = droppedItem.Z },
+            //    dimension, streamingRange, new Dictionary<string, object>
+            //    {
+            //        { "entityType", (long)NetworkingEntityTypes.Item },
+            //        { "id", droppedItem.Id },
+            //        { "name", droppedItem.Name },
+            //        { "count", droppedItem.Count },
+            //        { "model", droppedItem.Model }
+            //    });
+            //_entities.TryAdd(networkingEntity.Id, networkingEntity);
+            //return networkingEntity;
+            return null;
         }
 
         public void DescreaseDroppedItemQuantity(int networkingItemId, int itemsToRemove)
@@ -77,142 +95,50 @@ namespace AltVStrefaRPServer.Modules.Networking
             }
         }
 
+        public void AddNewMarker(Marker marker)
+        {
+            //var networkingEntity = AltNetworking.CreateEntity(new Position{X = marker.X, Y = marker.Y, Z = marker.Z}, marker.Dimension, marker.Range, 
+            //    new Dictionary<string, object>
+            //{
+            //    { "entityType", (int)NetworkingEntityTypes.Marker },
+            //    { "type", marker.Type },
+            //    { "scaleX", marker.ScaleX },
+            //    { "scaleY", marker.ScaleY },
+            //    { "scaleZ", marker.ScaleZ },
+            //    { "red", marker.Red },
+            //    { "green", marker.Green },
+            //    { "blue", marker.Blue },
+            //    { "alpha", marker.Alpha },
+            //});
+            //_entities.TryAdd(networkingEntity.Id, networkingEntity);
+            //marker.NetworkingEntity = networkingEntity;
+        }
+
         private void OnEntityStreamOut(INetworkingEntity entity, INetworkingClient client)
         {
-            _logger.LogDebug("Entity streamed out {networkingEntityId}", entity.Id);
-            //DisplayInfo(entity, client);
+            //Log.ForContext<NetworkingManager>().Debug("Entity streamed out {networkingEntityId}", entity.Id);
         }
 
         private void OnEntityStreamIn(INetworkingEntity entity, INetworkingClient client)
         {
-            _logger.LogDebug("Entity streamed in {networkingEntityId}", entity.Id);
-            //DisplayInfo(entity, client);
-        }
-
-        private void CreateRandomItems()
-        {
-            for (int i = 0; i < 2; i++)
-            {
-                AltNetworking.CreateEntity(new Position { X = -82 + (i * 15), Y = -109 + (i * 15), Z = 62 }, 0, 100, GetRandomItemData());
-            }
-        }
-
-        private void CreateRandomPeds()
-        {
-            for (int i = 0; i < 2; i++)
-            {
-                AltNetworking.CreateEntity(new Position { X = -82 + (i * 15), Y = -109 + (i * 15), Z = 62 }, 0, 100, GetPedRandomData());
-            }
+            //Log.ForContext<NetworkingManager>().Debug("Entity streamed in {networkingEntityId}", entity.Id);
         }
 
         private void ConfigureAltNetworking(AppSettings appSettings)
         {
-            try
-            {
-                AltNetworking.Configure(options =>
-                {
-                    options.Port = appSettings.ServerConfig.NetworkingManagerConfig.Port;
-                    options.Ip = appSettings.ServerConfig.NetworkingManagerConfig.Ip;
-                });
-            }
-            catch (Exception e)
-            {
-                _logger.LogCritical(e, "Error in networking manager. Couldn't configure AltNetworking module.");
-                throw;
-            }
-        }
-
-        private void SetupTimer()
-        {
-            _testTimer = new Timer(10000);
-            _testTimer.Elapsed += OnTimer;
-            _testTimer.AutoReset = true;
-            _testTimer.Start();
-        }
-
-        private void OnTimer(object sender, ElapsedEventArgs e)
-        {
-            try
-            {
-                var player = Alt.GetAllPlayers().FirstOrDefault();
-                if (player == null) return;
-                var randomPosition = GenerateRandomPosition(player.Position);
-                var newEntity = AltNetworking.CreateEntity(new Position { X = player.Position.X, Y = player.Position.Y, Z = player.Position.Z, },
-                    0, _rng.Next(100, 150), GetRandomItemData());
-                _entities.TryAdd(newEntity.Id, newEntity);
-                Alt.Log($"Created entity {newEntity.Id} dim {newEntity.Dimension} on thread {Thread.CurrentThread.ManagedThreadId}");
-                //if (Entities.Count >= 5)
-                //{
-                //    _testTimer.Stop();
-                //    return;
-                //}
-            }
-            catch (NullReferenceException exception)
-            {
-                Console.WriteLine(exception);
-                throw;
-            }
-        }
-
-        private void DisplayInfo(INetworkingEntity entity, INetworkingClient client)
-        {
-            var stringBuilder = new StringBuilder();
-            if (entity.StreamedInClients.Count > 0)
-            {
-                stringBuilder.AppendLine($"Streamed clients: ");
-            }
-            foreach (var entityStreamedInClient in entity.StreamedInClients)
-            {
-                stringBuilder.AppendLine($"Token: {entityStreamedInClient.Token} Exists: {entityStreamedInClient.Exists} " +
-                                         $"LocalEndPoint: {entityStreamedInClient.WebSocket.LocalEndPoint} RemoteEndPoint: {entityStreamedInClient.WebSocket.RemoteEndPoint}");
-            }
-            stringBuilder.AppendLine($"Entity data: Range {entity.Range} PositionSize {entity.Position.CalculateSize()}");
-            Alt.Log(stringBuilder.ToString());
-        }
-
-        private AltV.Net.Data.Position GenerateRandomPosition(AltV.Net.Data.Position position)
-        {
-            var newPosition = new AltV.Net.Data.Position
-            {
-                X = position.X + _rng.Next(1, 10),
-                Y = position.Y + _rng.Next(1, 10),
-                Z = position.Z + _rng.Next(1, 10)
-            };
-            return newPosition;
-        }
-
-        private Dictionary<string, object> GenerateRandomData()
-        {
-            var testData = new Dictionary<string, object>
-            {
-                { "someData", (long)_rng.Next(1000,3000)},
-                { "propModel", "somePropModel" },
-                { "quantity", (long)_rng.Next(1, 10)},
-                { "canPickup", true}
-            };
-            return testData;
-        }
-
-        private Dictionary<string, object> GetPedRandomData()
-        {
-            var testData = new Dictionary<string, object>
-            {
-                { "entityType", (long)NetworkingEntityTypes.Ped },
-                { "pedType",  (long)PedTypes.BankPed }
-            };
-            return testData;
-        }
-
-        private Dictionary<string, object> GetRandomItemData()
-        {
-            return new Dictionary<string, object>
-            {
-                { "entityType", (long)NetworkingEntityTypes.Item },
-                { "id", 2 },
-                { "name", "Jakiś itemek" },
-                { "count", 15 },
-                { "model", "prop_bodyarmour_04" }
-            };
+            //try
+            //{
+            //    AltNetworking.Configure(options =>
+            //    {
+            //        options.Port = appSettings.ServerConfig.NetworkingManagerConfig.Port;
+            //        options.Ip = appSettings.ServerConfig.NetworkingManagerConfig.Ip;
+            //    });
+            //}
+            //catch (Exception e)
+            //{
+            //    Log.ForContext<NetworkingManager>().Fatal(e, "Error in networking manager. Couldn't configure AltNetworking module.");
+            //    throw;
+            //}
         }
     }
 }

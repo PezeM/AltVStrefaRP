@@ -1,18 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using AltV.Net;
+﻿using AltV.Net;
 using AltV.Net.Elements.Args;
+using System;
+using System.Collections.Generic;
 
 namespace AltVStrefaRPServer.Models.Dto.Fractions
 {
     public class TownHallFractionDto : IMValueConvertible
     {
         private static readonly IMValueBaseAdapter _myAdapter = new TownHallFractionAdapter();
-        public int Id {get;set;}
-        public float Money {get;set;}
-        public int EmployeesCount {get; set;}
-        public int RolesCount {get;set;}
-        public string CreationDate {get;set;}
+        public int Id { get; set; }
+        public float Money { get; set; }
+        public int EmployeesCount { get; set; }
+        public int RolesCount { get; set; }
+        public string CreationDate { get; set; }
         public List<TaxDto> Taxes { get; set; }
 
         public IMValueBaseAdapter GetAdapter()
@@ -24,8 +24,8 @@ namespace AltVStrefaRPServer.Models.Dto.Fractions
     public class TownHallFractionAdapter : IMValueAdapter<TownHallFractionDto>
     {
         private readonly IMValueAdapter<List<TaxDto>> _taxListAdapter;
-        public TownHallFractionAdapter() 
-        { 
+        public TownHallFractionAdapter()
+        {
             _taxListAdapter = DefaultMValueAdapters.GetArrayAdapter(new TaxDtoAdapter());
         }
 
@@ -39,7 +39,7 @@ namespace AltVStrefaRPServer.Models.Dto.Fractions
             string creationDate = null;
             List<TaxDto> taxes = null;
             while (reader.HasNext())
-            { 
+            {
                 switch (reader.NextName())
                 {
                     case "id":

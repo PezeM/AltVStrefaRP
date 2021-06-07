@@ -1,6 +1,6 @@
 ﻿namespace AltVStrefaRPServer.Models.Enums
 {
-    public enum FractionsEnum : int
+    public enum FractionsEnum
     {
         Police = 1,
         Sams = 2,

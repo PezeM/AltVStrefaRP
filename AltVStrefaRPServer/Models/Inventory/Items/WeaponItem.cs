@@ -1,17 +1,17 @@
 ﻿using AltV.Net.Enums;
-using AltVStrefaRPServer.Models.Interfaces.Inventory;
-using AltVStrefaRPServer.Models.Interfaces.Items;
+using AltVStrefaRPServer.Extensions;
+using AltVStrefaRPServer.Models.Inventory.Interfaces;
 
 namespace AltVStrefaRPServer.Models.Inventory.Items
 {
     public class WeaponItem : Equipmentable, IDroppable
     {
-        public string Model { get; set; }
+        public string Model { get; private set; }
 
-        public WeaponModel WeaponModel { get; set; }
+        public WeaponModel WeaponModel { get; private set; }
         public int Ammo { get; set; }
 
-        public WeaponItem(string name, string model, WeaponModel weaponModel, int ammo, EquipmentSlot equipmentSlot = EquipmentSlot.LeftHand) 
+        public WeaponItem(string name, string model, WeaponModel weaponModel, int ammo, EquipmentSlot equipmentSlot = EquipmentSlot.LeftHand)
             : base(name, equipmentSlot)
         {
             Model = model;
@@ -22,7 +22,14 @@ namespace AltVStrefaRPServer.Models.Inventory.Items
         public override bool UseItem(Character character)
         {
             // Equip on slot
-            character.Player.GiveWeapon((uint)WeaponModel, Ammo, false);
+            character.Player?.GiveWeapon((uint)WeaponModel, Ammo, false);
+            return true;
+        }
+
+        public override bool UnequipItem(Character character)
+        {
+            // For now till ammo
+            character.Player?.RemoveWeapon((uint)WeaponModel);
             return true;
         }
 

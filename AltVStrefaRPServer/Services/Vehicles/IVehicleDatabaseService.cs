@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using AltVStrefaRPServer.Models.Vehicles;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using AltVStrefaRPServer.Models;
 
 namespace AltVStrefaRPServer.Services.Vehicles
 {
