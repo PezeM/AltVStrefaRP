@@ -1,4 +1,6 @@
-# AltVStrefaRP
+# AltV StrefaRP Server
+
+# No longer in development. Available for study purposes
 
 ### Builds
 
